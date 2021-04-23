@@ -1,0 +1,11 @@
+{
+	"parent": "neo_ores:block/neo_portal",
+  	"textures": 
+  	{
+		"0": "neo_ores:blocks/mana_furnace",
+		"2": "neo_ores:blocks/neo_portal_side",
+		"3": "neo_ores:blocks/neo_portal_up",
+		"4": "neo_ores:blocks/null",
+		"5": "neo_ores:blocks/neo_portal_inside"
+	}
+}

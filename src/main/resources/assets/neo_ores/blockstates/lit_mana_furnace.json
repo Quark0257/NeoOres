@@ -1,0 +1,10 @@
+{
+	"variants":
+	{
+		"facing=north":{"model":"neo_ores:lit_mana_furnace","uvlock":false},
+		"facing=west":{"model":"neo_ores:lit_mana_furnace","uvlock":false},
+		"facing=east":{"model":"neo_ores:lit_mana_furnace","uvlock":false},
+		"facing=south":{"model":"neo_ores:lit_mana_furnace","uvlock":false},
+		"inventory":{"model":"neo_ores:lit_mana_furnace","uvlock":false}
+	}
+}

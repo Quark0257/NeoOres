@@ -1,0 +1,6 @@
+{
+  	"variants": 
+  	{
+    	"dimension=earth":{"model": "neo_ores:guardite_ore"}
+  	}
+}

@@ -1,0 +1,6 @@
+{
+  	"variants": 
+  	{
+    	"dimension=fire":{"model": "neo_ores:flamite_ore"}
+  	}
+}

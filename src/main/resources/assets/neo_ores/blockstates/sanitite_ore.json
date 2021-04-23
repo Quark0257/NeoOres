@@ -1,0 +1,6 @@
+{
+  	"variants": 
+  	{
+    	"dimension=water":{"model": "neo_ores:sanitite_ore"}
+  	}
+}

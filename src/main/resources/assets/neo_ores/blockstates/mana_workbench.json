@@ -1,0 +1,13 @@
+{
+	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"model": "neo_ores:mana_workbench",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

@@ -1,0 +1,14 @@
+{
+  	"type": "minecraft:crafting_shapeless",
+  	"ingredients": 
+  	[
+    	{
+      		"item": "neo_ores:undite_block"
+    	}
+  	],
+  	"result": 
+  	{
+    	"item": "neo_ores:undite",
+    	"count": 9
+  	}
+}

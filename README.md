@@ -1,2 +1,2 @@
 # NeoOres
-A minecraft mod(NeoOres)'s code.
+A minecraft mod. Add SOME ores, magics and etc.

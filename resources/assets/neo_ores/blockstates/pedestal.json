@@ -1,0 +1,17 @@
+{
+  	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"textures": 
+    	{
+      		"particle": "neo_ores:blocks/mana_furnace"
+    	},
+    	"model": "neo_ores:empty_portal",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

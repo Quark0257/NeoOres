@@ -1,0 +1,9 @@
+{
+  	"variants": 
+  	{
+    	"dimension=water":{"model": "neo_ores:water_custom_gold_ore"},
+    	"dimension=earth":{"model": "neo_ores:earth_custom_gold_ore"},
+    	"dimension=fire":{"model": "neo_ores:fire_custom_gold_ore"},
+    	"dimension=air":{"model": "neo_ores:air_custom_gold_ore"}
+  	}
+}

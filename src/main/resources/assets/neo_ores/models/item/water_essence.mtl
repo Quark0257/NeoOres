@@ -1,7 +1,0 @@
-# Blender MTL File: 'None'
-# Material Count: 1
-
-newmtl Default_OBJ.004
-Kd 0.800000 0.800000 0.800000
-d 0.800000
-map_Kd neo_ores:items/water_essence

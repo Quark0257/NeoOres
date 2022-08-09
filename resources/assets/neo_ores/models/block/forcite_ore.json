@@ -1,9 +1,0 @@
-{
-	"parent": "neo_ores:block/cutout_mipped",
-  	"textures": 
-  	{
-  		"particle":"neo_ores:blocks/forcite_ore_layer",
-    	"source": "neo_ores:blocks/michastone",
-    	"overlay":"neo_ores:blocks/forcite_ore_layer"
-  	}
-}

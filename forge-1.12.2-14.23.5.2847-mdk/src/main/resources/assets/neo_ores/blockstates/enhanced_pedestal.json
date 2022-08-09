@@ -1,0 +1,22 @@
+{
+  	"variants": 
+  	{
+    	"tier=0":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=1":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=2":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=3":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=4":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=5":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=6":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=7":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=8":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=9":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=10":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=11":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=12":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=13":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=14":{"model": "neo_ores:enhanced_pedestal"},
+    	"tier=15":{"model": "neo_ores:enhanced_pedestal"},
+    	"inventory":{"model": "neo_ores:enhanced_pedestal"}
+  	}
+}

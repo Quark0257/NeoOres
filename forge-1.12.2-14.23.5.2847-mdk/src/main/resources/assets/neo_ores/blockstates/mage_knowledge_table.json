@@ -1,0 +1,10 @@
+{
+	"variants":
+	{
+		"facing=north":{"model":"neo_ores:mage_knowledge_table","uvlock":false},
+		"facing=west":{"model":"neo_ores:mage_knowledge_table","uvlock":false},
+		"facing=east":{"model":"neo_ores:mage_knowledge_table","uvlock":false},
+		"facing=south":{"model":"neo_ores:mage_knowledge_table","uvlock":false},
+		"inventory":{"model":"neo_ores:mage_knowledge_table","uvlock":false}
+	}
+}

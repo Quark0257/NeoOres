@@ -1,0 +1,9 @@
+{
+  	"variants": 
+  	{
+    	"dimension=earth":{"model": "neo_ores:guardite_ore"},
+		"dimension=air":{"model": "neo_ores:guardite_ore"},
+		"dimension=fire":{"model": "neo_ores:guardite_ore"},
+		"dimension=water":{"model": "neo_ores:guardite_ore"}
+  	}
+}

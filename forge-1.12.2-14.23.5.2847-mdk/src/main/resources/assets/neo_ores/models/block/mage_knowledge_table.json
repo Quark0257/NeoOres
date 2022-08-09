@@ -1,0 +1,27 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "neo_ores:block/cutout_mipped",
+	"textures": {
+		"0": "neo_ores:blocks/study_table_bottom",
+		"1": "neo_ores:blocks/study_table_east",
+		"2": "neo_ores:blocks/study_table_north",
+		"3": "neo_ores:blocks/study_table_south",
+		"5": "neo_ores:blocks/study_table_west",
+		"6": "neo_ores:blocks/study_table_up",
+		"particle": "neo_ores:blocks/study_table_up"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 13, 16],
+			"faces": {
+				"north": {"uv": [0, 3, 16, 16], "texture": "#2"},
+				"east": {"uv": [0, 3, 16, 16], "texture": "#1"},
+				"south": {"uv": [0, 3, 16, 16], "texture": "#3"},
+				"west": {"uv": [0, 3, 16, 16], "texture": "#5"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#6"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#0"}
+			}
+		}
+	]
+}

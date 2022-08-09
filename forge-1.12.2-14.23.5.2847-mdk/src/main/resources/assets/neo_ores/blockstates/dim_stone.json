@@ -1,0 +1,9 @@
+{
+	"variants": 
+  	{
+    	"dimension=earth":{"textures": {"particle": "neo_ores:blocks/urystone"},"model": "neo_ores:earth_dim_stone"},
+    	"dimension=water":{"textures": {"particle": "neo_ores:blocks/gabrystone"},"model": "neo_ores:water_dim_stone"},
+    	"dimension=fire":{"textures": {"particle": "neo_ores:blocks/michastone"},"model": "neo_ores:fire_dim_stone"},
+    	"dimension=air":{"textures": {"particle": "neo_ores:blocks/raphastone"},"model": "neo_ores:air_dim_stone"}
+  	}
+}

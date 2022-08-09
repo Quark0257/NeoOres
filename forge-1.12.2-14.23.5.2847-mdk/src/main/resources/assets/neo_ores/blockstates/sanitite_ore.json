@@ -1,0 +1,9 @@
+{
+  	"variants": 
+  	{
+    	"dimension=water":{"model": "neo_ores:sanitite_ore"},
+		"dimension=fire":{"model": "neo_ores:sanitite_ore"},
+		"dimension=air":{"model": "neo_ores:sanitite_ore"},
+		"dimension=earth":{"model": "neo_ores:sanitite_ore"}
+  	}
+}

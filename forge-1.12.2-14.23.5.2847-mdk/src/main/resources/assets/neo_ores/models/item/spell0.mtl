@@ -1,0 +1,327 @@
+# Blender MTL File: 'fire_essence.blend'
+# Material Count: 65
+
+newmtl a1
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-0
+
+newmtl a10
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-9
+
+newmtl a11
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-10
+
+newmtl a12
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-11
+
+newmtl a13
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-12
+
+newmtl a14
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-13
+
+newmtl a15
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-14
+
+newmtl a16
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-15
+
+newmtl a2
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-1
+
+newmtl a3
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-2
+
+newmtl a4
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-3
+
+newmtl a5
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-4
+
+newmtl a6
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-5
+
+newmtl a7
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-6
+
+newmtl a8
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-7
+
+newmtl a9
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-8
+
+newmtl b1
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-2
+
+newmtl b10
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-11
+
+newmtl b11
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-12
+
+newmtl b12
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-13
+
+newmtl b13
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-14
+
+newmtl b14
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-15
+
+newmtl b15
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-0
+
+newmtl b16
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-1
+
+newmtl b2
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-3
+
+newmtl b3
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-4
+
+newmtl b4
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-5
+
+newmtl b5
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-6
+
+newmtl b6
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-7
+
+newmtl b7
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-8
+
+newmtl b8
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-9
+
+newmtl b9
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-10
+
+newmtl c1
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-6
+
+newmtl c10
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-15
+
+newmtl c11
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-0
+
+newmtl c12
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-1
+
+newmtl c13
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-2
+
+newmtl c14
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-3
+
+newmtl c15
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-4
+
+newmtl c16
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-5
+
+newmtl c2
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-7
+
+newmtl c3
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-8
+
+newmtl c4
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-9
+
+newmtl c5
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-10
+
+newmtl c6
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-11
+
+newmtl c7
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-12
+
+newmtl c8
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-13
+
+newmtl c9
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-14
+
+newmtl d1
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-4
+
+newmtl d10
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-13
+
+newmtl d11
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-14
+
+newmtl d12
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-15
+
+newmtl d13
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-0
+
+newmtl d14
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-1
+
+newmtl d15
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-2
+
+newmtl d16
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-3
+
+newmtl d2
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-5
+
+newmtl d3
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-6
+
+newmtl d4
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-7
+
+newmtl d5
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-8
+
+newmtl d6
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-9
+
+newmtl d7
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-10
+
+newmtl d8
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-11
+
+newmtl d9
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_air-12
+
+newmtl main
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/air_essence

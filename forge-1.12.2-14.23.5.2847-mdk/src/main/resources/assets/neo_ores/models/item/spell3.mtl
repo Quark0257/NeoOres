@@ -1,0 +1,407 @@
+# Blender MTL File: 'fire_essence3.blend'
+# Material Count: 81
+
+newmtl a.000
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-0
+
+newmtl a.001
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-1
+
+newmtl a.002
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-2
+
+newmtl a.003
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-3
+
+newmtl a.004
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-4
+
+newmtl a.005
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-5
+
+newmtl a.006
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-6
+
+newmtl a.007
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-7
+
+newmtl a.008
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-8
+
+newmtl a.009
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-9
+
+newmtl a.010
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-10
+
+newmtl a.011
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-11
+
+newmtl a.012
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-12
+
+newmtl a.013
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-13
+
+newmtl a.014
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-14
+
+newmtl a.015
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-15
+
+newmtl b.000
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-2
+
+newmtl b.001
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-3
+
+newmtl b.002
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-4
+
+newmtl b.003
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-5
+
+newmtl b.004
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-6
+
+newmtl b.005
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-7
+
+newmtl b.006
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-8
+
+newmtl b.007
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-9
+
+newmtl b.008
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-10
+
+newmtl b.009
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-11
+
+newmtl b.010
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-12
+
+newmtl b.011
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-13
+
+newmtl b.012
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-14
+
+newmtl b.013
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-15
+
+newmtl b.014
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-0
+
+newmtl b.015
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-1
+
+newmtl c.000
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-4
+
+newmtl c.001
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-5
+
+newmtl c.002
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-6
+
+newmtl c.003
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-7
+
+newmtl c.004
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-8
+
+newmtl c.005
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-9
+
+newmtl c.006
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-10
+
+newmtl c.007
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-11
+
+newmtl c.008
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-12
+
+newmtl c.009
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-13
+
+newmtl c.010
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-14
+
+newmtl c.011
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-15
+
+newmtl c.012
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-0
+
+newmtl c.013
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-1
+
+newmtl c.014
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-2
+
+newmtl c.015
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-3
+
+newmtl d.000
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-6
+
+newmtl d.001
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-7
+
+newmtl d.002
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-8
+
+newmtl d.003
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-9
+
+newmtl d.004
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-10
+
+newmtl d.005
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-11
+
+newmtl d.006
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-12
+
+newmtl d.007
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-13
+
+newmtl d.008
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-14
+
+newmtl d.009
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-15
+
+newmtl d.010
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-0
+
+newmtl d.011
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-1
+
+newmtl d.012
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-2
+
+newmtl d.013
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-3
+
+newmtl d.014
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-4
+
+newmtl d.015
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-5
+
+newmtl e.000
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-8
+
+newmtl e.001
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-9
+
+newmtl e.002
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-10
+
+newmtl e.003
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-11
+
+newmtl e.004
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-12
+
+newmtl e.005
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-13
+
+newmtl e.006
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-14
+
+newmtl e.007
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-15
+
+newmtl e.008
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-0
+
+newmtl e.009
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-1
+
+newmtl e.010
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-2
+
+newmtl e.011
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-3
+
+newmtl e.012
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-4
+
+newmtl e.013
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-5
+
+newmtl e.014
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-6
+
+newmtl e.015
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/spell_water-7
+
+newmtl main
+Kd 0.800000 0.800000 0.800000
+d 0.800000
+map_Kd neo_ores:items/water_essence

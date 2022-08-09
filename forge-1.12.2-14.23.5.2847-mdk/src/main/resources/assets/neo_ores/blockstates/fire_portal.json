@@ -1,0 +1,17 @@
+{
+  	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"textures": 
+    	{
+      		"particle": "neo_ores:blocks/fire_portal_side"
+    	},
+    	"model": "neo_ores:fire_portal",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

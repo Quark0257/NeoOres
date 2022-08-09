@@ -1,0 +1,18 @@
+{
+  	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"textures": 
+    	{
+      		"particle": "neo_ores:blocks/pedestal_side"
+    	},
+    	"model": "neo_ores:pedestal_water",
+    	"uvlock": false
+  	},
+  	"variants":
+	{
+		"facing=down":{"model":"neo_ores:pedestal_water","uvlock":false},
+		"facing=up":{"model":"neo_ores:pedestal_water","uvlock":false},
+		"inventory":{"model":"neo_ores:pedestal_water","uvlock":false}
+	}
+}

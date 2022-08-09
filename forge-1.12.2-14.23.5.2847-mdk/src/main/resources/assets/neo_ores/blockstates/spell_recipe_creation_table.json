@@ -1,0 +1,13 @@
+{
+	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"model": "neo_ores:spell_recipe_creation_table",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

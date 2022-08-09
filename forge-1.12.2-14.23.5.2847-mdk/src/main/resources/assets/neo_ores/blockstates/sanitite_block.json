@@ -1,0 +1,17 @@
+{
+	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"textures": 
+    	{
+      		"particle": "neo_ores:blocks/sanitite_block"
+    	},
+    	"model": "neo_ores:sanitite_block",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

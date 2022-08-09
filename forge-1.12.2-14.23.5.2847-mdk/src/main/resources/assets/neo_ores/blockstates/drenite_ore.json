@@ -1,0 +1,9 @@
+{
+  	"variants": 
+  	{
+    	"dimension=air":{"model": "neo_ores:drenite_ore"},
+		"dimension=water":{"model": "neo_ores:drenite_ore"},
+		"dimension=fire":{"model": "neo_ores:drenite_ore"},
+		"dimension=earth":{"model": "neo_ores:drenite_ore"}
+  	}
+}

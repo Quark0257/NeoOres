@@ -1,0 +1,13 @@
+{
+	"parent": "block/orientable",
+  	"textures": 
+  	{
+  		"particle": "neo_ores:blocks/mana_furnace_top",
+    	"down": "neo_ores:blocks/study_table_bottom",
+        "up": "neo_ores:blocks/mana_furnace_top",
+        "north": "neo_ores:blocks/mana_furnace_north",
+        "east": "neo_ores:blocks/mana_furnace_east",
+        "south": "neo_ores:blocks/mana_furnace_south",
+        "west":"neo_ores:blocks/mana_furnace_west"
+  	}
+}

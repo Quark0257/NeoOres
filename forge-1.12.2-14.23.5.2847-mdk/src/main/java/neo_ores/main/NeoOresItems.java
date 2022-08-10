@@ -294,82 +294,102 @@ public class NeoOresItems
 			.setUnlocalizedName("creative_sword");
 	
 	public static final Item undite_helmet = new ItemNeoArmor(NeoOresItems.armorUndite, 3, EntityEquipmentSlot.HEAD)
+			.setToolType(ToolType.WATER)
 			.setRegistryName(Reference.MOD_ID, "undite_helmet")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("undite_helmet");
 	public static final Item undite_chestplate = new ItemNeoArmor(NeoOresItems.armorUndite, 3, EntityEquipmentSlot.CHEST)
+			.setToolType(ToolType.WATER)
 			.setRegistryName(Reference.MOD_ID, "undite_chestplate")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("undite_chestplate");
 	public static final Item undite_leggings = new ItemNeoArmor(NeoOresItems.armorUndite, 3, EntityEquipmentSlot.LEGS)
+			.setToolType(ToolType.WATER)
 			.setRegistryName(Reference.MOD_ID, "undite_leggings")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("undite_leggings");
 	public static final Item undite_boots = new ItemNeoArmor(NeoOresItems.armorUndite, 3, EntityEquipmentSlot.FEET)
+			.setToolType(ToolType.WATER)
 			.setRegistryName(Reference.MOD_ID, "undite_boots")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("undite_boots");
 	public static final Item salamite_helmet = new ItemNeoArmor(NeoOresItems.armorSalamite, 3, EntityEquipmentSlot.HEAD)
+			.setToolType(ToolType.FIRE)
 			.setRegistryName(Reference.MOD_ID, "salamite_helmet")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("salamite_helmet");
 	public static final Item salamite_chestplate = new ItemNeoArmor(NeoOresItems.armorSalamite, 3, EntityEquipmentSlot.CHEST)
+			.setToolType(ToolType.FIRE)
 			.setRegistryName(Reference.MOD_ID, "salamite_chestplate")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("salamite_chestplate");
 	public static final Item salamite_leggings = new ItemNeoArmor(NeoOresItems.armorSalamite, 3, EntityEquipmentSlot.LEGS)
+			.setToolType(ToolType.FIRE)
 			.setRegistryName(Reference.MOD_ID, "salamite_leggings")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("salamite_leggings");
 	public static final Item salamite_boots = new ItemNeoArmor(NeoOresItems.armorSalamite, 3, EntityEquipmentSlot.FEET)
+			.setToolType(ToolType.FIRE)
 			.setRegistryName(Reference.MOD_ID, "salamite_boots")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("salamite_boots");
 	public static final Item gnomite_helmet = new ItemNeoArmor(NeoOresItems.armorGnomite, 3, EntityEquipmentSlot.HEAD)
+			.setToolType(ToolType.EARTH)
 			.setRegistryName(Reference.MOD_ID, "gnomite_helmet")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("gnomite_helmet");
 	public static final Item gnomite_chestplate = new ItemNeoArmor(NeoOresItems.armorGnomite, 3, EntityEquipmentSlot.CHEST)
+			.setToolType(ToolType.EARTH)
 			.setRegistryName(Reference.MOD_ID, "gnomite_chestplate")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("gnomite_chestplate");
 	public static final Item gnomite_leggings = new ItemNeoArmor(NeoOresItems.armorGnomite, 3, EntityEquipmentSlot.LEGS)
+			.setToolType(ToolType.EARTH)
 			.setRegistryName(Reference.MOD_ID, "gnomite_leggings")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("gnomite_leggings");
 	public static final Item gnomite_boots = new ItemNeoArmor(NeoOresItems.armorGnomite, 3, EntityEquipmentSlot.FEET)
+			.setToolType(ToolType.EARTH)
 			.setRegistryName(Reference.MOD_ID, "gnomite_boots")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("gnomite_boots");
 	public static final Item sylphite_helmet = new ItemNeoArmor(NeoOresItems.armorSylphite, 3, EntityEquipmentSlot.HEAD)
+			.setToolType(ToolType.AIR)
 			.setRegistryName(Reference.MOD_ID, "sylphite_helmet")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("sylphite_helmet");
 	public static final Item sylphite_chestplate = new ItemNeoArmor(NeoOresItems.armorSylphite, 3, EntityEquipmentSlot.CHEST)
+			.setToolType(ToolType.AIR)
 			.setRegistryName(Reference.MOD_ID, "sylphite_chestplate")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("sylphite_chestplate");
 	public static final Item sylphite_leggings = new ItemNeoArmor(NeoOresItems.armorSylphite, 3, EntityEquipmentSlot.LEGS)
+			.setToolType(ToolType.AIR)
 			.setRegistryName(Reference.MOD_ID, "sylphite_leggings")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("sylphite_leggings");
 	public static final Item sylphite_boots = new ItemNeoArmor(NeoOresItems.armorSylphite, 3, EntityEquipmentSlot.FEET)
+			.setToolType(ToolType.AIR)
 			.setRegistryName(Reference.MOD_ID, "sylphite_boots")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("sylphite_boots");
 	public static final Item creative_helmet = new ItemNeoArmor(NeoOresItems.armorCreative, 3, EntityEquipmentSlot.HEAD)
+			.setToolType(ToolType.CREATIVE)
 			.setRegistryName(Reference.MOD_ID, "creative_helmet")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("creative_helmet");
 	public static final Item creative_chestplate = new ItemNeoArmor(NeoOresItems.armorCreative, 3, EntityEquipmentSlot.CHEST)
+			.setToolType(ToolType.CREATIVE)
 			.setRegistryName(Reference.MOD_ID, "creative_chestplate")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("creative_chestplate");
 	public static final Item creative_leggings = new ItemNeoArmor(NeoOresItems.armorCreative, 3, EntityEquipmentSlot.LEGS)
+			.setToolType(ToolType.CREATIVE)
 			.setRegistryName(Reference.MOD_ID, "creative_leggings")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("creative_leggings");
 	public static final Item creative_boots = new ItemNeoArmor(NeoOresItems.armorCreative, 3, EntityEquipmentSlot.FEET)
+			.setToolType(ToolType.CREATIVE)
 			.setRegistryName(Reference.MOD_ID, "creative_boots")
 			.setCreativeTab(NeoOres.neo_ores_tab)
 			.setUnlocalizedName("creative_boots");

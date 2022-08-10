@@ -185,6 +185,19 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			{
 				this.selectedSpells.add(spellitem);
 			}
+			else if(m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96 && this.selectedSpells.contains(spellitem))
+			{
+				this.selectedSpells.remove(spellitem);
+				List<SpellItem> removes = new ArrayList<SpellItem>();
+				for(SpellItem item : this.selectedSpells)
+				{
+					if(!canSelected(item))
+					{
+						removes.add(item);
+					}
+				}
+				this.selectedSpells.removeAll(removes);
+			}
 			this.changed();
 		}
 	}
@@ -283,12 +296,108 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		return !this.selectedSpells.contains(spell) && flag && this.selectedSpells.size() <= 96;
 	}
 	
+	private boolean canSelected(SpellItem spell)
+	{
+		boolean flag = spell.getSpellClass() instanceof SpellForm || spell.getSpellClass() instanceof SpellConditional;
+		boolean flag1 = false;
+		boolean flag2 = false;
+		boolean flag3 = false;
+		boolean need = false;
+		
+		boolean conditional = false;
+		boolean entityForm = false;
+		boolean mainForm = false;
+		for(SpellItem selected : this.selectedSpells)
+		{
+			if(selected.getSpellClass() instanceof SpellForm)
+			{
+				if(((SpellForm)selected.getSpellClass()).needConditional())
+				{
+					need = true;
+				}
+				
+				if(((SpellForm)selected.getSpellClass()).needPrimaryForm())
+				{
+					entityForm = true;
+				}
+				
+				if(!((SpellForm)selected.getSpellClass()).needPrimaryForm())
+				{
+					mainForm = true;
+				}
+			}
+			
+			if(selected.getSpellClass() instanceof SpellConditional)
+			{
+				conditional = true;
+			}
+		}
+		
+		if(conditional && need)
+		{
+			need = false;
+		}
+		
+		if(entityForm && !mainForm)
+		{
+			return flag && this.selectedSpells.size() <= 96;
+		}
+		
+		for(SpellItem selected : this.selectedSpells)
+		{
+			if(spell.getSpellClass() instanceof SpellEffect)
+			{
+				if(selected.getSpellClass() instanceof SpellForm && !need)
+				{
+					flag = true;
+					break;
+				}
+			}
+			else if(spell.getSpellClass() instanceof SpellCorrection)
+			{
+				if(selected.getSpellClass() instanceof SpellEffect)
+				{
+					flag1 = true;
+				}
+				
+				if(selected.getSpellClass() instanceof SpellForm)
+				{
+					flag2 = true;
+				}
+				
+				SpellCorrection correction = ((SpellCorrection)spell.getSpellClass());
+				if(correction.getLevel() <= 1)
+				{
+					flag3 = true;
+				}
+				else if(selected.getSpellClass() instanceof SpellCorrection)
+				{
+					SpellCorrection corr = ((SpellCorrection)selected.getSpellClass());
+					if(corr.getClass() == correction.getClass() &&  corr.getLevel() == correction.getLevel() - 1)
+					{
+						flag3 = true;
+					}
+				}
+				
+				if(flag1 && flag2 && flag3 && !need)
+				{
+					flag = true;
+					break;
+				}
+			}
+		}
+		
+		return flag && this.selectedSpells.size() <= 96;
+	}
+	
 	private void renderHoveredSpellToolTip(int mouseX, int mouseY)
 	{
 		if(this.getFromCoord(mouseX, mouseY) != null)
 		{
 			List<String> tooltip = new ArrayList<String>();
 			SpellItem spellitem = this.getFromCoord(mouseX, mouseY);
+			int m = (this.width - this.xSize) / 2;
+	        int n = (this.height - this.ySize) / 2; 
 			
 			tooltip.add(TextFormatting.WHITE + getName(spellitem));
 			
@@ -300,6 +409,11 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			{
 				tooltip.add("");
 				tooltip.add(TextFormatting.GREEN + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE + I18n.format("spell.canClick"));
+			}
+			else if(m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96 &&this.selectedSpells.contains(spellitem))
+			{
+				tooltip.add("");
+				tooltip.add(TextFormatting.DARK_RED + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE + I18n.format("spell.canClickDelete"));
 			}
 	        this.drawHoveringText(tooltip, mouseX, mouseY, fontRenderer);
 		}

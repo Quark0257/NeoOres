@@ -299,6 +299,7 @@ spell.required=Required
 spell.magic_point=Knowledge Point
 spell.required.health=Required Health : 
 spell.canClick=CLICK to add to the recipe
+spell.canClickDelete=CLICK to delete from the recipe
 
 chat.noRecipe=§cThere is no recipe!
 chat.noMultiblock=§cThere is a defect in the multi-block!

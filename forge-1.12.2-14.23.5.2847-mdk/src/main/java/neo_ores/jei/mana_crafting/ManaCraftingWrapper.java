@@ -75,7 +75,7 @@ public class ManaCraftingWrapper implements IRecipeWrapper
 					list.add(new ArrayList<ItemStack>());
 				}
 			}
-			jeiRecipes.add(new ManaCraftingWrapper(list,mcr.getResult(),TextFormatting.BLUE + I18n.format("container.mana_workbench.cost") + ":" + LongUtils.convertString(mcr.mana())));
+			jeiRecipes.add(new ManaCraftingWrapper(list,mcr.getResult(),TextFormatting.BLUE + I18n.format("container.mana_workbench.cost") + " : " + LongUtils.convertString(mcr.mana())));
 		}
 		return jeiRecipes;
 	}

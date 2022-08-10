@@ -3,10 +3,13 @@ package neo_ores.api;
 import javax.annotation.Nullable;
 
 import neo_ores.item.IItemNeoTool;
+import neo_ores.world.dimension.DimensionHelper.ToolType;
 import net.minecraft.item.ItemStack;
 
 public class TierUtils 
 {
+	public static final RingArray<ToolType> tiers = new RingArray<ToolType>(ToolType.AIR,ToolType.EARTH,ToolType.WATER,ToolType.FIRE);
+	
 	public final ItemStack stack;
 	
 	public TierUtils(ItemStack target)
@@ -60,6 +63,60 @@ public class TierUtils
 	public int getWater()
 	{
 		return getTier()[3];
+	}
+	
+	public int get(ToolType type)
+	{
+		switch(type)
+		{
+		case AIR :
+		{
+			return getAir();
+		}
+		case EARTH :
+		{
+			return getEarth();
+		}
+		case FIRE :
+		{
+			return getFire();
+		}
+		case WATER :
+		{
+			return getWater();
+		}
+		default:
+			return 0;
+		}
+	}
+	
+	public void set(ToolType type,int value)
+	{
+		switch(type)
+		{
+		case AIR :
+		{
+			setAir(value);
+			return;
+		}
+		case EARTH :
+		{
+			setEarth(value);
+			return;
+		}
+		case FIRE :
+		{
+			setFire(value);
+			return;
+		}
+		case WATER :
+		{
+			setWater(value);
+			return;
+		}
+		default:
+			return;
+		}
 	}
 	
 	public void setAir(int air)

@@ -1,26 +1,26 @@
 package neo_ores.item;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import neo_ores.api.PlayerManaDataServer;
+import neo_ores.api.TierUtils;
 import neo_ores.main.NeoOresItems;
+import neo_ores.world.dimension.DimensionHelper.ToolType;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
-@SuppressWarnings("deprecation")
-public class ItemNeoArmor extends ItemArmor implements INeoOresItem
+public class ItemNeoArmor extends ItemArmor implements INeoOresItem, IItemNeoTool
 {
 
 	public ItemNeoArmor(ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
@@ -45,137 +45,37 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem
 		}
 	}
 	
-	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
+	public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag)
 	{
-		super.addInformation(itemStack, world, list, flag);
-		if(itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("tiers", 9))
+		super.addInformation(stack, world, list, flag);
+		if(stack.getItem() instanceof IItemNeoTool)
 		{
-			NBTTagList NBTList = itemStack.getTagCompound().getTagList("tiers", 10);
-			if(NBTList != null && NBTList.getCompoundTagAt(0) != null)
-			{				
-				NBTTagCompound nbt = NBTList.getCompoundTagAt(0);
-				if(nbt.hasKey("air") && nbt.hasKey("earth") && nbt.hasKey("fire") && nbt.hasKey("water"))
-				{
-					boolean tipflag = false;
-					
-					if(nbt.getInteger("water") == 11 && nbt.getInteger("fire") == 11 && nbt.getInteger("earth") == 11 && nbt.getInteger("air") == 11)
-					{
-						for(int i = 0;i < list.size();i++)
-						{
-							List<String> spList = Arrays.asList(list.get(i).split(" "));
-							for(int j = 0;j < spList.size();j++)
-							{
-								if(spList.get(j).equals(TextFormatting.DARK_PURPLE + I18n.translateToLocal("armortip.water").trim()))
-								{
-									list.remove(i);
-								}
-								
-								if(spList.get(j).equals(TextFormatting.GOLD + I18n.translateToLocal("armortip.fire").trim()))
-								{
-									list.remove(i);
-								}
-								
-								if(spList.get(j).equals(TextFormatting.GREEN + I18n.translateToLocal("armortip.earth").trim()))
-								{
-									list.remove(i);
-								}
-								
-								if(spList.get(j).equals(TextFormatting.AQUA + I18n.translateToLocal("armortip.air").trim()))
-								{
-									list.remove(i);
-								}
-							}
-						}
-						
-						list.add(TextFormatting.WHITE + I18n.translateToLocal("armortip.space").trim());
-					}
-					else
-					{
-						if(nbt.getInteger("water") > 0)
-						{
-							for(int i = 0;i < list.size();i++)
-							{
-								List<String> spList = Arrays.asList(list.get(i).split(" "));
-								for(int j = 0;j < spList.size();j++)
-								{
-									if(spList.get(j).equals(TextFormatting.DARK_PURPLE + I18n.translateToLocal("armortip.water").trim()))
-									{
-										list.remove(i);
-										list.add(i, TextFormatting.DARK_PURPLE + I18n.translateToLocal("armortip.water").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("water")).trim());
-										tipflag = true;
-										break;
-									}
-									if(tipflag) break;
-								}
-							}			
-							if(!tipflag) list.add(TextFormatting.DARK_PURPLE + I18n.translateToLocal("armortip.water").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("water")).trim());
-							else tipflag = false;
-						}
-						
-						if(nbt.getInteger("fire") > 0)
-						{
-							for(int i = 0;i < list.size();i++)
-							{
-								List<String> spList = Arrays.asList(list.get(i).split(" "));
-								for(int j = 0;j < spList.size();j++)
-								{
-									if(spList.get(j).equals(TextFormatting.GOLD + I18n.translateToLocal("armortip.fire").trim()))
-									{
-										list.remove(i);
-										list.add(i, TextFormatting.GOLD + I18n.translateToLocal("armortip.fire").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("fire")).trim());
-										tipflag = true;
-										break;
-									}
-									if(tipflag) break;
-								}
-							}			
-							if(!tipflag) list.add(TextFormatting.GOLD + I18n.translateToLocal("armortip.fire").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("fire")).trim());
-							else tipflag = false;
-						}
-						
-						if(nbt.getInteger("earth") > 0)
-						{
-							for(int i = 0;i < list.size();i++)
-							{
-								List<String> spList = Arrays.asList(list.get(i).split(" "));
-								for(int j = 0;j < spList.size();j++)
-								{
-									if(spList.get(j).equals(TextFormatting.GREEN + I18n.translateToLocal("armortip.earth").trim()))
-									{
-										list.remove(i);
-										list.add(i, TextFormatting.GREEN + I18n.translateToLocal("armortip.earth").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("earth")).trim());
-										tipflag = true;
-										break;
-									}
-									if(tipflag) break;
-								}
-							}			
-							if(!tipflag) list.add(TextFormatting.GREEN + I18n.translateToLocal("armortip.earth").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("earth")).trim());
-							else tipflag = false;
-						}
-						
-						if(nbt.getInteger("air") > 0)
-						{
-							for(int i = 0;i < list.size();i++)
-							{
-								List<String> spList = Arrays.asList(list.get(i).split(" "));
-								for(int j = 0;j < spList.size();j++)
-								{
-									if(spList.get(j).equals(TextFormatting.AQUA + I18n.translateToLocal("armortip.air").trim()))
-									{
-										list.remove(i);
-										list.add(i, TextFormatting.AQUA + I18n.translateToLocal("armortip.air").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("air")).trim());
-										tipflag = true;
-										break;
-									}
-									if(tipflag) break;
-								}
-							}			
-							if(!tipflag) list.add(TextFormatting.AQUA + I18n.translateToLocal("armortip.air").trim() + " " + I18n.translateToLocal("tier." + nbt.getInteger("air")).trim());
-						}
-					}
-				}
-			}	
+			TierUtils utils = new TierUtils(stack);
+			if(utils.getAir() == 11 && utils.getEarth() == 11 && utils.getFire() == 11 && utils.getWater() == 11)
+			{
+				list.add(TextFormatting.WHITE + I18n.format("armortip.space").trim());
+				return;
+			}
+
+			if(utils.getAir() != 0)
+			{
+				list.add(TextFormatting.AQUA + I18n.format("armortip.air").trim() + " " + I18n.format("tier." + utils.getAir()).trim());
+			}
+			
+			if(utils.getEarth() != 0)
+			{
+				list.add(TextFormatting.GREEN + I18n.format("armortip.earth").trim() + " " + I18n.format("tier." + utils.getEarth()).trim());
+			}
+			
+			if(utils.getFire() != 0)
+			{
+				list.add(TextFormatting.GOLD + I18n.format("armortip.fire").trim() + " " + I18n.format("tier." + utils.getFire()).trim());
+			}
+			
+			if(utils.getWater() != 0)
+			{
+				list.add(TextFormatting.DARK_PURPLE + I18n.format("armortip.water").trim() + " " + I18n.format("tier." + utils.getWater()).trim());
+			}
 		}
 	}
 	
@@ -184,37 +84,39 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem
 		super.getSubItems(tab, items);
         if (this.isInCreativeTab(tab))
         {
+        	List<ItemStack> adds = new ArrayList<ItemStack>();
+        	List<ItemStack> removes = new ArrayList<ItemStack>();
             for(ItemStack stack : items)
             {
             	if(stack.getItem() instanceof ItemNeoArmor)
             	{
-            		if(((ItemNeoArmor)stack.getItem()).getArmorMaterial() == NeoOresItems.armorCreative)
+            		if(((IItemNeoTool)stack.getItem()).getToolType() == ToolType.CREATIVE)
             		{
             			ItemStack stack1 = stack.copy();
-            			items.remove(stack);
-            			NBTTagCompound nbt = new NBTTagCompound();
-
-            			if(!nbt.hasKey("tiers", 9))
-            			{
-            				nbt.setTag("tiers", new NBTTagList());
-            			}
-            			NBTTagList NBTList = nbt.getTagList("tiers", 10);
-            			if(NBTList != null && NBTList.getCompoundTagAt(0) != null)
-            			{
-            				NBTTagCompound itemNBT = new NBTTagCompound();
-            				itemNBT.setInteger("air", 11);
-            				itemNBT.setInteger("earth", 11);
-            				itemNBT.setInteger("fire", 11);
-            				itemNBT.setInteger("water", 11);
-
-            				NBTList.appendTag(itemNBT);
-            			}
-            			stack1.setTagCompound(nbt);
-            			items.add(stack1);
-            			break;
+            			removes.add(stack);
+            			TierUtils tier = new TierUtils(stack1);
+            			tier.setTier(11, 11, 11, 11);
+            			adds.add(stack1);
             		}
             	}
             }
+            items.removeAll(removes);
+            items.addAll(adds);
         }
     }
+
+	private ToolType type;
+	
+	@Override
+	public Item setToolType(ToolType name) 
+	{
+		type = name;
+		return this;
+	}
+
+	@Override
+	public ToolType getToolType() 
+	{
+		return type;
+	}
 }

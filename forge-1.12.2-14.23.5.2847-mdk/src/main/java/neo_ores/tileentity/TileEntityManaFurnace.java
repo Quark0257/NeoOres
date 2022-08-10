@@ -1,6 +1,8 @@
 package neo_ores.tileentity;
 
-import neo_ores.api.TierCalc;
+import neo_ores.api.RingArray;
+import neo_ores.api.RingArrayElement;
+import neo_ores.api.TierUtils;
 import neo_ores.block.BlockManaFurnace;
 import neo_ores.inventory.ContainerManaFurnace;
 import neo_ores.item.IItemNeoTool;
@@ -34,8 +36,6 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
     private static final int[] SLOTS_SOUTH = new int[] {1};
     private static final int[] SLOTS_WEST = new int[] {2};
     private static final int[] SLOTS_NORTH = new int[] {3};
-    
-    private TierCalc tier = new TierCalc();
 
     private NonNullList<ItemStack> manaFurnaceItemStacks = NonNullList.<ItemStack>withSize(7, ItemStack.EMPTY);
     private int manaFurnaceBurnTime;
@@ -236,7 +236,8 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
     public int getCookTime(ItemStack stack)
     {
     	int cost = 2;
-    	int cost_calc = (tier.getAirTier(stack) + tier.getEarthTier(stack) + tier.getFireTier(stack) + tier.getWaterTier(stack)) / 2;
+    	TierUtils utils = new TierUtils(stack);
+    	int cost_calc = (utils.getAir() + utils.getEarth() + utils.getFire() + utils.getWater()) / 2;
     	for(int i = 0;i < cost_calc + 1;i++)
     	{
     		cost *= 2;
@@ -295,111 +296,45 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
     
     public ItemStack getSmeltItem(ItemStack input,ItemStack air,ItemStack fire,ItemStack water,ItemStack earth)
     {
+    	RingArrayElement<ItemStack> e = new RingArrayElement<ItemStack>(air,earth,fire,water);
+    	TierUtils in = new TierUtils(input);
+		ItemStack itemStack = input.copy();
+		TierUtils out = new TierUtils(itemStack);
+		RingArray<ToolType> tiers = TierUtils.tiers;
     	if(input.getItem() instanceof IItemNeoTool)
     	{
     		IItemNeoTool tool = (IItemNeoTool)input.getItem();
-    		if(tool.getToolType() == ToolType.WATER)
+    		if(tool.getToolType() != ToolType.CREATIVE)
     		{
-    			ItemStack itemStack = input.copy();
+    			tiers.setTop(tiers.getGlobalIndex(tool.getToolType()));
+    			e.setTop(tiers.getGlobalIndex(tool.getToolType()));
     			boolean flag = false;
-    			if(this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(tier.getWaterTier(input) * 3/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getWaterTier(input) * 2/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}	
-    			if(tier.getWaterTier(input) * 1/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(tool.getToolType() == ToolType.FIRE)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getFireTier(input) * 3/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1);	flag = true;}
-    			if(tier.getFireTier(input) * 2/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getFireTier(input) * 1/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(tool.getToolType() == ToolType.EARTH)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getEarthTier(input) * 3/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1);	flag = true;}
-    			if(tier.getEarthTier(input) * 2/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getEarthTier(input) * 1/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(tool.getToolType() == ToolType.AIR)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 3/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 2/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 1/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1);flag = true;}
-    			if(flag) return itemStack;
+    			for(int i = 0;i < 4;i++)
+    			{
+    				if((i == 0 || in.get(tiers.get(i)) * (4-i)/4 > e.get(i).getMetadata()) && this.isType(input, e.get(i),tiers.get(i))) 
+    				{
+    					out.set(tiers.get(i),in.get(tiers.get(i)) + 1); 
+    					flag = true;
+    				}
+    			}
+    			if(flag) 
+    			{
+    				return itemStack;
+    			}
     		}
     		else if(tool.getToolType() == ToolType.CREATIVE)
     		{
-    			ItemStack itemStack = input.copy();
+    			e.setTop(0);
+    			tiers.setTop(0);
     			boolean flag = false;
-    			if(this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    	}
-    	else if(input.getItem() instanceof ItemNeoArmor)
-    	{
-    		ItemNeoArmor armor = (ItemNeoArmor)input.getItem();
-    		if(armor.getArmorMaterial() == NeoOresItems.armorUndite)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(tier.getWaterTier(input) * 3/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getWaterTier(input) * 2/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}	
-    			if(tier.getWaterTier(input) * 1/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorSalamite)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getFireTier(input) * 3/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1);	flag = true;}
-    			if(tier.getFireTier(input) * 2/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getFireTier(input) * 1/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorGnomite)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getEarthTier(input) * 3/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1);	flag = true;}
-    			if(tier.getEarthTier(input) * 2/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(tier.getEarthTier(input) * 1/4 > air.getMetadata() && this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorSylphite)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 3/4 > earth.getMetadata() && this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 2/4 > water.getMetadata() && this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(tier.getAirTier(input) * 1/4 > fire.getMetadata() && this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1);flag = true;}
-    			if(flag) return itemStack;
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorCreative)
-    		{
-    			ItemStack itemStack = input.copy();
-    			boolean flag = false;
-    			if(this.isWater(input, water)) {tier.setWaterTier(itemStack, tier.getWaterTier(input) + 1); flag = true;}
-    			if(this.isFire(input, fire)) {tier.setFireTier(itemStack, tier.getFireTier(input) + 1); flag = true;}
-    			if(this.isEarth(input, earth)) {tier.setEarthTier(itemStack, tier.getEarthTier(input) + 1); flag = true;}
-    			if(this.isAir(input, air)) {tier.setAirTier(itemStack, tier.getAirTier(input) + 1); flag = true;}
+    			for(int i = 0;i < 4;i++)
+    			{
+    				if(this.isType(input, e.get(i),tiers.get(i))) 
+    				{
+    					out.set(tiers.get(i),in.get(tiers.get(i)) + 1); 
+    					flag = true;
+    				}
+    			}
     			if(flag) return itemStack;
     		}
     	}
@@ -408,120 +343,64 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
     
     public void onSmeltShrink(ItemStack input,ItemStack air,ItemStack fire,ItemStack water,ItemStack earth)
     {
+    	RingArrayElement<ItemStack> e = new RingArrayElement<ItemStack>(air,earth,fire,water);
+    	TierUtils in = new TierUtils(input);
+		RingArray<ToolType> tiers = TierUtils.tiers;
     	if(input.getItem() instanceof IItemNeoTool)
     	{
     		IItemNeoTool tool = (IItemNeoTool)input.getItem();
-    		if(tool.getToolType() == ToolType.WATER)
+    		if(tool.getToolType() != ToolType.CREATIVE)
     		{
-    			if(this.isWater(input, water)) water.shrink(1);
-    			if(tier.getWaterTier(input) * 3/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);
-    			if(tier.getWaterTier(input) * 2/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    			if(tier.getWaterTier(input) * 1/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    		}
-    		else if(tool.getToolType() == ToolType.FIRE)
-    		{
-    			if(this.isFire(input, fire)) fire.shrink(1);
-    			if(tier.getFireTier(input) * 3/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    			if(tier.getFireTier(input) * 2/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getFireTier(input) * 1/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    		}
-    		else if(tool.getToolType() == ToolType.EARTH)
-    		{
-    			if(this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getEarthTier(input) * 3/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    			if(tier.getEarthTier(input) * 2/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);	
-    			if(tier.getEarthTier(input) * 1/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    		}
-    		else if(tool.getToolType() == ToolType.AIR)
-    		{
-    			if(this.isAir(input, air)) air.shrink(1);
-    			if(tier.getAirTier(input) * 3/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getAirTier(input) * 2/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    			if(tier.getAirTier(input) * 1/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);
+    			tiers.setTop(tiers.getGlobalIndex(tool.getToolType()));
+    			e.setTop(tiers.getGlobalIndex(tool.getToolType()));
+    			for(int i = 0;i < 4;i++)
+    			{
+    				if((i == 0 || in.get(tiers.get(i)) * (4-i)/4 > e.get(i).getMetadata()) && this.isType(input, e.get(i),tiers.get(i))) 
+    				{
+    					e.get(i).shrink(1);
+    				}
+    			}
     		}
     		else if(tool.getToolType() == ToolType.CREATIVE)
     		{
-    			if(this.isAir(input, air)) air.shrink(1);
-    			if(this.isWater(input, water)) water.shrink(1);
-    			if(this.isEarth(input, earth)) earth.shrink(1);
-    			if(this.isFire(input, fire)) fire.shrink(1);
-    		}
-    	}
-    	else if(input.getItem() instanceof ItemNeoArmor)
-    	{
-    		ItemNeoArmor armor = (ItemNeoArmor)input.getItem();
-    		if(armor.getArmorMaterial() == NeoOresItems.armorUndite)
-    		{
-    			if(this.isWater(input, water)) water.shrink(1);
-    			if(tier.getWaterTier(input) * 3/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);
-    			if(tier.getWaterTier(input) * 2/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    			if(tier.getWaterTier(input) * 1/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorSalamite)
-    		{
-    			if(this.isFire(input, fire)) fire.shrink(1);
-    			if(tier.getFireTier(input) * 3/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    			if(tier.getFireTier(input) * 2/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getFireTier(input) * 1/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorGnomite)
-    		{
-    			if(this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getEarthTier(input) * 3/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    			if(tier.getEarthTier(input) * 2/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);	
-    			if(tier.getEarthTier(input) * 1/4 > air.getMetadata() && this.isAir(input, air)) air.shrink(1);
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorSylphite)
-    		{
-    			if(this.isAir(input, air)) air.shrink(1);
-    			if(tier.getAirTier(input) * 3/4 > earth.getMetadata() && this.isEarth(input, earth)) earth.shrink(1);
-    			if(tier.getAirTier(input) * 2/4 > water.getMetadata() && this.isWater(input, water)) water.shrink(1);
-    			if(tier.getAirTier(input) * 1/4 > fire.getMetadata() && this.isFire(input, fire)) fire.shrink(1);
-    		}
-    		else if(armor.getArmorMaterial() == NeoOresItems.armorCreative)
-    		{
-    			if(this.isAir(input, air)) air.shrink(1);
-    			if(this.isWater(input, water)) water.shrink(1);
-    			if(this.isEarth(input, earth)) earth.shrink(1);
-    			if(this.isFire(input, fire)) fire.shrink(1);
+    			e.setTop(0);
+    			tiers.setTop(0);
+    			for(int i = 0;i < 4;i++)
+    			{
+    				if(this.isType(input, e.get(i),tiers.get(i))) 
+    				{
+    					e.get(i).shrink(1);
+    				}
+    			}
     		}
     	}
     }
     
-    public boolean isAir(ItemStack input,ItemStack air)
+    public boolean isType(ItemStack input,ItemStack item,ToolType type)
     {
-    	if(tier.getAirTier(input) == air.getMetadata() && air.getItem() == NeoOresItems.air_essence_core)
-    	{
-    		return true;
-    	}
-    	return false;
+    	TierUtils utils = new TierUtils(input);
+    	return utils.get(type) == item.getMetadata() && item.getItem() == getItemWithType(type);
     }
     
-    public boolean isEarth(ItemStack input,ItemStack earth)
+    public static Item getItemWithType(ToolType type)
     {
-    	if(tier.getEarthTier(input) == earth.getMetadata() && earth.getItem() == NeoOresItems.earth_essence_core)
-    	{
-    		return true;
-    	}
-    	return false;
-    }
-    
-    public boolean isFire(ItemStack input,ItemStack fire)
-    {
-    	if(tier.getFireTier(input) == fire.getMetadata() && fire.getItem() == NeoOresItems.fire_essence_core)
-    	{
-    		return true;
-    	}
-    	return false;
-    }
-    
-    public boolean isWater(ItemStack input,ItemStack water)
-    {
-    	if(tier.getWaterTier(input) == water.getMetadata() && water.getItem() == NeoOresItems.water_essence_core)
-    	{
-    		return true;
-    	}
-    	return false;
+    	switch(type)
+		{
+		case AIR :
+		{
+			return NeoOresItems.air_essence_core;
+		}
+		case EARTH :
+		{
+			return NeoOresItems.earth_essence_core;
+		}
+		case FIRE :
+		{
+			return NeoOresItems.fire_essence_core;
+		}
+		default:
+			return NeoOresItems.water_essence_core;
+		}
     }
 
     public static int getItemBurnTime(ItemStack stack)

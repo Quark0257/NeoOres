@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import neo_ores.api.TierCalc;
+import neo_ores.api.TierUtils;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import net.minecraft.block.Block;
@@ -22,7 +22,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @EventBusSubscriber(modid = Reference.MOD_ID)
 public class NeoItemEvent 
 {
-	private static TierCalc tier = new TierCalc();
 	private static Random random = new Random();
 	@SubscribeEvent
 	public static void onHarvestBlock(BlockEvent.HarvestDropsEvent event)
@@ -31,12 +30,12 @@ public class NeoItemEvent
 		{
 			ItemStack heldItem = event.getHarvester().getHeldItemMainhand().copy();
 			float totalXp = 0;
-			
+			TierUtils tier = new TierUtils(heldItem);
 			if(heldItem !=null)
 			{
 				if(heldItem.getItem() == NeoOresItems.undite_axe || heldItem.getItem() == NeoOresItems.undite_hoe || heldItem.getItem() == NeoOresItems.undite_pickaxe || heldItem.getItem() == NeoOresItems.undite_shovel || heldItem.getItem() == NeoOresItems.undite_sword)
 				{
-					int level = tier.getWaterTier(heldItem);
+					int level = tier.getWater();
 					if(level == 1)
 					{
 						event.getHarvester().addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0));

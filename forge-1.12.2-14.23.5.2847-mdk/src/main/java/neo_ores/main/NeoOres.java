@@ -1,7 +1,5 @@
 package neo_ores.main;
 
-
-import neo_ores.api.TierCalc;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.client.gui.GuiHandler;
 import neo_ores.command.CommandNeoOres;
@@ -178,8 +176,6 @@ public class NeoOres
 	
 	@SidedProxy(clientSide = "neo_ores.proxy.ClientProxy", serverSide = "neo_ores.proxy.CommonProxy")
 	public static CommonProxy proxy;
-	
-	public static TierCalc tierCalc = new TierCalc();
 	
 	@Instance(Reference.MOD_ID)
 	public static NeoOres instance;

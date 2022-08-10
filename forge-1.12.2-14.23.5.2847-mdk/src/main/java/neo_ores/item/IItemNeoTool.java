@@ -53,15 +53,13 @@ public interface IItemNeoTool
 	{
 		if(stack.getItem() instanceof IItemNeoTool)
 		{
-			IItemNeoTool item = (IItemNeoTool)stack.getItem();
-			int[] tier = item.getTierList(stack);
-			if(tier == new int[] {11,11,11,11})
+			TierUtils utils = new TierUtils(stack);
+			if(utils.getAir() == 11 && utils.getEarth() == 11 && utils.getFire() == 11 && utils.getWater() == 11)
 			{
 				list.add(TextFormatting.WHITE + I18n.format("tooltip.space").trim());
 				return;
 			}
 
-			TierUtils utils = new TierUtils(stack);
 			if(utils.getAir() != 0)
 			{
 				list.add(TextFormatting.AQUA + I18n.format("tooltip.air").trim() + " " + I18n.format("tier." + utils.getAir()).trim());

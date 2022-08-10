@@ -3,6 +3,7 @@ package neo_ores.item;
 import java.util.List;
 
 import neo_ores.api.PlayerManaDataServer;
+import neo_ores.api.TierUtils;
 import neo_ores.world.dimension.DimensionHelper.ToolType;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -10,8 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
@@ -54,24 +53,8 @@ public class ItemNeoPaxel extends ItemPaxel
             		{
             			ItemStack stack1 = stack.copy();
             			items.remove(stack);
-            			NBTTagCompound nbt = new NBTTagCompound();
-
-            			if(!nbt.hasKey("tiers", 9))
-            			{
-            				nbt.setTag("tiers", new NBTTagList());
-            			}
-            			NBTTagList NBTList = nbt.getTagList("tiers", 10);
-            			if(NBTList != null && NBTList.getCompoundTagAt(0) != null)
-            			{
-            				NBTTagCompound itemNBT = new NBTTagCompound();
-            				itemNBT.setInteger("air", 11);
-            				itemNBT.setInteger("earth", 11);
-            				itemNBT.setInteger("fire", 11);
-            				itemNBT.setInteger("water", 11);
-
-            				NBTList.appendTag(itemNBT);
-            			}
-            			stack1.setTagCompound(nbt);
+            			TierUtils tier = new TierUtils(stack1);
+            			tier.setTier(11, 11, 11, 11);
             			items.add(stack1);
             			break;
             		}

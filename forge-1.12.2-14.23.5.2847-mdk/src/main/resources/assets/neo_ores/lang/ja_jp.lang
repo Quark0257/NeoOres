@@ -299,6 +299,7 @@ spell.required=不足
 spell.magic_point=知識ポイント
 spell.required.health=要求体力 :
 spell.canClick=クリックしてレシピに追加
+spell.canClickDelete=クリックしてレシピから削除
 
 chat.noRecipe=§cレシピがありません！
 chat.noMultiblock=§cマルチブロックに不備があります！

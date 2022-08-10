@@ -8,13 +8,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SuppressWarnings("deprecation")
 @SideOnly(Side.CLIENT)
 public class GuiNeoGameOverlay extends Gui
 {
@@ -98,7 +97,7 @@ public class GuiNeoGameOverlay extends Gui
     					}
     				}
     				width += 83;
-    				String level = I18n.translateToLocal("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
+    				String level = I18n.format("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
     				fontrenderer.drawString(level, width - 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(level, width + 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(level, width, height - 1, Integer.parseInt("000000", 16));
@@ -106,7 +105,7 @@ public class GuiNeoGameOverlay extends Gui
     				fontrenderer.drawString(level, width, height, Integer.parseInt("66AAFF", 16));
     				
     				height += 10;
-    				String mana = I18n.translateToLocal("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
+    				String mana = I18n.format("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
     				fontrenderer.drawString(mana, width - 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(mana, width + 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(mana, width, height - 1, Integer.parseInt("000000", 16));
@@ -151,7 +150,7 @@ public class GuiNeoGameOverlay extends Gui
     					}
     				}
     				width += 83;
-    				String level = I18n.translateToLocal("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
+    				String level = I18n.format("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
     				fontrenderer.drawString(level, width - 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(level, width + 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(level, width, height - 1, Integer.parseInt("000000", 16));
@@ -159,7 +158,7 @@ public class GuiNeoGameOverlay extends Gui
     				fontrenderer.drawString(level, width, height, Integer.parseInt("66AAFF", 16));
     				
     				height += 10;
-    				String mana = I18n.translateToLocal("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
+    				String mana = I18n.format("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
     				fontrenderer.drawString(mana, width - 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(mana, width + 1, height, Integer.parseInt("000000", 16));
     				fontrenderer.drawString(mana, width, height - 1, Integer.parseInt("000000", 16));

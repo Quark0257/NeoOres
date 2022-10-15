@@ -6,11 +6,11 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class ItemStackWithSizeForRecipe 
+public class RecipeOreStack 
 {
 	private final Object object;
 	private final int size;
-	public ItemStackWithSizeForRecipe(Object object,int size)
+	public RecipeOreStack(Object object,int size)
 	{
 		this.object = object;
 		this.size = size;

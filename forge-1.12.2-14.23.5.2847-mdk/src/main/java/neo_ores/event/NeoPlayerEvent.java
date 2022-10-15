@@ -2,6 +2,7 @@ package neo_ores.event;
 
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.UUID;
 
 import neo_ores.api.PlayerManaDataServer;
 import neo_ores.client.gui.GuiNeoGameOverlay;
@@ -239,8 +240,6 @@ public class NeoPlayerEvent
 			
 			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP) 
 			{
-				
-				
 				EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
 				PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
 				if (playermp.ticksExisted % 40 == 0) 

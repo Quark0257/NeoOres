@@ -39,19 +39,19 @@ public class MakePortalWrapper implements IRecipeWrapper{
 		List<ItemStack> input = new ArrayList<ItemStack>();
 		input.add(new ItemStack(NeoOresBlocks.pedestal_water));
 		input.add(new ItemStack(NeoOresItems.essence,64,0));
-		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.earth_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + ": 3"));
+		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.earth_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + " : 3"));
 		input = new ArrayList<ItemStack>();
 		input.add(new ItemStack(NeoOresBlocks.pedestal_water));
 		input.add(new ItemStack(NeoOresItems.essence,64,1));
-		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.water_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + ": 5"));
+		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.water_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + " : 5"));
 		input = new ArrayList<ItemStack>();
 		input.add(new ItemStack(NeoOresBlocks.pedestal_water));
 		input.add(new ItemStack(NeoOresItems.essence,64,3));
-		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.air_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + ": 7"));
+		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.air_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + " : 7"));
 		input = new ArrayList<ItemStack>();
 		input.add(new ItemStack(NeoOresBlocks.pedestal_water));
 		input.add(new ItemStack(NeoOresItems.essence,64,2));
-		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.fire_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + ": 9"));
+		jeiRecipes.add(new MakePortalWrapper(input,new ItemStack(NeoOresBlocks.fire_portal),TextFormatting.BLUE + I18n.format("jei.gui.tier") + " : 9"));
 		return jeiRecipes;
 	}
 	

@@ -3,7 +3,7 @@ package neo_ores.item;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.ItemStackWithSizeForRecipe;
+import neo_ores.api.RecipeOreStack;
 import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
@@ -46,7 +46,7 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 		if(!playerIn.world.isRemote || !this.hasRecipe(playerIn.getHeldItem(handIn)))return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
 		ITextComponent itextcomponent = new TextComponentString(I18n.format("chat.displayRecipe"));
 		playerIn.sendStatusMessage(itextcomponent, false);
-		for(ItemStackWithSizeForRecipe recipe : SpellUtils.getClumpedRecipeFromList(this.readRecipeSpells(playerIn.getHeldItem(handIn))))
+		for(RecipeOreStack recipe : SpellUtils.getClumpedRecipeFromList(this.readRecipeSpells(playerIn.getHeldItem(handIn))))
 		{
 			if(recipe.isItemStack())
 			{

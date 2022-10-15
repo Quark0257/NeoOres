@@ -7,7 +7,7 @@ import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import neo_ores.api.ItemStackWithSizeForRecipe;
+import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.ManaCompositionRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -43,7 +43,7 @@ public class ManaCompositionWrapper  implements IRecipeWrapper {
 		{
 			List<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
 			int count = 0;
-			for(ItemStackWithSizeForRecipe iswsfr : mcr.getRecipe())
+			for(RecipeOreStack iswsfr : mcr.getRecipe())
 			{
 				List<ItemStack> items = new ArrayList<ItemStack>();
 
@@ -64,7 +64,7 @@ public class ManaCompositionWrapper  implements IRecipeWrapper {
 			{
 				list.add(new ArrayList<ItemStack>());
 			}
-			jeiRecipes.add(new ManaCompositionWrapper(list,mcr.getResult(),TextFormatting.BLUE + I18n.format("jei.gui.tier") + ": " + mcr.getTier()));
+			jeiRecipes.add(new ManaCompositionWrapper(list,mcr.getResult(),TextFormatting.BLUE + I18n.format("jei.gui.tier") + " : " + mcr.getTier()));
 		}
 		return jeiRecipes;
 	}

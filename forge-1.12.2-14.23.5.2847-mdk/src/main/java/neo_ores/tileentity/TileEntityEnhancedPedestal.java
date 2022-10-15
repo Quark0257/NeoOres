@@ -36,8 +36,8 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	
 	public void setSize(int slotsize)
 	{
-		this.slotsize = 4 * (int)Math.pow(2.0D ,(double)((0 < slotsize && slotsize <= 8) ? slotsize : 1));
-		item_list = NonNullList.withSize(this.slotsize, ItemStackWithSize.EMPTY);
+		this.slotsize = 2 * (int)Math.pow(2.0D,(double)((0 < slotsize && slotsize <= 8) ? slotsize : 1));
+		this.item_list = NonNullList.withSize(this.slotsize, ItemStackWithSize.EMPTY);
 	}
 	
 	public void setSuckable(boolean canSuck)
@@ -111,7 +111,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     {
         super.writeToNBT(compound);
         
-        ItemStackWithSize.setToNBT(item_list, compound);
+        ItemStackWithSize.setToNBT(this.item_list, compound);
         
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound = display.writeToNBT(nbttagcompound);
@@ -137,20 +137,27 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     
     public ItemStack getStackInSlot(int index)
     {
-    	return this.item_list.get(index).getStack().copy();
+    	//System.out.println(index);
+    	return this.item_list.get(index).getMediate();
     }
     
     public ItemStack decrStackSize(int index, int count) 
     {
-    	this.item_list.get(index).addSize(-count);
-    	if(item_list.get(index).isEmpty()) item_list.set(index, ItemStackWithSize.EMPTY);
-    	return this.item_list.get(index).getStack();
+    	ItemStack stack1 = !this.item_list.get(index).isEmpty() && count > 0 ? this.item_list.get(index).getMediate().splitStack(count) : ItemStack.EMPTY;
+    	
+    	if (!stack1.isEmpty())
+        {
+            this.markDirty();
+        }
+    	
+    	return stack1;
     }
 
     public ItemStack removeStackFromSlot(int index) 
     {
+    	ItemStack stack = this.item_list.get(index).getMediate().copy();
     	this.item_list.set(index, ItemStackWithSize.EMPTY);
-        return ItemStack.EMPTY;
+        return stack;
     }
 
     @Override
@@ -159,12 +166,16 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     	if(this.item_list.get(index).isEmpty()) this.item_list.set(index,new ItemStackWithSize(stack,(this.getInventoryStackLimit() < stack.getCount()) ? this.getInventoryStackLimit() : stack.getCount()));
     	else 
     	{
+    		ItemStack stack1 = stack.copy();
     		if(this.getInventoryStackLimit() < this.item_list.get(index).getSize() + stack.getCount())
     		{
-    			stack.setCount(this.getInventoryStackLimit() - this.item_list.get(index).getSize());
+    			stack1.setCount(this.getInventoryStackLimit() - this.item_list.get(index).getSize() - stack.getCount());
+    			stack.setCount(stack.getCount() - this.getInventoryStackLimit() + this.item_list.get(index).getSize());
     		}
-    		this.item_list.get(index).addStack(stack);
+    		this.item_list.get(index).addStack(stack1);
     	}
+    	
+    	this.markDirty();
     }
     
     public ItemStack addItemStackToInventory(ItemStack stack) 
@@ -227,9 +238,9 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     @Override
     public int getInventoryStackLimit() 
     {
-        return (int)Math.pow(slotsize / 4,3) * 64;
+        return (int)Math.pow(slotsize / 2,3) * 64;
     }
-
+    
     @Override
     public boolean isUsableByPlayer(EntityPlayer player) 
     {
@@ -289,6 +300,36 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public void update() 
 	{
+		//System.out.println(this.display);
+		if(!this.getWorld().isRemote)
+		{
+			for(int i = 0;i < this.getSizeInventory();i++)
+			{
+				if(!this.item_list.get(i).isEmpty())
+				{
+					for(int j = i + 1;j < this.getSizeInventory();j++)
+					{
+						if(!this.item_list.get(i).isEmpty())
+						{
+							if(this.item_list.get(i).compareWith(this.item_list.get(j).getStack()))
+							{
+								if(this.getInventoryStackLimit() < this.item_list.get(i).getSize() + this.item_list.get(j).getSize())
+								{
+									this.item_list.get(j).setSize(this.getInventoryStackLimit() - (this.item_list.get(i).getSize() + this.item_list.get(j).getSize()));
+									this.item_list.get(i).setSize(this.getInventoryStackLimit());
+								}
+								else
+								{
+									this.item_list.get(i).addSize(this.item_list.get(j).getSize());
+									this.item_list.set(j,ItemStackWithSize.EMPTY);
+								}
+							}
+						}
+					}
+				}
+			}
+		}	
+		
 		if(this.canSuck && !this.getWorld().isRemote)
 		{
 			List<EntityItem> list = TileEntityHopper.getCaptureItems(this.getWorld(), (double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 1.0625D, (double)this.pos.getZ() + 0.5D);
@@ -310,7 +351,8 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 			packet.setInteger("z", this.pos.getZ());
 			packet.setDouble("offset", offset);
 			packet.setInteger("slotsize", this.slotsize);
-			ItemStack stack = (this.getDisplay().isEmpty()) ? this.getStackInSlot(this.getSlot()) : this.getDisplay();
+			ItemStack stack = (this.getDisplay().isEmpty()) ? this.getStackInSlot(this.getSlot()).copy() : this.getDisplay();
+			stack.setCount(1);
 			NBTTagCompound nbttagcompound = new NBTTagCompound();
 	        nbttagcompound = stack.writeToNBT(nbttagcompound);
 			packet.setTag("display", nbttagcompound);
@@ -358,13 +400,13 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) 
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) 
 	{
-		return false;
+		return true;
 	}
 	
 	public NonNullList<ItemStackWithSize> getItems()

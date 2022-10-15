@@ -7,17 +7,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.main.Reference;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -265,9 +270,9 @@ public class SpellUtils
 		public static final String LEVEL = "level";
 	}
 	
-	public static List<ItemStackWithSizeForRecipe> getRecipeFromList(List<SpellItem> spells)
+	public static List<RecipeOreStack> getRecipeFromList(List<SpellItem> spells)
 	{
-		List<ItemStackWithSizeForRecipe> recipe = new ArrayList<ItemStackWithSizeForRecipe>();
+		List<RecipeOreStack> recipe = new ArrayList<RecipeOreStack>();
 		for(SpellItem spell : spells)
 		{
 			for(SpellRecipe sr : recipes)
@@ -281,16 +286,16 @@ public class SpellUtils
 		return recipe;
 	}
 	
-	public static List<ItemStackWithSizeForRecipe> getClumpedRecipeFromList(List<SpellItem> spells)
+	public static List<RecipeOreStack> getClumpedRecipeFromList(List<SpellItem> spells)
 	{
-		List<ItemStackWithSizeForRecipe> recipe = new ArrayList<ItemStackWithSizeForRecipe>();
+		List<RecipeOreStack> recipe = new ArrayList<RecipeOreStack>();
 		for(SpellItem spell : spells)
 		{
 			for(SpellRecipe sr : recipes)
 			{
 				if(sr.getSpell().equals(spell))
 				{
-					for(ItemStackWithSizeForRecipe iswsfr : sr.getRecipe())
+					for(RecipeOreStack iswsfr : sr.getRecipe())
 					{
 						int n = recipe.size();
 						boolean flag = false;
@@ -300,7 +305,7 @@ public class SpellUtils
 							{
 								if(recipe.get(i).compareStackWith(iswsfr.getStack()))
 								{
-									recipe.set(i, new ItemStackWithSizeForRecipe(recipe.get(i).getStack(),recipe.get(i).getSize() + iswsfr.getSize()));
+									recipe.set(i, new RecipeOreStack(recipe.get(i).getStack(),recipe.get(i).getSize() + iswsfr.getSize()));
 									flag = true;
 									break;
 								}
@@ -309,7 +314,7 @@ public class SpellUtils
 							{
 								if(recipe.get(i).getOreDic().equals(iswsfr.getOreDic()))
 								{
-									recipe.set(i, new ItemStackWithSizeForRecipe(recipe.get(i).getOreDic(),recipe.get(i).getSize() + iswsfr.getSize()));
+									recipe.set(i, new RecipeOreStack(recipe.get(i).getOreDic(),recipe.get(i).getSize() + iswsfr.getSize()));
 									flag = true;
 									break;
 								}
@@ -321,5 +326,93 @@ public class SpellUtils
 			}	
 		}
 		return recipe;
+	}
+	
+	public static long getMPConsume(List<SpellItem> spellList)
+	{
+		long manasum = 0L;
+		float manapro = 1.0F;
+		for(SpellItem spellitem : spellList)
+		{
+			manasum += spellitem.getCostsum();
+			manapro *= spellitem.getCostproduct();
+		}
+		
+		return (long)(manasum * manapro);
+	}
+	
+	public static void run(List<SpellItem> initializedSpellList, EntityLivingBase runner, ItemStack stack, @Nullable EntityLivingBase targetEntity)
+	{
+		RayTraceResult result = null;
+		List<SpellItem> entityspells = new ArrayList<SpellItem>();
+		List<SpellItem> spells = new ArrayList<SpellItem>();
+		for(SpellItem spellitem : initializedSpellList)
+		{
+			if(spellitem.getSpellClass() instanceof Spell.SpellForm && ((Spell.SpellForm)spellitem.getSpellClass()).needPrimaryForm())
+			{
+				entityspells.add(spellitem);
+			}
+			else
+			{
+				spells.add(spellitem);
+			}
+		}
+		
+		if(targetEntity != null)
+		{
+			result = new RayTraceResult(targetEntity);
+		}
+		
+		if(!entityspells.isEmpty())
+		{
+			for(SpellItem entityspellitem : entityspells)
+			{
+				Spell entityspell = entityspellitem.getSpellClass();
+				for(SpellItem spell : spells)
+				{
+					if(spell.getSpellClass() instanceof Spell.SpellCorrection)
+					{
+						((Spell.SpellCorrection)spell.getSpellClass()).onCorrection(entityspell);
+					}
+				}
+				if(entityspell instanceof Spell.SpellForm)
+				{
+					((Spell.SpellForm)entityspell).onSpellRunning(runner.getEntityWorld(), runner,stack,result,SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));				
+				}
+			}
+		}
+		else
+		{
+			List<SpellItem> formspells = new ArrayList<SpellItem>();
+			List<SpellItem> notformspells = new ArrayList<SpellItem>();
+			for(SpellItem spell : spells)
+			{
+				if(spell.getSpellClass() instanceof Spell.SpellForm)
+				{
+					formspells.add(spell);
+				}
+				else
+				{
+					notformspells.add(spell);
+				}
+			}
+			
+			for(SpellItem formspell : formspells)
+			{
+				Spell form = formspell.getSpellClass();
+				for(SpellItem notformspell : notformspells)
+				{
+					if(notformspell.getSpellClass() instanceof Spell.SpellCorrection)
+					{
+						((Spell.SpellCorrection)notformspell.getSpellClass()).onCorrection(form);
+					}
+				}
+				
+				if(form instanceof Spell.SpellForm)
+				{
+					((Spell.SpellForm)form).onSpellRunning(runner.getEntityWorld(), runner,stack,result,SpellUtils.getItemStackNBTFromList(notformspells, new NBTTagCompound()));
+				}
+			}
+		}
 	}
 }

@@ -71,7 +71,6 @@ import morph.avaritia.recipe.extreme.ExtremeShapedRecipe;
 dependencies="required-after:baubles@[1.5.2,);after:avaritia@[3.3.0,);after:jei;")
 public class NeoOres 
 {
-	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{

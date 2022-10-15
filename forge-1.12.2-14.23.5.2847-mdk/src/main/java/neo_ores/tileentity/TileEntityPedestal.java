@@ -99,14 +99,14 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
     
     public ItemStack decrStackSize(int index, int count) 
     {
-    	stack.shrink(count);
-    	return stack;
+    	return !stack.isEmpty() && count > 0 ? stack.splitStack(count) : ItemStack.EMPTY;
     }
 
     public ItemStack removeStackFromSlot(int index) 
     {
+    	ItemStack stackcopy = this.stack.copy();
     	this.stack = ItemStack.EMPTY;
-        return ItemStack.EMPTY;
+        return stackcopy;
     }
 
     @Override
@@ -499,7 +499,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) 
 	{
-		if(side != EnumFacing.UP)
+		if(this.offset < -0.4375 && side != EnumFacing.DOWN || this.offset >= -0.4375 && side != EnumFacing.UP)
 		{
 			List<Integer> list = new ArrayList<Integer>();
 			int size = this.getSizeInventory();
@@ -515,13 +515,13 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) 
 	{
-		return direction != EnumFacing.UP && this.isItemValidForSlot(index, stack);
+		return canInsert(index,itemStackIn,direction);
 	}
 
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) 
 	{
-		return false;
+		return canExtract(index,stack,direction);
 	}
 	
 	public static void dropInventoryItems(World worldIn, BlockPos pos, TileEntityPedestal tileentity) 
@@ -537,11 +537,15 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 
 	@Override
 	public boolean canExtract(int index, ItemStack stack, EnumFacing direction) {
-		return direction != EnumFacing.UP;
+		return (direction != EnumFacing.UP && this.offset >= -0.4375) || (direction != EnumFacing.DOWN && this.offset < -0.4375);
 	}
 
 	@Override
 	public boolean canInsert(int index, ItemStack stack, EnumFacing direction) {
+		if(this.offset < -0.4375)
+		{
+			return direction != EnumFacing.DOWN && this.isItemValidForSlot(index, stack);
+		}
 		return direction != EnumFacing.UP && this.isItemValidForSlot(index, stack);
 	}
 	

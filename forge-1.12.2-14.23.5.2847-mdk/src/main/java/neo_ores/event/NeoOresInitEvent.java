@@ -208,7 +208,7 @@ public class NeoOresInitEvent
     }
 	
 	@SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> event) 
+	public void registerItems(RegistryEvent.Register<Item> event) 
 	{	
 		for(Block block : NeoOresBlocks.registry)
 		{
@@ -284,7 +284,7 @@ public class NeoOresInitEvent
     		{
     			INeoOresBlock block = (INeoOresBlock)block1;
     			for(metadata = 0;metadata <= block.getMaxMeta();metadata++)
-        		{
+    			{
         			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block1), metadata, block.getModel(metadata));
         		}
     		}

@@ -10,27 +10,23 @@ import neo_ores.api.NBTUtils;
 import neo_ores.api.PlayerManaDataClient;
 import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.SpellUtils;
-import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.config.NeoOresConfig;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
-@SuppressWarnings("deprecation")
 public class ItemSpell extends ItemRayTraceable
 {
 	public ItemSpell()
@@ -57,7 +53,7 @@ public class ItemSpell extends ItemRayTraceable
 				manasum += spellitem.getCostsum();
 				manapro *= spellitem.getCostproduct();
 			}
-			list.add(I18n.translateToLocal("tooltip.mana").trim() + " : " + LongUtils.convertString((long)(manasum * manapro)));
+			list.add(I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString((long)(manasum * manapro)));
 			NBTUtils.ForItemStack util = new NBTUtils.ForItemStack(stack);
 			NBTTagList desclist = util.getListAsList("desc");
 			for(int i = 0;i < desclist.tagCount();i++)
@@ -153,6 +149,50 @@ public class ItemSpell extends ItemRayTraceable
 	{
 		//player.setActiveHand(hand);
 		//EnumActionResult actionResult = (NeoOresConfig.miscellaneous.repeatable) ? EnumActionResult.FAIL : EnumActionResult.SUCCESS;
+		
+		if(!NeoOresConfig.miscellaneous.repeatable)
+		{
+			player.setActiveHand(hand);
+		}
+		
+		EnumActionResult actionResult = EnumActionResult.SUCCESS;
+		ItemStack itemspell = player.getHeldItem(hand);
+		if(itemspell.getTagCompound() != null && itemspell.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
+		{
+			List<SpellItem> rawSpellList = SpellUtils.getListFromItemStackNBT(itemspell.getTagCompound().copy());
+			long manaConsume = SpellUtils.getMPConsume(rawSpellList);
+			List<SpellItem> initializedSpellList = SpellUtils.getListInitialized(rawSpellList);
+			
+			if(!player.isCreative())
+			{
+				if(!player.world.isRemote)
+				{
+					PlayerManaDataServer pmd = new PlayerManaDataServer((EntityPlayerMP)player);
+					if(manaConsume > pmd.getMana())
+					{
+						return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
+					}
+					else
+					{
+						pmd.addMana(-manaConsume);
+					}
+				}
+				else
+				{
+					PlayerManaDataClient pmdc = new PlayerManaDataClient((EntityPlayerSP)player);
+					if(manaConsume > pmdc.getMana())
+					{
+						return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
+					}
+				}
+			}
+			
+			SpellUtils.run(initializedSpellList, player, player.getHeldItem(hand), target);
+		}
+
+        return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
+		
+		/*
 		if(!NeoOresConfig.miscellaneous.repeatable)
 		{
 			player.setActiveHand(hand);
@@ -264,6 +304,7 @@ public class ItemSpell extends ItemRayTraceable
 		}
 
         return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
+        */
     }
 	
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)

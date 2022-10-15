@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import neo_ores.api.ItemStackWithSizeForRecipe;
+import neo_ores.api.RecipeOreStack;
 import neo_ores.main.Reference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -14,11 +14,11 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 @ObjectHolder(Reference.MOD_ID)
 public class ManaCompositionRecipe extends IForgeRegistryEntry.Impl<ManaCompositionRecipe>
 {
-	public List<ItemStackWithSizeForRecipe> recipe;
+	public List<RecipeOreStack> recipe;
 	public int tier;
 	public ItemStack result;
 	
-	public ManaCompositionRecipe(int tier,@Nonnull ItemStack result,List<ItemStackWithSizeForRecipe> objects)
+	public ManaCompositionRecipe(int tier,@Nonnull ItemStack result,List<RecipeOreStack> objects)
 	{	
 		this.tier = tier;
 		this.result = result;
@@ -31,7 +31,7 @@ public class ManaCompositionRecipe extends IForgeRegistryEntry.Impl<ManaComposit
 		return this.setRegistryName(new ResourceLocation(modid, "manaCompositionRecipe." + key));
 	}
 	
-	public List<ItemStackWithSizeForRecipe> getRecipe()
+	public List<RecipeOreStack> getRecipe()
 	{
 		return this.recipe;
 	}

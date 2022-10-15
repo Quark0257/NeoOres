@@ -21,12 +21,12 @@ public interface IItemNeoTool
 	//[air,earth,fire,water]
 	public default int[] getTierList(ItemStack stack)
 	{
-		if(!stack.hasTagCompound() || !stack.getTagCompound().hasKey("tiers", 10))
+		if(!stack.hasTagCompound() || !stack.getTagCompound().hasKey("neo_ores", 10) || !stack.getTagCompound().getCompoundTag("neo_ores").hasKey("tiers", 10))
 		{
 			return new int[] {0,0,0,0};
 		}
 		
-		NBTTagCompound tiers = stack.getTagCompound().getCompoundTag("tiers");
+		NBTTagCompound tiers = stack.getTagCompound().getCompoundTag("neo_ores").getCompoundTag("tiers");
 		return new int[] {tiers.getInteger("air"),tiers.getInteger("earth"),tiers.getInteger("fire"),tiers.getInteger("water")};
 	}
 	
@@ -40,13 +40,18 @@ public interface IItemNeoTool
 			stack.setTagCompound(new NBTTagCompound());
 		}
 		
+		if(!stack.getTagCompound().hasKey("neo_ores", 10))
+		{
+			stack.getTagCompound().setTag("neo_ores", new NBTTagCompound());
+		}
+		
 		NBTTagCompound tiers = new NBTTagCompound();
 		tiers.setInteger("air", data[0]);
 		tiers.setInteger("earth", data[1]);
 		tiers.setInteger("fire", data[2]);
 		tiers.setInteger("water", data[3]);
 		
-		stack.getTagCompound().setTag("tiers", tiers);
+		stack.getTagCompound().getCompoundTag("neo_ores").setTag("tiers", tiers);
 	}
 	
 	public default void addTierInfo(ItemStack stack, World world, List<String> list, ITooltipFlag flag)

@@ -3,11 +3,10 @@ package neo_ores.item;
 import neo_ores.block.BlockEnhancedPedestal;
 import neo_ores.block.properties.PedestalTiers;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 
-@SuppressWarnings("deprecation")
 public class ItemBlockEnhancedPedestal extends ItemBlock {
     public ItemBlockEnhancedPedestal(Block block)
     {
@@ -29,6 +28,6 @@ public class ItemBlockEnhancedPedestal extends ItemBlock {
 	public String getItemStackDisplayName(ItemStack stack)
     {
     	int meta = PedestalTiers.getFromMeta(stack.getItemDamage()).getMeta();
-        return I18n.translateToLocal(this.getUnlocalizedName(stack) + ".name").trim() + I18n.translateToLocal("size." ) + (meta % 8 + 1) + I18n.translateToLocal("hoppered." + (meta / 8));
+        return  I18n.format("hoppered." + (meta / 8)) + I18n.format(this.getUnlocalizedName(stack) + ".name").trim() + I18n.format("size.") + (meta % 8 + 1) + I18n.format(")");
     }
 }

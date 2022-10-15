@@ -9,6 +9,7 @@ import neo_ores.packet.PacketManaDataToClient;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class PlayerManaDataServer 
@@ -206,6 +207,14 @@ public class PlayerManaDataServer
 	
 	public void addMXP(long value)
 	{
+		if(this.playermp instanceof FakePlayer)
+		{
+			if(this.playermp instanceof IMagicExperienceContainer)
+			{
+				((IMagicExperienceContainer)this.playermp).addMagicXp(value);
+			}
+			return;
+		}
 		if(value > Long.MAX_VALUE - this.getMXP()) this.setMXP(Long.MAX_VALUE);
 		else if(value + this.getMXP() >= 0) this.setMXP(value + this.getMXP());
 		else this.setMXP(0);
@@ -219,7 +228,7 @@ public class PlayerManaDataServer
 	}
 	
 	public void addMagicPoint(long value)
-	{
+	{		
 		if(value > Long.MAX_VALUE - this.getMagicPoint()) this.setMagicPoint(Long.MAX_VALUE);
 		else if(value + this.getMagicPoint() >= 0) this.setMagicPoint(value + this.getMagicPoint());
 		else this.setMagicPoint(0);

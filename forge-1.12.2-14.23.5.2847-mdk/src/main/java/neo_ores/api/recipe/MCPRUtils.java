@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import neo_ores.api.ItemStackWithSize;
-import neo_ores.api.ItemStackWithSizeForRecipe;
+import neo_ores.api.RecipeOreStack;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -47,7 +47,7 @@ public class MCPRUtils
 				if(recipe.getTier() <= tier)
 				{
 					boolean b = false;
-					for(ItemStackWithSizeForRecipe list : recipe.getRecipe())
+					for(RecipeOreStack list : recipe.getRecipe())
 					{
 						for(ItemStackWithSize input : inputitems)
 						{
@@ -77,9 +77,9 @@ public class MCPRUtils
 					if(b)
 					{
 						if(world.isRemote) return recipe.getResult().copy();
-						List<ItemStackWithSizeForRecipe> recipeCopy = new ArrayList<ItemStackWithSizeForRecipe>();
+						List<RecipeOreStack> recipeCopy = new ArrayList<RecipeOreStack>();
 						recipeCopy.addAll(recipe.getRecipe());
-						for(ItemStackWithSizeForRecipe list : recipeCopy)
+						for(RecipeOreStack list : recipeCopy)
 						{
 							int size = list.getSize();
 							int n = 0;

@@ -454,7 +454,6 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 						return spellitem;
 					}
 				}
-		      	
 			}
 		}
         

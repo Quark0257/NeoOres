@@ -80,8 +80,9 @@ tile.fire_essence_block.name=Fire Essence Block
 tile.water_essence_block.name=Water Essence Block
 
 size.= (Size:
-hoppered.0=)
-hoppered.1=, with Hopper)
+hoppered.0=
+hoppered.1=Hoppered 
+)=)
 
 item.undite.name=Undite
 item.gnomite_ingot.name=Gnomite Ingot

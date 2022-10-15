@@ -49,7 +49,7 @@ public class MakePortalCategory implements IRecipeCategory<MakePortalWrapper>
 	public void setRecipe(IRecipeLayout arg0, MakePortalWrapper arg1, IIngredients arg2) 
 	{
 		IGuiItemStackGroup guiItems = arg0.getItemStacks();
-		guiItems.init(0, true, 48, 44);
+		guiItems.init(0, true, 48, 45);
 		guiItems.init(1, true, 48, 11);
 		guiItems.init(2,false,118,44);
 		guiItems.set(arg2);

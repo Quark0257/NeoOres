@@ -12,6 +12,7 @@ import java.util.List;
 public class  ItemStackWithSize
 {
     private final ItemStack stack;
+    private ItemStack mediate;
     private int size;
     public static final ItemStackWithSize EMPTY = new ItemStackWithSize(ItemStack.EMPTY,0);
 
@@ -20,15 +21,20 @@ public class  ItemStackWithSize
     	stack = (itemstack == null) ? ItemStack.EMPTY : itemstack;
     	stack.setCount(1);
         this.size = size;
+        ItemStack stack = itemstack.copy();
+        stack.setCount(size);
+        this.setMediate(stack);
     }
 
     public ItemStack getStack()
     {
+    	this.updateStack();
         return this.isEmpty() ? ItemStack.EMPTY : stack;
     }
 
     public int getSize()
     {
+    	this.updateStack();
         return (size < 0) ? 0 : size;
     }
     
@@ -39,11 +45,14 @@ public class  ItemStackWithSize
     
     public void setSize(int count) 
     {
+    	this.updateStack();
     	this.size = count;
+    	this.mediate.setCount(count);
     }
 
     public List<ItemStack> asList(int clampsize)
     {
+    	this.updateStack();
     	int csize = this.size;
         List<ItemStack> list = new ArrayList<ItemStack>();
         for(int i = 0;i < csize / clampsize;i++)
@@ -66,7 +75,7 @@ public class  ItemStackWithSize
     {
         if(this.compareWith(stack))
         {
-            this.size += stack.getCount();
+            this.addSize(stack.getCount());
             return true;
         }
         return false;
@@ -89,6 +98,7 @@ public class  ItemStackWithSize
     
     public boolean isEmpty()
     {
+    	this.updateStack();
     	return this.stack.isEmpty() || this.size <= 0;
     }
     
@@ -97,6 +107,7 @@ public class  ItemStackWithSize
     	NBTTagList taglist = new NBTTagList();
     	for(ItemStackWithSize stackWS : list)
     	{
+    		stackWS.updateStack();
     		NBTTagCompound item = new NBTTagCompound();
     		item.setString("id", stackWS.getStack().getItem().getRegistryName().toString());
     		item.setInteger("damage", stackWS.getStack().getItemDamage());
@@ -130,5 +141,34 @@ public class  ItemStackWithSize
     public String toString()
     {
     	return this.getStack().toString() + ": x" + this.getSize();
+    }
+    
+    public ItemStackWithSize copy()
+    {
+    	return new ItemStackWithSize(this.stack.copy(),this.size);
+    }
+    
+    public ItemStackWithSize split(int amount)
+    {
+        int i = Math.min(amount, this.size);
+        ItemStackWithSize itemstack = this.copy();
+        itemstack.setSize(i);
+        this.addSize(-i);
+        return itemstack;
+    }
+    
+    private void setMediate(ItemStack stack)
+    {
+    	this.mediate = stack;
+    }
+    
+    public ItemStack getMediate()
+    {
+    	return this.mediate;
+    }
+    
+    public void updateStack()
+    {
+    	this.size = this.mediate.getCount();
     }
 }

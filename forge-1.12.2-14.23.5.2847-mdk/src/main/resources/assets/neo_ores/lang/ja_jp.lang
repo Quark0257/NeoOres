@@ -80,8 +80,9 @@ tile.fire_essence_block.name=火のエッセンスブロック
 tile.water_essence_block.name=水のエッセンスブロック
 
 size.= (サイズ:
-hoppered.0=)
-hoppered.1=, ホッパー付き)
+hoppered.0=
+hoppered.1=ホッパー付き
+)=)
 
 item.undite.name=アンダイト
 item.gnomite_ingot.name=グノマイトインゴット
@@ -202,7 +203,7 @@ potion.potency.7=Ⅷ
 potion.potency.8=Ⅸ
 potion.potency.9=Ⅹ
 potion.potency.10=ⅩⅠ
-potion.potency.11=Ⅻ
+potion.potency.11=?
 
 tier.1=Ⅰ
 tier.2=Ⅱ
@@ -285,7 +286,7 @@ correction.7= Ⅶ
 correction.8= Ⅷ
 correction.9= Ⅸ
 correction.10= Ⅹ
-correction.11= Ⅺ
+correction.11= ?
 
 spell.earth=地
 spell.water=水

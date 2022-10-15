@@ -12,10 +12,12 @@ public abstract class AbstractTileEntityPedestal extends TileEntity implements I
 	public void setDisplay(ItemStack stack)
 	{
 		this.display = stack.copy();
+		this.display.setCount(1);
 	}
 	
 	public ItemStack getDisplay()
 	{
+		this.display.setCount(1);
 		return this.display;
 	}
 	

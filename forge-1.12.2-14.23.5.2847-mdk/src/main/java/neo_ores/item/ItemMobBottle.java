@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -107,6 +109,7 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 		entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 		world.spawnEntity(entity);
 		stack.removeSubCompound("storedEntity");
+		world.playSound(player, entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 0.75F);
 		if(stack.getTagCompound().getSize() <= 0) stack.setTagCompound(null);
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 	}

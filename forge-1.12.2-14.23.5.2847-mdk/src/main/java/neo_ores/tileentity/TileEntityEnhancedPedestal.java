@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import neo_ores.api.ItemStackWithSize;
+import neo_ores.api.LargeItemStack;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresItems;
 import neo_ores.packet.PacketItemsToClient;
@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal implements ISidedInventory
 {
 	public int slotsize;
-	private NonNullList<ItemStackWithSize> item_list = NonNullList.withSize(this.slotsize, ItemStackWithSize.EMPTY);
+	private NonNullList<LargeItemStack> item_list = NonNullList.withSize(this.slotsize, LargeItemStack.EMPTY);
 	private int selectedSlot;
 	private boolean canSuck;
 	public int tickCount;
@@ -37,7 +37,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	public void setSize(int slotsize)
 	{
 		this.slotsize = 2 * (int)Math.pow(2.0D,(double)((0 < slotsize && slotsize <= 8) ? slotsize : 1));
-		this.item_list = NonNullList.withSize(this.slotsize, ItemStackWithSize.EMPTY);
+		this.item_list = NonNullList.withSize(this.slotsize, LargeItemStack.EMPTY);
 	}
 	
 	public void setSuckable(boolean canSuck)
@@ -103,15 +103,15 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
         	this.display = new ItemStack(compound.getCompoundTag("display"));
         }
         
-        this.item_list = NonNullList.withSize(this.getSizeInventory(), ItemStackWithSize.EMPTY);
-        ItemStackWithSize.getFromNBT(this.item_list,compound);
+        this.item_list = NonNullList.withSize(this.getSizeInventory(), LargeItemStack.EMPTY);
+        LargeItemStack.getFromNBT(this.item_list,compound);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         
-        ItemStackWithSize.setToNBT(this.item_list, compound);
+        LargeItemStack.setToNBT(this.item_list, compound);
         
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound = display.writeToNBT(nbttagcompound);
@@ -156,14 +156,14 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     public ItemStack removeStackFromSlot(int index) 
     {
     	ItemStack stack = this.item_list.get(index).getMediate().copy();
-    	this.item_list.set(index, ItemStackWithSize.EMPTY);
+    	this.item_list.set(index, LargeItemStack.EMPTY);
         return stack;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) 
     {
-    	if(this.item_list.get(index).isEmpty()) this.item_list.set(index,new ItemStackWithSize(stack,(this.getInventoryStackLimit() < stack.getCount()) ? this.getInventoryStackLimit() : stack.getCount()));
+    	if(this.item_list.get(index).isEmpty()) this.item_list.set(index,new LargeItemStack(stack,(this.getInventoryStackLimit() < stack.getCount()) ? this.getInventoryStackLimit() : stack.getCount()));
     	else 
     	{
     		ItemStack stack1 = stack.copy();
@@ -227,7 +227,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     public boolean isFull()
     {
     	if(item_list.isEmpty()) return true;
-    	for(ItemStackWithSize stack : item_list)
+    	for(LargeItemStack stack : item_list)
     	{
     		if(stack.isEmpty()) return false;
     		else if(stack.getSize() < this.getInventoryStackLimit()) return false;
@@ -281,7 +281,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
     {
     	for(int i = 0;i < this.item_list.size();i++)
     	{
-    		this.item_list.set(i, ItemStackWithSize.EMPTY);
+    		this.item_list.set(i, LargeItemStack.EMPTY);
     	}
     }
 
@@ -321,7 +321,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 								else
 								{
 									this.item_list.get(i).addSize(this.item_list.get(j).getSize());
-									this.item_list.set(j,ItemStackWithSize.EMPTY);
+									this.item_list.set(j,LargeItemStack.EMPTY);
 								}
 							}
 						}
@@ -409,7 +409,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 		return true;
 	}
 	
-	public NonNullList<ItemStackWithSize> getItems()
+	public NonNullList<LargeItemStack> getItems()
 	{
 		return this.item_list;
 	}
@@ -419,7 +419,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 		double x = pos.getX();
 		double y = pos.getY();
 		double z = pos.getZ();
-		for (ItemStackWithSize stackWS : tileentity.getItems())
+		for (LargeItemStack stackWS : tileentity.getItems())
         {
 			if(!stackWS.isEmpty())
 			{

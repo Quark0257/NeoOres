@@ -9,14 +9,14 @@ import net.minecraft.util.NonNullList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class  ItemStackWithSize
+public class  LargeItemStack
 {
     private final ItemStack stack;
     private ItemStack mediate;
     private int size;
-    public static final ItemStackWithSize EMPTY = new ItemStackWithSize(ItemStack.EMPTY,0);
+    public static final LargeItemStack EMPTY = new LargeItemStack(ItemStack.EMPTY,0);
 
-    public ItemStackWithSize(ItemStack itemstack, int size)
+    public LargeItemStack(ItemStack itemstack, int size)
     {
     	stack = (itemstack == null) ? ItemStack.EMPTY : itemstack;
     	stack.setCount(1);
@@ -102,10 +102,10 @@ public class  ItemStackWithSize
     	return this.stack.isEmpty() || this.size <= 0;
     }
     
-    public static void setToNBT(NonNullList<ItemStackWithSize> list,NBTTagCompound nbt)
+    public static void setToNBT(NonNullList<LargeItemStack> list,NBTTagCompound nbt)
     {
     	NBTTagList taglist = new NBTTagList();
-    	for(ItemStackWithSize stackWS : list)
+    	for(LargeItemStack stackWS : list)
     	{
     		stackWS.updateStack();
     		NBTTagCompound item = new NBTTagCompound();
@@ -118,7 +118,7 @@ public class  ItemStackWithSize
     	nbt.setTag("ItemsWithSize", taglist);
     }
     
-    public static void getFromNBT(NonNullList<ItemStackWithSize> list,NBTTagCompound nbt)
+    public static void getFromNBT(NonNullList<LargeItemStack> list,NBTTagCompound nbt)
     {
     	NBTTagCompound copied = nbt.copy();
     	if(copied.hasKey("ItemsWithSize", 9))
@@ -132,7 +132,7 @@ public class  ItemStackWithSize
     			{
     				ItemStack stack = new ItemStack(d,1,item.getInteger("damage"));
     				if(item.hasKey("tag", 10)) stack.setTagCompound(item.getCompoundTag("tag"));
-    				list.set(i,new ItemStackWithSize(stack,item.getInteger("size")));
+    				list.set(i,new LargeItemStack(stack,item.getInteger("size")));
     			}
     		}
     	}
@@ -143,15 +143,15 @@ public class  ItemStackWithSize
     	return this.getStack().toString() + ": x" + this.getSize();
     }
     
-    public ItemStackWithSize copy()
+    public LargeItemStack copy()
     {
-    	return new ItemStackWithSize(this.stack.copy(),this.size);
+    	return new LargeItemStack(this.stack.copy(),this.size);
     }
     
-    public ItemStackWithSize split(int amount)
+    public LargeItemStack split(int amount)
     {
         int i = Math.min(amount, this.size);
-        ItemStackWithSize itemstack = this.copy();
+        LargeItemStack itemstack = this.copy();
         itemstack.setSize(i);
         this.addSize(-i);
         return itemstack;

@@ -1,31 +1,77 @@
 package neo_ores.tileentity;
 
+import neo_ores.api.FakePlayerMechanicalMagician;
+import neo_ores.api.MathUtils;
+import neo_ores.api.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.util.FakePlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.WorldServer;
 
 public class TileEntityMechanicalMagician extends TileEntity implements ITickable, ISidedInventory
 {
-	public final FakePlayer player;
+	private FakePlayerMechanicalMagician player = null;
 	public boolean redstone;
 	public boolean activated;
+	private BlockPos destination;
 	
-	public TileEntityMechanicalMagician(FakePlayer player)
+	public TileEntityMechanicalMagician()
 	{
-		this.player = player;
+		
+	}
+	
+	public void setPlayer(WorldServer world,BlockPos pos,EnumFacing direction)
+	{
+		this.player = new FakePlayerMechanicalMagician(world,pos,direction);
+		this.destination = pos.add(direction.getDirectionVec());
+	}
+	
+	public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        
+        this.player.readEntityFromNBT(compound.getCompoundTag("player"));
+        int[] desti = compound.getIntArray("destination");
+        if(desti.length == 3)
+        {
+        	this.destination = new BlockPos(desti[0],desti[1],desti[2]);
+        }
+    }
+
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+    	NBTTagCompound playerTag = new NBTTagCompound();
+        this.player.writeEntityToNBT(playerTag);
+        compound.setTag("player", playerTag);
+        int[] desti = new int[3];
+        desti[0] = this.destination.getX();
+        desti[1] = this.destination.getY();
+        desti[2] = this.destination.getZ();
+        compound.setIntArray("destination", desti);
+        
+        return super.writeToNBT(compound);
+    }
+    
+    public void setDestination(BlockPos destination)
+	{
+		this.destination = destination;
+		Vec2f direction = MathUtils.getYawPitch(destination.getX() - this.getPos().getX(), destination.getY() - this.getPos().getY(), destination.getZ() - this.getPos().getZ());
+		this.player.rotationPitch = direction.y;
+		this.player.rotationYaw = direction.x;
 	}
 	
 	@Override
 	public int getSizeInventory() 
 	{
-		return 0;
+		return 14;
 	}
 
 	@Override
@@ -141,33 +187,28 @@ public class TileEntityMechanicalMagician extends TileEntity implements ITickabl
 	public void update() 
 	{
 		if(this.redstone && !this.activated)
-		{
-			if(redstone)
+		{	
+			EntityLivingBase target = null;
+			double d = 0;
+			for(EntityLivingBase elb : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(this.destination.getX(),this.destination.getY(),this.destination.getZ(),this.destination.getX() + 1.0D,this.destination.getY() + 1.0D,this.destination.getZ() + 1.0D)))
 			{
-				this.player.getHeldItemMainhand().useItemRightClick(world, player, EnumHand.MAIN_HAND);
-			}
-			else
-			{
-				double d = 0;
-				EntityLivingBase target = null;
-				for(EntityLivingBase elb : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(this.getPos().getX(),this.getPos().getY(),this.getPos().getZ(),this.getPos().getX() + 1.0D,this.getPos().getY() + 1.0D,this.getPos().getZ() + 1.0D)))
+				double x = elb.posX - this.getPos().getX() - 0.5D;
+				double y = elb.posX - this.getPos().getY() - 0.5D;
+				double z = elb.posX - this.getPos().getZ() - 0.5D;
+				double d0 = x * x + y * y + z * z;
+				if(d <= 0) d = d0;
+				else
 				{
-					double x = elb.posX - this.getPos().getX() - 0.5D;
-					double y = elb.posX - this.getPos().getY() - 0.5D;
-					double z = elb.posX - this.getPos().getZ() - 0.5D;
-					double d0 = x * x + y * y + z * z;
-					if(d <= 0) d = d0;
-					else
+					if(d > d0)
 					{
-						if(d > d0)
-						{
-							d = d0;
-							elb = target;
-						}
+						d = d0;
+						target = elb;
 					}
 				}
-				this.player.getHeldItemMainhand().interactWithEntity(player,target, EnumHand.MAIN_HAND);
 			}
+			
+			SpellUtils.run(null, this.player, this.player.getHeldItemMainhand(), target);
+			
 			this.activated = true;
 		}
 		

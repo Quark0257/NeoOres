@@ -5,7 +5,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import neo_ores.api.ItemStackWithSize;
+import neo_ores.api.LargeItemStack;
 import neo_ores.block.properties.PedestalTiers;
 import neo_ores.item.ItemBlockEnhancedPedestal;
 import neo_ores.main.NeoOresItems;
@@ -148,7 +148,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	    	ItemStack hand = player.getHeldItemMainhand();
 	    	TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)tileentity;
     		int slot = teep.getSlot();
-    		ItemStackWithSize isws = teep.getItems().get(slot);
+    		LargeItemStack isws = teep.getItems().get(slot);
     		ItemStack stack = isws.getStack().copy();
 
     		if(hand.getItem() == NeoOresItems.mana_wrench)

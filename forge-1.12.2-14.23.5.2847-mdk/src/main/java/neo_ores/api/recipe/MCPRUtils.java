@@ -3,7 +3,7 @@ package neo_ores.api.recipe;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.ItemStackWithSize;
+import neo_ores.api.LargeItemStack;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import net.minecraft.item.ItemStack;
@@ -21,8 +21,8 @@ public class MCPRUtils
 		if(te instanceof TileEntityEnhancedPedestal)
 		{
 			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)te;
-			List<ItemStackWithSize> inputitems = new ArrayList<ItemStackWithSize>();
-			for(ItemStackWithSize stack : teep.getItems())
+			List<LargeItemStack> inputitems = new ArrayList<LargeItemStack>();
+			for(LargeItemStack stack : teep.getItems())
 			{
 				if(!stack.isEmpty())
 				{
@@ -30,7 +30,7 @@ public class MCPRUtils
 					int size = inputitems.size();
 					for(int i = 0;i <  size;i++)
 					{
-						ItemStackWithSize input = inputitems.get(i);
+						LargeItemStack input = inputitems.get(i);
 						if(input.compareWith(stack.getStack()))
 						{
 							input.addSize(stack.getSize());
@@ -49,7 +49,7 @@ public class MCPRUtils
 					boolean b = false;
 					for(RecipeOreStack list : recipe.getRecipe())
 					{
-						for(ItemStackWithSize input : inputitems)
+						for(LargeItemStack input : inputitems)
 						{
 							if((list.compareStackWith(input.getStack()) || list.compareOreDicWith(input.getStack())))
 							{
@@ -83,7 +83,7 @@ public class MCPRUtils
 						{
 							int size = list.getSize();
 							int n = 0;
-							for(ItemStackWithSize isws : teep.getItems())
+							for(LargeItemStack isws : teep.getItems())
 							{
 								if(list.compareStackWith(isws.getStack()) || list.compareOreDicWith(isws.getStack()))
 								{

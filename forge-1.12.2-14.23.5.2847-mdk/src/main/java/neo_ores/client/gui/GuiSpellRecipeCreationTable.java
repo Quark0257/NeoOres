@@ -189,14 +189,22 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			{
 				this.selectedSpells.remove(spellitem);
 				List<SpellItem> removes = new ArrayList<SpellItem>();
-				for(SpellItem item : this.selectedSpells)
+				List<SpellItem> lastSelectedSpells = new ArrayList<SpellItem>();
+				while(true)
 				{
-					if(!canSelected(item))
+					for(SpellItem item : this.selectedSpells)
 					{
-						removes.add(item);
+						if(!canSelected(item))
+						{
+							removes.add(item);
+						}
 					}
+					this.selectedSpells.removeAll(removes);
+					
+					if(this.selectedSpells.size() == lastSelectedSpells.size()) break;
+					
+					lastSelectedSpells = new ArrayList<SpellItem>(this.selectedSpells);
 				}
-				this.selectedSpells.removeAll(removes);
 			}
 			this.changed();
 		}

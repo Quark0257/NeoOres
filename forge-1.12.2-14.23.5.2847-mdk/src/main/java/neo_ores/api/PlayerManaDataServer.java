@@ -2,6 +2,7 @@ package neo_ores.api;
 
 import java.util.Random;
 
+import neo_ores.api.spell.SpellItem;
 import neo_ores.data.PlayerDataStorage;
 import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;
@@ -81,10 +82,17 @@ public class PlayerManaDataServer
 			mxp -= (long)(16.0F + gotMXPBar);
 			level++;
 			
-			double a = 0.003D;
+			double all_required_magic_point = 0.0D;
+			for(SpellItem spell : SpellUtils.registry)
+			{
+				all_required_magic_point += spell.getTier();
+			}
+			
+			double pro = 10.0D;
+			double a = 5.5D/pro/all_required_magic_point;
 			double b = 5.0D;
 			double compares = (Math.atan(a * (gotLevel + level) - b) + Math.atan(b)) / (Math.atan(b) + Math.PI / 2);
-			if(this.random.nextDouble() < compares)
+			if((gotLevel + level) % pro == 0 && this.random.nextDouble() > compares)
 			{
 				magicpoint++;
 			}

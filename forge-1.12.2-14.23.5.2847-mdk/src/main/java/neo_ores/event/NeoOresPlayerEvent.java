@@ -52,7 +52,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoPlayerEvent 
+public class NeoOresPlayerEvent 
 {
 	public static final String nbtsoulboundtag = "soulboundslot";
 	

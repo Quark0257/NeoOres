@@ -250,6 +250,10 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				{
 					tooltip.add((TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " " + I18n.format("spell.magic_point"));
 				}
+				else
+				{
+					tooltip.add((TextFormatting.BOLD + (TextFormatting.BLUE + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " " + I18n.format("spell.magic_point"));
+				}
 				
 				if(!this.canGetSpellItemByTree(spellitem, this.mc.player))
 				{

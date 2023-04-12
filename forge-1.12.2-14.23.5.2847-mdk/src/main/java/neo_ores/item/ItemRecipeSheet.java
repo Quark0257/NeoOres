@@ -50,12 +50,12 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 		{
 			if(recipe.isItemStack())
 			{
-				ITextComponent itextcomponent0 = new TextComponentString(recipe.getStack().getDisplayName() + I18n.format("chat.displayStack") + ": x" + recipe.getSize());
+				ITextComponent itextcomponent0 = new TextComponentString(recipe.getStack().getDisplayName() + I18n.format("chat.displayStack") + " : x" + recipe.getSize());
 				playerIn.sendStatusMessage(itextcomponent0, false);
 			}
 			else if(recipe.isOreDic())
 			{
-				ITextComponent itextcomponent0 = new TextComponentString(recipe.getOreDic() + I18n.format("chat.displayOreDic") + ": x" + recipe.getSize());
+				ITextComponent itextcomponent0 = new TextComponentString(recipe.getOreDic() + I18n.format("chat.displayOreDic") + " : x" + recipe.getSize());
 				playerIn.sendStatusMessage(itextcomponent0, false);
 			}
 			
@@ -79,14 +79,17 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 	{
 		if(hasRecipe(itemStack))
 		{
-			 for(SpellItem spell : this.readRecipeSpells(itemStack))
-			 {
-				 list.add(TextFormatting.GRAY + getName(spell) + (flag.isAdvanced() ? TextFormatting.DARK_GRAY + " (" + spell.toString() + ")" : ""));
-			 }
+			List<SpellItem> spells = new ArrayList<SpellItem>(this.readRecipeSpells(itemStack));
+			for(SpellItem spell : spells)
+			{
+				list.add(TextFormatting.GRAY + getName(spell) + (flag.isAdvanced() ? TextFormatting.DARK_GRAY + " (" + spell.toString() + ")" : ""));
+			}
+			long manaConsume = SpellUtils.getMPConsume(spells);
+			list.add(TextFormatting.GRAY + I18n.format("tooltip.mana").trim() + " : " + manaConsume);
 		}
 	}
 	
-	private static String getName(SpellItem spellitem)
+	public static String getName(SpellItem spellitem)
 	{
 		if(spellitem.getSpellClass() instanceof Spell.SpellCorrection)
 		{

@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
+
+import neo_ores.api.SpellUtils;
 import neo_ores.api.TierUtils;
+import neo_ores.api.spell.SpellItem;
+import neo_ores.item.ItemRecipeSheet;
+import neo_ores.item.ItemSpell;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
@@ -15,14 +23,46 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoItemEvent 
+public class NeoOresItemEvent 
 {
 	private static Random random = new Random();
+	
+	private static boolean isShift()
+	{
+		return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onTooltip(ItemTooltipEvent e)
+	{
+		ItemStack stack = e.getItemStack();
+		if(stack.getItem() instanceof ItemSpell)
+		{
+			e.getToolTip().add("");
+			if(isShift())
+			{
+				for(SpellItem item : SpellUtils.getListInitialized(SpellUtils.getListFromItemStackNBT(stack.getTagCompound())))
+				{
+					e.getToolTip().add(TextFormatting.BLUE + ItemRecipeSheet.getName(item) + (e.getFlags().isAdvanced() ? " (" + item.toString() + ")" : ""));
+				}
+			}
+			else
+			{
+				e.getToolTip().add(TextFormatting.BLUE + I18n.format("neo_ores.pressLShiftDesc"));
+			}
+		}
+	}
+	
 	@SubscribeEvent
 	public static void onHarvestBlock(BlockEvent.HarvestDropsEvent event)
 	{

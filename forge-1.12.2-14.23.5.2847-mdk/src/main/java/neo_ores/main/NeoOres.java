@@ -1,5 +1,6 @@
 package neo_ores.main;
 
+import neo_ores.api.TierUtils;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.client.gui.GuiHandler;
 import neo_ores.command.CommandNeoOres;
@@ -9,7 +10,8 @@ import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
 import neo_ores.event.NeoOresInitEvent;
 import neo_ores.event.NeoOresInitEventAfterItems;
-import neo_ores.event.NeoPlayerEvent;
+import neo_ores.event.NeoOresItemEvent;
+import neo_ores.event.NeoOresPlayerEvent;
 import neo_ores.packet.PacketItemsToClient;
 import neo_ores.packet.PacketManaDataToClient;
 import neo_ores.packet.PacketManaDataToServer;
@@ -32,9 +34,9 @@ import neo_ores.world.gen.NeoOresOreGen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
@@ -63,7 +65,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Random;
 
-import morph.avaritia.init.ModItems;
 import morph.avaritia.recipe.AvaritiaRecipeManager;
 import morph.avaritia.recipe.extreme.ExtremeShapedRecipe;
 
@@ -77,7 +78,8 @@ public class NeoOres
 		NeoOresInfoCore.registerInfo(meta);
 		MinecraftForge.EVENT_BUS.register(new NeoOresInitEvent());
 		MinecraftForge.EVENT_BUS.register(new NeoOresInitEventAfterItems());
-		MinecraftForge.EVENT_BUS.register(new NeoPlayerEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresPlayerEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresItemEvent());
 		DimensionManager.registerDimension(THE_WATER.getId(), THE_WATER);
 		DimensionManager.registerDimension(THE_EARTH.getId(), THE_EARTH);
 		DimensionManager.registerDimension(THE_FIRE.getId(), THE_FIRE);
@@ -109,60 +111,51 @@ public class NeoOres
 	{
 		if(Loader.isModLoaded("avaritia"))
 		{
-			NBTTagCompound nbt = new NBTTagCompound();
-
-			if(!nbt.hasKey("tiers", 9))
-			{
-				nbt.setTag("tiers", new NBTTagList());
-			}
-			NBTTagList NBTList = nbt.getTagList("tiers", 10);
-			if(NBTList != null && NBTList.getCompoundTagAt(0) != null)
-			{
-				NBTTagCompound itemNBT = new NBTTagCompound();
-				itemNBT.setInteger("air", 11);
-				itemNBT.setInteger("earth", 11);
-				itemNBT.setInteger("fire", 11);
-				itemNBT.setInteger("water", 11);
-
-				NBTList.appendTag(itemNBT);
-			}
-			
 			ItemStack helmet = new ItemStack(NeoOresItems.creative_helmet);
-			helmet.setTagCompound(nbt);
+			TierUtils utils = new TierUtils(helmet);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_helmet"), new ExtremeShapedRecipe(helmet,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_helmet))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_helmet"))));
 			ItemStack chestplate = new ItemStack(NeoOresItems.creative_chestplate);
-			chestplate.setTagCompound(nbt);
+			utils = new TierUtils(chestplate);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_chestplate"), new ExtremeShapedRecipe(chestplate,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_chestplate))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_chestplate"))));
 			ItemStack leggings = new ItemStack(NeoOresItems.creative_leggings);
-			leggings.setTagCompound(nbt);
+			utils = new TierUtils(leggings);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_leggings"), new ExtremeShapedRecipe(leggings,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_pants))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_pants"))));
 			ItemStack boots = new ItemStack(NeoOresItems.creative_boots);
-			boots.setTagCompound(nbt);
+			utils = new TierUtils(boots);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_boots"), new ExtremeShapedRecipe(boots,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_boots))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_boots"))));
 			ItemStack axe = new ItemStack(NeoOresItems.creative_axe);
-			axe.setTagCompound(nbt);
+			utils = new TierUtils(axe);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_axe"), new ExtremeShapedRecipe(axe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_axe))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_axe"))));
 			ItemStack hoe = new ItemStack(NeoOresItems.creative_hoe);
-			hoe.setTagCompound(nbt);
+			utils = new TierUtils(hoe);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_hoe"), new ExtremeShapedRecipe(hoe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_hoe))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_hoe"))));
 			ItemStack pickaxe = new ItemStack(NeoOresItems.creative_pickaxe);
-			pickaxe.setTagCompound(nbt);
+			utils = new TierUtils(pickaxe);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_pickaxe"), new ExtremeShapedRecipe(pickaxe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_pickaxe))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_pickaxe"))));
 			ItemStack shovel = new ItemStack(NeoOresItems.creative_shovel);
-			shovel.setTagCompound(nbt);
+			utils = new TierUtils(shovel);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_shovel"), new ExtremeShapedRecipe(shovel,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',new ItemStack(ModItems.infinity_shovel))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_shovel"))));
 			ItemStack sword = new ItemStack(NeoOresItems.creative_sword);
-			sword.setTagCompound(nbt);
+			utils = new TierUtils(sword);
+			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_sword"), new ExtremeShapedRecipe(sword,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,9),'W',new ItemStack(NeoOresItems.water_essence_core,1,9),'X',new ItemStack(ModItems.infinity_sword))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,9),'W',new ItemStack(NeoOresItems.water_essence_core,1,9),'X',Item.getByNameOrId("avaritia:infinity_sword"))));
 			
 		}
 	}

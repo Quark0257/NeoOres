@@ -73,7 +73,7 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 			}
 			entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 			world.spawnEntity(entity);
-			runner.attackEntityFrom(NeoOres.Payment, entity.getMaxHealth());
+			runner.attackEntityFrom(NeoOres.PAYMENT, entity.getMaxHealth());
 			
 			if(runner instanceof EntityPlayerMP)
 			{

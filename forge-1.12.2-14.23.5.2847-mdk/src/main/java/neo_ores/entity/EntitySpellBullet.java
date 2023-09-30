@@ -65,7 +65,7 @@ public class EntitySpellBullet extends EntityThrowable
         this.supportLiquid = supportLiquid;
         this.throughWater = noResistance;
         this.setNoGravity(nogravity);
-        this.stack = handItem;
+        this.stack = handItem.copy();
         this.collided = collided;
     }
     
@@ -75,7 +75,8 @@ public class EntitySpellBullet extends EntityThrowable
         float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
         float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
         this.shoot((double)f, (double)f1, (double)f2, velocity, 0.0F);
-        if(canApplyInertia) {
+        if(canApplyInertia) 
+        {
         	this.motionX += entityThrower.motionX;
         	this.motionZ += entityThrower.motionZ;
 

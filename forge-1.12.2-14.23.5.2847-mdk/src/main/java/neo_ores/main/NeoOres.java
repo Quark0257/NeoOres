@@ -219,16 +219,8 @@ public class NeoOres
 	public static final DamageSource FIRE = new DamageSource("neo_ores.fire").setDamageBypassesArmor().setDamageIsAbsolute();
 	public static final DamageSource EARTH = new DamageSource("neo_ores.earth").setDamageBypassesArmor().setDamageIsAbsolute();
 	public static final DamageSource AIR = new DamageSource("neo_ores.air").setDamageBypassesArmor().setDamageIsAbsolute();
-	public static final DamageSource Payment = new DamageSource("neo_ores.payment").setDamageBypassesArmor().setDamageIsAbsolute();
+	public static final DamageSource PAYMENT = new DamageSource("neo_ores.payment").setDamageBypassesArmor().setDamageIsAbsolute();
 	public static final DamageSource CERATIVE = new DamageSource("neo_ores.creative").setDamageIsAbsolute().setDamageBypassesArmor().setDamageAllowedInCreativeMode();
-	
-	public static EntityDamageSource setDamageByEntity(DamageSource source,Entity entity)
-	{
-		EntityDamageSource eds = new EntityDamageSource(source.getDamageType(),entity);
-		if(source.isDamageAbsolute()) eds.setDamageIsAbsolute();
-		if(source.isUnblockable()) eds.setDamageBypassesArmor();
-		return eds;
-	}
 	
 	public static final DimensionType THE_WATER = DimensionType.register("The Gabry", "dim_water", NeoOresConfig.dim.dimwater, WorldProviderTheWater.class, false);
 	public static final DimensionType THE_EARTH = DimensionType.register("The Ury", "dim_earth", NeoOresConfig.dim.dimearth, WorldProviderTheEarth.class, false);

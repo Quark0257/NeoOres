@@ -7,6 +7,7 @@ import neo_ores.main.NeoOres;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -56,12 +57,12 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 				{
 					if(elb != entity && elb != runner)
 					{
-						this.onDamage(elb, runner);
+						this.onDamage(elb, runner,item);
 					}
 				}
 			}
 			
-			this.onDamage(entity, runner);
+			this.onDamage(entity, runner,item);
 			
 			Map<Enchantment,Integer> enchs = EnchantmentHelper.getEnchantments(item);
 			if(enchs.containsKey(Enchantments.LOOTING))
@@ -78,11 +79,11 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 		
 	}
 	
-	private void onDamage(Entity elb,EntityLivingBase runner)
+	private void onDamage(Entity elb,EntityLivingBase runner,ItemStack stack)
 	{
 		if(elb.canBeCollidedWith())
 		{
-			elb.attackEntityFrom(NeoOres.setDamageByEntity(NeoOres.EARTH,runner), (int)(3.5 * Math.pow(1.5,this.damageLevel)) + 3);
+			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH,runner,stack), (int)(3.5 * Math.pow(1.5,this.damageLevel)) + 3);
 			if(runner instanceof EntityPlayerMP)
 			{
 				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);

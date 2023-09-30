@@ -12,6 +12,7 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.potion.PotionNeoOres;
+import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerManaDataServer;
 import neo_ores.world.dimension.FromAirTeleporter;
 import net.minecraft.block.state.IBlockState;
@@ -21,6 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,6 +45,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -529,5 +532,14 @@ public class NeoOresEntityEvent
 
 		return (playerYaw - 360.0F < sourceYaw + yawWidth || playerYaw < sourceYaw + yawWidth || playerYaw + 360.0F < sourceYaw + yawWidth) && (sourceYaw - yawWidth < playerYaw - 360.0F || sourceYaw - yawWidth < playerYaw || sourceYaw - yawWidth < playerYaw + 360.0F) && sourcePitch - pitchWidth < playerPitch && playerPitch < sourcePitch + pitchWidth;
 	}
-
+	
+	@SubscribeEvent
+	public void onLootingLevelEvent(LootingLevelEvent event)
+	{
+		if(event.getDamageSource() != null && event.getDamageSource() instanceof EntityDamageSourceWithItem)
+		{
+			EntityDamageSourceWithItem edsw = (EntityDamageSourceWithItem)event.getDamageSource();
+			event.setLootingLevel(EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, edsw.getStack()));
+		}
+	}
 }

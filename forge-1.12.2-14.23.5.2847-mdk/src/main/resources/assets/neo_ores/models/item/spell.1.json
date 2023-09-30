@@ -2,7 +2,7 @@
 	"parent":"item/generated",
 	"textures": 
 	{
-		"layer0": "neo_ores:items/spell_1"
+		"layer0": "neo_ores:items/spell_1_white"
 	},
 	"display": 
   	{

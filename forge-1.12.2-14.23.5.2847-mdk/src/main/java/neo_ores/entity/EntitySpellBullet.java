@@ -6,15 +6,20 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import neo_ores.api.SpellUtils;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -34,9 +39,11 @@ public class EntitySpellBullet extends EntityThrowable
 	private ItemStack stack = ItemStack.EMPTY;
 	private boolean throughWater;
 	private boolean isUpdatingDefault;
-	private int ignoreTime;
 	private boolean supportLiquid;
+	private boolean collided = false;
 
+	private static final Predicate<Entity> PROJECTILE_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE);
+	
 	public EntitySpellBullet(World worldIn) 
 	{
 		super(worldIn);
@@ -47,7 +54,7 @@ public class EntitySpellBullet extends EntityThrowable
         super(worldIn,x,y,z);
     }
     
-    public EntitySpellBullet(World worldIn, EntityLivingBase shooter,boolean nogravity,boolean noResistance,int life,NBTTagCompound spells,boolean supportLiquid,ItemStack handItem)
+    public EntitySpellBullet(World worldIn, EntityLivingBase shooter,boolean nogravity,boolean noResistance,int life,NBTTagCompound spells,boolean supportLiquid,ItemStack handItem,boolean collided)
     {
         super(worldIn,shooter);
         this.spells = SpellUtils.getListFromItemStackNBT(spells);
@@ -59,20 +66,23 @@ public class EntitySpellBullet extends EntityThrowable
         this.throughWater = noResistance;
         this.setNoGravity(nogravity);
         this.stack = handItem;
+        this.collided = collided;
     }
     
-    public void shoot(EntityLivingBase entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity)
+    public void shoot(EntityLivingBase entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, boolean canApplyInertia)
     {
         float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
         float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
         float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
         this.shoot((double)f, (double)f1, (double)f2, velocity, 0.0F);
-        this.motionX += entityThrower.motionX;
-        this.motionZ += entityThrower.motionZ;
+        if(canApplyInertia) {
+        	this.motionX += entityThrower.motionX;
+        	this.motionZ += entityThrower.motionZ;
 
-        if (!entityThrower.onGround)
-        {
-            this.motionY += entityThrower.motionY;
+        	if (!entityThrower.onGround)
+        	{
+        		this.motionY += entityThrower.motionY;
+        	}
         }
     }
 
@@ -121,70 +131,35 @@ public class EntitySpellBullet extends EntityThrowable
         vec3d = new Vec3d(this.posX, this.posY, this.posZ);
         vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
     	
-    	Entity entity = null;
-        List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(this.motionX, this.motionY, this.motionZ).grow(1.0D));
-        double d0 = 0.0D;
-        boolean flag = false;
-
-        for (int i = 0; i < list.size(); ++i)
+        if (raytraceresult != null)
         {
-            Entity entity1 = list.get(i);
-
-            if (entity1.canBeCollidedWith())
-            {
-                if (entity1 == this.ignoreEntity)
-                {
-                    flag = true;
-                }
-                else if (this.thrower != null && this.ticksExisted < 2 && this.ignoreEntity == null)
-                {
-                    this.ignoreEntity = entity1;
-                    flag = true;
-                }
-                else
-                {
-                    flag = false;
-                    AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
-                    RayTraceResult raytraceresult1 = axisalignedbb.calculateIntercept(vec3d, vec3d1);
-
-                    if (raytraceresult1 != null)
-                    {
-                        double d1 = vec3d.squareDistanceTo(raytraceresult1.hitVec);
-
-                        if (d1 < d0 || d0 == 0.0D)
-                        {
-                            entity = entity1;
-                            d0 = d1;
-                        }
-                    }
-                }
-            }
+            vec3d = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y, raytraceresult.hitVec.z);
         }
-
-        if (this.ignoreEntity != null)
-        {
-            if (flag)
-            {
-                this.ignoreTime = 2;
-            }
-            else if (this.ignoreTime-- <= 0)
-            {
-                this.ignoreEntity = null;
-            }
-        }
+        
+        Entity entity = this.findEntityOnPath(vec3d1, vec3d);
 
         if (entity != null)
         {
             raytraceresult = new RayTraceResult(entity);
         }
 
-        if (raytraceresult != null)
+        if (raytraceresult != null && raytraceresult.entityHit instanceof EntityPlayer)
         {
-            if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK && this.world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL)
+            EntityPlayer entityplayer = (EntityPlayer)raytraceresult.entityHit;
+
+            if (this.thrower instanceof EntityPlayer && !((EntityPlayer)this.thrower).canAttackPlayer(entityplayer))
+            {
+                raytraceresult = null;
+            }
+        }
+
+        if (raytraceresult != null && !ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+        {
+        	if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK && this.world.getBlockState(raytraceresult.getBlockPos()).getBlock() == Blocks.PORTAL)
             {
                 this.setPortal(raytraceresult.getBlockPos());
             }
-            else if (!ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+            else if (!ForgeEventFactory.onProjectileImpact(this, raytraceresult) && (!this.collided || entity.canBeCollidedWith()))
             {
                 this.onImpact(raytraceresult);
             }
@@ -219,6 +194,38 @@ public class EntitySpellBullet extends EntityThrowable
         }
     }
     
+    @Nullable
+    protected Entity findEntityOnPath(Vec3d start, Vec3d end)
+    {
+        Entity entity = null;
+        List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(this.motionX, this.motionY, this.motionZ).grow(1.0D),PROJECTILE_TARGETS);
+        double d0 = 0.0D;
+
+        for (int i = 0; i < list.size(); ++i)
+        {
+            Entity entity1 = list.get(i);
+            if(entity1 == this) continue;
+            
+            if (entity1 != this.thrower || this.ticksInAir >= 5)
+            {
+                AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
+                RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(start, end);
+
+                if (raytraceresult != null)
+                {
+                    double d1 = start.squareDistanceTo(raytraceresult.hitVec);
+
+                    if (d1 < d0 || d0 == 0.0D)
+                    {
+                        entity = entity1;
+                        d0 = d1;
+                    }
+                }
+            }
+        }
+
+        return entity;
+    }
 
 	protected void onImpact(RayTraceResult result) 
 	{

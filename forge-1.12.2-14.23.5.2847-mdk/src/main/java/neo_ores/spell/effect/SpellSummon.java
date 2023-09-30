@@ -1,10 +1,10 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.NBTUtils;
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOres;
 import neo_ores.spell.SpellItemInterfaces.HasCanApplyNBT;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;

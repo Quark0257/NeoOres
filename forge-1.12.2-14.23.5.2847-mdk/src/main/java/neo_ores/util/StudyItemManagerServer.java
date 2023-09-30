@@ -1,4 +1,4 @@
-package neo_ores.api;
+package neo_ores.util;
 
 import java.util.ArrayList;
 import java.util.List;

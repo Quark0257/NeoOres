@@ -2,17 +2,19 @@ package neo_ores.event;
 
 import java.util.ListIterator;
 import java.util.Random;
-import java.util.UUID;
 
-import neo_ores.api.PlayerManaDataServer;
+import neo_ores.block.BlockEnhancedPedestal;
+import neo_ores.block.BlockPedestal;
 import neo_ores.client.gui.GuiNeoGameOverlay;
 import neo_ores.entity.fakeattribute.FakeAttributeMaxMana;
 import neo_ores.item.ItemPaxel;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.potion.PotionNeoOres;
-import neo_ores.spell.effect.SpellOreGen;
+import neo_ores.util.PlayerManaDataServer;
 import neo_ores.world.dimension.FromAirTeleporter;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -35,6 +37,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -43,16 +46,15 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresPlayerEvent 
+public class NeoOresEntityEvent 
 {
 	public static final String nbtsoulboundtag = "soulboundslot";
 	
@@ -228,6 +230,24 @@ public class NeoOresPlayerEvent
 				{
 					((PotionNeoOres.IFakeAttributeModified)effect.getPotion()).applyAttributesModifiersToEntity(playermp, effect.getAmplifier());
 				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityTravelToDimensionEvent(EntityTravelToDimensionEvent event)
+	{
+	}
+	
+	@SubscribeEvent
+	public void onPlayerInteractEvent(PlayerInteractEvent.LeftClickBlock event)
+	{
+		if(!event.getWorld().isRemote && event.getEntityPlayer() != null && event.getEntityPlayer().capabilities.isCreativeMode && event.getItemStack().getItem() == NeoOresItems.mana_wrench)
+		{
+			IBlockState state = event.getWorld().getBlockState(event.getPos());
+			if(state != null && ((state.getBlock() instanceof BlockEnhancedPedestal) || state.getBlock() instanceof BlockPedestal))
+			{
+				state.getBlock().onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
 			}
 		}
 	}
@@ -409,7 +429,14 @@ public class NeoOresPlayerEvent
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerClone(PlayerEvent.Clone evt)
-	{
+	{	
+		if (evt.getEntityPlayer() instanceof EntityPlayerMP) 
+		{
+			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
+			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)evt.getEntityPlayer());
+			pmds.sendToClient();
+		}
+		
 		if ((!evt.isWasDeath()) || (evt.isCanceled())) 
 		{
 			return;
@@ -417,13 +444,6 @@ public class NeoOresPlayerEvent
 		if ((evt.getOriginal() == null) || (evt.getEntityPlayer() == null) || ((evt.getEntityPlayer() instanceof FakePlayer))) 
 		{
 			return;
-		}
-		
-		if (evt.getEntityPlayer() instanceof EntityPlayerMP) 
-		{
-			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)evt.getEntityPlayer());
-			pmds.sendToClient();
 		}
 		
 		if (evt.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory")) 

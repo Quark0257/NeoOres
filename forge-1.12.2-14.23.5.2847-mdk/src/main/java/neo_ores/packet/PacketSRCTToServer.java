@@ -1,8 +1,8 @@
 package neo_ores.packet;
 
 import io.netty.buffer.ByteBuf;
-import neo_ores.api.SpellUtils;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
+import neo_ores.util.SpellUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

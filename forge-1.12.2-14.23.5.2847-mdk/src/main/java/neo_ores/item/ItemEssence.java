@@ -1,9 +1,9 @@
 package neo_ores.item;
 
-import neo_ores.api.PlayerManaDataClient;
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;
+import neo_ores.util.PlayerManaDataClient;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;

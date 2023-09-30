@@ -2,7 +2,7 @@ package neo_ores.tileentity;
 
 import neo_ores.api.FakePlayerMechanicalMagician;
 import neo_ores.api.MathUtils;
-import neo_ores.api.SpellUtils;
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;

@@ -7,18 +7,18 @@ import javax.annotation.Nullable;
 
 import neo_ores.api.LongUtils;
 import neo_ores.api.NBTUtils;
-import neo_ores.api.PlayerManaDataClient;
-import neo_ores.api.PlayerManaDataServer;
-import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.SpellItem;
-import neo_ores.api.spell.SpellItemType;
 import neo_ores.config.NeoOresConfig;
+import neo_ores.util.PlayerManaDataClient;
+import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
@@ -27,7 +27,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
-public class ItemSpell extends ItemRayTraceable
+public class ItemSpell extends Item
 {
 	public ItemSpell()
     {
@@ -85,64 +85,11 @@ public class ItemSpell extends ItemRayTraceable
 	
 	public int getMetadata(ItemStack stack)
 	{
-		if(stack.getTagCompound() != null && stack.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
+		if(stack.getTagCompound() != null && stack.getTagCompound().hasKey("metadata"))
 		{
-			int air = 0;
-			int earth = 0;
-			int fire = 0;
-			int water = 0;
-			for(SpellItem spellitem : SpellUtils.getListFromItemStackNBT(stack.getTagCompound().copy()))
-			{
-				if(spellitem.getType() == SpellItemType.AIR)
-				{
-					air++;
-				}
-				else if(spellitem.getType() == SpellItemType.EARTH)
-				{
-					earth++;
-				}
-				else if(spellitem.getType() == SpellItemType.FIRE)
-				{
-					fire++;
-				}
-				else if(spellitem.getType() == SpellItemType.WATER)
-				{
-					water++;
-				}
-			}
-			
-			return this.compare(air, earth, fire, water);
+			return stack.getTagCompound().getInteger("metadata");
 		}
 		return 0;
-	}
-	
-	private int compare(int air,int earth,int fire,int water)
-	{
-		int i = air;
-		if(i < earth) i = earth;
-		if(i < fire) i = fire;
-		if(i < water) i = water;
-		
-		if(i == air)
-		{
-			return 0;
-		}
-		else if(i == earth)
-		{
-			return 1;
-		}
-		else if(i == fire)
-		{
-			return 2;
-		}
-		else if(i == water)
-		{
-			return 3;
-		}
-		else
-		{
-			return 0;
-		}
 	}
 	
 	public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand, @Nullable EntityLivingBase target)

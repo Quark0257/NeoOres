@@ -6,15 +6,14 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
-import neo_ores.api.SpellUtils;
 import neo_ores.api.TierUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ItemRecipeSheet;
 import neo_ores.item.ItemSpell;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
+import neo_ores.util.SpellUtils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Blocks;

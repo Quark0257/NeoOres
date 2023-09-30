@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
-import neo_ores.api.SpellUtils;
-import neo_ores.api.StudyItemManagerClient;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellConditional;
@@ -20,6 +18,8 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketSRCTToServer;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
+import neo_ores.util.SpellUtils;
+import neo_ores.util.StudyItemManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -595,8 +595,8 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItem(spell));
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
-		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16,64,64,0.25F);
 		RenderHelper.enableGUIStandardItemLighting();
+		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16,64,64,0.25F);
 		
 		if(spell.getSpellClass() instanceof Spell.SpellCorrection)
 		{
@@ -606,24 +606,24 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 				this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,"textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
         		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         		GlStateManager.enableBlend();
-        		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8,16,16,0.5F);
         		RenderHelper.enableGUIStandardItemLighting();
+        		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8,16,16,0.5F);
 			}
 		}
 		
 		this.mc.getTextureManager().bindTexture(new ResourceLocation(spell.getTexturePath().getResourceDomain(),"textures/gui/spellitems/" + spell.getTexturePath().getResourcePath() + ".png"));
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
-		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8,16,16,0.5F);
 		RenderHelper.enableGUIStandardItemLighting();
+		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8,16,16,0.5F);
 		
 		if(inactive)
 		{
 			this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItemInactive(spell));
     		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     		GlStateManager.enableBlend();
-    		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16,64,64,0.25F);
     		RenderHelper.enableGUIStandardItemLighting();
+    		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16,64,64,0.25F);
 		}
 	}
     

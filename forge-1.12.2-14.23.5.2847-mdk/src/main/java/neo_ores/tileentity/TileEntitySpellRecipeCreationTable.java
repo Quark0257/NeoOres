@@ -3,11 +3,11 @@ package neo_ores.tileentity;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.inventory.ContainerSpellRecipeCreationTable;
 import neo_ores.main.NeoOres;
 import neo_ores.packet.PacketSRCTToClient;
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

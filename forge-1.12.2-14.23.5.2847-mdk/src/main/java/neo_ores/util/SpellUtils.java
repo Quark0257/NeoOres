@@ -1,4 +1,4 @@
-package neo_ores.api;
+package neo_ores.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,18 +12,23 @@ import javax.annotation.Nullable;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
+import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.main.Reference;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class SpellUtils 
@@ -32,19 +37,30 @@ public class SpellUtils
 	@SuppressWarnings("deprecation")
 	public static final List<SpellItem> registry = GameRegistry.findRegistry(SpellItem.class).getValues();
 	
+	public static final Map<String,SpellItem> keySet = keySet();
+	
 	@SuppressWarnings("deprecation")
 	public static final List<SpellRecipe> recipes = GameRegistry.findRegistry(SpellRecipe.class).getValues();
 	
+	public static final List<SpellItem> tier_sorted_spells = getSpellsSort();
+	
 	public static SpellItem getFromID(String modid,String id)
 	{
-		for(SpellItem spell : registry)
+		if(keySet.containsKey(modid + ":" + id))
 		{
-			if(spell.getModId().equals(modid) && spell.getRegisteringId().equals(id))
-			{
-				return spell;
-			}
+			return keySet.get(modid + ":" + id);
 		}
 		return null;
+	}
+	
+	public static Map<String,SpellItem> keySet()
+	{
+		Map<String,SpellItem> keySets = new HashMap<String,SpellItem>();
+		for(SpellItem spell : getSpellsSort())
+		{
+			keySets.put(spell.getModId() + ":" + spell.getRegisteringId(), spell);
+		}
+		return keySets;
 	}
 	
 	public static Map<String,List<String>> getAll()
@@ -88,26 +104,36 @@ public class SpellUtils
 		return list;
 	}
 	
-	public static List<SpellItem> getListFromNBT(NBTTagCompound nbt)
+	public static List<SpellItem> getSpellsSort()
 	{
 		List<SpellItem> spells = new ArrayList<SpellItem>();
 		for(int tier = 1;tier <= 11;tier++)
 		{
-			for(String key : nbt.getKeySet())
+			for(SpellItem spell : registry)
 			{
-				if(nbt.hasKey(key, 9))
+				if(spell.getTier() == tier)
 				{
-					NBTTagList list = nbt.getTagList(key, 8);
-					for(int i = 0;i < list.tagCount();i++)
+					spells.add(spell);
+				}
+			}
+		}
+		return spells;
+	}
+	
+	public static List<SpellItem> getListFromNBT(NBTTagCompound nbt)
+	{
+		List<SpellItem> spells = new ArrayList<SpellItem>();
+		for(String key : nbt.getKeySet())
+		{
+			if(nbt.hasKey(key, 9))
+			{
+				NBTTagList list = nbt.getTagList(key, 8);
+				for(int i = 0;i < list.tagCount();i++)
+				{
+					String id = list.getStringTagAt(i);
+					if(keySet.containsKey(key + ":" + id))
 					{
-						String id = list.getStringTagAt(i);
-						for(SpellItem spell : registry)
-						{
-							if(spell.getModId().equals(key) && spell.getRegisteringId().equals(id) && spell.getTier() == tier)
-							{
-								spells.add(spell);
-							}
-						}
+						spells.add(keySet.get(key + ":" + id));
 					}
 				}
 			}
@@ -143,10 +169,13 @@ public class SpellUtils
 	
 	public static List<SpellItem> getListFromItemStackNBT(NBTTagCompound nbt)
 	{
-		NBTTagCompound copied = nbt.copy();
-		if(copied != null && copied.hasKey(NBTTagUtils.SPELL,10))
+		if(nbt != null)
 		{
-			return getListFromNBT(copied.getCompoundTag(NBTTagUtils.SPELL));
+			NBTTagCompound copied = nbt.copy();
+			if(copied != null && copied.hasKey(NBTTagUtils.SPELL,10))
+			{
+				return getListFromNBT(copied.getCompoundTag(NBTTagUtils.SPELL));
+			}
 		}
 		return new ArrayList<SpellItem>();
 	}
@@ -413,6 +442,131 @@ public class SpellUtils
 					((Spell.SpellForm)form).onSpellRunning(runner.getEntityWorld(), runner,stack,result,SpellUtils.getItemStackNBTFromList(notformspells, new NBTTagCompound()));
 				}
 			}
+		}
+	}
+	
+	public static RayTraceResult rayTrace(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+    {
+        float f = playerIn.rotationPitch;
+        float f1 = playerIn.rotationYaw;
+        double d0 = playerIn.posX;
+        double d1 = playerIn.posY + (double)playerIn.getEyeHeight();
+        double d2 = playerIn.posZ;
+        Vec3d vec3d = new Vec3d(d0, d1, d2);
+        float f2 = MathHelper.cos(-f1 * 0.017453292F - (float)Math.PI);
+        float f3 = MathHelper.sin(-f1 * 0.017453292F - (float)Math.PI);
+        float f4 = -MathHelper.cos(-f * 0.017453292F);
+        float f5 = MathHelper.sin(-f * 0.017453292F);
+        float f6 = f3 * f4;
+        float f7 = f2 * f4;
+        double d3 = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+        Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+        return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
+    }
+	
+	public static int[] getSpellTypeValues(List<SpellItem> spells)
+	{
+		int air = 0;
+		int earth = 0;
+		int fire = 0;
+		int water = 0;
+		for(SpellItem spellitem : spells)
+		{
+			if(spellitem.getType() == SpellItemType.AIR)
+			{
+				air++;
+			}
+			else if(spellitem.getType() == SpellItemType.EARTH)
+			{
+				earth++;
+			}
+			else if(spellitem.getType() == SpellItemType.FIRE)
+			{
+				fire++;
+			}
+			else if(spellitem.getType() == SpellItemType.WATER)
+			{
+				water++;
+			}
+		}
+		return new int[] {air,earth,fire,water};
+	}
+	
+	public static int getSpellColor(List<SpellItem> spells)
+	{
+		int calculated_color = 0xFFFFFF;
+		int calculated_red = 0;
+		int calculated_green = 0;
+		int calculated_blue = 0;
+		int calculated_values = 0;
+		int[] color_codes = new int[] {0x00FFCE,0xB5FF00,0xFF5200,0x8700FF};
+		int[] type_rates = getSpellTypeValues(spells);
+		for(int id = 0;id < 4;id++)
+		{
+			calculated_red += (color_codes[id] / 0x10000) * type_rates[id];
+			calculated_blue += (color_codes[id] % 0x100) * type_rates[id];
+			calculated_green += ((color_codes[id] % 0x10000) / 0x100) * type_rates[id];
+			calculated_values += type_rates[id];
+		}
+		if(calculated_values != 0) calculated_color = (calculated_red / calculated_values) * 0x10000 + (calculated_green / calculated_values) * 0x100 + calculated_blue / calculated_values;
+		return calculated_color;
+	}
+	
+	public static int getSpellMetadata(List<SpellItem> spells)
+	{
+		int air = 0;
+		int earth = 0;
+		int fire = 0;
+		int water = 0;
+		for(SpellItem spellitem : spells)
+		{
+			if(spellitem.getType() == SpellItemType.AIR)
+			{
+				air++;
+			}
+			else if(spellitem.getType() == SpellItemType.EARTH)
+			{
+				earth++;
+			}
+			else if(spellitem.getType() == SpellItemType.FIRE)
+			{
+				fire++;
+			}
+			else if(spellitem.getType() == SpellItemType.WATER)
+			{
+				water++;
+			}
+		}
+		
+		return compare(air, earth, fire, water);
+	}
+	
+	private static int compare(int air,int earth,int fire,int water)
+	{
+		int i = air;
+		if(i < earth) i = earth;
+		if(i < fire) i = fire;
+		if(i < water) i = water;
+		
+		if(i == air)
+		{
+			return 0;
+		}
+		else if(i == earth)
+		{
+			return 1;
+		}
+		else if(i == fire)
+		{
+			return 2;
+		}
+		else if(i == water)
+		{
+			return 3;
+		}
+		else
+		{
+			return 0;
 		}
 	}
 }

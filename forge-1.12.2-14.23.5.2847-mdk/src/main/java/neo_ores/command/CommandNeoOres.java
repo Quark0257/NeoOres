@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import neo_ores.api.PlayerManaDataServer;
-import neo_ores.api.SpellUtils;
-import neo_ores.api.StudyItemManagerServer;
+import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
+import neo_ores.util.StudyItemManagerServer;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

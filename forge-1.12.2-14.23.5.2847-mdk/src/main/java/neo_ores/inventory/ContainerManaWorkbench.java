@@ -3,10 +3,10 @@ package neo_ores.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.PlayerManaDataClient;
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.recipe.ManaCraftingRecipes;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.util.PlayerManaDataClient;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

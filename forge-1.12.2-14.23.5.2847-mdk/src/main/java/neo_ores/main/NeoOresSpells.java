@@ -15,6 +15,7 @@ import neo_ores.spell.correction.SpellHarvestLevel;
 import neo_ores.spell.correction.SpellLuck;
 import neo_ores.spell.correction.SpellNoAnyResistance;
 import neo_ores.spell.correction.SpellNoGravity;
+import neo_ores.spell.correction.SpellNoInertia;
 import neo_ores.spell.correction.SpellRange;
 import neo_ores.spell.correction.SpellSilk;
 import neo_ores.spell.correction.SpellSpeed;
@@ -23,6 +24,7 @@ import neo_ores.spell.correction.SpellTier;
 import neo_ores.spell.effect.SpellComposition;
 import neo_ores.spell.effect.SpellDig;
 import neo_ores.spell.effect.SpellEarthDamage;
+import neo_ores.spell.effect.SpellOreGen;
 import neo_ores.spell.effect.SpellSummon;
 import neo_ores.spell.form.SpellBullet;
 import neo_ores.spell.form.SpellTouch;
@@ -97,6 +99,8 @@ public class NeoOresSpells
 	public static final SpellItem spell_damageLv11 = new SpellItem(new BasicData(Reference.MOD_ID,"damage11",11,SpellItemType.FIRE,1,1.6f),"damage_level",new MageKnowledgeTableData(NeoOresSpells.spell_damageLv10,-2,12,new ResourceLocation(Reference.MOD_ID,"damage"),NeoOres.neo_ores),new SpellDamageLevel(11));
 	public static final SpellItem spell_summon = new SpellItem(new BasicData(Reference.MOD_ID,"summon",5,SpellItemType.EARTH,100,10),"summon",new MageKnowledgeTableData(NeoOresSpells.spell_damageLv5,-3,7,new ResourceLocation(Reference.MOD_ID, "summon"),NeoOres.neo_ores),new SpellSummon());
 	public static final SpellItem spell_nbt_applying = new SpellItem(new BasicData(Reference.MOD_ID,"nbt_apply",11,SpellItemType.WATER,1,100),"nbt_apply",new MageKnowledgeTableData(NeoOresSpells.spell_summon,-3,8,new ResourceLocation(Reference.MOD_ID, "nbt_apply"),NeoOres.neo_ores),new SpellCanApplyNBT());
+	public static final SpellItem spell_ore_gen = new SpellItem(new BasicData(Reference.MOD_ID,"ore_gen",11,SpellItemType.EARTH,100,100),"ore_gen",new MageKnowledgeTableData(NeoOresSpells.spell_luck10,-1,12,new ResourceLocation(Reference.MOD_ID, "ore_gen"),NeoOres.neo_ores),new SpellOreGen());
+	public static final SpellItem spell_no_inertia = new SpellItem(new BasicData(Reference.MOD_ID,"no_inertia",1,SpellItemType.EARTH,10,1),"no_inertia",new MageKnowledgeTableData(NeoOresSpells.spell_bullet,4,3,new ResourceLocation(Reference.MOD_ID, "no_inertia"),NeoOres.neo_ores),new SpellNoInertia());
 	
 	public static final List<SpellItem> registry = Arrays.asList(
 			spell_touch,
@@ -165,6 +169,8 @@ public class NeoOresSpells
 			spell_damageLv10,
 			spell_damageLv11,
 			spell_summon,
-			spell_nbt_applying
+			spell_nbt_applying,
+			spell_ore_gen,
+			spell_no_inertia
 			);	
 }

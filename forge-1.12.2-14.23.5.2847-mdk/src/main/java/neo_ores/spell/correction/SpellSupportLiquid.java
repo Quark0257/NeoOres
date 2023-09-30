@@ -1,10 +1,9 @@
 package neo_ores.spell.correction;
 
-import neo_ores.api.spell.Spell;
-import neo_ores.api.spell.Spell.SpellCorrection;
+import neo_ores.api.spell.Spell.SpellCorrectionSingle;
 import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
 
-public class SpellSupportLiquid extends SpellCorrection
+public class SpellSupportLiquid extends SpellCorrectionSingle<HasChanceLiquid>
 {
 	public SpellSupportLiquid() 
 	{
@@ -12,11 +11,7 @@ public class SpellSupportLiquid extends SpellCorrection
 	}
 
 	@Override
-	public void onCorrection(Spell spell) 
-	{
-		if(spell instanceof HasChanceLiquid)
-		{
-			((HasChanceLiquid) spell).setSupport();
-		}
+	protected void onApply(HasChanceLiquid spell) {
+		spell.setSupport();
 	}
 }

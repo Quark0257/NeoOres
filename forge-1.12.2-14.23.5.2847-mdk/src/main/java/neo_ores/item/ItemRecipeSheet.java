@@ -3,11 +3,12 @@ package neo_ores.item;
 import java.util.ArrayList;
 import java.util.List;
 
+import neo_ores.api.LongUtils;
 import neo_ores.api.RecipeOreStack;
-import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellCorrection;
+import neo_ores.util.SpellUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,7 +51,7 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 		{
 			if(recipe.isItemStack())
 			{
-				ITextComponent itextcomponent0 = new TextComponentString(recipe.getStack().getDisplayName() + I18n.format("chat.displayStack") + " : x" + recipe.getSize());
+				ITextComponent itextcomponent0 = new TextComponentString(recipe.getStack().getDisplayName() + " (" + recipe.getStack().getItem().getRegistryName().getResourceDomain() + ")" + " : x" + recipe.getSize());
 				playerIn.sendStatusMessage(itextcomponent0, false);
 			}
 			else if(recipe.isOreDic())
@@ -85,7 +86,7 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 				list.add(TextFormatting.GRAY + getName(spell) + (flag.isAdvanced() ? TextFormatting.DARK_GRAY + " (" + spell.toString() + ")" : ""));
 			}
 			long manaConsume = SpellUtils.getMPConsume(spells);
-			list.add(TextFormatting.GRAY + I18n.format("tooltip.mana").trim() + " : " + manaConsume);
+			list.add(TextFormatting.GRAY + I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString(manaConsume));
 		}
 	}
 	

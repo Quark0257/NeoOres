@@ -1,7 +1,8 @@
-package neo_ores.api;
+package neo_ores.util;
 
 import java.util.Random;
 
+import neo_ores.api.IMagicExperienceContainer;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.data.PlayerDataStorage;
 import neo_ores.main.NeoOres;

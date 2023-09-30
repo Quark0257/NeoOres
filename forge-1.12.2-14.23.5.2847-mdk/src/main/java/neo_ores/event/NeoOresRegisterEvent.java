@@ -4,6 +4,7 @@ import neo_ores.client.render.RendererPedestal;
 import neo_ores.client.render.entity.RenderSpellBullet;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.item.INeoOresItem;
+import neo_ores.item.ItemSpell;
 import neo_ores.block.INeoOresBlock;
 import neo_ores.client.render.ModelLoaderItemSpell;
 import neo_ores.client.render.RendererNeoPortal;
@@ -45,7 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresInitEvent 
+public class NeoOresRegisterEvent 
 {
 	public static TextureAtlasSprite earth0;
 	public static TextureAtlasSprite water0;
@@ -62,14 +63,14 @@ public class NeoOresInitEvent
 	@SideOnly(Side.CLIENT)
 	public void registerColored(ColorHandlerEvent.Item event)
 	{
-		IItemColor color = new IItemColor()
+		IItemColor essenceColor = new IItemColor()
 		{
 			@Override
 			public int colorMultiplier(ItemStack stack, int tintIndex) 
 			{
 				if(stack.getItem() == NeoOresItems.air_essence_core)
 				{
-					int color_code = 0xFFFFFF;
+					int color_code = 0x00FFCE;
 					switch(stack.getMetadata()) 
 					{
 						case 0: color_code = 0xE8FFFB; break;
@@ -88,7 +89,7 @@ public class NeoOresInitEvent
 				}
 				else if(stack.getItem() == NeoOresItems.earth_essence_core)
 				{
-					int color_code = 0xFFFFFF;
+					int color_code = 0xB5FF00;
 					switch(stack.getMetadata()) 
 					{
 						case 0: color_code = 0xF8FFE8; break;
@@ -107,7 +108,7 @@ public class NeoOresInitEvent
 				}
 				else if(stack.getItem() == NeoOresItems.fire_essence_core)
 				{
-					int color_code = 0xFFFFFF;
+					int color_code = 0xFF5200;
 					switch(stack.getMetadata()) 
 					{
 						case 0: color_code = 0xFFEFE8; break;
@@ -126,7 +127,7 @@ public class NeoOresInitEvent
 				}
 				else if(stack.getItem() == NeoOresItems.water_essence_core)
 				{
-					int color_code = 0xFFFFFF;
+					int color_code = 0x8700FF;
 					switch(stack.getMetadata()) 
 					{
 						case 0: color_code = 0xF4E8FF; break;
@@ -146,10 +147,24 @@ public class NeoOresInitEvent
 				return 0xFFFFFF;
 			}
 		};
-		event.getItemColors().registerItemColorHandler(color, NeoOresItems.air_essence_core);
-		event.getItemColors().registerItemColorHandler(color, NeoOresItems.earth_essence_core);
-		event.getItemColors().registerItemColorHandler(color, NeoOresItems.fire_essence_core);
-		event.getItemColors().registerItemColorHandler(color, NeoOresItems.water_essence_core);
+		event.getItemColors().registerItemColorHandler(essenceColor, NeoOresItems.air_essence_core);
+		event.getItemColors().registerItemColorHandler(essenceColor, NeoOresItems.earth_essence_core);
+		event.getItemColors().registerItemColorHandler(essenceColor, NeoOresItems.fire_essence_core);
+		event.getItemColors().registerItemColorHandler(essenceColor, NeoOresItems.water_essence_core);
+		
+		IItemColor spellColor = new IItemColor()
+		{
+			@Override
+			public int colorMultiplier(ItemStack stack, int tintIndex) 
+			{
+				if(stack.getItem() instanceof ItemSpell && stack.getTagCompound() != null && stack.getTagCompound().hasKey("color"))
+				{
+					return stack.getTagCompound().getInteger("color");
+				}
+				return 0xFFFFFF;
+			}
+		};
+		event.getItemColors().registerItemColorHandler(spellColor, NeoOresItems.spell);
 	}
 	/*
 	@SubscribeEvent
@@ -190,7 +205,6 @@ public class NeoOresInitEvent
 		event.getRegistry().register(NeoOres.strong_mana_regen);
     }
 	
-	@SuppressWarnings("deprecation")
 	@SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) 
 	{
@@ -199,12 +213,12 @@ public class NeoOresInitEvent
 			event.getRegistry().register(block);
 		}
 		
-		GameRegistry.registerTileEntity(TileEntityManaFurnace.class, "mana_furnace");
-		GameRegistry.registerTileEntity(TileEntityNeoPortal.class, "neo_portal");
-		GameRegistry.registerTileEntity(TileEntityMageKnowledgeTable.class, "mage_knowledge_table");
-		GameRegistry.registerTileEntity(TileEntityEnhancedPedestal.class, "enhanced_pedestal");
-		GameRegistry.registerTileEntity(TileEntityPedestal.class, "pedestal");
-		GameRegistry.registerTileEntity(TileEntitySpellRecipeCreationTable.class, "spell_recipe_creation_table");
+		GameRegistry.registerTileEntity(TileEntityManaFurnace.class, new ResourceLocation(Reference.MOD_ID,"mana_furnace"));
+		GameRegistry.registerTileEntity(TileEntityNeoPortal.class, new ResourceLocation(Reference.MOD_ID,"neo_portal"));
+		GameRegistry.registerTileEntity(TileEntityMageKnowledgeTable.class, new ResourceLocation(Reference.MOD_ID,"mage_knowledge_table"));
+		GameRegistry.registerTileEntity(TileEntityEnhancedPedestal.class, new ResourceLocation(Reference.MOD_ID,"enhanced_pedestal"));
+		GameRegistry.registerTileEntity(TileEntityPedestal.class, new ResourceLocation(Reference.MOD_ID,"pedestal"));
+		GameRegistry.registerTileEntity(TileEntitySpellRecipeCreationTable.class, new ResourceLocation(Reference.MOD_ID,"spell_recipe_creation_table"));
     }
 	
 	@SubscribeEvent

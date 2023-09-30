@@ -2,15 +2,15 @@ package neo_ores.spell.effect;
 
 import java.util.Map;
 
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleMagic1;
-import neo_ores.event.NeoOresInitEvent;
+import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasSilk;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
@@ -216,7 +216,7 @@ public class SpellDig  extends SpellEffect implements HasRange,HasSilk,HasLuck,H
 	}
 
 	@Override
-	public void setHavestLevel(int value) 
+	public void setHarvestLevel(int value) 
 	{
 		this.harvestlevel = value;
 	}
@@ -322,7 +322,7 @@ public class SpellDig  extends SpellEffect implements HasRange,HasSilk,HasLuck,H
             for(int j = 0;j < 8;j++)
             {
             	int d = (int)(10.0D / (Math.random() + 0.5D));
-            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresInitEvent.particle0);
+            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresRegisterEvent.particle0);
             	//ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z,300);
             	Minecraft.getMinecraft().effectRenderer.addEffect(png);
             }

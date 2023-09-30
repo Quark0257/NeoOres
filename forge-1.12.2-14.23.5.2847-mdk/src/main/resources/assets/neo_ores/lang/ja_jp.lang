@@ -274,6 +274,10 @@ spell.summon.name=召喚
 spell.summon.desc=キャプチャリングボトルに保存されたモブを召喚するスペルアイテム。召喚するとき召喚するモブの最大体力と同じだけダメージを受ける。
 spell.nbt_apply.name=NBT
 spell.nbt_apply.desc=モブ召喚時、キャプチャリングボトルに保存されたモブのnbtを適用する。
+spell.ore_gen.name=鉱石生成
+spell.ore_gen.desc=石材を鉱石に変えるスペルアイテム。
+spell.no_inertia.name=反慣性力
+spell.no_inertia.desc=飛翔スペルの慣性の影響を無視するスペルアイテム。
 
 correction.0=
 correction.1= Ⅰ
@@ -385,5 +389,7 @@ config.misc.repeatable=呪文連打
 config.misc.repeatable.tooltip=呪文が連打可能かどうか。
 config.misc.mkt.back=背景のテクスチャパス
 config.misc.mkt.back.tooltip=魔術師の知識台の背景のテクスチャパスを変更する。
+
+neo_ores.pressLShiftDesc=L-Shiftで詳細表示
 
 homerunbat=§b§oホームランバット

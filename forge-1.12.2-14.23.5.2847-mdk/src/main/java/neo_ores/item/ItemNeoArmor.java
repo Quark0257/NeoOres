@@ -3,9 +3,9 @@ package neo_ores.item;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.TierUtils;
 import neo_ores.main.NeoOresItems;
+import neo_ores.util.PlayerManaDataServer;
 import neo_ores.world.dimension.DimensionHelper.ToolType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;

@@ -3,12 +3,11 @@ package neo_ores.spell.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellFormNotEntity;
-import neo_ores.item.ItemRayTraceable;
 import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -55,10 +54,9 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 		else
 		{
 			RayTraceResult blockresult = result;
-			if(blockresult == null && stack.getItem() instanceof ItemRayTraceable && runner instanceof EntityPlayer)
+			if(blockresult == null && runner instanceof EntityPlayer)
 			{
-				ItemRayTraceable item = (ItemRayTraceable)stack.getItem();
-				blockresult = item.rayTraceForPublic(world, (EntityPlayer)runner, this.liquid);
+				blockresult = SpellUtils.rayTrace(world, (EntityPlayer)runner, this.liquid);
 			}
 			
 			if(blockresult != null)

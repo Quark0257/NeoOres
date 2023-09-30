@@ -1,12 +1,28 @@
 package neo_ores.event;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonWriter;
+
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.ManaCompositionRecipe;
 import neo_ores.api.recipe.ManaCraftingRecipe;
+import neo_ores.api.recipe.OreWeightRecipe;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.main.NeoOres;
@@ -31,7 +47,9 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -39,7 +57,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresInitEventAfterItems 
+public class NeoOresRecipeRegisterEvent 
 {	
 	private List<ManaCraftingRecipeManager> manacraftingrecipes = new ArrayList<ManaCraftingRecipeManager>();
 	private List<ManaCompositionRecipeManager> manacompositionrecipes = new ArrayList<ManaCompositionRecipeManager>();
@@ -124,6 +142,8 @@ public class NeoOresInitEventAfterItems
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv11,new RecipeOreStack(new ItemStack(Items.SPIDER_EYE),8192),new RecipeOreStack("gemQuartz",8192)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_summon, new RecipeOreStack("mobBottle",1),new RecipeOreStack(new ItemStack(Items.NETHER_STAR),1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_nbt_applying, new RecipeOreStack(new ItemStack(Items.NETHER_STAR),64)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_ore_gen, new RecipeOreStack(new ItemStack(Items.NETHER_STAR),64),new RecipeOreStack(new ItemStack(NeoOresItems.sylphite),16),new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_ingot),16),new RecipeOreStack(new ItemStack(NeoOresItems.salamite),16),new RecipeOreStack(new ItemStack(NeoOresItems.undite),16)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_no_inertia, new RecipeOreStack(new ItemStack(Items.ENDER_EYE),1)));
 	}
 
 	@SubscribeEvent(priority=EventPriority.LOWEST)
@@ -153,7 +173,6 @@ public class NeoOresInitEventAfterItems
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.sylphite_hoe), 10000, "RR", "T ","T ",'R', "gemSylphite", 'T',"stickWood");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.sylphite_paxel), 10000, "ASP", "LTH"," T ",'A', new ItemStack(NeoOresItems.sylphite_axe),'H', new ItemStack(NeoOresItems.sylphite_hoe),'P', new ItemStack(NeoOresItems.sylphite_pickaxe),'L', new ItemStack(NeoOresItems.sylphite_shovel),'S', new ItemStack(NeoOresItems.sylphite_sword), 'T',"stickWood");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.sylphite_shovel), 10000, "R", "T","T",'R',"gemSylphite", 'T',"stickWood");
-		this.addManaCraftingRecipe(new ItemStack(Blocks.LOG), 20, "RR", "RR",'R', "plankWood");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.essence,1,0),5," H ","HXH"," H ",'H',"gravel",'X',"nuggetIron");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.essence,1,1),5," H ","HXH"," H ",'H',PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER),'X',"nuggetIron");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.essence,1,2),5," H ","HXH"," H ",'H',new ItemStack(Blocks.MAGMA),'X',"nuggetIron");
@@ -200,6 +219,139 @@ public class NeoOresInitEventAfterItems
 			n++;
 		}
 	}
+	
+	public static void registerFromJson(FMLPreInitializationEvent event) 
+	{
+		File configFile = new File(event.getModConfigurationDirectory(),"neo_ores.json");
+        if (!configFile.exists())
+        {
+        	try {
+            	JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8));
+                JsonObject configDefault = new JsonObject();
+                JsonArray spell_ore_gen = new JsonArray();
+                
+                JsonObject stone = new JsonObject();
+                stone.addProperty("id", "minecraft:stone");
+                stone.addProperty("metadata", 0);
+                //OreDic Only
+                JsonArray acceptModsStoneOre = new JsonArray();
+                acceptModsStoneOre.add("minecraft");
+                acceptModsStoneOre.add("thermalfoundation");
+                acceptModsStoneOre.add("nuclearcraft");
+                acceptModsStoneOre.add("ic2");
+                acceptModsStoneOre.add("mekanism");
+                acceptModsStoneOre.add("roots");
+                acceptModsStoneOre.add("thaumcraft");
+                acceptModsStoneOre.add("actuallyaddition");
+                acceptModsStoneOre.add("biomesoplenty");
+                acceptModsStoneOre.add("appliedenergistics2");
+                acceptModsStoneOre.add("immersiveengineering");
+                acceptModsStoneOre.add("astralsorcery");
+                acceptModsStoneOre.add("draconicevolution");
+                acceptModsStoneOre.add("embers");
+                acceptModsStoneOre.add("rftools");
+                acceptModsStoneOre.add("forestry");
+                acceptModsStoneOre.add("projectred-exploration");
+                acceptModsStoneOre.add("metallurgy");
+                acceptModsStoneOre.add("iceandfire");
+                
+                JsonObject oreIronStone = new JsonObject();
+                oreIronStone.addProperty("registry_name", "oredic_ore_iron_stone");
+                oreIronStone.addProperty("id", "ore:oreIron");
+                oreIronStone.addProperty("weight", 11520);
+                oreIronStone.add("replace_block", stone);
+                oreIronStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreIronStone);
+                
+                JsonObject oreGoldStone = new JsonObject();
+                oreGoldStone.addProperty("registry_name", "oredic_ore_gold_stone");
+                oreGoldStone.addProperty("id", "ore:oreGold");
+                oreGoldStone.addProperty("weight", 576);
+                oreGoldStone.add("replace_block", stone);
+                oreGoldStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreGoldStone);
+                
+                JsonObject oreDiamondStone = new JsonObject();
+                oreDiamondStone.addProperty("registry_name", "oredic_ore_diamond_stone");
+                oreDiamondStone.addProperty("id", "ore:oreDiamond");
+                oreDiamondStone.addProperty("weight", 128);
+                oreDiamondStone.add("replace_block", stone);
+                oreDiamondStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreDiamondStone);
+                
+                JsonObject oreEmeraldStone = new JsonObject();
+                oreEmeraldStone.addProperty("registry_name", "oredic_ore_emerald_stone");
+                oreEmeraldStone.addProperty("id", "ore:oreEmerald");
+                oreEmeraldStone.addProperty("weight", 112);
+                oreEmeraldStone.add("replace_block", stone);
+                oreEmeraldStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreEmeraldStone);
+                
+                JsonObject oreRedstoneStone = new JsonObject();
+                oreRedstoneStone.addProperty("registry_name", "oredic_ore_redstone_stone");
+                oreRedstoneStone.addProperty("id", "ore:oreRedstone");
+                oreRedstoneStone.addProperty("weight", 1024);
+                oreRedstoneStone.add("replace_block", stone);
+                oreRedstoneStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreRedstoneStone);
+                
+                JsonObject oreLapisStone = new JsonObject();
+                oreLapisStone.addProperty("registry_name", "oredic_ore_lapis_stone");
+                oreLapisStone.addProperty("id", "ore:oreLapis");
+                oreLapisStone.addProperty("weight", 224);
+                oreLapisStone.add("replace_block", stone);
+                oreLapisStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreLapisStone);
+                
+                JsonObject oreCoalStone = new JsonObject();
+                oreCoalStone.addProperty("registry_name", "oredic_ore_coal_stone");
+                oreCoalStone.addProperty("id", "ore:oreCoal");
+                oreCoalStone.addProperty("weight", 43520);
+                oreCoalStone.add("replace_block", stone);
+                oreCoalStone.add("acceptMods", acceptModsStoneOre);
+                spell_ore_gen.add(oreCoalStone);
+                
+                configDefault.add("spell_ore_gen", spell_ore_gen);
+                
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                writer.setIndent("  ");
+                gson.toJson(configDefault, writer);
+            	writer.close();
+        	}
+        	catch(Exception e) {
+        		FMLLog.log.error("Unable to create {} - skipping", configFile);
+        	}
+        }
+        JsonParser parser = new JsonParser();
+        JsonElement config;
+        try
+        {
+            try (Reader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))
+            {
+                config = parser.parse(reader);
+            }
+            
+            if(config.isJsonObject()) {
+            	JsonObject jo = config.getAsJsonObject();
+            	for(JsonElement genE : jo.get("spell_ore_gen").getAsJsonArray()) {
+            		try {
+            			JsonObject gen = genE.getAsJsonObject();
+            			GameRegistry.findRegistry(OreWeightRecipe.class).register(new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID,gen.get("registry_name").getAsString())));
+            		} catch(Exception e) {
+            			FMLLog.log.error("Unable to register");
+            		}
+            	}
+            }
+        } catch (Exception e) {
+            FMLLog.log.error("Unable to parse {} - skipping", configFile);
+        }
+	}
+	
+	@SubscribeEvent(priority=EventPriority.LOWEST)
+    public static void registerOreWeightRecipes(RegistryEvent.Register<OreWeightRecipe> event)
+    {
+		//event.getR
+    }
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)

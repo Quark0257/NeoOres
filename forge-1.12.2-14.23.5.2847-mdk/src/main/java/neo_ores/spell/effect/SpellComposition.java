@@ -1,14 +1,14 @@
 package neo_ores.spell.effect;
 
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.recipe.MCPRUtils;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleNoGravity;
-import neo_ores.event.NeoOresInitEvent;
+import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresItems;
 import neo_ores.spell.SpellItemInterfaces.HasTier;
 import neo_ores.tileentity.TileEntityPedestal;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
@@ -238,10 +238,10 @@ public class SpellComposition extends SpellEffect implements HasTier
 	
 	private TextureAtlasSprite getTexture(int meta)
 	{
-		if(meta == 0)return NeoOresInitEvent.air0;
-		else if(meta == 1)return NeoOresInitEvent.earth0;
-		else if(meta == 2)return NeoOresInitEvent.fire0;
-		return NeoOresInitEvent.water0;
+		if(meta == 0)return NeoOresRegisterEvent.air0;
+		else if(meta == 1)return NeoOresRegisterEvent.earth0;
+		else if(meta == 2)return NeoOresRegisterEvent.fire0;
+		return NeoOresRegisterEvent.water0;
 	}
 	
 	@Override

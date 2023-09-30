@@ -1,22 +1,17 @@
 package neo_ores.spell.correction;
 
-import neo_ores.api.spell.Spell;
-import neo_ores.api.spell.Spell.SpellCorrection;
+import neo_ores.api.spell.Spell.SpellCorrectionSingle;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 
-public class SpellHarvestLevel  extends SpellCorrection
+public class SpellHarvestLevel  extends SpellCorrectionSingle<HasHarvestLevel>
 {
 	public SpellHarvestLevel(int level) 
 	{
 		super(level);
 	}
-	
+
 	@Override
-	public void onCorrection(Spell spell) 
-	{
-		if(spell instanceof HasHarvestLevel)
-		{
-			((HasHarvestLevel) spell).setHavestLevel(this.level);
-		}
+	protected void onApply(HasHarvestLevel spell) {
+		spell.setHarvestLevel(this.getLevel());
 	}
 }

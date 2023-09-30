@@ -273,7 +273,11 @@ spell.no_resistance.desc=The Spell Item of ignore effect of any resistance of a 
 spell.summon.name=Summon
 spell.summon.desc=The Spell Item of summoning mob which stored Bottle o' Capturing. You need to pay health as same as the max health of summoning mob.
 spell.nbt_apply.name=NBT
-spell.nbt_apply.desc=The Spell Item of applying mob nbt to summoning mob with Summon. 
+spell.nbt_apply.desc=The Spell Item of applying mob nbt to summoning mob with Summon.
+spell.ore_gen.name=Ore Generation
+spell.ore_gen.desc=The Spell Item of transforming stone materials to ores.
+spell.no_inertia.name=Anti-Inertia
+spell.no_inertia.desc=The Spell Item of ignore effect of inertia of a spell flying.
 
 correction.0=
 correction.1= I
@@ -387,5 +391,7 @@ config.misc.repeatable=Spell Repeatable
 config.misc.repeatable.tooltip=Whether is spell repeated running.
 config.misc.mkt.back=Background Texture Path
 config.misc.mkt.back.tooltip=Change background texture path of Knowledge Table of Mage.
+
+neo_ores.pressLShiftDesc=Press L-Shift for details
 
 homerunbat=§b§oHome Run Bat

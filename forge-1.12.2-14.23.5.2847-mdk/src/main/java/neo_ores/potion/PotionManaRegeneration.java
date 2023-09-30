@@ -1,6 +1,6 @@
 package neo_ores.potion;
 
-import neo_ores.api.PlayerManaDataServer;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 

@@ -21,7 +21,7 @@ public class SpellItemInterfaces
 	
 	public static interface HasHarvestLevel extends ICorrectingBase
 	{
-		public void setHavestLevel(int value);
+		public void setHarvestLevel(int value);
 	}
 	
 	public static interface HasHealLevel extends ICorrectingBase
@@ -72,5 +72,15 @@ public class SpellItemInterfaces
 	public static interface HasCanApplyNBT extends ICorrectingBase
 	{
 		public void setCanApplyNBT();
+	}
+	
+	public static interface HasNoInertia extends ICorrectingBase
+	{
+		public void setNoInertia();
+	}
+	
+	public static interface HasCollidableFilter extends ICorrectingBase
+	{
+		public void setCollidableFilter();
 	}
 }

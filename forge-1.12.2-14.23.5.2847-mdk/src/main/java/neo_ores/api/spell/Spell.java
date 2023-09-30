@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 public abstract class Spell
 {
@@ -67,7 +68,7 @@ public abstract class Spell
 			}
 			catch(ClassCastException e)
 			{
-				System.out.println("Spelling has an unexpected error (a class cast error) and this spell item was skipped!");
+				FMLLog.log.error("Spelling has an unexpected error (a class cast error) and this spell item was skipped!");
 				return;
 			}
 		}

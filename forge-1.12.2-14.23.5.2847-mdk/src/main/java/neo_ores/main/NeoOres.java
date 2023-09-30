@@ -8,10 +8,10 @@ import neo_ores.config.NeoOresConfig;
 import neo_ores.creativetab.NeoOresTab;
 import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
-import neo_ores.event.NeoOresInitEvent;
-import neo_ores.event.NeoOresInitEventAfterItems;
+import neo_ores.event.NeoOresRegisterEvent;
+import neo_ores.event.NeoOresRecipeRegisterEvent;
 import neo_ores.event.NeoOresItemEvent;
-import neo_ores.event.NeoOresPlayerEvent;
+import neo_ores.event.NeoOresEntityEvent;
 import neo_ores.packet.PacketItemsToClient;
 import neo_ores.packet.PacketManaDataToClient;
 import neo_ores.packet.PacketManaDataToServer;
@@ -76,15 +76,16 @@ public class NeoOres
 	public void preInit(FMLPreInitializationEvent event) 
 	{
 		NeoOresInfoCore.registerInfo(meta);
-		MinecraftForge.EVENT_BUS.register(new NeoOresInitEvent());
-		MinecraftForge.EVENT_BUS.register(new NeoOresInitEventAfterItems());
-		MinecraftForge.EVENT_BUS.register(new NeoOresPlayerEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresRegisterEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresRecipeRegisterEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresEntityEvent());
 		MinecraftForge.EVENT_BUS.register(new NeoOresItemEvent());
 		DimensionManager.registerDimension(THE_WATER.getId(), THE_WATER);
 		DimensionManager.registerDimension(THE_EARTH.getId(), THE_EARTH);
 		DimensionManager.registerDimension(THE_FIRE.getId(), THE_FIRE);
 		DimensionManager.registerDimension(THE_AIR.getId(), THE_AIR);
 		GameRegistry.registerWorldGenerator(new NeoOresOreGen(), 0);
+		NeoOresRecipeRegisterEvent.registerFromJson(event);
 		
 		PACKET.registerMessage(PacketManaDataToClient.Handler.class, PacketManaDataToClient.class, 0, Side.CLIENT);
 		PACKET.registerMessage(PacketManaDataToServer.Handler.class, PacketManaDataToServer.class, 1, Side.SERVER);
@@ -94,7 +95,7 @@ public class NeoOres
 		
 		if(event.getSide().isClient())
 		{
-			NeoOresInitEvent.registerRendering();
+			NeoOresRegisterEvent.registerRendering();
 		}
 	}
 	
@@ -102,8 +103,7 @@ public class NeoOres
 	public void init(FMLInitializationEvent event) 
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		
-		NeoOresInitEvent.registerEntity(this);
+		NeoOresRegisterEvent.registerEntity(this);
 	}
 	
 	@EventHandler

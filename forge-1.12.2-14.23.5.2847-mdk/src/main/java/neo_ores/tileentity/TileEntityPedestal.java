@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import neo_ores.api.LargeItemStack;
-import neo_ores.api.SpellUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ISpellWritable;
 import neo_ores.item.IPostscriptDataIntoSpell;
@@ -15,6 +14,7 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresItems;
 import neo_ores.packet.PacketItemsToClient;
+import neo_ores.util.SpellUtils;
 import net.minecraft.block.BlockQuartz;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStoneSlab;
@@ -252,25 +252,23 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 					if(this.phase < SpellUtils.getRecipeFromList(this.getRecipeIn()).size())
 					{
 						if(!SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().isEmpty()) this.getEP().setDisplay(SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().get((this.tickCount / 20) % SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().size()));
+						loop0 :
 						for(int index = 0;index < this.getEP().getSizeInventory();index++)
 						{
-							boolean flag0 = false;
 							for(ItemStack stack : this.getEP().getItems().get(index).asList(64))
 							{
 								if(SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).compareWith(stack))
 								{
 									this.getEP().decrStackSize(index, 1);
 									this.requiredSize++;
-									flag0 = true;
 									if(stack.getItem() instanceof IPostscriptDataIntoSpell)
 									{
 										this.additionalData = ((IPostscriptDataIntoSpell)stack.getItem()).postscript(stack, this.world,this.additionalData);
 										this.desc = ((IPostscriptDataIntoSpell)stack.getItem()).addFormattedDesc(stack, this.world, this.desc);
 									}		
-									break;
+									break loop0;
 								}
 							}
-							if(flag0) break;
 						}
 						if(requiredSize >= SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getSize())
 						{

@@ -166,7 +166,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 	public void onBlockClicked(World world,BlockPos pos,EntityPlayer player)
 	{
 		if(world.isRemote) return;
-
+		
 		@SuppressWarnings("deprecation")
 		RayTraceResult result = ForgeHooks.rayTraceEyes(player,((EntityPlayerMP)player).interactionManager.getBlockReachDistance() + 1.0D);
 		if(result == null || result.typeOfHit != Type.BLOCK) return;

@@ -1,4 +1,4 @@
-package neo_ores.api;
+package neo_ores.util;
 
 import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;

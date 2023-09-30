@@ -2,10 +2,10 @@ package neo_ores.client.gui;
 
 import javax.annotation.Nullable;
 
-import neo_ores.api.SpellUtils;
-import neo_ores.api.StudyItemManagerClient;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.util.SpellUtils;
+import neo_ores.util.StudyItemManagerClient;
 import neo_ores.api.spell.KnowledgeTab;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.fml.relauncher.Side;

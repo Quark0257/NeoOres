@@ -1,10 +1,10 @@
 package neo_ores.packet;
 
 import io.netty.buffer.ByteBuf;
-import neo_ores.api.PlayerManaDataServer;
-import neo_ores.api.SpellUtils;
-import neo_ores.api.StudyItemManagerServer;
 import neo_ores.main.Reference;
+import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
+import neo_ores.util.StudyItemManagerServer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;

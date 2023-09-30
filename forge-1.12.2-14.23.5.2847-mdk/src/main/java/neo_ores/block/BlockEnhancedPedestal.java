@@ -115,9 +115,14 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	        else
 	        {
 	        	Item item = itemstack.getItem();
-	        	if(item == NeoOresItems.mana_wrench)
+	        	if(!playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
 	        	{
 	        		teep.addSlot(1);
+	        		return true;
+	        	}
+	        	else if(playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
+	        	{
+	        		teep.addSlot(-1);
 	        		return true;
 	        	}
 	        	else if(item == NeoOresItems.spell)
@@ -145,17 +150,12 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 
 	    if (tileentity instanceof TileEntityEnhancedPedestal)
 	    {
-	    	ItemStack hand = player.getHeldItemMainhand();
 	    	TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)tileentity;
     		int slot = teep.getSlot();
     		LargeItemStack isws = teep.getItems().get(slot);
     		ItemStack stack = isws.getStack().copy();
 
-    		if(hand.getItem() == NeoOresItems.mana_wrench)
-    		{
-    			teep.addSlot(-1);
-    		}
-    		else if(player.isSneaking())
+    		if(player.isSneaking())
 	    	{
 	    		if(isws.getSize() > stack.getMaxStackSize())
 	    		{

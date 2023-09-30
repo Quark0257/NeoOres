@@ -2,14 +2,15 @@ package neo_ores.spell.effect;
 
 import java.util.Map;
 
-import neo_ores.api.PlayerManaDataServer;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOres;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerManaDataServer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
@@ -38,7 +39,7 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 	@Override
 	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack) 
 	{
-		if(result != null && result.typeOfHit == Type.ENTITY && result.entityHit instanceof EntityLivingBase && !world.isRemote)
+		if(result != null && result.typeOfHit == Type.ENTITY && !world.isRemote)
 		{
 			ItemStack item = stack.copy();
 			if(this.luck > 0)
@@ -46,31 +47,21 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 				item.addEnchantment(Enchantments.LOOTING, this.luck);
 			}
 			
-			EntityLivingBase entity = (EntityLivingBase)result.entityHit;
+			Entity entity = (Entity)result.entityHit;
 			
 			if(range0 > 0)
 			{
 				int range = range0 *2;
-				for(EntityLivingBase elb : world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entity.posX - range,entity.posY - range,entity.posZ - range,entity.posX + range,entity.posY + range,entity.posZ + range)))
+				for(Entity elb : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.posX - range,entity.posY - range,entity.posZ - range,entity.posX + range,entity.posY + range,entity.posZ + range)))
 				{
 					if(elb != entity && elb != runner)
 					{
-						elb.attackEntityFrom(NeoOres.setDamageByEntity(NeoOres.EARTH,runner), this.damageLevel * 2 + 3);
-						if(runner instanceof EntityPlayerMP)
-						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
-							pmds.addMXP(1L + (long)Math.pow(2,range) + (long)Math.pow(3,luck));	
-						}
+						this.onDamage(elb, runner);
 					}
 				}
 			}
 			
-			entity.attackEntityFrom(NeoOres.setDamageByEntity(NeoOres.EARTH,runner), this.damageLevel * 2 + 3);
-			if(runner instanceof EntityPlayerMP)
-			{
-				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
-				pmds.addMXP(1L +  (long)Math.pow(3, luck));	
-			}
+			this.onDamage(entity, runner);
 			
 			Map<Enchantment,Integer> enchs = EnchantmentHelper.getEnchantments(item);
 			if(enchs.containsKey(Enchantments.LOOTING))
@@ -85,6 +76,19 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 			}
 		}
 		
+	}
+	
+	private void onDamage(Entity elb,EntityLivingBase runner)
+	{
+		if(elb.canBeCollidedWith())
+		{
+			elb.attackEntityFrom(NeoOres.setDamageByEntity(NeoOres.EARTH,runner), (int)(3.5 * Math.pow(1.5,this.damageLevel)) + 3);
+			if(runner instanceof EntityPlayerMP)
+			{
+				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
+				pmds.addMXP(10L + (long)Math.pow(3,luck));	
+			}
+		}
 	}
 
 	@Override

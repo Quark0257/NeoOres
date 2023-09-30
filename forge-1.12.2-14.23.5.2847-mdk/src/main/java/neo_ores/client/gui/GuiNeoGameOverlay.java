@@ -1,7 +1,7 @@
 package neo_ores.client.gui;
 
 import neo_ores.api.LongUtils;
-import neo_ores.api.PlayerManaDataClient;
+import neo_ores.util.PlayerManaDataClient;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -8,6 +8,7 @@ import neo_ores.client.particle.ParticleMagic1;
 import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
 import neo_ores.util.UtilSpellOreGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -61,60 +62,13 @@ public class SpellOreGen extends SpellEffect implements HasRange
 		{
 			ItemStack item = stack.copy();
 			EnumFacing face = EnumFacing.getFacingFromVector((float)(result.hitVec.x - runner.posX),(float)(result.hitVec.y - runner.posY - runner.getEyeHeight()),(float)(result.hitVec.z - runner.posZ));
-			if(face == EnumFacing.DOWN || face == EnumFacing.UP)
+			for(BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				int x = result.getBlockPos().getX() - range;
-				int z = result.getBlockPos().getZ() - range;
-				for(int i = 0;i < range * 2 + 1;i++)
+				if(world.isRemote) this.onDisplay(world,pos, runner);
+				else
 				{
-					for(int j = 0;j < range * 2 + 1;j++)
-					{
-						BlockPos pos = new BlockPos(x + i,result.getBlockPos().getY(),z + j);
-						if(world.isRemote) this.onDisplay(world,pos, runner);
-						else
-						{
-							IBlockState state = world.getBlockState(pos);
-							this.transform(state, world, pos, runner, item);	
-						}
-
-
-					}
-				}
-			}
-			else if(face == EnumFacing.WEST || face == EnumFacing.EAST)
-			{
-				int y = result.getBlockPos().getY() - range;
-				int z = result.getBlockPos().getZ() - range;
-				for(int i = 0;i < range * 2 + 1;i++)
-				{
-					for(int j = 0;j < range * 2 + 1;j++)
-					{
-						BlockPos pos = new BlockPos(result.getBlockPos().getX(),y + i,z + j);
-						if(world.isRemote) this.onDisplay(world,pos, runner);
-						else
-						{
-							IBlockState state = world.getBlockState(pos);
-							this.transform(state, world, pos, runner, item);
-						}
-					}
-				}
-			}
-			else
-			{
-				int x = result.getBlockPos().getX() - range;
-				int y = result.getBlockPos().getY() - range;
-				for(int i = 0;i < range * 2 + 1;i++)
-				{
-					for(int j = 0;j < range * 2 + 1;j++)
-					{
-						BlockPos pos = new BlockPos(x + i,y + j,result.getBlockPos().getZ());
-						if(world.isRemote) this.onDisplay(world,pos, runner);
-						else
-						{
-							IBlockState state = world.getBlockState(pos);
-							this.transform(state, world, pos, runner, item);
-						}
-					}
+					IBlockState state = world.getBlockState(pos);
+					this.transform(state, world, pos, runner, item);	
 				}
 			}
 		}
@@ -160,6 +114,21 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	@SideOnly(Side.CLIENT)
 	private void onDisplay(World worldIn ,BlockPos pos,EntityLivingBase runner)
 	{
+		double d1 = (double)((float)pos.getX());
+        double d2 = (double)((float)pos.getY());
+        double d3 = (double)((float)pos.getZ());
+        for(Entry<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1,d2,d3),new Vec3d(1.0,1.0,1.0),new Vec3d(1.0,1.0,1.0)).entrySet())
+        {
+        	Vec3d start = entry.getKey();
+        	Vec3d velocity = entry.getValue();
+        	for(int j = 0;j < 8;j++)
+            {
+            	int d = (int)(10.0D / (Math.random() + 0.5D));
+            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresRegisterEvent.particle0);
+            	Minecraft.getMinecraft().effectRenderer.addEffect(png);
+            }
+        }
+		/*
         for (int i = 0; i < 12; ++i)
         {
             double d1 = (double)((float)pos.getX());
@@ -251,6 +220,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
             	Minecraft.getMinecraft().effectRenderer.addEffect(png);
             }
         }
+        */
 	}
 	
 	@Override

@@ -23,7 +23,9 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -568,5 +570,77 @@ public class SpellUtils
 		{
 			return 0;
 		}
+	}
+	
+	public static List<BlockPos> rangedPos(BlockPos target, EnumFacing face, int range)
+	{
+		List<BlockPos> list = new ArrayList<BlockPos>();
+		if(face == EnumFacing.DOWN || face == EnumFacing.UP)
+		{
+			int x = target.getX() - range;
+			int z = target.getZ() - range;
+			for(int i = 0;i < range * 2 + 1;i++)
+			{
+				for(int j = 0;j < range * 2 + 1;j++)
+				{
+					BlockPos pos = new BlockPos(x + i,target.getY(),z + j);
+					list.add(pos);
+				}
+			}
+		}
+		else if(face == EnumFacing.WEST || face == EnumFacing.EAST)
+		{
+			int y = target.getY() - range;
+			int z = target.getZ() - range;
+			for(int i = 0;i < range * 2 + 1;i++)
+			{
+				for(int j = 0;j < range * 2 + 1;j++)
+				{
+					BlockPos pos = new BlockPos(target.getX(),y + i,z + j);
+					list.add(pos);
+				}
+			}
+		}
+		else
+		{
+			int x = target.getX() - range;
+			int y = target.getY() - range;
+			for(int i = 0;i < range * 2 + 1;i++)
+			{
+				for(int j = 0;j < range * 2 + 1;j++)
+				{
+					BlockPos pos = new BlockPos(x + i,y + j,target.getZ());
+					list.add(pos);
+				}
+			}
+		}
+		return list;
+	}
+	
+	public static Map<Vec3d,Vec3d> getPosVelOnParallelepiped(Vec3d target, Vec3d size, Vec3d velocity) 
+	{
+		Map<Vec3d,Vec3d> map = new HashMap<Vec3d,Vec3d>();
+		double d1 = target.x;
+		double d2 = target.y;
+		double d3 = target.z;
+		double d4 = size.x;
+		double d5 = size.y;
+		double d6 = size.z;
+		double d7 = velocity.x;
+		double d8 = velocity.y;
+		double d9 = velocity.z;
+		map.put(new Vec3d(d1, d2, d3),new Vec3d(d7, 0.0D, 0.0D));
+		map.put(new Vec3d(d1, d2, d3),new Vec3d(0.0D, 0.0D, d9));
+		map.put(new Vec3d(d1, d2, d3 + d6),new Vec3d(0.0D, d8, 0.0D));
+		map.put(new Vec3d(d1, d2 + d5, d3),new Vec3d(0.0D, -d8, 0.0D));
+		map.put(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(0.0D, 0.0D, -d9));
+		map.put(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(d7, 0.0D, 0.0D));
+		map.put(new Vec3d(d1 + d4, d2, d3),new Vec3d(0.0D, d8, 0.0D));
+		map.put(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(0.0D, 0.0D, -d9));
+		map.put(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(-d7, 0.0D, 0.0D));
+		map.put(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(0.0D, 0.0D, d9));
+		map.put(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(-d7, 0.0D, 0.0D));
+		map.put(new Vec3d(d1 + d4, d2 + d5, d3 + d6),new Vec3d(0.0D, -d8, 0.0D));
+		return map;
 	}
 }

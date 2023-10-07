@@ -52,7 +52,7 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 			
 			if(range0 > 0)
 			{
-				int range = range0 *2;
+				int range = range0 * 2;
 				for(Entity elb : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.posX - range,entity.posY - range,entity.posZ - range,entity.posX + range,entity.posY + range,entity.posZ + range)))
 				{
 					if(elb != entity && elb != runner)

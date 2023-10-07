@@ -54,7 +54,7 @@ public class EntitySpellBullet extends EntityThrowable
         super(worldIn,x,y,z);
     }
     
-    public EntitySpellBullet(World worldIn, EntityLivingBase shooter,boolean nogravity,boolean noResistance,int life,NBTTagCompound spells,boolean supportLiquid,ItemStack handItem,boolean collided)
+    public EntitySpellBullet(World worldIn, EntityLivingBase shooter,boolean nogravity,boolean noResistance,int life,NBTTagCompound spells,boolean supportLiquid,ItemStack handItem,boolean applyCollidedFilter)
     {
         super(worldIn,shooter);
         this.spells = SpellUtils.getListFromItemStackNBT(spells);
@@ -66,7 +66,7 @@ public class EntitySpellBullet extends EntityThrowable
         this.throughWater = noResistance;
         this.setNoGravity(nogravity);
         this.stack = handItem.copy();
-        this.collided = collided;
+        this.collided = applyCollidedFilter;
     }
     
     public void shoot(EntityLivingBase entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, boolean canApplyInertia)

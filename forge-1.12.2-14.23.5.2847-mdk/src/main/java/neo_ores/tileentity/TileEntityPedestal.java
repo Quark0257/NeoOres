@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import neo_ores.api.LargeItemStack;
+import neo_ores.api.StackUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ISpellWritable;
 import neo_ores.item.IPostscriptDataIntoSpell;
@@ -549,7 +549,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	
 	private boolean compareWith(ItemStack stack1,ItemStack stack2)
 	{
-		return stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage() &&  LargeItemStack.compareNBTWith(stack1, stack2);
+		return stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage() &&  StackUtils.compareNBTWith(stack1, stack2);
 	}
 	
 	public void spellCreation(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)

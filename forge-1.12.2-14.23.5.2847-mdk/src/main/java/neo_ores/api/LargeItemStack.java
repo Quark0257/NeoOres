@@ -18,12 +18,12 @@ public class  LargeItemStack
 
     public LargeItemStack(ItemStack itemstack, int size)
     {
-    	stack = (itemstack == null) ? ItemStack.EMPTY : itemstack;
+    	stack = (itemstack == null) ? ItemStack.EMPTY : itemstack.copy();
     	stack.setCount(1);
         this.size = size;
-        ItemStack stack = itemstack.copy();
-        stack.setCount(size);
-        this.setMediate(stack);
+        ItemStack stack0 = itemstack.copy();
+        stack0.setCount(size);
+        this.setMediate(stack0);
     }
 
     public ItemStack getStack()
@@ -73,7 +73,7 @@ public class  LargeItemStack
 
     public boolean addStack(ItemStack stack)
     {
-        if(this.compareWith(stack))
+        if(StackUtils.compareWith(this.getStack(),stack))
         {
             this.addSize(stack.getCount());
             return true;
@@ -81,19 +81,9 @@ public class  LargeItemStack
         return false;
     }
     
-    @SuppressWarnings("static-access")
-	public boolean compareWith(ItemStack stack)
+    public boolean compareWith(ItemStack stack)
     {
-    	if(stack.getItem() == this.stack.getItem() && stack.getItemDamage() == this.stack.getItemDamage() &&  this.compareNBTWith(stack, getStack()))
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    public static boolean compareNBTWith(ItemStack stack1,ItemStack stack2)
-    {
-    	return (!stack1.hasTagCompound() && stack2.hasTagCompound() || stack1.hasTagCompound() && !stack2.hasTagCompound()) ? false : ((!stack1.hasTagCompound() && !stack2.hasTagCompound()) ? true : stack1.getTagCompound().equals(stack2.getTagCompound()));
+    	return StackUtils.compareWith(this.getStack(), stack);
     }
     
     public boolean isEmpty()

@@ -3,12 +3,14 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.spell.Spell.SpellEffect;
+import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.main.NeoOres;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -40,7 +42,7 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 	@Override
 	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack) 
 	{
-		if(result != null && result.typeOfHit == Type.ENTITY && !world.isRemote)
+		if(result != null && result.typeOfHit == Type.ENTITY)
 		{
 			ItemStack item = stack.copy();
 			if(this.luck > 0)
@@ -57,12 +59,12 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 				{
 					if(elb != entity && elb != runner)
 					{
-						this.onDamage(elb, runner,item);
+						this.onDamage(world,elb, runner,item);
 					}
 				}
 			}
 			
-			this.onDamage(entity, runner,item);
+			this.onDamage(world,entity, runner,item);
 			
 			Map<Enchantment,Integer> enchs = EnchantmentHelper.getEnchantments(item);
 			if(enchs.containsKey(Enchantments.LOOTING))
@@ -79,11 +81,12 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 		
 	}
 	
-	private void onDamage(Entity elb,EntityLivingBase runner,ItemStack stack)
+	private void onDamage(World world,Entity elb,EntityLivingBase runner,ItemStack stack)
 	{
 		if(elb.canBeCollidedWith())
 		{
 			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH,runner,stack), (int)(3.5 * Math.pow(1.5,this.damageLevel)) + 3);
+			if(world.isRemote) SpellUtils.onDisplayParticleTypeAEntity(world, elb,NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack), 16);
 			if(runner instanceof EntityPlayerMP)
 			{
 				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);

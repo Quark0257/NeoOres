@@ -31,7 +31,7 @@ public class SpellBullet  extends SpellFormSpellEntity implements HasChanceLiqui
 	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack,RayTraceResult result, NBTTagCompound spells) 
 	{
 		EntitySpellBullet entity = new EntitySpellBullet(world, runner, this.noGravity,this.noResistance, 20 * (this.continuation + 1),spells,this.liquid, stack, canCollided);
-        entity.shoot(runner, runner.rotationPitch, runner.rotationYaw, 0.0F, 0.5F * (this.speed + 1),!this.noInertia);
+        entity.shoot(runner, runner.rotationPitch, runner.rotationYaw, 0.0F, 0.5F * (this.speed + 2),!this.noInertia);
         world.playSound(runner.posX, runner.posY, runner.posZ, SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F, true);
         world.spawnEntity(entity);
 	}

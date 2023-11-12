@@ -6,6 +6,7 @@ import java.util.Random;
 import neo_ores.block.BlockEnhancedPedestal;
 import neo_ores.block.BlockPedestal;
 import neo_ores.client.gui.GuiNeoGameOverlay;
+import neo_ores.config.NeoOresConfig;
 import neo_ores.entity.fakeattribute.FakeAttributeMaxMana;
 import neo_ores.item.ItemPaxel;
 import neo_ores.main.NeoOres;
@@ -265,10 +266,12 @@ public class NeoOresEntityEvent
 			{
 				EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
 				PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
-				if (playermp.ticksExisted % 40 == 0) 
+				if (playermp.ticksExisted % 20 == 0) 
 				{
-					pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() * 0.0001F) + 1.0F));
+					//pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() * 0.0001F) + 1.0F));
 					//System.out.println(SpellUtils.getItemStackNBTFromList(Arrays.asList(new SpellItemManager[] {NeoOres.spell_dig,NeoOres.spell_touch}), new NBTTagCompound()).toString());
+					double x = pmd.getLevel();
+					pmd.addMana((long) ((0.000007 * x * (x + 1) * (2 * x + 1) / 6 + x + NeoOresConfig.magic.init_max_mana) * (0.01 * Math.pow(2, -0.0007 * x) + 0.01)));
 				}
 				
 				FakeAttributeMaxMana famm = new FakeAttributeMaxMana(playermp);

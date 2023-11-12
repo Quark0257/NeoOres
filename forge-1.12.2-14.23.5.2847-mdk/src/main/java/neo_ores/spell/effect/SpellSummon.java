@@ -43,7 +43,12 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 			Entity rawentity = EntityList.createEntityByIDFromName(new ResourceLocation(entityTag.getString("id")),world);
 			if(rawentity == null || !(rawentity instanceof EntityLivingBase)) return;
 			EntityLivingBase entity = (EntityLivingBase)rawentity;
-			if(this.applyNBT) entity.deserializeNBT(entityTag.getCompoundTag("tag"));
+			if(this.applyNBT && entityTag.getCompoundTag("tag") != null) {
+				if(entityTag.getCompoundTag("tag").hasUniqueId("UUID")) {
+					entityTag.getCompoundTag("tag").removeTag("UUID");
+				}
+				entity.deserializeNBT(entityTag.getCompoundTag("tag"));
+			}
 			else entity.setHealth(entity.getMaxHealth());
 			if(result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) return;
 			BlockPos entitySpawn = result.getBlockPos();

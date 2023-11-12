@@ -4,7 +4,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.client.particle.ParticleMagic1;
 import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerManaDataServer;
@@ -12,7 +11,6 @@ import neo_ores.util.SpellUtils;
 import neo_ores.util.UtilSpellOreGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,8 +21,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SpellOreGen extends SpellEffect implements HasRange
 {
@@ -64,7 +60,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 			EnumFacing face = EnumFacing.getFacingFromVector((float)(result.hitVec.x - runner.posX),(float)(result.hitVec.y - runner.posY - runner.getEyeHeight()),(float)(result.hitVec.z - runner.posZ));
 			for(BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				if(world.isRemote) this.onDisplay(world,pos, runner);
+				if(world.isRemote) SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(),pos.getY(),pos.getZ()), new Vec3d(1.0,1.0,1.0), NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack),8);
 				else
 				{
 					IBlockState state = world.getBlockState(pos);
@@ -109,118 +105,6 @@ public class SpellOreGen extends SpellEffect implements HasRange
 			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
 			pmds.addMXP(10L);
 		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	private void onDisplay(World worldIn ,BlockPos pos,EntityLivingBase runner)
-	{
-		double d1 = (double)((float)pos.getX());
-        double d2 = (double)((float)pos.getY());
-        double d3 = (double)((float)pos.getZ());
-        for(Entry<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1,d2,d3),new Vec3d(1.0,1.0,1.0),new Vec3d(1.0,1.0,1.0)).entrySet())
-        {
-        	Vec3d start = entry.getKey();
-        	Vec3d velocity = entry.getValue();
-        	for(int j = 0;j < 8;j++)
-            {
-            	int d = (int)(10.0D / (Math.random() + 0.5D));
-            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresRegisterEvent.particle0);
-            	Minecraft.getMinecraft().effectRenderer.addEffect(png);
-            }
-        }
-		/*
-        for (int i = 0; i < 12; ++i)
-        {
-            double d1 = (double)((float)pos.getX());
-            double d2 = (double)((float)pos.getY());
-            double d3 = (double)((float)pos.getZ());
-            Vec3d velocity = new Vec3d(0, 0, 0);
-            Vec3d start = new Vec3d(0, 0, 0);
-
-            switch(i)
-            {
-            case 0:
-            {
-            	start = new Vec3d(d1, d2, d3);
-            	velocity = new Vec3d( 1.0D, 0.0D, 0.0D);
-            	break;
-            }
-            case 1:
-            {
-            	start = new Vec3d(d1, d2, d3);
-            	velocity = new Vec3d( 0.0D, 0.0D, 1.0D);
-            	break;
-            }
-            case 2:
-            {
-            	start = new Vec3d(d1, d2, d3 + 1.0);
-            	velocity = new Vec3d( 0.0D, 1.0D, 0.0D);
-            	break;
-            }
-            case 3:
-            {
-            	start = new Vec3d(d1, d2 + 1.0, d3);
-            	velocity = new Vec3d( 0.0D, -1.0D, 0.0D);
-            	break;
-            }
-            case 4:
-            {
-            	start = new Vec3d(d1, d2 + 1.0, d3 + 1.0);
-            	velocity = new Vec3d( 0.0D, 0.0D, -1.0D);
-            	break;
-            }
-            case 5:
-            {
-            	start = new Vec3d(d1, d2 + 1.0, d3 + 1.0);
-            	velocity = new Vec3d( 1.0D, 0.0D, 0.0D);
-            	break;
-            }
-            case 6:
-            {
-            	start = new Vec3d(d1 + 1.0, d2, d3);
-            	velocity = new Vec3d( 0.0D, 1.0D, 0.0D);
-            	break;
-            }
-            case 7:
-            {
-            	start = new Vec3d(d1 + 1.0, d2, d3 + 1.0);
-            	velocity = new Vec3d( 0.0D, 0.0D, -1.0D);
-            	break;
-            }
-            case 8:
-            {
-            	start = new Vec3d(d1 + 1.0, d2, d3 + 1.0);
-            	velocity = new Vec3d( -1.0D, 0.0D, 0.0D);
-            	break;
-            }
-            case 9:
-            {
-            	start = new Vec3d(d1 + 1.0, d2 + 1.0, d3);
-            	velocity = new Vec3d( 0.0D, 0.0D, 1.0D);
-            	break;
-            }
-            case 10:
-            {
-            	start = new Vec3d(d1 + 1.0, d2 + 1.0, d3);
-            	velocity = new Vec3d( -1.0D, 0.0D, 0.0D);
-            	break;
-            }
-            case 11:
-            {
-            	start = new Vec3d(d1 + 1.0, d2 + 1.0, d3 + 1.0);
-            	velocity = new Vec3d( 0.0D, -1.0D, 0.0D);
-            	break;
-            }
-            }
-            for(int j = 0;j < 8;j++)
-            {
-            	int d = (int)(10.0D / (Math.random() + 0.5D));
-            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresRegisterEvent.particle0);
-            	//ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z,300);
-            	Minecraft.getMinecraft().effectRenderer.addEffect(png);
-            }
-        }
-        */
 	}
 	
 	@Override

@@ -9,13 +9,19 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
+import neo_ores.client.particle.ParticleMagic1;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.main.Reference;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,6 +31,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -32,6 +39,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SpellUtils 
 {
@@ -617,9 +626,9 @@ public class SpellUtils
 		return list;
 	}
 	
-	public static Map<Vec3d,Vec3d> getPosVelOnParallelepiped(Vec3d target, Vec3d size, Vec3d velocity) 
+	public static List<Pair<Vec3d,Vec3d>> getPosVelOnParallelepiped(Vec3d target, Vec3d size, Vec3d velocity) 
 	{
-		Map<Vec3d,Vec3d> map = new HashMap<Vec3d,Vec3d>();
+		List<Pair<Vec3d,Vec3d>> list = new ArrayList<Pair<Vec3d,Vec3d>>();
 		double d1 = target.x;
 		double d2 = target.y;
 		double d3 = target.z;
@@ -629,18 +638,52 @@ public class SpellUtils
 		double d7 = velocity.x;
 		double d8 = velocity.y;
 		double d9 = velocity.z;
-		map.put(new Vec3d(d1, d2, d3),new Vec3d(d7, 0.0D, 0.0D));
-		map.put(new Vec3d(d1, d2, d3),new Vec3d(0.0D, 0.0D, d9));
-		map.put(new Vec3d(d1, d2, d3 + d6),new Vec3d(0.0D, d8, 0.0D));
-		map.put(new Vec3d(d1, d2 + d5, d3),new Vec3d(0.0D, -d8, 0.0D));
-		map.put(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(0.0D, 0.0D, -d9));
-		map.put(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(d7, 0.0D, 0.0D));
-		map.put(new Vec3d(d1 + d4, d2, d3),new Vec3d(0.0D, d8, 0.0D));
-		map.put(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(0.0D, 0.0D, -d9));
-		map.put(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(-d7, 0.0D, 0.0D));
-		map.put(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(0.0D, 0.0D, d9));
-		map.put(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(-d7, 0.0D, 0.0D));
-		map.put(new Vec3d(d1 + d4, d2 + d5, d3 + d6),new Vec3d(0.0D, -d8, 0.0D));
-		return map;
+		list.add(Pair.of(new Vec3d(d1, d2, d3),new Vec3d(d7, 0.0D, 0.0D))); //1
+		list.add(Pair.of(new Vec3d(d1, d2, d3),new Vec3d(0.0D, 0.0D, d9))); //2
+		list.add(Pair.of(new Vec3d(d1, d2, d3 + d6),new Vec3d(0.0D, d8, 0.0D))); //3
+		list.add(Pair.of(new Vec3d(d1, d2 + d5, d3),new Vec3d(0.0D, -d8, 0.0D))); //4
+		list.add(Pair.of(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(0.0D, 0.0D, -d9))); //5
+		list.add(Pair.of(new Vec3d(d1, d2 + d5, d3 + d6),new Vec3d(d7, 0.0D, 0.0D))); //6
+		list.add(Pair.of(new Vec3d(d1 + d4, d2, d3),new Vec3d(0.0D, d8, 0.0D))); //7
+		list.add(Pair.of(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(0.0D, 0.0D, -d9))); //8
+		list.add(Pair.of(new Vec3d(d1 + d4, d2, d3 + d6),new Vec3d(-d7, 0.0D, 0.0D))); //9
+		list.add(Pair.of(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(0.0D, 0.0D, d9))); //10
+		list.add(Pair.of(new Vec3d(d1 + d4, d2 + d5, d3),new Vec3d(-d7, 0.0D, 0.0D))); //11
+		list.add(Pair.of(new Vec3d(d1 + d4, d2 + d5, d3 + d6),new Vec3d(0.0D, -d8, 0.0D))); //12
+		return list;
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void onDisplayParticleTypeA(World world, Vec3d target,Vec3d size, TextureAtlasSprite[] texture,int color,int particleVolume )
+	{
+        for(Pair<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(target,size,size))
+        {
+        	Vec3d start = entry.getKey();
+        	Vec3d velocity = entry.getValue();
+        	for(int j = 0;j < particleVolume;j++)
+            {
+            	int d = (int)(10.0D / (Math.random() + 0.5D));
+            	ParticleMagic1 png = new ParticleMagic1(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d,0.0005F, texture);
+            	Minecraft.getMinecraft().effectRenderer.addEffect(png);
+            }
+        }
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture,int color, int particleVolume)
+	{
+		AxisAlignedBB aabb = targetEntity.getRenderBoundingBox();
+		Vec3d target = new Vec3d(aabb.minX,aabb.minY,aabb.minZ);
+		Vec3d size = new Vec3d(aabb.maxX - aabb.minX,aabb.maxY - aabb.minY,aabb.maxZ - aabb.minZ);
+		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color,particleVolume);
+	}
+	
+	public static int getColor(ItemStack stack)
+	{
+		if(stack.getTagCompound() != null && stack.getTagCompound().hasKey("color"))
+		{
+			return stack.getTagCompound().getInteger("color");
+		}
+		return 0xFFFFFF;
 	}
 }

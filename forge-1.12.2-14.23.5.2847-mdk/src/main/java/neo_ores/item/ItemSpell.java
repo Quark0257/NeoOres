@@ -97,7 +97,7 @@ public class ItemSpell extends Item
 		//player.setActiveHand(hand);
 		//EnumActionResult actionResult = (NeoOresConfig.miscellaneous.repeatable) ? EnumActionResult.FAIL : EnumActionResult.SUCCESS;
 		
-		if(!NeoOresConfig.miscellaneous.repeatable)
+		if(!NeoOresConfig.magic.repeatable)
 		{
 			player.setActiveHand(hand);
 		}

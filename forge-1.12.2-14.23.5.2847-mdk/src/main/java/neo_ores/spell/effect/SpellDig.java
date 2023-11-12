@@ -1,7 +1,8 @@
 package neo_ores.spell.effect;
 
 import java.util.Map;
-import java.util.Map.Entry;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleMagic1;
@@ -194,7 +195,7 @@ public class SpellDig  extends SpellEffect implements HasRange,HasSilk,HasLuck,H
 		double d1 = (double)((float)pos.getX());
         double d2 = (double)((float)pos.getY());
         double d3 = (double)((float)pos.getZ());
-        for(Entry<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1,d2,d3),new Vec3d(1.0,1.0,1.0),new Vec3d(1.0,1.0,1.0)).entrySet())
+        for(Pair<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1,d2,d3),new Vec3d(1.0,1.0,1.0),new Vec3d(1.0,1.0,1.0)))
         {
         	Vec3d start = entry.getKey();
         	Vec3d velocity = entry.getValue();

@@ -1,11 +1,14 @@
 package neo_ores.world.dimension;
 
 import neo_ores.main.NeoOres;
+import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldProviderTheEarth extends WorldProvider
 {
@@ -19,6 +22,13 @@ public class WorldProviderTheEarth extends WorldProvider
     {
         this.biomeProvider = new BiomeProviderSingle(Biomes.PLAINS);
         this.hasSkyLight = false;
+    }
+    
+    @Override
+	@SideOnly(Side.CLIENT)
+	public MusicTicker.MusicType getMusicType()
+    {
+        return NeoOres.gnome;
     }
     
     protected void generateLightBrightnessTable()
@@ -47,11 +57,6 @@ public class WorldProviderTheEarth extends WorldProvider
         return false;
     }
 
-    public float calculateCelestialAngle(long worldTime, float partialTicks)
-    {
-        return 0.0F;
-    }
-
     public boolean canRespawnHere()
     {
         return false;
@@ -60,5 +65,10 @@ public class WorldProviderTheEarth extends WorldProvider
     public double getHorizon()
     {
     	return 256.0D;
+    }
+    
+    public float calculateCelestialAngle(long worldTime, float partialTicks)
+    {
+        return 0.0F;
     }
 }

@@ -54,8 +54,8 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
     {
         this.world = world;
         this.rand = new Random(LongUtils.trimAdd(seed, 1));
-        this.lperlinNoise1 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.lperlinNoise2 = new NoiseGeneratorOctaves(this.rand, 17);
+        this.lperlinNoise1 = new NoiseGeneratorOctaves(this.rand, 17);
+        this.lperlinNoise2 = new NoiseGeneratorOctaves(this.rand, 18);
         this.perlinNoise1 = new NoiseGeneratorOctaves(this.rand, 8);
         this.noiseGen5 = new NoiseGeneratorOctaves(this.rand, 10);
         this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);

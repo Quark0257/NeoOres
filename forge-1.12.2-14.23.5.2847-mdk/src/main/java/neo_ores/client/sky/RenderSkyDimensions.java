@@ -29,7 +29,12 @@ public class RenderSkyDimensions extends IRenderHandler
     private int glSkyList2 = -1;
     private TextureManager renderEngine;
     private VertexFormat vertexBufferFormat;
+    private final boolean isStarColored;
 	
+    public RenderSkyDimensions(boolean starColored) {
+    	this.isStarColored = starColored;
+    }
+    
 	@Override
 	public void render(float partialTicks, WorldClient world, Minecraft mc) 
 	{
@@ -258,50 +263,55 @@ public class RenderSkyDimensions extends IRenderHandler
                     double d25 = d24 * d9 - d22 * d10;
                     double d26 = d22 * d9 + d24 * d10;
                     
-                    float red;
-                    float green;
-                    float blue;
-                    
-                    double seed = random.nextDouble();
-                    float temp = (float)(4.0D * (seed - 0.5D) * (seed - 0.5D) * (seed - 0.5D) + 0.5D);
-                    
-                    float f0 = 0.08F;
-                    float f1 = 0.30F;
-                    float f2 = 0.50F;
-                    float f3 = 0.75F;
-                    
-                    if(temp < f0)
-                    {
-                    	red = 1.0F;
-                    	blue = 0.0F;
-                    	green = 0.0F;
+                    if(this.isStarColored) {
+                    	float red;
+                        float green;
+                        float blue;
+                        
+                        double seed = random.nextDouble();
+                        float temp = (float)(4.0D * (seed - 0.5D) * (seed - 0.5D) * (seed - 0.5D) + 0.5D);
+                        
+                        float f0 = 0.08F;
+                        float f1 = 0.30F;
+                        float f2 = 0.50F;
+                        float f3 = 0.75F;
+                        
+                        if(temp < f0)
+                        {
+                        	red = 1.0F;
+                        	blue = 0.0F;
+                        	green = 0.0F;
+                        }
+                        else if(temp < f1)
+                        {
+                        	red = 1.0F;
+                        	blue = 0.0F;
+                        	green = (temp - f0) / (f1 - f0);
+                        }
+                        else if(temp < f2)
+                        {
+                        	red = 1.0F;
+                        	green = 1.0F;
+                        	blue = (temp - f1) / (f2 - f1);
+                        }
+                        else if(temp < f3)
+                        {
+                        	red = 1.0F;
+                        	green = 1.0F;
+                        	blue = 1.0F;
+                        }
+                        else
+                        {
+                        	red = ((1.00F - temp) / (1.0F - f3)) * 0.75F + 0.25F;
+                        	green = 0.5F + red * 0.5F;
+                        	blue = 1.0F;
+                        }
+                        
+                        bufferBuilderIn.pos(d5 + d25, d6 + d23, d7 + d26).color(red, green, blue,1.0F).endVertex();
                     }
-                    else if(temp < f1)
-                    {
-                    	red = 1.0F;
-                    	blue = 0.0F;
-                    	green = (temp - f0) / (f1 - f0);
+                    else {
+                    	bufferBuilderIn.pos(d5 + d25, d6 + d23, d7 + d26).color(1.0F, 1.0F, 1.0F,1.0F).endVertex();
                     }
-                    else if(temp < f2)
-                    {
-                    	red = 1.0F;
-                    	green = 1.0F;
-                    	blue = (temp - f1) / (f2 - f1);
-                    }
-                    else if(temp < f3)
-                    {
-                    	red = 1.0F;
-                    	green = 1.0F;
-                    	blue = 1.0F;
-                    }
-                    else
-                    {
-                    	red = ((1.00F - temp) / (1.0F - f3)) * 0.75F + 0.25F;
-                    	green = 0.5F + red * 0.5F;
-                    	blue = 1.0F;
-                    }
-                    
-                    bufferBuilderIn.pos(d5 + d25, d6 + d23, d7 + d26).color(red, green, blue,1.0F).endVertex();
                 }
             }
         }

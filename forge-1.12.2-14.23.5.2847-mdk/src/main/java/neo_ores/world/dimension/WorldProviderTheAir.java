@@ -2,6 +2,7 @@ package neo_ores.world.dimension;
 
 import neo_ores.client.sky.RenderSkyDimensions;
 import neo_ores.main.NeoOres;
+import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -24,6 +25,13 @@ public class WorldProviderTheAir extends WorldProvider
         this.biomeProvider = new BiomeProviderSingle(Biomes.FOREST);
         this.hasSkyLight = true;
     }
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public MusicTicker.MusicType getMusicType()
+    {
+        return NeoOres.sylphied;
+    }
 
     public IChunkGenerator createChunkGenerator()
     {
@@ -42,7 +50,7 @@ public class WorldProviderTheAir extends WorldProvider
 
     public boolean canRespawnHere()
     {
-        return false;
+        return true;
     }
     
     public double getHorizon()
@@ -58,6 +66,6 @@ public class WorldProviderTheAir extends WorldProvider
     @SideOnly(Side.CLIENT)
     public IRenderHandler getSkyRenderer()
     {
-    	return new RenderSkyDimensions();
+    	return new RenderSkyDimensions(false);
     }
 }

@@ -2,6 +2,7 @@ package neo_ores.world.dimension;
 
 import neo_ores.client.sky.RenderSkyDimensions;
 import neo_ores.main.NeoOres;
+import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldProviderTheFire extends WorldProvider
 {
+	
 	@Override
 	public DimensionType getDimensionType() 
 	{
@@ -23,6 +25,13 @@ public class WorldProviderTheFire extends WorldProvider
     {
         this.biomeProvider = new BiomeProviderSingle(Biomes.MESA);
         this.hasSkyLight = true;
+    }
+    
+    @Override
+	@SideOnly(Side.CLIENT)
+	public MusicTicker.MusicType getMusicType()
+    {
+        return NeoOres.salamandra;
     }
 
     public IChunkGenerator createChunkGenerator()
@@ -55,14 +64,14 @@ public class WorldProviderTheFire extends WorldProvider
     	return false;
     }
     
-    public float calculateCelestialAngle(long worldTime, float partialTicks)
-    {
-        return 0.5F;
-    }
-    
     @SideOnly(Side.CLIENT)
     public IRenderHandler getSkyRenderer()
     {
-    	return new RenderSkyDimensions();
+    	return new RenderSkyDimensions(true);
+    }
+    
+    public float calculateCelestialAngle(long worldTime, float partialTicks)
+    {
+        return 0.5F;
     }
 }

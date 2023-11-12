@@ -14,4 +14,11 @@ public class MathUtils
 	{
 		return value == (int)value;
 	}
+	
+	/*
+	 * 0 - 1 - 2 - 3 made 0 - 1 - 0 - (-1)
+	 */
+	public static int sin(int i) {
+		return (int)Math.sin(Math.PI * (i % 4) / 2);
+	}
 }

@@ -6,22 +6,21 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import neo_ores.api.StackUtils;
+import neo_ores.api.Structure;
+import neo_ores.api.StructureUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ISpellWritable;
 import neo_ores.item.IPostscriptDataIntoSpell;
 import neo_ores.item.ISpellRecipeWritable;
 import neo_ores.main.NeoOres;
-import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresItems;
+import neo_ores.main.Reference;
 import neo_ores.packet.PacketItemsToClient;
+import neo_ores.util.CompareStateAlter;
 import neo_ores.util.SpellUtils;
-import net.minecraft.block.BlockQuartz;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -32,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -237,7 +237,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		}
 		
 		super.update();
-		this.isMultiblock = this.isMultiBlock();
+		this.isMultiblock = this.multiBlock();
 		
 		if(!this.getWorld().isRemote)
 		{
@@ -327,155 +327,19 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		
 	}
 	
-	@SuppressWarnings("deprecation")
-	private boolean isMultiBlock()
+	public boolean multiBlock() 
 	{
 		if(!this.getWorld().isRemote && this.offset < -0.4375) 
 		{
-			if(getStateFromOffset(0,0,0).getBlock() == NeoOresBlocks.pedestal)
+			if(this.getWorld() instanceof WorldServer) 
 			{
-				if(getStateFromOffset(0,1,0).getBlock().getLightValue(getStateFromOffset(0,1,0)) >= 15)
-				{
-					for(int x = -1;x <= 1;x++)
-					{
-						for(int z = -1;z <= 1;z++)
-						{
-							if(!(x==0 && z == 0) && getStateFromOffset(x,1,z).getBlock() != Blocks.QUARTZ_STAIRS)
-							{
-								return false;
-							}
-						}
-					}
-					IBlockState qh_bottom = Blocks.STONE_SLAB.getDefaultState().withProperty(BlockStoneSlab.VARIANT,BlockStoneSlab.EnumType.QUARTZ).withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.BOTTOM);
-					IBlockState qh_top = Blocks.STONE_SLAB.getDefaultState().withProperty(BlockStoneSlab.VARIANT,BlockStoneSlab.EnumType.QUARTZ).withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
-					if(getStateFromOffset(-3,1,0) == qh_bottom && getStateFromOffset(-2,1,0) == qh_bottom && getStateFromOffset(2,1,0) == qh_bottom && getStateFromOffset(3,1,0) == qh_bottom
-							&& getStateFromOffset(0,1,-3) == qh_bottom && getStateFromOffset(0,1,-2) == qh_bottom &&getStateFromOffset(0,1,2) == qh_bottom && getStateFromOffset(0,1,3) == qh_bottom)
-					{
-						if(getStateFromOffset(-2,0,3) == qh_bottom && getStateFromOffset(2,0,3) == qh_bottom && getStateFromOffset(-2,0,-3) == qh_bottom && getStateFromOffset(2,0,-3) == qh_bottom
-								&& getStateFromOffset(3,0,-2) == qh_bottom && getStateFromOffset(3,0,2) == qh_bottom &&getStateFromOffset(-3,0,-2) == qh_bottom && getStateFromOffset(-3,0,2) == qh_bottom)
-						{
-							if(getStateFromOffset(-1,0,3) == qh_top && getStateFromOffset(1,0,3) == qh_top && getStateFromOffset(-1,0,-3) == qh_top && getStateFromOffset(1,0,-3) == qh_top
-									&& getStateFromOffset(-3,0,-1) == qh_top && getStateFromOffset(-3,0,1) == qh_top &&getStateFromOffset(3,0,-1) == qh_top && getStateFromOffset(3,0,1) == qh_top)
-							{
-								IBlockState qc = Blocks.QUARTZ_BLOCK.getDefaultState().withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.CHISELED);
-								if(getStateFromOffset(0,-1,-4).getBlock() == NeoOresBlocks.earth_essence_block && getStateFromOffset(0,-1,4).getBlock() == NeoOresBlocks.fire_essence_block && getStateFromOffset(-4,-1,0).getBlock() == NeoOresBlocks.water_essence_block && getStateFromOffset(4,-1,0).getBlock() == NeoOresBlocks.air_essence_block
-										&& getStateFromOffset(-3,-1,-3) == qc && getStateFromOffset(-3,-1,3) == qc &&getStateFromOffset(3,-1,-3) == qc && getStateFromOffset(3,-1,3) == qc)
-								{
-									IBlockState qpy = Blocks.QUARTZ_BLOCK.getDefaultState().withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.LINES_Y);
-									for(int y = -5;y <= -2;y++)
-									{
-										if(y == -2)
-										{
-											if(!(getStateFromOffset(0,y,-4) == qc && getStateFromOffset(0,y,4) == qc && getStateFromOffset(-4,y,0) == qc && getStateFromOffset(4,y,0) == qc
-													&& getStateFromOffset(-3,y,-3) == qpy && getStateFromOffset(-3,y,3) == qpy &&getStateFromOffset(3,y,-3) == qpy && getStateFromOffset(3,y,3) == qpy))
-											{
-												return false;
-											}
-										}
-										else if(!(getStateFromOffset(0,y,-4) == qpy && getStateFromOffset(0,y,4) == qpy && getStateFromOffset(-4,y,0) == qpy && getStateFromOffset(4,y,0) == qpy
-												&& getStateFromOffset(-3,y,-3) == qpy && getStateFromOffset(-3,y,3) == qpy &&getStateFromOffset(3,y,-3) == qpy && getStateFromOffset(3,y,3) == qpy))
-										{
-											return false;
-										}
-									}
-									IBlockState qpx = Blocks.QUARTZ_BLOCK.getDefaultState().withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.LINES_X);
-									IBlockState qpz = Blocks.QUARTZ_BLOCK.getDefaultState().withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.LINES_Z);
-									for(int x = -2;x <= 2;x++)
-									{
-										if(x == 0)
-										{
-											if(getStateFromOffset(x,-5,-3).getBlock().getLightValue(getStateFromOffset(0,1,0)) < 15)
-											{
-												return false;
-											}
-											
-											if(getStateFromOffset(x,-5,3).getBlock().getLightValue(getStateFromOffset(0,1,0)) < 15)
-											{
-												return false;
-											}
-										}
-										else
-										{
-											if(getStateFromOffset(x,-5,-3) != qpx)
-											{
-												return false;
-											}
-											
-											if(getStateFromOffset(x,-5,3) != qpx)
-											{
-												return false;
-											}
-										}
-									}
-									
-									for(int z = -2;z <= 2;z++)
-									{
-										if(z == 0)
-										{
-											if(getStateFromOffset(-3,-5,z).getBlock().getLightValue(getStateFromOffset(0,1,0)) < 15)
-											{
-												return false;
-											}
-											
-											if(getStateFromOffset(3,-5,z).getBlock().getLightValue(getStateFromOffset(0,1,0)) < 15)
-											{
-												return false;
-											}
-										}
-										else
-										{
-											if(getStateFromOffset(-3,-5,z) != qpz)
-											{
-												return false;
-											}
-											
-											if(getStateFromOffset(3,-5,z) != qpz)
-											{
-												return false;
-											}
-										}
-									}
-									for(int x = -2;x <= 2;x++)
-									{
-										for(int z = -2;z <= 2;z++)
-										{
-											if(x == 0 && z == 0)
-											{
-												if(getStateFromOffset(x,-5,z).getBlock() != NeoOresBlocks.enhanced_pedestal)
-												{
-													return false;
-												}
-											}
-											else if(-1 <= x && x <= 1 && -1 <= z && z <= 1)
-											{
-												if(getStateFromOffset(x,-5,z).getBlock() != Blocks.QUARTZ_STAIRS)
-												{
-													return false;
-												}
-											}
-											else
-											{
-												if(getStateFromOffset(x,-5,z) != qc)
-												{
-													return false;
-												}
-											}
-										}
-									}
-									return true;
-								}
-							}
-						}
-					}
-				}
+				WorldServer server = (WorldServer)this.getWorld();
+				Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/alter")).setPosition(this.getPos().add(-4, -5, -4));
+				CompareStateAlter csa = new CompareStateAlter(str);
+				return StructureUtils.isMatch(this.getWorld(), str, csa);
 			}
 		}
 		return false;
-	}
-	
-	private IBlockState getStateFromOffset(int osX,int osY,int osZ)
-	{
-		return this.getWorld().getBlockState(new BlockPos(this.getPos().getX() + osX,this.getPos().getY() + osY,this.getPos().getZ() + osZ));
 	}
 	
 	private TileEntityEnhancedPedestal getEP()

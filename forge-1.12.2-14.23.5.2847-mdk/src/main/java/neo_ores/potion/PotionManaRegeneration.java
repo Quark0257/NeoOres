@@ -23,6 +23,6 @@ public class PotionManaRegeneration extends PotionNeoOres
 	
 	public boolean isReady(int duration, int amplifier)
 	{
-		return duration % (20 / (amplifier + 1)+1) == 0;
+		return duration % (20 / (amplifier + 1) + 1) == 0;
 	}
 }

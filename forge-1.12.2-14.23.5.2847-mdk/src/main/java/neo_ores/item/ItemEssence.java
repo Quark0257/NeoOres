@@ -1,5 +1,6 @@
 package neo_ores.item;
 
+import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;
 import neo_ores.util.PlayerManaDataClient;
@@ -75,11 +76,11 @@ public class ItemEssence extends INeoOresItem.Impl
 	    	}
 			else
 			{
-				pmd.setLevel(1);
-				pmd.setTrueMaxMana(100);
-				pmd.setMana(50);
-				pmd.setMXP(0);
-				pmd.setMagicPoint(10);
+				pmd.setLevel(NeoOresConfig.magic.init_level);
+				pmd.setTrueMaxMana(NeoOresConfig.magic.init_max_mana);
+				pmd.setMana(NeoOresConfig.magic.init_mana);
+				pmd.setMXP(NeoOresConfig.magic.init_mxp);
+				pmd.setMagicPoint(NeoOresConfig.magic.init_magic_point);
 			}
 		}
 		

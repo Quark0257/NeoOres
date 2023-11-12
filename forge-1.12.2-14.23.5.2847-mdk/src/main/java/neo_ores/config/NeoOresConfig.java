@@ -519,15 +519,40 @@ public class NeoOresConfig
 		}
 	}
 	
+	@LangKey("config.category.magic")
+	public static Magic magic = new Magic();
+	
+	public static class Magic {
+		@LangKey("config.magic.repeatable")
+		@RequiresMcRestart
+		public boolean repeatable = false;
+		
+		@LangKey("config.magic.init_magic_point")
+		@RequiresMcRestart
+		public int init_magic_point = 10;
+		
+		@LangKey("config.magic.init_max_mana")
+		@RequiresMcRestart
+		public int init_max_mana = 100;
+		
+		@LangKey("config.magic.init_mana")
+		@RequiresMcRestart
+		public int init_mana = 50;
+		
+		@LangKey("config.magic.init_mxp")
+		@RequiresMcRestart
+		public int init_mxp = 0;
+		
+		@LangKey("config.magic.init_level")
+		@RequiresMcRestart
+		public int init_level = 1;
+	}
+	
 	@LangKey("config.category.miscellaneous")
 	public static Misc miscellaneous = new Misc();
 	
 	public static class Misc
-	{
-		@LangKey("config.misc.repeatable")
-		@RequiresMcRestart
-		public boolean repeatable = false;
-		
+	{		
 		@LangKey("config.misc.mkt.back")
 		@RequiresWorldRestart
 		public String mkt_back = "neo_ores:textures/blocks/michastone.png";

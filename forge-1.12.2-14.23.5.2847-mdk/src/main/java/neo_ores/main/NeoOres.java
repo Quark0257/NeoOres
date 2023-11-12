@@ -31,9 +31,9 @@ import neo_ores.world.dimension.WorldProviderTheEarth;
 import neo_ores.world.dimension.WorldProviderTheAir;
 import neo_ores.world.dimension.WorldProviderTheWater;
 import neo_ores.world.gen.NeoOresOreGen;
+import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,9 +41,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DimensionType;
+import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -243,5 +244,12 @@ public class NeoOres
 	public static final PotionType strong_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,1800,1)).setRegistryName(Reference.MOD_ID, "strong_mana_regen");
 	public static final PotionType long_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,9600)).setRegistryName(Reference.MOD_ID, "long_mana_regen");
 	
-
+	public static final SoundEvent MUSIC_AIR = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.sylphied")).setRegistryName(Reference.MOD_ID, "music.sylphied");
+	public static final SoundEvent MUSIC_EARTH = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.gnome")).setRegistryName(Reference.MOD_ID, "music.gnome");
+	public static final SoundEvent MUSIC_FIRE = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.salamandra")).setRegistryName(Reference.MOD_ID, "music.salamandra");
+	public static final SoundEvent MUSIC_WATER = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.undine")).setRegistryName(Reference.MOD_ID, "music.undine");
+	public static final MusicTicker.MusicType sylphied = EnumHelperClient.addMusicType("Sylphied", MUSIC_AIR, 3600, 12000);
+	public static final MusicTicker.MusicType gnome = EnumHelperClient.addMusicType("Gnome", MUSIC_EARTH, 3600, 12000);
+	public static final MusicTicker.MusicType salamandra = EnumHelperClient.addMusicType("Salamandra", MUSIC_FIRE, 3600, 12000);
+	public static final MusicTicker.MusicType undine = EnumHelperClient.addMusicType("Undine", MUSIC_WATER, 3600, 12000);
 }

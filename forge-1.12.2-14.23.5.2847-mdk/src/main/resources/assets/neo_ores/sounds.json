@@ -1,0 +1,6 @@
+{
+	"music.sylphied" : { "sounds" : [ {"name": "neo_ores:music/sylphied", "stream" : true,"volume" : 1.5}]},
+	"music.undine" : { "sounds" : [ {"name": "neo_ores:music/undine", "stream" : true,"volume" : 1.5}]},
+	"music.gnome" : { "sounds" : [ {"name": "neo_ores:music/gnome", "stream" : true,"volume" : 1.0}]},
+	"music.salamandra" : { "sounds" : [ {"name": "neo_ores:music/salamandra", "stream" : true,"volume" : 1.5}]}
+}

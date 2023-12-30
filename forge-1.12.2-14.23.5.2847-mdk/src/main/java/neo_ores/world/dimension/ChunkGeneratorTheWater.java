@@ -9,6 +9,7 @@ import neo_ores.api.LongUtils;
 import neo_ores.block.BlockDimension;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import neo_ores.world.gen.structures.water.MapGenWaterStructure;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -47,8 +48,7 @@ public class ChunkGeneratorTheWater  implements IChunkGenerator
     private NoiseGeneratorOctaves perlinNoise1;
     public NoiseGeneratorOctaves scaleNoise;
     public NoiseGeneratorOctaves depthNoise;
-    private MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
-    private MapGenBase genNetherCaves = new MapGenCavesHell();
+    private MapGenWaterStructure genStructure = new MapGenWaterStructure();
     double[] pnr;
     double[] ar;
     double[] br;
@@ -66,7 +66,6 @@ public class ChunkGeneratorTheWater  implements IChunkGenerator
         this.scaleNoise = new NoiseGeneratorOctaves(this.rand, 10);
         this.depthNoise = new NoiseGeneratorOctaves(this.rand, 16);
         worldIn.setSeaLevel(255);
-        this.genNetherCaves = TerrainGen.getModdedMapGen(genNetherCaves, InitMapGenEvent.EventType.NETHER_CAVE);
     }
 
     public void prepareHeights(int p_185936_1_, int p_185936_2_, ChunkPrimer primer)
@@ -217,11 +216,10 @@ public class ChunkGeneratorTheWater  implements IChunkGenerator
         ChunkPrimer chunkprimer = new ChunkPrimer();
         this.prepareHeights(x, z, chunkprimer);
         this.buildSurfaces(x, z, chunkprimer);
-        this.genNetherCaves.generate(this.world, x, z, chunkprimer);
 
         if (this.generateStructures)
         {
-            this.genNetherBridge.generate(this.world, x, z, chunkprimer);
+            this.genStructure.generate(this.world, x, z, chunkprimer);
         }
 
         Chunk chunk = new Chunk(this.world, chunkprimer, x, z);
@@ -332,7 +330,7 @@ public class ChunkGeneratorTheWater  implements IChunkGenerator
         BlockPos blockpos = new BlockPos(i, 0, j);
         Biome biome = this.world.getBiome(blockpos.add(16, 0, 16));
         ChunkPos chunkpos = new ChunkPos(x, z);
-        this.genNetherBridge.generateStructure(this.world, this.rand, chunkpos);
+        if (this.generateStructures) this.genStructure.generateStructure(this.world, this.rand, chunkpos);
 
         ForgeEventFactory.onChunkPopulate(false, this, this.world, this.rand, x, z, false);
         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(this.world, this.rand, chunkpos));

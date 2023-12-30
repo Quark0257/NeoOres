@@ -3,10 +3,13 @@ package neo_ores.world.dimension;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import neo_ores.api.LongUtils;
 import neo_ores.block.BlockDimension;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import neo_ores.world.gen.structures.air.MapGenAirStructure;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -26,7 +29,6 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField;
 import net.minecraftforge.event.terraingen.InitNoiseGensEvent.ContextEnd;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
-import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 public class ChunkGeneratorTheAir implements IChunkGenerator
@@ -43,12 +45,12 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
     private final World world;
     private NoiseGeneratorSimplex islandNoise;
     private double[] buffer;
+    private final boolean mapFeaturesEnabled;
     private Biome[] biomesForGeneration;
     double[] pnr;
     double[] ar;
     double[] br;
-    private int chunkX = 0;
-    private int chunkZ = 0;
+    private MapGenAirStructure airStr = new MapGenAirStructure(this);
 
     public ChunkGeneratorTheAir(World world, boolean isGeneratingStructure, long seed)
     {
@@ -61,13 +63,13 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         this.noiseGen6 = new NoiseGeneratorOctaves(this.rand, 16);
         this.islandNoise = new NoiseGeneratorSimplex(this.rand);
         ContextEnd ctx = new ContextEnd(lperlinNoise1, lperlinNoise2, perlinNoise1, noiseGen5, noiseGen6, islandNoise);
-        ctx = TerrainGen.getModdedNoiseGenerators(world, this.rand, ctx);
         this.lperlinNoise1 = ctx.getLPerlin1();
         this.lperlinNoise2 = ctx.getLPerlin2();
         this.perlinNoise1 = ctx.getPerlin();
         this.noiseGen5 = ctx.getDepth();
         this.noiseGen6 = ctx.getScale();
         this.islandNoise = ctx.getIsland();
+        this.mapFeaturesEnabled = isGeneratingStructure;
     }
 
     public void setBlocksInChunk(int x, int z, ChunkPrimer primer)
@@ -104,15 +106,16 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
                             for (int j2 = 0; j2 < 8; ++j2)
                             {
                                 IBlockState iblockstate = AIR;
-
-                                if (d15 > 0.0D)
+                                
+                                int k2 = i2 + i1 * 8;
+                                int l2 = l1 + k1 * 4;
+                                int i3 = j2 + j1 * 8;
+                                
+                                if (d15 > 0.0D && l2 >= 1)
                                 {
                                     iblockstate = MAINBLOCK;
                                 }
 
-                                int k2 = i2 + i1 * 8;
-                                int l2 = l1 + k1 * 4;
-                                int i3 = j2 + j1 * 8;
                                 primer.setBlockState(k2, l2, i3, iblockstate);
                                 d15 += d16;
                             }
@@ -129,6 +132,18 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
                 }
             }
         }
+        
+        /*
+        for (int i1 = 0; i1 < 16; ++i1)
+        {
+            for (int j1 = 0; j1 < 16; ++j1)
+            {
+            	for(int y = 128;y < 256;y++) {
+            		primer.setBlockState(i1, y, j1, AIR);
+            	}
+            }
+        }
+        */
     }
     
     private void buildSurfacesWithBiomeBlocks(int x,int y,int z,ChunkPrimer primer)
@@ -176,9 +191,9 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         }
     }
 
-    public void buildSurfaces(ChunkPrimer primer)
+    public void buildSurfaces(int chunkX, int chunkZ, ChunkPrimer primer)
     {
-        if (!ForgeEventFactory.onReplaceBiomeBlocks(this, this.chunkX, this.chunkZ, primer, this.world)) return;
+        if (!ForgeEventFactory.onReplaceBiomeBlocks(this, chunkX, chunkZ, primer, this.world)) return;
         for (int i = 0; i < 16; ++i)
         {
             for (int j = 0; j < 16; ++j)
@@ -193,13 +208,17 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
 
     public Chunk generateChunk(int x, int z)
     {
-        this.chunkX = x; this.chunkZ = z;
         this.rand.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
         ChunkPrimer chunkprimer = new ChunkPrimer();
         this.biomesForGeneration = this.world.getBiomeProvider().getBiomes(this.biomesForGeneration, x * 16, z * 16, 16, 16);
         this.setBlocksInChunk(x, z, chunkprimer);
-        this.buildSurfaces(chunkprimer);
-
+        this.buildSurfaces(x,z,chunkprimer);
+        
+        if (this.mapFeaturesEnabled)
+        {
+            this.airStr.generate(this.world, x, z, chunkprimer);
+        }
+        
         Chunk chunk = new Chunk(this.world, chunkprimer, x, z);
         byte[] abyte = chunk.getBiomeArray();
 
@@ -211,11 +230,14 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         chunk.generateSkylightMap();
         return chunk;
     }
-
-    private float getIslandHeightValue(int p_185960_1_, int p_185960_2_, int p_185960_3_, int p_185960_4_)
+    
+    /**
+     * 2500 loops is so stupid!
+     */
+    private float getIslandHeightValue(int x, int z, int x1, int z1)
     {
-        float f = (float)(p_185960_1_ * 2 + p_185960_3_);
-        float f1 = (float)(p_185960_2_ * 2 + p_185960_4_);
+        float f = (float)(x * 2 + x1);
+        float f1 = (float)(z * 2 + z1);
         float f2 = 100.0F - MathHelper.sqrt(f * f + f1 * f1) * 8.0F;
 
         if (f2 > 80.0F)
@@ -227,19 +249,21 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         {
             f2 = -100.0F;
         }
+        
+        // -100 <= f2 <= 80
 
         for (int i = -12; i <= 12; ++i)
         {
             for (int j = -12; j <= 12; ++j)
             {
-                long k = (long)(p_185960_1_ + i);
-                long l = (long)(p_185960_2_ + j);
+                long k = (long)(x + i);
+                long l = (long)(z + j);
 
                 if (this.islandNoise.getValue((double)k, (double)l) < -0.8999999761581421D)
                 {
                     float f3 = (MathHelper.abs((float)k) * 3439.0F + MathHelper.abs((float)l) * 147.0F) % 13.0F + 9.0F;
-                    f = (float)(p_185960_3_ - i * 2);
-                    f1 = (float)(p_185960_4_ - j * 2);
+                    f = (float)(x1 - i * 2);
+                    f1 = (float)(z1 - j * 2);
                     float f4 = 100.0F - MathHelper.sqrt(f * f + f1 * f1) * f3;
 
                     if (f4 > 80.0F)
@@ -251,6 +275,8 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
                     {
                         f4 = -100.0F;
                     }
+                    
+                    // -100 <= f4 <= 80
 
                     if (f4 > f2)
                     {
@@ -263,38 +289,33 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         return f2;
     }
 
-    public boolean isIslandChunk(int x, int y)
+    private double[] getHeights(double[] height, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY, int sizeZ)
     {
-        return this.getIslandHeightValue(x, y, 1, 1) >= 0.0F;
-    }
-
-    private double[] getHeights(double[] height, int p_185963_2_, int p_185963_3_, int p_185963_4_, int p_185963_5_, int p_185963_6_, int p_185963_7_)
-    {
-        InitNoiseField event = new InitNoiseField(this, height, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_);
+        InitNoiseField event = new InitNoiseField(this, height, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ);
         MinecraftForge.EVENT_BUS.post(event);
         if (event.getResult() == Result.DENY) return event.getNoisefield();
 
         if (height == null)
         {
-            height = new double[p_185963_5_ * p_185963_6_ * p_185963_7_];
+            height = new double[sizeX * sizeY * sizeZ];
         }
 
         double d0 = 684.412D;
         d0 = d0 * 2.0D;
-        this.pnr = this.perlinNoise1.generateNoiseOctaves(this.pnr, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_, d0 / 80.0D, 4.277575000000001D, d0 / 80.0D);
-        this.ar = this.lperlinNoise1.generateNoiseOctaves(this.ar, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_, d0, 684.412D, d0);
-        this.br = this.lperlinNoise2.generateNoiseOctaves(this.br, p_185963_2_, p_185963_3_, p_185963_4_, p_185963_5_, p_185963_6_, p_185963_7_, d0, 684.412D, d0);
-        int i = p_185963_2_ / 2;
-        int j = p_185963_4_ / 2;
+        this.pnr = this.perlinNoise1.generateNoiseOctaves(this.pnr, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ, d0 / 80.0D, 4.277575000000001D, d0 / 80.0D);
+        this.ar = this.lperlinNoise1.generateNoiseOctaves(this.ar, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ, d0, 684.412D, d0);
+        this.br = this.lperlinNoise2.generateNoiseOctaves(this.br, offsetX, offsetY, offsetZ, sizeX, sizeY, sizeZ, d0, 684.412D, d0);
+        int i = offsetX / 2;
+        int j = offsetZ / 2;
         int k = 0;
 
-        for (int l = 0; l < p_185963_5_; ++l)
+        for (int l = 0; l < sizeX; ++l)
         {
-            for (int i1 = 0; i1 < p_185963_7_; ++i1)
+            for (int i1 = 0; i1 < sizeZ; ++i1)
             {
                 float f = this.getIslandHeightValue(i, j, l, i1);
 
-                for (int j1 = 0; j1 < p_185963_6_; ++j1)
+                for (int j1 = 0; j1 < sizeY; ++j1)
                 {
                     double d2 = this.ar[k] / 512.0D;
                     double d3 = this.br[k] / 512.0D;
@@ -318,9 +339,9 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
                     d4 = d4 + (double)f;
                     int k1 = 2;
 
-                    if (j1 > p_185963_6_ / 2 - k1)
+                    if (j1 > sizeY / 2 - k1)
                     {
-                        double d6 = (double)((float)(j1 - (p_185963_6_ / 2 - k1)) / 64.0F);
+                        double d6 = (double)((float)(j1 - (sizeY / 2 - k1)) / 64.0F);
                         d6 = MathHelper.clamp(d6, 0.0D, 1.0D);
                         d4 = d4 * (1.0D - d6) + -3000.0D * d6;
                     }
@@ -352,6 +373,11 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
         BlockPos blockpos = new BlockPos(i, 0, j);
         Biome biome = this.world.getBiome(blockpos.add(16, 0, 16));
         ChunkPos chunkpos = new ChunkPos(x, z);
+        
+        if (this.mapFeaturesEnabled)
+        {
+            this.airStr.generateStructure(this.world, this.rand, new ChunkPos(x, z));
+        }
 
         ForgeEventFactory.onChunkPopulate(false, this, this.world, this.rand, x, z, false);
         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(this.world, this.rand, chunkpos));
@@ -377,15 +403,30 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
     {
     }
 
-	@Override
-	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored) 
-	{
-		return null;
-	}
+    @Nullable
+    public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored)
+    {
+        return null;//"RaphaSanctuary".equals(structureName) && this.airStr != null ? this.airStr.getNearestStructurePos(worldIn, position, findUnexplored) : null;
+    }
 
-	@Override
-	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) 
-	{
-		return false;
-	}
+    public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
+    {
+        return "RaphaSanctuary".equals(structureName) && this.airStr != null ? this.airStr.isInsideStructure(pos) : false;
+    }
+    
+    private static final IBlockState DEFAULT_STATE = Blocks.AIR.getDefaultState();
+    
+    public int getHeight(int x, int z) {
+    	for (int j = 255; j >= 0; j--)
+        {
+            IBlockState iblockstate = this.world.getBlockState(new BlockPos(x,j,z));
+
+            if (iblockstate != null && iblockstate != DEFAULT_STATE)
+            {
+                return j;
+            }
+        }
+
+        return 0;
+    }
 }

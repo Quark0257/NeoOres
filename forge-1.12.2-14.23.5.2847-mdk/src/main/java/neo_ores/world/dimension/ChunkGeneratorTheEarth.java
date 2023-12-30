@@ -9,6 +9,7 @@ import neo_ores.api.LongUtils;
 import neo_ores.block.BlockDimension;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import neo_ores.world.gen.structures.earth.MapGenEarthStructure;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -21,16 +22,11 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.MapGenCavesHell;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.structure.MapGenNetherBridge;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
-import net.minecraftforge.event.terraingen.InitMapGenEvent;
-import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class ChunkGeneratorTheEarth implements IChunkGenerator
@@ -38,6 +34,7 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
 	protected static final IBlockState MAINBLOCK = NeoOresBlocks.dim_stone.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.EARTH);
     protected static final IBlockState SUBBLOCK = Blocks.AIR.getDefaultState();
     protected static final IBlockState BEDROCK = Blocks.BEDROCK.getDefaultState();
+    private static final int LAKE_LEVEL = 48;
     private final World world;
     private final boolean generateStructures;
     private final Random rand;
@@ -47,8 +44,7 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
     private NoiseGeneratorOctaves perlinNoise1;
     public NoiseGeneratorOctaves scaleNoise;
     public NoiseGeneratorOctaves depthNoise;
-    private MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
-    private MapGenBase genNetherCaves = new MapGenCavesHell();
+    private MapGenEarthStructure genStrcuture = new MapGenEarthStructure();
     double[] pnr;
     double[] ar;
     double[] br;
@@ -66,7 +62,6 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
         this.scaleNoise = new NoiseGeneratorOctaves(this.rand, 10);
         this.depthNoise = new NoiseGeneratorOctaves(this.rand, 16);
         worldIn.setSeaLevel(255);
-        this.genNetherCaves = TerrainGen.getModdedMapGen(genNetherCaves, InitMapGenEvent.EventType.NETHER_CAVE);
     }
 
     public void prepareHeights(int p_185936_1_, int p_185936_2_, ChunkPrimer primer)
@@ -147,6 +142,7 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
     {
     	IBlockState topblock = this.world.getBiome(new BlockPos(x,y,z)).topBlock;
 		IBlockState fillerblock = this.world.getBiome(new BlockPos(x,y,z)).fillerBlock;
+		IBlockState water = Blocks.WATER.getDefaultState();
 		
 		IBlockState iblockstate2 = primer.getBlockState(x, y, z);
 		IBlockState iblockstate3 = primer.getBlockState(x, y + 1, z);
@@ -170,7 +166,12 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
             		}
             	}
             	
-            	primer.setBlockState(x, y, z, topblock);
+            	if(y >= LAKE_LEVEL) {
+            		primer.setBlockState(x, y, z, topblock);
+            	}
+            	else {
+            		primer.setBlockState(x, y, z, fillerblock);
+            	}
             	
             	for(int filler = 0;filler < fillamount;filler++)
             	{
@@ -185,6 +186,11 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
             		}
             	}
             }   
+        }
+        else if(iblockstate2.getBlock() == SUBBLOCK.getBlock()) {
+        	if(y <= LAKE_LEVEL) {
+        		primer.setBlockState(x, y, z, water);
+        	}
         }
     }
 
@@ -217,11 +223,10 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
         ChunkPrimer chunkprimer = new ChunkPrimer();
         this.prepareHeights(x, z, chunkprimer);
         this.buildSurfaces(x, z, chunkprimer);
-        this.genNetherCaves.generate(this.world, x, z, chunkprimer);
 
         if (this.generateStructures)
         {
-            this.genNetherBridge.generate(this.world, x, z, chunkprimer);
+            this.genStrcuture.generate(this.world, x, z, chunkprimer);
         }
 
         Chunk chunk = new Chunk(this.world, chunkprimer, x, z);
@@ -332,7 +337,9 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
         BlockPos blockpos = new BlockPos(i, 0, j);
         Biome biome = this.world.getBiome(blockpos.add(16, 0, 16));
         ChunkPos chunkpos = new ChunkPos(x, z);
-        this.genNetherBridge.generateStructure(this.world, this.rand, chunkpos);
+        if (this.generateStructures) {
+        	this.genStrcuture.generateStructure(this.world, this.rand, chunkpos);
+        }
 
         ForgeEventFactory.onChunkPopulate(false, this, this.world, this.rand, x, z, false);
         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(this.world, this.rand, chunkpos));

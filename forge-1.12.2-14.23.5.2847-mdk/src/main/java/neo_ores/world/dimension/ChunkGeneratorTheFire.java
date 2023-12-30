@@ -7,6 +7,7 @@ import neo_ores.api.LongUtils;
 import neo_ores.block.BlockDimension;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import neo_ores.world.gen.structures.fire.MapGenFireStructure;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
@@ -35,6 +36,7 @@ public class ChunkGeneratorTheFire implements IChunkGenerator
     protected static final IBlockState MAINBLOCK = NeoOresBlocks.dim_stone.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.FIRE);
     public static final IBlockState SUBBLOCK = Blocks.AIR.getDefaultState();
     protected static final IBlockState AIR = Blocks.AIR.getDefaultState();
+    private final boolean generateStructures;
     private NoiseGeneratorOctaves lperlinNoise1;
     private NoiseGeneratorOctaves lperlinNoise2;
     private NoiseGeneratorOctaves perlinNoise1;
@@ -44,6 +46,7 @@ public class ChunkGeneratorTheFire implements IChunkGenerator
     private NoiseGeneratorSimplex islandNoise;
     private double[] buffer;
     private Biome[] biomesForGeneration;
+    private MapGenFireStructure genStructure = new MapGenFireStructure();
     double[] pnr;
     double[] ar;
     double[] br;
@@ -68,6 +71,7 @@ public class ChunkGeneratorTheFire implements IChunkGenerator
         this.noiseGen5 = ctx.getDepth();
         this.noiseGen6 = ctx.getScale();
         this.islandNoise = ctx.getIsland();
+        this.generateStructures = isGeneratingStructure;
     }
 
     public void setBlocksInChunk(int x, int z, ChunkPrimer primer)
@@ -199,7 +203,12 @@ public class ChunkGeneratorTheFire implements IChunkGenerator
         this.biomesForGeneration = this.world.getBiomeProvider().getBiomes(this.biomesForGeneration, x * 16, z * 16, 16, 16);
         this.setBlocksInChunk(x, z, chunkprimer);
         this.buildSurfaces(chunkprimer);
-
+        
+        if (this.generateStructures)
+        {
+            this.genStructure.generate(this.world, x, z, chunkprimer);
+        }
+        
         Chunk chunk = new Chunk(this.world, chunkprimer, x, z);
         byte[] abyte = chunk.getBiomeArray();
 
@@ -352,7 +361,9 @@ public class ChunkGeneratorTheFire implements IChunkGenerator
         BlockPos blockpos = new BlockPos(i, 0, j);
         Biome biome = this.world.getBiome(blockpos.add(16, 0, 16));
         ChunkPos chunkpos = new ChunkPos(x, z);
-
+        
+        if (this.generateStructures) this.genStructure.generateStructure(this.world, this.rand, chunkpos);
+        
         ForgeEventFactory.onChunkPopulate(false, this, this.world, this.rand, x, z, false);
         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(this.world, this.rand, chunkpos));
 

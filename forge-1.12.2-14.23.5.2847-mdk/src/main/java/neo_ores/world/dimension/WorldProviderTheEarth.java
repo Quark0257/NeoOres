@@ -2,7 +2,6 @@ package neo_ores.world.dimension;
 
 import neo_ores.main.NeoOres;
 import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
@@ -20,7 +19,7 @@ public class WorldProviderTheEarth extends WorldProvider
 	
     public void init()
     {
-        this.biomeProvider = new BiomeProviderSingle(Biomes.PLAINS);
+        this.biomeProvider = new BiomeProviderSingle(NeoOres.test);
         this.hasSkyLight = false;
     }
     
@@ -70,5 +69,10 @@ public class WorldProviderTheEarth extends WorldProvider
     public float calculateCelestialAngle(long worldTime, float partialTicks)
     {
         return 0.0F;
+    }
+    
+    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
+    {
+        return false;
     }
 }

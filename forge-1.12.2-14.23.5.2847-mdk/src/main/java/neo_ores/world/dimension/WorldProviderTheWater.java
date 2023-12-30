@@ -71,4 +71,9 @@ public class WorldProviderTheWater extends WorldProvider
     {
         return 0.0F;
     }
+    
+    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
+    {
+        return false;
+    }
 }

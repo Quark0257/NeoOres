@@ -8,7 +8,6 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,6 +23,7 @@ public class WorldProviderTheAir extends WorldProvider
     {
         this.biomeProvider = new BiomeProviderSingle(Biomes.FOREST);
         this.hasSkyLight = true;
+        this.setSkyRenderer(new RenderSkyDimensions(false));
     }
 	
 	@Override
@@ -55,17 +55,11 @@ public class WorldProviderTheAir extends WorldProvider
     
     public double getHorizon()
     {
-    	return 0.0D;
+    	return -64.0D;
     }
     
     public boolean shouldMapSpin(String entity, double x, double z, double rotation)
     {
     	return false;
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public IRenderHandler getSkyRenderer()
-    {
-    	return new RenderSkyDimensions(false);
     }
 }

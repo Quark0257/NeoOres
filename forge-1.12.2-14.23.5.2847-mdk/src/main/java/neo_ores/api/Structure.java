@@ -12,16 +12,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponentTemplate;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
 
 public class Structure extends StructureComponentTemplate 
-{
-	public Structure(TemplateManager manager, ResourceLocation resource) {
-		this.template = manager.getTemplate(null, resource);
-		this.setBoundingBoxFromTemplate();
-	}
+{		
+	public Structure() {}
 	
 	public Structure(WorldServer world, ResourceLocation resource) {
+		super(0);
 		this.template = world.getStructureTemplateManager().getTemplate(null, resource);
 	}
 	

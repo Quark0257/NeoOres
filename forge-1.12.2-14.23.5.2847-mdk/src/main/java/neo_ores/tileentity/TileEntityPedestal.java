@@ -20,7 +20,6 @@ import neo_ores.util.CompareStateAlter;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -272,7 +271,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 						}
 						if(requiredSize >= SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getSize())
 						{
-							phase++;
+							this.phase++;
 							this.requiredSize = 0;
 							this.getWorld().playSound(null,(double)this.getPos().getX() + 0.5, (double)this.getPos().getY() - 3.5, (double)this.getPos().getZ() + 0.5, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, this.getWorld().rand.nextFloat() * 0.1F + 0.9F);
 						}
@@ -423,12 +422,12 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			if(!this.isMultiblock) 
 			{
 				ITextComponent itextcomponent = new TextComponentTranslation("chat.noMultiblock");
-                ((EntityPlayerMP)playerIn).sendStatusMessage(itextcomponent, false);
+                playerIn.sendStatusMessage(itextcomponent, true);
 			}
 			else if(!this.isRecipeIn()) 
 			{
 				ITextComponent itextcomponent = new TextComponentTranslation("chat.noRecipe");
-                playerIn.sendStatusMessage(itextcomponent, false);
+                playerIn.sendStatusMessage(itextcomponent, true);
 			}
 			else
 			{

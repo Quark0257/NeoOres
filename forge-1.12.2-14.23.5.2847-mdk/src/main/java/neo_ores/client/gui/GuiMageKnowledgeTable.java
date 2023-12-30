@@ -75,7 +75,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	public void initGui()
     {
 		tabs = SpellUtils.getAllStudyTabs();
-		this.buttonList.add(new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2, 120, 20, I18n.format(tab.getKey()))
+		this.buttonList.add(new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2, 100, 20, I18n.format(tab.getKey()))
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
 		    {
@@ -310,16 +310,18 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			m = 1.0F / m;
 			for(int i = 0;i < maxY - minY;i++)
 			{
-				if(m < 0) this.drawHorizontalLine(minX + (int)(i * -m) - 1, minX + (int)((i + 2) * -m), maxY - i, color - 0x1000000);
-				else this.drawHorizontalLine(minX + (int)(i * m) - 1, minX + (int)((i + 2) * m), minY + i, color - 0x1000000);
+				int d = Math.sqrt(1 + m * m) > 1.5 ? 0 : 1;
+				if(m < 0) this.drawHorizontalLine(minX + (int)(i * -m) - 1, minX + (int)((i + 1) * -m + d), maxY - i, color - 0x1000000);
+				else this.drawHorizontalLine(minX + (int)(i * m) - 1, minX + (int)((i + 1) * m + d), minY + i, color - 0x1000000);
 			}
 		}
 		else
 		{
 			for(int i = 0;i < maxX - minX;i++)
 			{
-				if(m < 0) this.drawVerticalLine(maxX - i, minY + (int)(i * -m) - 1, minY + (int)((i + 1) * -m + 1), color - 0x1000000);
-				else this.drawVerticalLine(minX + i, minY + (int)(i * m) - 1, minY + (int)((i + 1) * m + 1), color - 0x1000000);
+				int d = Math.sqrt(1 + m * m) > 1.5 ? 0 : 1;
+				if(m < 0) this.drawVerticalLine(maxX - i, minY + (int)(i * -m) - 1, minY + (int)((i + 1) * -m + d), color - 0x1000000);
+				else this.drawVerticalLine(minX + i, minY + (int)(i * m) - 1, minY + (int)((i + 1) * m + d), color - 0x1000000);
 			}
 		}
 	}
@@ -382,8 +384,8 @@ public class GuiMageKnowledgeTable extends GuiScreen
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,"textures/gui/study_table_window.png"));
         this.drawTexturedWithTextureSizeModalRect(x, y, 0, 0, windowSizeX, windowSizeY,512,512);
-        this.fontRenderer.drawString(I18n.format("gui.mage_knowledge_table"), x + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("gui.mage_knowledge_table"))) / 2, y + 12, 4210752);
-        this.fontRenderer.drawString(TextFormatting.BLUE + I18n.format("spell.magic_point") + ":" + LongUtils.convertString(this.pmdc.getMagicPoint()), x-20 + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("spell.magic_point") + ":" + LongUtils.convertString(this.pmdc.getMagicPoint()))), y + 12, 4210752);
+        this.fontRenderer.drawString(I18n.format("gui.mage_knowledge_table"), x + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("gui.mage_knowledge_table"))) / 2, y + 14, 4210752);
+        this.fontRenderer.drawString(TextFormatting.BLUE + I18n.format("spell.magic_point") + " : " + LongUtils.convertString(this.pmdc.getMagicPoint()), x-28 + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("spell.magic_point") + ":" + LongUtils.convertString(this.pmdc.getMagicPoint()))), y + 14, 4210752);
     }
 	
 	public boolean doesGuiPauseGame()

@@ -1,0 +1,9 @@
+{
+	"variants": 
+  	{
+    	"dimension=earth":{"textures": {"particle": "neo_ores:blocks/ury_brick"},"model": "neo_ores:earth_dim_brick"},
+    	"dimension=water":{"textures": {"particle": "neo_ores:blocks/gabry_brick"},"model": "neo_ores:water_dim_brick"},
+    	"dimension=fire":{"textures": {"particle": "neo_ores:blocks/micha_brick"},"model": "neo_ores:fire_dim_brick"},
+    	"dimension=air":{"textures": {"particle": "neo_ores:blocks/rapha_brick"},"model": "neo_ores:air_dim_brick"}
+  	}
+}

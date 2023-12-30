@@ -1,0 +1,7 @@
+{
+	"parent": "block/cube_all",
+  	"textures": 
+  	{
+    	"all": "neo_ores:blocks/gabry_brick"
+  	}
+}

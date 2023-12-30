@@ -176,6 +176,7 @@ public class NeoOresBlocks
 	public static final Block flamite_ore = new BlockNeoOreOriginal("flamite_ore",9,DimensionName.FIRE, 0.0F, false, NeoOresItems.flamite,0, 1, 1, 11, 23).setCreativeTab(NeoOres.neo_ores_tab);
 	
 	public static final Block dim_stone = new BlockDimension("dim_stone", Material.ROCK, 1.5F, 10.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block dim_brick = new BlockDimension("dim_brick", Material.ROCK, 2.5F, 20.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
 	
 	public static final List<Block> registry = Arrays.asList(
 			mana_workbench,
@@ -224,6 +225,7 @@ public class NeoOresBlocks
 			sanitite_ore,
 			aerite_ore,
 			flamite_ore,
-			dim_stone
+			dim_stone,
+			dim_brick
 			);	
 }

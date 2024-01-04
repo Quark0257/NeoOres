@@ -3,9 +3,15 @@ package neo_ores.main;
 import java.util.Arrays;
 import java.util.List;
 
+import neo_ores.api.ListUtils;
 import neo_ores.block.BlockAerite;
 import neo_ores.block.BlockAirEssence;
 import neo_ores.block.BlockDimension;
+import neo_ores.block.BlockDimensionLeaves;
+import neo_ores.block.BlockDimensionLog;
+import neo_ores.block.BlockDimensionPillarSingleModel;
+import neo_ores.block.BlockDimensionSapling;
+import neo_ores.block.BlockDimensionSaplingWater;
 import neo_ores.block.BlockDrenite;
 import neo_ores.block.BlockEarthEssence;
 import neo_ores.block.BlockEnhancedPedestal;
@@ -34,6 +40,8 @@ import neo_ores.world.dimension.DimensionHelper.DimensionName;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 
@@ -177,8 +185,39 @@ public class NeoOresBlocks
 	
 	public static final Block dim_stone = new BlockDimension("dim_stone", Material.ROCK, 1.5F, 10.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block dim_brick = new BlockDimension("dim_brick", Material.ROCK, 2.5F, 20.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block dim_log = new BlockDimensionLog("dim_log", Material.WOOD, 2.0F, 5.0F, "axe", 0, 0.0F, SoundType.WOOD).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroded_dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "corroded_dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroding_dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "corroding_dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block earth_sapling = new BlockDimensionSapling("earth_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block fire_sapling = new BlockDimensionSapling("fire_sapling", Material.PLANTS, Blocks.PACKED_ICE, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block air_sapling = new BlockDimensionSapling("air_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block water_sapling = new BlockDimensionSaplingWater("water_sapling", Blocks.SAND, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroded_earth_sapling = new BlockDimensionSapling("corroded_earth_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroded_fire_sapling = new BlockDimensionSapling("corroded_fire_sapling", Material.PLANTS, Blocks.PACKED_ICE, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroded_air_sapling = new BlockDimensionSapling("corroded_air_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroded_water_sapling = new BlockDimensionSaplingWater("corroded_water_sapling", Blocks.SAND, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroding_earth_sapling = new BlockDimensionSapling("corroding_earth_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroding_fire_sapling = new BlockDimensionSapling("corroding_fire_sapling", Material.PLANTS, Blocks.PACKED_ICE, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroding_air_sapling = new BlockDimensionSapling("corroding_air_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block corroding_water_sapling = new BlockDimensionSaplingWater("corroding_water_sapling", Blocks.SAND, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
 	
-	public static final List<Block> registry = Arrays.asList(
+	public static final List<Block> color_saplings = Arrays.asList(
+			corroded_air_sapling,
+			air_sapling,
+			corroding_air_sapling,
+			corroded_water_sapling,
+			water_sapling,
+			corroding_water_sapling,
+			corroded_fire_sapling,
+			fire_sapling,
+			corroding_fire_sapling,
+			corroded_earth_sapling,
+			earth_sapling,
+			corroding_earth_sapling
+			);
+	
+	public static final List<Block> registry = ListUtils.getCombinedList(Arrays.asList(
 			mana_workbench,
 			mana_furnace,
 			mage_knowledge_table,
@@ -226,6 +265,10 @@ public class NeoOresBlocks
 			aerite_ore,
 			flamite_ore,
 			dim_stone,
-			dim_brick
-			);	
+			dim_brick,
+			dim_log,
+			dim_leaves,
+			corroded_dim_leaves,
+			corroding_dim_leaves
+			),color_saplings);	
 }

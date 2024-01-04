@@ -1,0 +1,7 @@
+{
+    "parent": "neo_ores:block/cube_column",
+    "textures": {
+        "end": "neo_ores:blocks/log_base_top",
+        "side": "neo_ores:blocks/log_base"
+    }
+}

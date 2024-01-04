@@ -12,10 +12,12 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -41,6 +43,31 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem, IItemNeoToo
 			{
 				pmds.addMana(-1L);
 				stack.damageItem(-1, player);
+			}
+			
+			if(this.getEquipmentSlot() == EntityEquipmentSlot.HEAD) {
+				if(this.getArmorMaterial() == NeoOresItems.armorSylphite) {
+					player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 320, 1, false, false));
+				}
+				
+				if(this.getArmorMaterial() == NeoOresItems.armorSalamite) {
+					player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 320, 1, false, false));
+				}
+				
+				if(this.getArmorMaterial() == NeoOresItems.armorUndite) {
+					player.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 320, 1, false, false));
+				}
+				
+				if(this.getArmorMaterial() == NeoOresItems.armorGnomite) {
+					player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 320, 1, false, false));
+				}
+				
+				if(this.getArmorMaterial() == NeoOresItems.armorCreative) {
+					player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 320, 1, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 320, 1, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 320, 1, false, false));
+					player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 320, 1, false, false));
+				}
 			}
 		}
 	}

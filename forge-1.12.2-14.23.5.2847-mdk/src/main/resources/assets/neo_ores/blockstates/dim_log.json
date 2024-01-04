@@ -1,0 +1,17 @@
+{
+	"variants": 
+  	{
+    	"axis=y,dimension=earth":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log"},
+    	"axis=y,dimension=water":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log"},
+    	"axis=y,dimension=fire":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log"},
+    	"axis=y,dimension=air":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log"},
+    	"axis=z,dimension=earth":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90},
+    	"axis=z,dimension=water":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90},
+    	"axis=z,dimension=fire":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90},
+    	"axis=z,dimension=air":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90},
+    	"axis=x,dimension=earth":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90, "y": 90},
+    	"axis=x,dimension=water":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90, "y": 90},
+    	"axis=x,dimension=fire":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90, "y": 90},
+    	"axis=x,dimension=air":{"textures": {"particle": "neo_ores:blocks/log_base"},"model": "neo_ores:dim_log", "x": 90, "y": 90}
+  	}
+}

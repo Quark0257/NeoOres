@@ -3,7 +3,6 @@ package neo_ores.world.dimension;
 import neo_ores.client.sky.RenderSkyDimensions;
 import neo_ores.main.NeoOres;
 import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.init.Biomes;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
@@ -21,7 +20,7 @@ public class WorldProviderTheFire extends WorldProvider
 	
     public void init()
     {
-        this.biomeProvider = new BiomeProviderSingle(Biomes.MESA);
+        this.biomeProvider = new BiomeProviderSingle(NeoOres.fire);
         this.hasSkyLight = true;
         this.setSkyRenderer(new RenderSkyDimensions(true));
     }

@@ -209,4 +209,9 @@ public class BlockMageKnowledgeTable extends BlockContainer implements INeoOresB
 	{
 		return new ItemBlock(block).setRegistryName(block.getRegistryName());
 	}
+
+	public String getUnlocalizedName(ItemStack stack)
+	{
+		return "tile." + this.getRegistryName().getResourcePath();
+	}
 }

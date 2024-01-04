@@ -1,0 +1,21 @@
+{
+	"variants": 
+  	{
+    	"check_decay=false,decayable=false,dimension=air":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=false,dimension=earth":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=false,dimension=fire":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=false,dimension=water":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=true,dimension=air":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=true,dimension=earth":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=true,dimension=fire":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=false,decayable=true,dimension=water":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=false,dimension=air":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=false,dimension=earth":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=false,dimension=fire":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=false,dimension=water":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=true,dimension=air":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=true,dimension=earth":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=true,dimension=fire":{"model": "neo_ores:dim_leaves"},
+    	"check_decay=true,decayable=true,dimension=water":{"model": "neo_ores:dim_leaves"}
+  	}
+}

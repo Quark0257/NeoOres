@@ -1,0 +1,12 @@
+{
+    "parent": "neo_ores:block/colored_block",
+    "textures": {
+        "particle": "#side",
+        "down": "#end",
+        "up": "#end",
+        "north": "#side",
+        "east": "#side",
+        "south": "#side",
+        "west": "#side"
+    }
+}

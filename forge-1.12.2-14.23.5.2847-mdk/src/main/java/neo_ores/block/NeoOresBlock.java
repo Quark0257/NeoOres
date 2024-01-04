@@ -7,6 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class NeoOresBlock extends Block implements INeoOresBlock
@@ -36,5 +37,10 @@ public class NeoOresBlock extends Block implements INeoOresBlock
 	public Item getItemBlock(Block block)
 	{
 		return new ItemBlock(block).setRegistryName(block.getRegistryName());
+	}
+
+	public String getUnlocalizedName(ItemStack stack)
+	{
+		return "tile." + this.getRegistryName().getResourcePath();
 	}
 }

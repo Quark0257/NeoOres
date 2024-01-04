@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 
 public class BlockDimension extends NeoOresBlock
 {
-	
 	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension", DimensionName.class);
 	
 	public BlockDimension(String registername,Material materialIn,float hardness,float resistant,String harvest_key,int harvest_level,float light,SoundType sound) 
@@ -112,6 +111,6 @@ public class BlockDimension extends NeoOresBlock
 	
 	public Item getItemBlock(Block block)
 	{
-		return new ItemBlockDimension(block).setRegistryName(block.getRegistryName());
+		return new ItemBlockDimension((NeoOresBlock)block).setRegistryName(block.getRegistryName());
 	}
 }

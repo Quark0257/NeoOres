@@ -1,8 +1,12 @@
 package neo_ores.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import neo_ores.block.BlockDimension;
+import neo_ores.block.BlockDimensionLeaves;
 import neo_ores.block.BlockEnhancedPedestal;
 import neo_ores.block.BlockPedestal;
 import neo_ores.client.gui.GuiNeoGameOverlay;
@@ -10,12 +14,14 @@ import neo_ores.config.NeoOresConfig;
 import neo_ores.entity.fakeattribute.FakeAttributeMaxMana;
 import neo_ores.item.ItemPaxel;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.potion.PotionNeoOres;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerManaDataServer;
 import neo_ores.world.dimension.FromAirTeleporter;
+import neo_ores.world.dimension.DimensionHelper.DimensionName;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,10 +38,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Teleporter;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.util.FakePlayer;
@@ -261,7 +270,8 @@ public class NeoOresEntityEvent
 	{
 		if (event.getEntity() != null) 
 		{
-			
+			World worldIn = event.getEntity().getEntityWorld();
+			//MP updater
 			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP) 
 			{
 				EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
@@ -295,7 +305,42 @@ public class NeoOresEntityEvent
 				if(o !=null && !o.isEmpty()) System.out.println(o);
 				*/
 			}
-
+			
+			//Environmental Controller
+			if (!event.getEntity().getEntityWorld().isRemote && event.getEntityLiving() != null) {
+				if(event.getEntityLiving().getEntityBoundingBox() != null) {
+					for(BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3)) {
+						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
+						if(state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves 
+								|| state.getBlock() == NeoOresBlocks.dim_log) {
+							if(state.getValue(BlockDimension.DIM) == DimensionName.WATER) {
+								event.getEntityLiving().extinguish();
+								break;
+							}
+						}
+						if(NeoOresBlocks.color_saplings.subList(3, 6).contains(state.getBlock())) {
+							event.getEntityLiving().extinguish();
+							break;
+						}
+					}
+					for(BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3)) {
+						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
+						if(state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves 
+								|| state.getBlock() == NeoOresBlocks.dim_log) {
+							if(state.getValue(BlockDimension.DIM) == DimensionName.FIRE) {
+								event.getEntityLiving().setFire(worldIn.rand.nextInt(10) + 5);
+								break;
+							}
+						}
+						if(NeoOresBlocks.color_saplings.subList(6, 9).contains(state.getBlock())) {
+							event.getEntityLiving().setFire(worldIn.rand.nextInt(10) + 5);
+							break;
+						}
+					}
+				}
+			}
+			
+			//Air Teleporter
 			MinecraftServer server = event.getEntity().getServer();
 			if (server != null && event.getEntity().dimension == NeoOres.THE_AIR.getId() && event.getEntity().posY < -64) 
 			{
@@ -544,5 +589,25 @@ public class NeoOresEntityEvent
 			EntityDamageSourceWithItem edsw = (EntityDamageSourceWithItem)event.getDamageSource();
 			event.setLootingLevel(EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, edsw.getStack()));
 		}
+	}
+	
+	public static List<BlockPos> getBlockPositions(AxisAlignedBB aabb, double margin) {
+		List<BlockPos> poses = new ArrayList<BlockPos>();
+		int minX = MathHelper.floor(aabb.minX - margin);
+		int minY = MathHelper.floor(aabb.minY - margin);
+		int minZ = MathHelper.floor(aabb.minZ - margin);
+		int maxX = MathHelper.floor(aabb.maxX + margin);
+		int maxY = MathHelper.floor(aabb.maxY + margin);
+		int maxZ = MathHelper.floor(aabb.maxZ + margin);
+		for(int x = minX;x <= maxX;x++) {
+			for(int y = minY;y <= maxY;y++) {
+				for(int z = minZ;z <= maxZ;z++) {
+					if(0 <= y && y <= 255) {
+						poses.add(new BlockPos(x,y,z));
+					}
+				}
+			}
+		}
+		return poses;
 	}
 }

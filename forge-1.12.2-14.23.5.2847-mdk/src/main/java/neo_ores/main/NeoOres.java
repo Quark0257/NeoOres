@@ -8,8 +8,6 @@ import neo_ores.config.NeoOresConfig;
 import neo_ores.creativetab.NeoOresTab;
 import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
-import neo_ores.event.NeoOresRegisterEvent;
-import neo_ores.event.NeoOresRecipeRegisterEvent;
 import neo_ores.event.NeoOresItemEvent;
 import neo_ores.event.NeoOresEntityEvent;
 import neo_ores.packet.PacketItemsToClient;
@@ -28,9 +26,21 @@ import neo_ores.potion.PotionUndying;
 import neo_ores.proxy.CommonProxy;
 import neo_ores.world.dimension.WorldProviderTheFire;
 import neo_ores.world.dimension.WorldProviderTheEarth;
+import neo_ores.world.biome.BiomeTheAir;
+import neo_ores.world.biome.BiomeTheEarth;
+import neo_ores.world.biome.BiomeTheFire;
+import neo_ores.world.biome.BiomeTheWater;
 import neo_ores.world.dimension.WorldProviderTheAir;
 import neo_ores.world.dimension.WorldProviderTheWater;
 import neo_ores.world.gen.NeoOresOreGen;
+import neo_ores.world.gen.structures.air.AirStructurePieces;
+import neo_ores.world.gen.structures.air.AirStructureStart;
+import neo_ores.world.gen.structures.earth.EarthStructurePieces;
+import neo_ores.world.gen.structures.earth.EarthStructureStart;
+import neo_ores.world.gen.structures.fire.FireStructurePieces;
+import neo_ores.world.gen.structures.fire.FireStructureStart;
+import neo_ores.world.gen.structures.water.WaterStructurePieces;
+import neo_ores.world.gen.structures.water.WaterStructureStart;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -44,6 +54,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -87,6 +99,7 @@ public class NeoOres
 		DimensionManager.registerDimension(THE_AIR.getId(), THE_AIR);
 		GameRegistry.registerWorldGenerator(new NeoOresOreGen(), 0);
 		NeoOresRecipeRegisterEvent.registerFromJson(event);
+		NeoOres.registerStructures();
 		
 		PACKET.registerMessage(PacketManaDataToClient.Handler.class, PacketManaDataToClient.class, 0, Side.CLIENT);
 		PACKET.registerMessage(PacketManaDataToServer.Handler.class, PacketManaDataToServer.class, 1, Side.SERVER);
@@ -98,6 +111,17 @@ public class NeoOres
 		{
 			NeoOresRegisterEvent.registerRendering();
 		}
+	}
+	
+	public static void registerStructures() {
+		MapGenStructureIO.registerStructure(EarthStructureStart.class, "UrySanctuary");
+		MapGenStructureIO.registerStructure(WaterStructureStart.class, "GabrySanctuary");
+		MapGenStructureIO.registerStructure(AirStructureStart.class, "RaphaSanctuary");
+		MapGenStructureIO.registerStructure(FireStructureStart.class, "MichaSanctuary");
+		EarthStructurePieces.registerPieces();
+		WaterStructurePieces.registerPieces();
+		AirStructurePieces.registerPieces();
+		FireStructurePieces.registerPieces();
 	}
 	
 	@EventHandler
@@ -252,4 +276,9 @@ public class NeoOres
 	public static final MusicTicker.MusicType gnome = EnumHelperClient.addMusicType("Gnome", MUSIC_EARTH, 3600, 12000);
 	public static final MusicTicker.MusicType salamandra = EnumHelperClient.addMusicType("Salamandra", MUSIC_FIRE, 3600, 12000);
 	public static final MusicTicker.MusicType undine = EnumHelperClient.addMusicType("Undine", MUSIC_WATER, 3600, 12000);
+	
+	public static final Biome air = new BiomeTheAir((new Biome.BiomeProperties("Raphael's Forest")).setTemperature(0.7F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "air");
+	public static final Biome earth = new BiomeTheEarth((new Biome.BiomeProperties("Uriel's Forest")).setTemperature(0.95F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "earth");
+	public static final Biome fire = new BiomeTheFire((new Biome.BiomeProperties("Michael's Forest")).setTemperature(2.0F)).setRegistryName(Reference.MOD_ID, "fire");
+	public static final Biome water = new BiomeTheWater((new Biome.BiomeProperties("Gabriel's Forest")).setTemperature(0.5F)).setRegistryName(Reference.MOD_ID, "water");
 }

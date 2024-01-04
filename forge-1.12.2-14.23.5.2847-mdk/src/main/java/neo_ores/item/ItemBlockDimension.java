@@ -1,16 +1,16 @@
 package neo_ores.item;
 
-import neo_ores.block.BlockDimension;
+import neo_ores.block.INeoOresBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class ItemBlockDimension extends ItemBlock
 {
-	public ItemBlockDimension(Block block) 
+	public <T extends Block & INeoOresBlock> ItemBlockDimension(T block) 
 	{
 		super(block);
-		this.setHasSubtypes(true);
+		if(block.getMaxMeta() > 0) this.setHasSubtypes(true);
 		this.setMaxDamage(0);
 	}
 	
@@ -21,6 +21,6 @@ public class ItemBlockDimension extends ItemBlock
 	
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return ((BlockDimension)this.getBlock()).getUnlocalizedName(stack);
+		return ((INeoOresBlock)this.getBlock()).getUnlocalizedName(stack);
 	}
 }

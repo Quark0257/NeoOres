@@ -1,0 +1,7 @@
+{
+	"parent": "neo_ores:block/colored_cross",
+  	"textures": 
+  	{
+    	"cross": "neo_ores:blocks/sapling_base"
+  	}
+}

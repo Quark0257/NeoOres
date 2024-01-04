@@ -19,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.tileentity.TileEntity;
@@ -165,5 +166,10 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 	public Item getItemBlock(Block block)
 	{
 		return new ItemBlock(block).setRegistryName(block.getRegistryName());
+	}
+
+	public String getUnlocalizedName(ItemStack stack)
+	{
+		return "tile." + this.getRegistryName().getResourcePath();
 	}
 }

@@ -19,7 +19,7 @@ public class WorldProviderTheEarth extends WorldProvider
 	
     public void init()
     {
-        this.biomeProvider = new BiomeProviderSingle(NeoOres.test);
+        this.biomeProvider = new BiomeProviderSingle(NeoOres.earth);
         this.hasSkyLight = false;
     }
     

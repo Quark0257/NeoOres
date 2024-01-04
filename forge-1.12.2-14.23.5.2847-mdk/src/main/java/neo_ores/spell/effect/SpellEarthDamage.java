@@ -3,8 +3,8 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvent;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;

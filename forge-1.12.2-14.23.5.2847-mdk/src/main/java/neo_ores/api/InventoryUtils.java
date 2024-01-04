@@ -1,5 +1,6 @@
 package neo_ores.api;
 
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -10,13 +11,21 @@ public class InventoryUtils
 		if(targetindex < target.getSizeInventory())
 		{
 			ItemStack targetstack = target.getStackInSlot(targetindex).copy();
+			if(targetstack.isEmpty()) return false;
 			int targetcount = targetstack.getCount();
 			int size = distination.getSizeInventory();
 			for(int i = 0;i < size;i++)
 			{
 				ItemStack distinationstack = distination.getStackInSlot(i).copy();
-				if(distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount() || !distination.isItemValidForSlot(i,targetstack))
+				if(distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount())
 					continue;
+				if(distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount())
+					continue;
+				if(!distination.isItemValidForSlot(i,targetstack)) 
+					continue;
+				if(distination instanceof InventoryPlayer) {
+					if(((InventoryPlayer)distination).mainInventory.size() <= i) continue;
+				}
 				if(StackUtils.compareWith(distination.getStackInSlot(i),targetstack))
 				{
 					int count = targetstack.getCount() + distination.getStackInSlot(i).getCount();
@@ -46,6 +55,9 @@ public class InventoryUtils
 				ItemStack distinationstack = targetstack.copy();
 				if(distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount() || !distination.isItemValidForSlot(i,targetstack))
 					continue;
+				if(distination instanceof InventoryPlayer) {
+					if(((InventoryPlayer)distination).mainInventory.size() <= i) continue;
+				}
 				if(distination.getStackInSlot(i).isEmpty())
 				{
 					int count = targetstack.getCount();
@@ -73,16 +85,19 @@ public class InventoryUtils
 		return false;
 	}
 	
-	public static boolean addInventoryfromStack(ItemStack stack, IInventory distination)
+	public static ItemStack addInventoryfromStack(ItemStack stack, IInventory distination)
 	{
+		if(stack.isEmpty()) return ItemStack.EMPTY;
 		ItemStack targetstack = stack.copy();
-		int targetcount = targetstack.getCount();
 		int size = distination.getSizeInventory();
 		for(int i = 0;i < size;i++)
 		{
 			ItemStack distinationstack = distination.getStackInSlot(i).copy();
 			if(distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount() || !distination.isItemValidForSlot(i,targetstack))
 				continue;
+			if(distination instanceof InventoryPlayer) {
+				if(((InventoryPlayer)distination).mainInventory.size() <= i) continue;
+			}
 			if(StackUtils.compareWith(distination.getStackInSlot(i),targetstack))
 			{
 				int count = targetstack.getCount() + distination.getStackInSlot(i).getCount();
@@ -104,7 +119,7 @@ public class InventoryUtils
 				}
 			}
 			
-			if(targetstack.isEmpty()) return true;
+			if(targetstack.isEmpty()) return stack;
 		}
 		
 		for(int i = 0;i < size;i++)
@@ -112,6 +127,9 @@ public class InventoryUtils
 			ItemStack distinationstack = targetstack.copy();
 			if(distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount() || !distination.isItemValidForSlot(i,targetstack))
 				continue;
+			if(distination instanceof InventoryPlayer) {
+				if(((InventoryPlayer)distination).mainInventory.size() <= i) continue;
+			}
 			if(distination.getStackInSlot(i).isEmpty())
 			{
 				int count = targetstack.getCount();
@@ -132,8 +150,8 @@ public class InventoryUtils
 				}
 			}
 			
-			if(targetstack.isEmpty()) return true;
+			if(targetstack.isEmpty()) return stack;
 		}
-		return targetcount != targetstack.getCount();
+		return stack;
 	}
 }

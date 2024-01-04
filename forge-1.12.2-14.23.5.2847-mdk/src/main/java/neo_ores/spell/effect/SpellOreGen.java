@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvent;
+import neo_ores.main.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerManaDataServer;
 import neo_ores.util.SpellUtils;

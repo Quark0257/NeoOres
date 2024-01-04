@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleMagic1;
-import neo_ores.event.NeoOresRegisterEvent;
+import neo_ores.main.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;

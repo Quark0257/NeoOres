@@ -26,14 +26,11 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter,Ha
 	
 	@Override
 	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -57,7 +54,6 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter,Ha
 						//TODO set Filter
 						if(!inventory.getStackInSlot(i).isEmpty() && InventoryUtils.addInventoryfromInventorySlot(i, inventory, player.inventory)) 
 						{
-							
 							break;
 						}
 					}
@@ -93,9 +89,10 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter,Ha
 			EntityItem entityitem = (EntityItem)entity;
 			ItemStack target = entityitem.getItem();
 			//TODO set Filter
-			if(!target.isEmpty() && InventoryUtils.addInventoryfromStack(target, player.inventory))
+			ItemStack result = InventoryUtils.addInventoryfromStack(target, player.inventory);
+			if(!target.isEmpty() && result.getCount() != target.getCount())
 			{
-				
+				entityitem.setItem(result);
 				if(entityitem.getItem().isEmpty()) entityitem.setDead();
 			}
 		}

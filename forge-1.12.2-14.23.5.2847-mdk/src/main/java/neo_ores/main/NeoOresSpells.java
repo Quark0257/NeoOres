@@ -8,6 +8,7 @@ import neo_ores.api.spell.MageKnowledgeTableData;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.spell.correction.SpellCanApplyNBT;
+import neo_ores.spell.correction.SpellCollidableFilter;
 import neo_ores.spell.correction.SpellContinuation;
 import neo_ores.spell.correction.SpellDamageLevel;
 import neo_ores.spell.correction.SpellGather;
@@ -25,6 +26,7 @@ import neo_ores.spell.effect.SpellComposition;
 import neo_ores.spell.effect.SpellDig;
 import neo_ores.spell.effect.SpellEarthDamage;
 import neo_ores.spell.effect.SpellOreGen;
+import neo_ores.spell.effect.SpellPullItem;
 import neo_ores.spell.effect.SpellSummon;
 import neo_ores.spell.form.SpellBullet;
 import neo_ores.spell.form.SpellTouch;
@@ -101,6 +103,8 @@ public class NeoOresSpells
 	public static final SpellItem spell_nbt_applying = new SpellItem(new BasicData(Reference.MOD_ID,"nbt_apply",11,SpellItemType.WATER,1,100),"nbt_apply",new MageKnowledgeTableData(NeoOresSpells.spell_summon,-3,8,new ResourceLocation(Reference.MOD_ID, "nbt_apply"),NeoOres.neo_ores),new SpellCanApplyNBT());
 	public static final SpellItem spell_ore_gen = new SpellItem(new BasicData(Reference.MOD_ID,"ore_gen",11,SpellItemType.EARTH,100,100),"ore_gen",new MageKnowledgeTableData(NeoOresSpells.spell_luck10,-1,12,new ResourceLocation(Reference.MOD_ID, "ore_gen"),NeoOres.neo_ores),new SpellOreGen());
 	public static final SpellItem spell_no_inertia = new SpellItem(new BasicData(Reference.MOD_ID,"no_inertia",1,SpellItemType.EARTH,10,1),"no_inertia",new MageKnowledgeTableData(NeoOresSpells.spell_bullet,4,3,new ResourceLocation(Reference.MOD_ID, "no_inertia"),NeoOres.neo_ores),new SpellNoInertia());
+	public static final SpellItem spell_pull_item = new SpellItem(new BasicData(Reference.MOD_ID,"pull_item",1,SpellItemType.AIR,1,1),"pull_item",new MageKnowledgeTableData(NeoOresSpells.spell_composition,3,2,new ResourceLocation(Reference.MOD_ID, "pull_item"),NeoOres.neo_ores),new SpellPullItem());
+	public static final SpellItem spell_collidable_filter = new SpellItem(new BasicData(Reference.MOD_ID,"collidable_filter",1,SpellItemType.FIRE,1,1),"collidable_filter",new MageKnowledgeTableData(NeoOresSpells.spell_earth_damage,-2,1,new ResourceLocation(Reference.MOD_ID, "collidable_filter"),NeoOres.neo_ores),new SpellCollidableFilter());
 	
 	public static final List<SpellItem> registry = Arrays.asList(
 			spell_touch,
@@ -171,6 +175,8 @@ public class NeoOresSpells
 			spell_summon,
 			spell_nbt_applying,
 			spell_ore_gen,
-			spell_no_inertia
+			spell_no_inertia,
+			spell_pull_item,
+			spell_collidable_filter
 			);	
 }

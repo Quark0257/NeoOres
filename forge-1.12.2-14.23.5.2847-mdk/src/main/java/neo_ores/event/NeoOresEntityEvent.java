@@ -422,7 +422,7 @@ public class NeoOresEntityEvent
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerClone(PlayerEvent.Clone evt)
 	{
-		if (evt.getEntityPlayer() instanceof EntityPlayerMP)
+		if (evt.getEntityPlayer() instanceof EntityPlayerMP && evt.getOriginal().getEntityData().hasKey("neo_ores"))
 		{
 			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
 			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) evt.getEntityPlayer());

@@ -45,9 +45,7 @@ public class ColorUtils
 
 	public static RGB getThreePhase(double phase)
 	{
-		return new RGB((int) (255 * (Math.sin(phase) + 1.0) / 2.0),
-				(int) (255 * (Math.sin(phase - 2.0 * Math.PI / 3.0) + 1.0) / 2.0),
-				(int) (255 * (Math.sin(phase - 4 * Math.PI / 3.0) + 1.0) / 2.0));
+		return new RGB((int) (255 * (Math.sin(phase) + 1.0) / 2.0), (int) (255 * (Math.sin(phase - 2.0 * Math.PI / 3.0) + 1.0) / 2.0), (int) (255 * (Math.sin(phase - 4 * Math.PI / 3.0) + 1.0) / 2.0));
 	}
 
 	public static double theta(RGB color)
@@ -73,8 +71,7 @@ public class ColorUtils
 		int min = Math.min(color.red, color.green);
 		min = Math.min(min, color.blue);
 		double factor = 255.0 / (double) (max - min);
-		return new RGB((int) ((color.red - min) * factor), (int) ((color.green - min) * factor),
-				(int) ((color.blue - min) * factor));
+		return new RGB((int) ((color.red - min) * factor), (int) ((color.green - min) * factor), (int) ((color.blue - min) * factor));
 	}
 
 	public static RGB makeThreeDegreePhase(double phase)
@@ -85,7 +82,6 @@ public class ColorUtils
 		int min = Math.min(color.red, color.green);
 		min = Math.min(min, color.blue);
 		double factor = 255.0 / (double) (max - min);
-		return new RGB((int) ((color.red - min) * factor + 0.5), (int) ((color.green - min) * factor + 0.5),
-				(int) ((color.blue - min) * factor + 0.5));
+		return new RGB((int) ((color.red - min) * factor + 0.5), (int) ((color.green - min) * factor + 0.5), (int) ((color.blue - min) * factor + 0.5));
 	}
 }

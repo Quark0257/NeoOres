@@ -37,8 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockNeoOre extends NeoOresBlock
 {
-	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension",
-			DimensionName.class);
+	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension", DimensionName.class);
 	private boolean dropSelf;
 	private int dropMin = 0;
 	private Item dropItem = null;
@@ -48,8 +47,8 @@ public class BlockNeoOre extends NeoOresBlock
 	private int dropDamage = 0;
 	private DimensionName dimension = null;
 
-	public BlockNeoOre(String registername, int harvestLevel, @Nullable DimensionName dimension, float light,
-			boolean dropSelf, @Nullable Item dropItem, int damage, int min, int max, int dropExpMin, int dropExpMax)
+	public BlockNeoOre(String registername, int harvestLevel, @Nullable DimensionName dimension, float light, boolean dropSelf, @Nullable Item dropItem, int damage, int min, int max, int dropExpMin,
+			int dropExpMax)
 	{
 		super(Material.ROCK);
 		this.setHardness(3.0F);
@@ -87,14 +86,12 @@ public class BlockNeoOre extends NeoOresBlock
 
 	public int quantityDropped(Random random)
 	{
-		return this.dropMin < this.dropMax ? this.dropMin + random.nextInt(this.dropMax - this.dropMin + 1)
-				: this.dropMin;
+		return this.dropMin < this.dropMax ? this.dropMin + random.nextInt(this.dropMax - this.dropMin + 1) : this.dropMin;
 	}
 
 	public int quantityDroppedWithBonus(int fortune, Random random)
 	{
-		if (fortune > 0 && Item.getItemFromBlock(this) != this
-				.getItemDropped((IBlockState) this.getBlockState().getValidStates().iterator().next(), random, fortune))
+		if (fortune > 0 && Item.getItemFromBlock(this) != this.getItemDropped((IBlockState) this.getBlockState().getValidStates().iterator().next(), random, fortune))
 		{
 			int i = random.nextInt(fortune + 2) - 1;
 
@@ -125,8 +122,7 @@ public class BlockNeoOre extends NeoOresBlock
 	{
 		if ((new ItemStack(this)).getItem() == Item.getItemFromBlock(NeoOresBlocks.custom_lit_redstone_ore))
 		{
-			return new ItemStack(NeoOresBlocks.custom_redstone_ore, 1,
-					this.getMetaFromState(worldIn.getBlockState(pos)));
+			return new ItemStack(NeoOresBlocks.custom_redstone_ore, 1, this.getMetaFromState(worldIn.getBlockState(pos)));
 		}
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)));
 	}
@@ -155,8 +151,7 @@ public class BlockNeoOre extends NeoOresBlock
 		super.onEntityWalk(worldIn, pos, entityIn);
 	}
 
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		this.activate(worldIn, pos);
 		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
@@ -170,15 +165,13 @@ public class BlockNeoOre extends NeoOresBlock
 		}
 
 		if (this == NeoOresBlocks.custom_redstone_ore)
-			worldIn.setBlockState(pos, NeoOresBlocks.custom_lit_redstone_ore.getDefaultState().withProperty(DIM,
-					worldIn.getBlockState(pos).getValue(DIM)));
+			worldIn.setBlockState(pos, NeoOresBlocks.custom_lit_redstone_ore.getDefaultState().withProperty(DIM, worldIn.getBlockState(pos).getValue(DIM)));
 	}
 
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
 	{
 		if (state.getBlock() == NeoOresBlocks.custom_lit_redstone_ore)
-			worldIn.setBlockState(pos, NeoOresBlocks.custom_redstone_ore.getDefaultState().withProperty(DIM,
-					worldIn.getBlockState(pos).getValue(DIM)));
+			worldIn.setBlockState(pos, NeoOresBlocks.custom_redstone_ore.getDefaultState().withProperty(DIM, worldIn.getBlockState(pos).getValue(DIM)));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -230,8 +223,7 @@ public class BlockNeoOre extends NeoOresBlock
 				d1 = (double) pos.getX() - 0.0625D;
 			}
 
-			if (d1 < (double) pos.getX() || d1 > (double) (pos.getX() + 1) || d2 < 0.0D
-					|| d2 > (double) (pos.getY() + 1) || d3 < (double) pos.getZ() || d3 > (double) (pos.getZ() + 1))
+			if (d1 < (double) pos.getX() || d1 > (double) (pos.getX() + 1) || d2 < 0.0D || d2 > (double) (pos.getY() + 1) || d3 < (double) pos.getZ() || d3 > (double) (pos.getZ() + 1))
 			{
 				worldIn.spawnParticle(EnumParticleTypes.REDSTONE, d1, d2, d3, 0.0D, 0.0D, 0.0D);
 			}
@@ -265,8 +257,7 @@ public class BlockNeoOre extends NeoOresBlock
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
 	}
@@ -274,8 +265,7 @@ public class BlockNeoOre extends NeoOresBlock
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
-		return this.dimension != null ? this.getDefaultState().withProperty(DIM, this.dimension)
-				: this.getDefaultState().withProperty(DIM, DimensionName.getFromMeta(meta));
+		return this.dimension != null ? this.getDefaultState().withProperty(DIM, this.dimension) : this.getDefaultState().withProperty(DIM, DimensionName.getFromMeta(meta));
 	}
 
 	@Override
@@ -303,8 +293,7 @@ public class BlockNeoOre extends NeoOresBlock
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		return dimension != null ? "tile." + this.getRegistryName().getResourcePath()
-				: "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_"
-						+ this.getRegistryName().getResourcePath();
+				: "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_" + this.getRegistryName().getResourcePath();
 	}
 
 	public boolean getTickRandomly()
@@ -320,10 +309,7 @@ public class BlockNeoOre extends NeoOresBlock
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID,
-						DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()),
-				"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	// 0~15 available

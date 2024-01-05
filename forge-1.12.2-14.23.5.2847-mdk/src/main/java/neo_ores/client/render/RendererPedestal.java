@@ -11,8 +11,7 @@ import net.minecraft.item.ItemStack;
 
 public class RendererPedestal extends TileEntitySpecialRenderer<AbstractTileEntityPedestal>
 {
-	public void render(AbstractTileEntityPedestal te, double x, double y, double z, float partialTicks,
-			int destroyStage, float alpha)
+	public void render(AbstractTileEntityPedestal te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
 		GlStateManager.pushMatrix();
@@ -25,9 +24,7 @@ public class RendererPedestal extends TileEntitySpecialRenderer<AbstractTileEnti
 			EntityItem entityitem = null;
 			float ticks = te.tickCount;
 			GlStateManager.pushMatrix();
-			GlStateManager.translate((float) x + 0.5F,
-					(float) y + 0.3125F + 0.03125F * (float) Math.sin(ticks / 10.0F)
-							+ ((te.offset < -0.4325D) ? (float) te.offset + 0.8125F : (float) te.offset),
+			GlStateManager.translate((float) x + 0.5F, (float) y + 0.3125F + 0.03125F * (float) Math.sin(ticks / 10.0F) + ((te.offset < -0.4325D) ? (float) te.offset + 0.8125F : (float) te.offset),
 					(float) z + 0.5F);
 			GlStateManager.scale(1.25D, 1.25D, 1.25D);
 			GlStateManager.rotate(ticks % 360.0F, 0.0F, 1.0F, 0.0F);

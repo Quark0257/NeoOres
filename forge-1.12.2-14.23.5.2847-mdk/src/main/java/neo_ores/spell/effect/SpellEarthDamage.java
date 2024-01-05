@@ -23,88 +23,98 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,HasDamageLevel
+public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, HasDamageLevel
 {
 	private int damageLevel = 0;
 	private int luck = 0;
 	private int range0 = 0;
 
 	@Override
-	public void setLuck(int value) {
+	public void setLuck(int value)
+	{
 		luck = value;
 	}
 
 	@Override
-	public void setRange(int value) {
+	public void setRange(int value)
+	{
 		this.range0 = value;
 	}
 
 	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack) 
+	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		if(result != null && result.typeOfHit == Type.ENTITY)
+		if (result != null && result.typeOfHit == Type.ENTITY)
 		{
 			ItemStack item = stack.copy();
-			if(this.luck > 0)
+			if (this.luck > 0)
 			{
 				item.addEnchantment(Enchantments.LOOTING, this.luck);
 			}
-			
-			Entity entity = (Entity)result.entityHit;
-			
-			if(range0 > 0)
+
+			Entity entity = (Entity) result.entityHit;
+
+			if (range0 > 0)
 			{
 				int range = range0 * 2;
-				for(Entity elb : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.posX - range,entity.posY - range,entity.posZ - range,entity.posX + range,entity.posY + range,entity.posZ + range)))
+				for (Entity elb : world.getEntitiesWithinAABB(Entity.class,
+						new AxisAlignedBB(entity.posX - range, entity.posY - range, entity.posZ - range, entity.posX + range, entity.posY + range, entity.posZ + range)))
 				{
-					if(elb != entity && elb != runner)
+					if (elb != entity && elb != runner)
 					{
-						this.onDamage(world,elb, runner,item);
+						this.onDamage(world, elb, runner, item);
 					}
 				}
 			}
-			
-			this.onDamage(world,entity, runner,item);
-			
-			Map<Enchantment,Integer> enchs = EnchantmentHelper.getEnchantments(item);
-			if(enchs.containsKey(Enchantments.LOOTING))
+
+			this.onDamage(world, entity, runner, item);
+
+			Map<Enchantment, Integer> enchs = EnchantmentHelper.getEnchantments(item);
+			if (enchs.containsKey(Enchantments.LOOTING))
 			{
 				enchs.remove(Enchantments.LOOTING);
 			}
-			if(item.hasTagCompound())item.getTagCompound().removeTag("ench");;
-			
-			for(Map.Entry<Enchantment,Integer> entry : enchs.entrySet())
+			if (item.hasTagCompound())
+				item.getTagCompound().removeTag("ench");
+			;
+
+			for (Map.Entry<Enchantment, Integer> entry : enchs.entrySet())
 			{
 				item.addEnchantment(entry.getKey(), entry.getValue());
 			}
 		}
-		
+
 	}
-	
-	private void onDamage(World world,Entity elb,EntityLivingBase runner,ItemStack stack)
+
+	private void onDamage(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
-		if(elb.canBeCollidedWith())
+		if (elb.canBeCollidedWith())
 		{
-			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH,runner,stack), (int)(3.5 * Math.pow(1.5,this.damageLevel)) + 3);
-			if(world.isRemote) SpellUtils.onDisplayParticleTypeAEntity(world, elb,NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack), 16);
-			if(runner instanceof EntityPlayerMP)
+			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), (int) (3.5 * Math.pow(1.5, this.damageLevel)) + 3);
+			if (world.isRemote)
+				SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack), 16);
+			if (runner instanceof EntityPlayerMP)
 			{
-				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
-				pmds.addMXP(10L + (long)Math.pow(3,luck));	
+				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+				pmds.addMXP(10L + (long) Math.pow(3, luck));
 			}
 		}
 	}
 
 	@Override
-	public void setDamageLevel(int value) 
+	public void setDamageLevel(int value)
 	{
 		this.damageLevel = value;
-		
+
 	}
 
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) {}
+	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
+	{
+	}
 
 	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) {}
+	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
+	{
+	}
 }

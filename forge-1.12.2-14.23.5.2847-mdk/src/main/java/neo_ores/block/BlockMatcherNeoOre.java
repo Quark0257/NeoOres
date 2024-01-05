@@ -23,7 +23,6 @@ public class BlockMatcherNeoOre implements Predicate<IBlockState>
 	@Override
 	public boolean apply(@Nullable IBlockState input)
 	{
-		return input != null && input.getBlock() == this.state.getBlock() && input.getValue(BlockNeoOre.DIM) != null
-				&& input.getValue(BlockNeoOre.DIM) == state.getValue(BlockNeoOre.DIM);
+		return input != null && input.getBlock() == this.state.getBlock() && input.getValue(BlockNeoOre.DIM) != null && input.getValue(BlockNeoOre.DIM) == state.getValue(BlockNeoOre.DIM);
 	}
 }

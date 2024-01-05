@@ -35,8 +35,7 @@ public class BlockManaWorkbench extends NeoOresBlock
 		return Item.getItemFromBlock(NeoOresBlocks.mana_workbench);
 	}
 
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		if (!worldIn.isRemote)
 		{
@@ -75,8 +74,7 @@ public class BlockManaWorkbench extends NeoOresBlock
 
 		public ITextComponent getDisplayName()
 		{
-			return new TextComponentTranslation(NeoOresBlocks.mana_workbench.getUnlocalizedName() + ".name",
-					new Object[0]);
+			return new TextComponentTranslation(NeoOresBlocks.mana_workbench.getUnlocalizedName() + ".name", new Object[0]);
 		}
 
 		public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)

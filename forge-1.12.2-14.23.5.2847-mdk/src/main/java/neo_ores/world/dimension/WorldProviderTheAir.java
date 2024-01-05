@@ -13,52 +13,52 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class WorldProviderTheAir extends WorldProvider
 {
 	@Override
-	public DimensionType getDimensionType() 
+	public DimensionType getDimensionType()
 	{
 		return NeoOres.THE_AIR;
 	}
-	
+
 	public void init()
-    {
-        this.biomeProvider = new BiomeProviderSingle(NeoOres.air);
-        this.hasSkyLight = true;
-        this.setSkyRenderer(new RenderSkyDimensions(false));
-    }
-	
+	{
+		this.biomeProvider = new BiomeProviderSingle(NeoOres.air);
+		this.hasSkyLight = true;
+		this.setSkyRenderer(new RenderSkyDimensions(false));
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public MusicTicker.MusicType getMusicType()
-    {
-        return NeoOres.sylphied;
-    }
+	{
+		return NeoOres.sylphied;
+	}
 
-    public IChunkGenerator createChunkGenerator()
-    {
-        return new ChunkGeneratorTheAir(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
-    }
+	public IChunkGenerator createChunkGenerator()
+	{
+		return new ChunkGeneratorTheAir(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
+	}
 
-    public boolean isSurfaceWorld()
-    {
-        return true;
-    }
+	public boolean isSurfaceWorld()
+	{
+		return true;
+	}
 
-    public boolean canCoordinateBeSpawn(int x, int z)
-    {
-        return false;
-    }
+	public boolean canCoordinateBeSpawn(int x, int z)
+	{
+		return false;
+	}
 
-    public boolean canRespawnHere()
-    {
-        return true;
-    }
-    
-    public double getHorizon()
-    {
-    	return -64.0D;
-    }
-    
-    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
-    {
-    	return false;
-    }
+	public boolean canRespawnHere()
+	{
+		return true;
+	}
+
+	public double getHorizon()
+	{
+		return -64.0D;
+	}
+
+	public boolean shouldMapSpin(String entity, double x, double z, double rotation)
+	{
+		return false;
+	}
 }

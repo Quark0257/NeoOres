@@ -6,15 +6,15 @@ import neo_ores.spell.SpellItemInterfaces.HasContinuation;
 public class SpellContinuation extends SpellCorrectionSingle<HasContinuation>
 {
 
-	public SpellContinuation(int level) 
+	public SpellContinuation(int level)
 	{
 		super(level);
 	}
 
 	@Override
-	public void onApply(HasContinuation spell) 
+	public void onApply(HasContinuation spell)
 	{
 		spell.setContinuation(level);
 	}
-	
+
 }

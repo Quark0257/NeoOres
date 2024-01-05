@@ -5,13 +5,14 @@ import neo_ores.spell.SpellItemInterfaces.HasSilk;
 
 public class SpellSilk extends SpellCorrectionSingle<HasSilk>
 {
-	public SpellSilk() 
+	public SpellSilk()
 	{
 		super(0);
 	}
 
 	@Override
-	protected void onApply(HasSilk spell) {
+	protected void onApply(HasSilk spell)
+	{
 		spell.setSilkTouch();
 	}
 }

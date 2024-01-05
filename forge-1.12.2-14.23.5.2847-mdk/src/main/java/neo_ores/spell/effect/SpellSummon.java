@@ -20,69 +20,75 @@ import net.minecraft.world.World;
 public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 {
 	private boolean applyNBT = false;
-	
+
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) 
+	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
 	}
 
 	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) 
+	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
 	{
 	}
 
 	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result,ItemStack stack) 
+	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		if(world.isRemote) return;
-		
-		if(stack.getTagCompound().hasKey("additionalData",10) && stack.getTagCompound().getCompoundTag("additionalData").hasKey("storedEntity", 10))
+		if (world.isRemote)
+			return;
+
+		if (stack.getTagCompound().hasKey("additionalData", 10) && stack.getTagCompound().getCompoundTag("additionalData").hasKey("storedEntity", 10))
 		{
 			NBTUtils nbtutils = new NBTUtils(stack.getTagCompound().getCompoundTag("additionalData"));
 			NBTTagCompound entityTag = nbtutils.getCompound("storedEntity");
-			Entity rawentity = EntityList.createEntityByIDFromName(new ResourceLocation(entityTag.getString("id")),world);
-			if(rawentity == null || !(rawentity instanceof EntityLivingBase)) return;
-			EntityLivingBase entity = (EntityLivingBase)rawentity;
-			if(this.applyNBT && entityTag.getCompoundTag("tag") != null) {
-				if(entityTag.getCompoundTag("tag").hasUniqueId("UUID")) {
+			Entity rawentity = EntityList.createEntityByIDFromName(new ResourceLocation(entityTag.getString("id")), world);
+			if (rawentity == null || !(rawentity instanceof EntityLivingBase))
+				return;
+			EntityLivingBase entity = (EntityLivingBase) rawentity;
+			if (this.applyNBT && entityTag.getCompoundTag("tag") != null)
+			{
+				if (entityTag.getCompoundTag("tag").hasUniqueId("UUID"))
+				{
 					entityTag.getCompoundTag("tag").removeTag("UUID");
 				}
 				entity.deserializeNBT(entityTag.getCompoundTag("tag"));
 			}
-			else entity.setHealth(entity.getMaxHealth());
-			if(result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) return;
+			else
+				entity.setHealth(entity.getMaxHealth());
+			if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK)
+				return;
 			BlockPos entitySpawn = result.getBlockPos();
-			if(result.sideHit == EnumFacing.DOWN)
+			if (result.sideHit == EnumFacing.DOWN)
 			{
-				entitySpawn = entitySpawn.add(0,-entity.height, 0);
+				entitySpawn = entitySpawn.add(0, -entity.height, 0);
 			}
-			else if(result.sideHit == EnumFacing.EAST)
+			else if (result.sideHit == EnumFacing.EAST)
 			{
-				entitySpawn = entitySpawn.add(1,0, 0);
+				entitySpawn = entitySpawn.add(1, 0, 0);
 			}
-			else if(result.sideHit == EnumFacing.WEST)
+			else if (result.sideHit == EnumFacing.WEST)
 			{
-				entitySpawn = entitySpawn.add(-1,0, 0);
+				entitySpawn = entitySpawn.add(-1, 0, 0);
 			}
-			else if(result.sideHit == EnumFacing.NORTH)
+			else if (result.sideHit == EnumFacing.NORTH)
 			{
-				entitySpawn = entitySpawn.add(0,0, -1);
+				entitySpawn = entitySpawn.add(0, 0, -1);
 			}
-			else if(result.sideHit == EnumFacing.SOUTH)
+			else if (result.sideHit == EnumFacing.SOUTH)
 			{
-				entitySpawn = entitySpawn.add(0,0, 1);
+				entitySpawn = entitySpawn.add(0, 0, 1);
 			}
 			else
 			{
-				entitySpawn = entitySpawn.add(0,1, 0);
+				entitySpawn = entitySpawn.add(0, 1, 0);
 			}
 			entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 			world.spawnEntity(entity);
 			runner.attackEntityFrom(NeoOres.PAYMENT, entity.getMaxHealth());
-			
-			if(runner instanceof EntityPlayerMP)
+
+			if (runner instanceof EntityPlayerMP)
 			{
-				EntityPlayerMP player = (EntityPlayerMP)runner;
+				EntityPlayerMP player = (EntityPlayerMP) runner;
 				PlayerManaDataServer pmds = new PlayerManaDataServer(player);
 				pmds.addMXP(10);
 			}
@@ -90,7 +96,7 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 	}
 
 	@Override
-	public void setCanApplyNBT() 
+	public void setCanApplyNBT()
 	{
 		applyNBT = true;
 	}

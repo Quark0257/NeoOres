@@ -27,15 +27,12 @@ import net.minecraft.world.World;
 
 public class BlockDimensionPillar extends BlockDimension implements INeoOresBlock
 {
-	public static final PropertyEnum<BlockDimensionPillar.EnumAxis> LOG_AXIS = PropertyEnum.<BlockDimensionPillar.EnumAxis>create(
-			"axis", BlockDimensionPillar.EnumAxis.class);
+	public static final PropertyEnum<BlockDimensionPillar.EnumAxis> LOG_AXIS = PropertyEnum.<BlockDimensionPillar.EnumAxis>create("axis", BlockDimensionPillar.EnumAxis.class);
 
-	public BlockDimensionPillar(String registername, Material materialIn, float hardness, float resistant,
-			String harvest_key, int harvest_level, float light, SoundType sound)
+	public BlockDimensionPillar(String registername, Material materialIn, float hardness, float resistant, String harvest_key, int harvest_level, float light, SoundType sound)
 	{
 		super(registername, materialIn, hardness, resistant, harvest_key, harvest_level, light, sound);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(DIM, DimensionName.EARTH)
-				.withProperty(LOG_AXIS, EnumAxis.Y));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(DIM, DimensionName.EARTH).withProperty(LOG_AXIS, EnumAxis.Y));
 	}
 
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)
@@ -102,8 +99,7 @@ public class BlockDimensionPillar extends BlockDimension implements INeoOresBloc
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)) % 4);
 	}
@@ -125,8 +121,7 @@ public class BlockDimensionPillar extends BlockDimension implements INeoOresBloc
 
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_"
-				+ this.getRegistryName().getResourcePath();
+		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_" + this.getRegistryName().getResourcePath();
 	}
 
 	public int getMaxMeta()
@@ -136,10 +131,7 @@ public class BlockDimensionPillar extends BlockDimension implements INeoOresBloc
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID,
-						DimensionName.getFromMeta(meta % 4).getName() + "_" + this.getRegistryName().getResourcePath()),
-				"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, DimensionName.getFromMeta(meta % 4).getName() + "_" + this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	@Override
@@ -157,11 +149,9 @@ public class BlockDimensionPillar extends BlockDimension implements INeoOresBloc
 		return false;
 	}
 
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer)
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
-		return this.getStateFromMeta(meta).withProperty(LOG_AXIS,
-				BlockDimensionPillar.EnumAxis.fromFacingAxis(facing.getAxis()));
+		return this.getStateFromMeta(meta).withProperty(LOG_AXIS, BlockDimensionPillar.EnumAxis.fromFacingAxis(facing.getAxis()));
 	}
 
 	public IBlockState withRotation(IBlockState state, Rotation rot)

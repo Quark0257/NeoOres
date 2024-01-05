@@ -13,34 +13,38 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.loot.LootTableList;
 
-public class AirStructurePieceComponent  extends StructurePieceComponent {
-	public AirStructurePieceComponent() {}
-	
-	public AirStructurePieceComponent(WorldServer world, StructurePieceAndOption spao) {
+public class AirStructurePieceComponent extends StructurePieceComponent
+{
+	public AirStructurePieceComponent()
+	{
+	}
+
+	public AirStructurePieceComponent(WorldServer world, StructurePieceAndOption spao)
+	{
 		super(world, spao, "air/");
 	}
 
 	@Override
-	protected void handleDataMarker(String function, BlockPos pos, World worldIn, Random rand,
-			StructureBoundingBox sbb) {
+	protected void handleDataMarker(String function, BlockPos pos, World worldIn, Random rand, StructureBoundingBox sbb)
+	{
 		if (function.startsWith("Chest"))
-        {
+		{
 			worldIn.setBlockState(pos, Blocks.CHEST.getDefaultState());
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+			TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            if (tileentity instanceof TileEntityChest)
-            {
-                ((TileEntityChest)tileentity).setLootTable(LootTableList.CHESTS_END_CITY_TREASURE, rand.nextLong());
-            }
-        }
+			if (tileentity instanceof TileEntityChest)
+			{
+				((TileEntityChest) tileentity).setLootTable(LootTableList.CHESTS_END_CITY_TREASURE, rand.nextLong());
+			}
+		}
 		else if (function.startsWith("Spawner"))
-        {
-            BlockPos blockpos = pos.down();
-        }
+		{
+			BlockPos blockpos = pos.down();
+		}
 		else if (function.startsWith("Boss"))
-        {
-            BlockPos blockpos = pos.down();
-        }
+		{
+			BlockPos blockpos = pos.down();
+		}
 	}
 
 }

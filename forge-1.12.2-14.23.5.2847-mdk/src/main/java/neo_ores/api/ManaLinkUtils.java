@@ -32,20 +32,17 @@ public class ManaLinkUtils
 			stack.getTagCompound().setTag("neo_ores", new NBTTagCompound());
 		}
 
-		stack.getTagCompound().getCompoundTag("neo_ores").setString("playerUUID",
-				player.getOfflineUUID(player.getName()).toString());
+		stack.getTagCompound().getCompoundTag("neo_ores").setString("playerUUID", player.getOfflineUUID(player.getName()).toString());
 	}
 
 	@Nullable
 	public EntityPlayer getPlayer(WorldServer world)
 	{
-		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("neo_ores", 10)
-				|| !stack.getTagCompound().getCompoundTag("neo_ores").hasKey("playerUUID", 8))
+		if (!stack.hasTagCompound() || !stack.getTagCompound().hasKey("neo_ores", 10) || !stack.getTagCompound().getCompoundTag("neo_ores").hasKey("playerUUID", 8))
 		{
 			return null;
 		}
-		return world.getPlayerEntityByUUID(
-				UUID.fromString(stack.getTagCompound().getCompoundTag("neo_ores").getString("playerUUID")));
+		return world.getPlayerEntityByUUID(UUID.fromString(stack.getTagCompound().getCompoundTag("neo_ores").getString("playerUUID")));
 	}
 
 	public boolean hasPlayer(WorldServer world)

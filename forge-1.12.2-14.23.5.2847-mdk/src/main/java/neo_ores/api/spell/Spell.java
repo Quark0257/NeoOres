@@ -20,8 +20,7 @@ public abstract class Spell
 
 		public abstract boolean needConditional();
 
-		public abstract void onSpellRunning(World world, @Nullable EntityLivingBase runner, ItemStack stack,
-				@Nullable RayTraceResult result, NBTTagCompound spells);
+		public abstract void onSpellRunning(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells);
 
 	}
 
@@ -58,16 +57,15 @@ public abstract class Spell
 		{
 			try
 			{
-				Class<T> type = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass())
-						.getActualTypeArguments()[0];
+				Class<T> type = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 				if (type.isInstance(spell))
 				{
 					this.onApply((T) spell);
 				}
-			} catch (ClassCastException e)
+			}
+			catch (ClassCastException e)
 			{
-				FMLLog.log.error(
-						"Spelling has an unexpected error (a class cast error) and this spell item was skipped!");
+				FMLLog.log.error("Spelling has an unexpected error (a class cast error) and this spell item was skipped!");
 				return;
 			}
 		}
@@ -81,8 +79,7 @@ public abstract class Spell
 
 		public abstract void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack);
 
-		public abstract void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result,
-				ItemStack stack);
+		public abstract void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack);
 
 	}
 
@@ -104,8 +101,7 @@ public abstract class Spell
 
 	public static abstract class SpellConditional extends Spell
 	{
-		public abstract boolean isSpellRunnable(World world, @Nullable EntityLivingBase runner, ItemStack stack,
-				@Nullable RayTraceResult result, NBTTagCompound spells);
+		public abstract boolean isSpellRunnable(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells);
 
 		public void initialize()
 		{

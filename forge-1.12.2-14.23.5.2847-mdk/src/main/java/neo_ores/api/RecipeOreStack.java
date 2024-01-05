@@ -104,8 +104,7 @@ public class RecipeOreStack
 	 */
 	public static boolean compareWith(ItemStack stack1, ItemStack stack2)
 	{
-		if (stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage()
-				&& compareNBTWith(stack1, stack2))
+		if (stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage() && compareNBTWith(stack1, stack2))
 		{
 			return true;
 		}
@@ -119,9 +118,7 @@ public class RecipeOreStack
 	public static boolean compareNBTWith(ItemStack stack1, ItemStack stack2)
 	{
 		return (!stack1.hasTagCompound() && stack2.hasTagCompound()) ? false
-				: ((!stack1.hasTagCompound() && !stack2.hasTagCompound()
-						|| stack1.hasTagCompound() && !stack2.hasTagCompound()) ? true
-								: stack1.getTagCompound().equals(stack2.getTagCompound()));
+				: ((!stack1.hasTagCompound() && !stack2.hasTagCompound() || stack1.hasTagCompound() && !stack2.hasTagCompound()) ? true : stack1.getTagCompound().equals(stack2.getTagCompound()));
 	}
 
 	public String toString()

@@ -5,13 +5,13 @@ import neo_ores.spell.SpellItemInterfaces.HasGather;
 
 public class SpellGather extends SpellCorrectionSingle<HasGather>
 {
-	public SpellGather() 
+	public SpellGather()
 	{
 		super(0);
 	}
 
 	@Override
-	public void onApply(HasGather spell) 
+	public void onApply(HasGather spell)
 	{
 		spell.setCanGather();
 	}

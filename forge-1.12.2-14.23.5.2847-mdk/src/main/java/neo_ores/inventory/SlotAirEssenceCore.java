@@ -8,12 +8,12 @@ import net.minecraft.item.ItemStack;
 public class SlotAirEssenceCore extends Slot
 {
 	public SlotAirEssenceCore(IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
-    {
-        super(inventoryIn, slotIndex, xPosition, yPosition);
-    }
+	{
+		super(inventoryIn, slotIndex, xPosition, yPosition);
+	}
 
-    public boolean isItemValid(ItemStack stack)
-    {
-        return stack.getItem() == NeoOresItems.air_essence_core;
-    }
+	public boolean isItemValid(ItemStack stack)
+	{
+		return stack.getItem() == NeoOresItems.air_essence_core;
+	}
 }

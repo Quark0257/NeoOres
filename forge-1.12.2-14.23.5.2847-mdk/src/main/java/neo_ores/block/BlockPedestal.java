@@ -64,8 +64,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 		this.watered = water;
 	}
 
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-			List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
 	{
 		if (watered)
 		{
@@ -130,8 +129,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 		super.breakBlock(worldIn, pos, state);
 	}
 
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		if (worldIn.isRemote)
 			return true;
@@ -174,8 +172,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 			return;
 
 		@SuppressWarnings("deprecation")
-		RayTraceResult result = ForgeHooks.rayTraceEyes(player,
-				((EntityPlayerMP) player).interactionManager.getBlockReachDistance() + 1.0D);
+		RayTraceResult result = ForgeHooks.rayTraceEyes(player, ((EntityPlayerMP) player).interactionManager.getBlockReachDistance() + 1.0D);
 		if (result == null || result.typeOfHit != Type.BLOCK)
 			return;
 		TileEntity tileentity = world.getTileEntity(pos);
@@ -225,8 +222,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 
 			if (flag)
 			{
-				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY,
-						entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
+				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
 						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
 				entityplayer.inventoryContainer.detectAndSendChanges();
 			}
@@ -273,21 +269,17 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 		}
 	}
 
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer)
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
 		if (!watered)
-			return this.getDefaultState().withProperty(FACING,
-					(placer.rotationPitch < 0) ? EnumFacing.UP : EnumFacing.DOWN);
+			return this.getDefaultState().withProperty(FACING, (placer.rotationPitch < 0) ? EnumFacing.UP : EnumFacing.DOWN);
 		return this.getDefaultState();
 	}
 
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
-			ItemStack stack)
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
 		if (!watered)
-			worldIn.setBlockState(pos,
-					state.withProperty(FACING, (placer.rotationPitch < 0) ? EnumFacing.UP : EnumFacing.DOWN), 2);
+			worldIn.setBlockState(pos, state.withProperty(FACING, (placer.rotationPitch < 0) ? EnumFacing.UP : EnumFacing.DOWN), 2);
 	}
 
 	public IBlockState getStateFromMeta(int meta)

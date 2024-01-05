@@ -54,8 +54,7 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 		this.meta = meta;
 	}
 
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-			List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
 	{
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BOTTOM);
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_WEST);
@@ -102,8 +101,7 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 			if (server != null && entityIn.isSneaking())
 			{
 				PlayerList playerList = server.getPlayerList();
-				int dest = entityIn.dimension == DimensionType.OVERWORLD.getId() ? dimension.getId()
-						: DimensionType.OVERWORLD.getId();
+				int dest = entityIn.dimension == DimensionType.OVERWORLD.getId() ? dimension.getId() : DimensionType.OVERWORLD.getId();
 
 				Teleporter teleporter = new NeoOresTeleporter(server.getWorld(dest), entityIn.dimension);
 
@@ -121,8 +119,7 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 
 					entityIn.isDead = false;
 
-					playerList.transferEntityToWorld(entityIn, origin, server.getWorld(origin), server.getWorld(dest),
-							teleporter);
+					playerList.transferEntityToWorld(entityIn, origin, server.getWorld(origin), server.getWorld(dest), teleporter);
 				}
 			}
 		}
@@ -161,8 +158,7 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	// 0~15 available

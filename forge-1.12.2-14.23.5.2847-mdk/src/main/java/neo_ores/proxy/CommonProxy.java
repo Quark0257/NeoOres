@@ -3,13 +3,14 @@ package neo_ores.proxy;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-public class CommonProxy 
+public class CommonProxy
 {
-	public World getClientWorld() 
+	public World getClientWorld()
 	{
-	    return null;
+		return null;
 	}
-	
-	public void setCustomStateModel(Block block) {
+
+	public void setCustomStateModel(Block block)
+	{
 	}
 }

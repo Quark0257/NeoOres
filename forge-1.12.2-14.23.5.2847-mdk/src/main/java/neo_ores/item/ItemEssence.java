@@ -23,40 +23,40 @@ import net.minecraft.world.World;
 public class ItemEssence extends INeoOresItem.Impl
 {
 	public ItemEssence()
-    {
-        this.setHasSubtypes(true);
-        this.setMaxDamage(0);
-        this.setCreativeTab(NeoOres.neo_ores_tab);
-    }
-	
+	{
+		this.setHasSubtypes(true);
+		this.setMaxDamage(0);
+		this.setCreativeTab(NeoOres.neo_ores_tab);
+	}
+
 	public boolean hasEffect(ItemStack stack)
 	{
 		return true;
 	}
-	
+
 	public String getUnlocalizedName(ItemStack stack)
-    {
-        int i = stack.getMetadata();
-        return super.getUnlocalizedName() + "." + i;
-    }
-	
+	{
+		int i = stack.getMetadata();
+		return super.getUnlocalizedName() + "." + i;
+	}
+
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
-    {
-        if (this.isInCreativeTab(tab))
-        {
-            for (int i = 0; i < 5; ++i)
-            {
-                items.add(new ItemStack(this, 1, i));
-            }
-        }
-    }
+	{
+		if (this.isInCreativeTab(tab))
+		{
+			for (int i = 0; i < 5; ++i)
+			{
+				items.add(new ItemStack(this, 1, i));
+			}
+		}
+	}
 
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
-    {
-		if(player.world.isRemote)
+	{
+		if (player.world.isRemote)
 		{
-			PlayerManaDataClient pmdc = new PlayerManaDataClient((EntityPlayerSP)player);
-			if(pmdc.getLevel() > 0)
+			PlayerManaDataClient pmdc = new PlayerManaDataClient((EntityPlayerSP) player);
+			if (pmdc.getLevel() > 0)
 			{
 				return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
 			}
@@ -67,13 +67,13 @@ public class ItemEssence extends INeoOresItem.Impl
 		}
 		else
 		{
-			EntityPlayerMP playermp = (EntityPlayerMP)player;
+			EntityPlayerMP playermp = (EntityPlayerMP) player;
 			PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
 
-			if(pmd.getLevel() > 0)
+			if (pmd.getLevel() > 0)
 			{
 				return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
-	    	}
+			}
 			else
 			{
 				pmd.setLevel(NeoOresConfig.magic.init_level);
@@ -83,32 +83,32 @@ public class ItemEssence extends INeoOresItem.Impl
 				pmd.setMagicPoint(NeoOresConfig.magic.init_magic_point);
 			}
 		}
-		
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-    }
-	
-	public ModelResourceLocation getModel(Item item,int meta)
+
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+	}
+
+	public ModelResourceLocation getModel(Item item, int meta)
 	{
 		String path = "mana_essence.obj";
-		if(meta == 0)
+		if (meta == 0)
 		{
 			path = "earth_essence.obj";
 		}
-		else if(meta == 1)
+		else if (meta == 1)
 		{
 			path = "water_essence.obj";
 		}
-		else if(meta == 2)
+		else if (meta == 2)
 		{
 			path = "fire_essence.obj";
 		}
-		else if(meta == 3)
+		else if (meta == 3)
 		{
 			path = "air_essence.obj";
 		}
-		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID,path),"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, path), "inventory");
 	}
-	
+
 	public int getMaxMeta()
 	{
 		return 4;

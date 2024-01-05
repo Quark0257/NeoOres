@@ -32,8 +32,7 @@ public class InventoryUtils
 				if (StackUtils.compareWith(distination.getStackInSlot(i), targetstack))
 				{
 					int count = targetstack.getCount() + distination.getStackInSlot(i).getCount();
-					int min = Math.min(distination.getInventoryStackLimit(),
-							distination.getStackInSlot(i).getMaxStackSize());
+					int min = Math.min(distination.getInventoryStackLimit(), distination.getStackInSlot(i).getMaxStackSize());
 					if (count <= min)
 					{
 						target.removeStackFromSlot(targetindex);
@@ -58,8 +57,7 @@ public class InventoryUtils
 			for (int i = 0; i < size; i++)
 			{
 				ItemStack distinationstack = targetstack.copy();
-				if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount()
-						|| distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
+				if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
 						|| !distination.isItemValidForSlot(i, targetstack))
 					continue;
 				if (distination instanceof InventoryPlayer)
@@ -70,8 +68,7 @@ public class InventoryUtils
 				if (distination.getStackInSlot(i).isEmpty())
 				{
 					int count = targetstack.getCount();
-					int min = Math.min(distination.getInventoryStackLimit(),
-							distination.getStackInSlot(i).getMaxStackSize());
+					int min = Math.min(distination.getInventoryStackLimit(), distination.getStackInSlot(i).getMaxStackSize());
 					if (count <= min)
 					{
 						target.removeStackFromSlot(targetindex);
@@ -105,8 +102,7 @@ public class InventoryUtils
 		for (int i = 0; i < size; i++)
 		{
 			ItemStack distinationstack = distination.getStackInSlot(i).copy();
-			if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount()
-					|| distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
+			if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
 					|| !distination.isItemValidForSlot(i, targetstack))
 				continue;
 			if (distination instanceof InventoryPlayer)
@@ -117,8 +113,7 @@ public class InventoryUtils
 			if (StackUtils.compareWith(distination.getStackInSlot(i), targetstack))
 			{
 				int count = targetstack.getCount() + distination.getStackInSlot(i).getCount();
-				int min = Math.min(distination.getInventoryStackLimit(),
-						distination.getStackInSlot(i).getMaxStackSize());
+				int min = Math.min(distination.getInventoryStackLimit(), distination.getStackInSlot(i).getMaxStackSize());
 				if (count <= min)
 				{
 					stack = ItemStack.EMPTY;
@@ -143,8 +138,7 @@ public class InventoryUtils
 		for (int i = 0; i < size; i++)
 		{
 			ItemStack distinationstack = targetstack.copy();
-			if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount()
-					|| distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
+			if (distination.getInventoryStackLimit() <= distination.getStackInSlot(i).getCount() || distination.getStackInSlot(i).getMaxStackSize() <= distination.getStackInSlot(i).getCount()
 					|| !distination.isItemValidForSlot(i, targetstack))
 				continue;
 			if (distination instanceof InventoryPlayer)
@@ -155,8 +149,7 @@ public class InventoryUtils
 			if (distination.getStackInSlot(i).isEmpty())
 			{
 				int count = targetstack.getCount();
-				int min = Math.min(distination.getInventoryStackLimit(),
-						distination.getStackInSlot(i).getMaxStackSize());
+				int min = Math.min(distination.getInventoryStackLimit(), distination.getStackInSlot(i).getMaxStackSize());
 				if (count <= min)
 				{
 					stack = ItemStack.EMPTY;

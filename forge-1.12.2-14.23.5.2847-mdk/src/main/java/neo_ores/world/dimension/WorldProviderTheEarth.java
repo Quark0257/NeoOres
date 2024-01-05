@@ -12,67 +12,67 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class WorldProviderTheEarth extends WorldProvider
 {
 	@Override
-	public DimensionType getDimensionType() 
+	public DimensionType getDimensionType()
 	{
 		return NeoOres.THE_EARTH;
 	}
-	
-    public void init()
-    {
-        this.biomeProvider = new BiomeProviderSingle(NeoOres.earth);
-        this.hasSkyLight = false;
-    }
-    
-    @Override
+
+	public void init()
+	{
+		this.biomeProvider = new BiomeProviderSingle(NeoOres.earth);
+		this.hasSkyLight = false;
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public MusicTicker.MusicType getMusicType()
-    {
-        return NeoOres.gnome;
-    }
-    
-    protected void generateLightBrightnessTable()
-    {
-        float f = 0.05F;
+	{
+		return NeoOres.gnome;
+	}
 
-        for (int i = 0; i <= 15; ++i)
-        {
-            float f1 = 1.0F - (float)i / 15.0F;
-            this.lightBrightnessTable[i] = (1.0F - f1) / (f1 * 3.0F + 1.0F) * (1.0F - f) + f;
-        }
-    }
+	protected void generateLightBrightnessTable()
+	{
+		float f = 0.05F;
 
-    public IChunkGenerator createChunkGenerator()
-    {
-        return new ChunkGeneratorTheEarth(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
-    }
+		for (int i = 0; i <= 15; ++i)
+		{
+			float f1 = 1.0F - (float) i / 15.0F;
+			this.lightBrightnessTable[i] = (1.0F - f1) / (f1 * 3.0F + 1.0F) * (1.0F - f) + f;
+		}
+	}
 
-    public boolean isSurfaceWorld()
-    {
-        return false;
-    }
+	public IChunkGenerator createChunkGenerator()
+	{
+		return new ChunkGeneratorTheEarth(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
+	}
 
-    public boolean canCoordinateBeSpawn(int x, int z)
-    {
-        return false;
-    }
+	public boolean isSurfaceWorld()
+	{
+		return false;
+	}
 
-    public boolean canRespawnHere()
-    {
-        return false;
-    }
-    
-    public double getHorizon()
-    {
-    	return 256.0D;
-    }
-    
-    public float calculateCelestialAngle(long worldTime, float partialTicks)
-    {
-        return 0.0F;
-    }
-    
-    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
-    {
-        return false;
-    }
+	public boolean canCoordinateBeSpawn(int x, int z)
+	{
+		return false;
+	}
+
+	public boolean canRespawnHere()
+	{
+		return false;
+	}
+
+	public double getHorizon()
+	{
+		return 256.0D;
+	}
+
+	public float calculateCelestialAngle(long worldTime, float partialTicks)
+	{
+		return 0.0F;
+	}
+
+	public boolean shouldMapSpin(String entity, double x, double z, double rotation)
+	{
+		return false;
+	}
 }

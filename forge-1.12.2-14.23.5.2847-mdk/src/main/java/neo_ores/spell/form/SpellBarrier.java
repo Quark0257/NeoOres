@@ -1,5 +1,6 @@
 package neo_ores.spell.form;
 
-public class SpellBarrier {
+public class SpellBarrier
+{
 
 }

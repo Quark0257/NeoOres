@@ -12,28 +12,33 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 
-public abstract class StructureNatural extends Structure {
-	
+public abstract class StructureNatural extends Structure
+{
+
 	protected WorldServer server;
 	protected ResourceLocation resource;
 	protected String structureName;
 	protected Rotation rotation;
-	
-	public StructureNatural() {}
-	
-	public StructureNatural(WorldServer world, ResourceLocation resource, BlockPos pos, Rotation rot) {
+
+	public StructureNatural()
+	{
+	}
+
+	public StructureNatural(WorldServer world, ResourceLocation resource, BlockPos pos, Rotation rot)
+	{
 		super(world, resource);
 		this.server = world;
 		this.rotation = rot;
-		this.placeSettings = new PlacementSettings().setRotation(rot).setReplacedBlock((Block)null).setIgnoreStructureBlock(false);
+		this.placeSettings = new PlacementSettings().setRotation(rot).setReplacedBlock((Block) null).setIgnoreStructureBlock(false);
 		this.templatePosition = pos;
 		this.setup(this.template, this.templatePosition, this.placeSettings);
 	}
-	
-	public void generate(StructureBoundingBox sbb) {
+
+	public void generate(StructureBoundingBox sbb)
+	{
 		this.addComponentParts(this.server, this.placeSettings.getRandom(this.getPos()), sbb);
 	}
-	
+
 	@Override
 	protected abstract void handleDataMarker(String function, BlockPos pos, World worldIn, Random rand, StructureBoundingBox sbb);
 }

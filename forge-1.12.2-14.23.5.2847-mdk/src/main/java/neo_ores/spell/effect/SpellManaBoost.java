@@ -6,23 +6,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class SpellManaBoost extends SpellEffect 
+public class SpellManaBoost extends SpellEffect
 {
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) 
+	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
-		
+
 	}
 
 	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) 
+	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
 	{
-		
+
 	}
 
 	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result,ItemStack stack) 
+	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		
+
 	}
 }

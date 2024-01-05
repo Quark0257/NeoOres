@@ -14,8 +14,7 @@ import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicExperienceContainer
 {
-	public static final GameProfile neo_ores_profile = new GameProfile(
-			UUID.fromString("43b3f040-0d77-4416-8c8c-f7cff76a88dd"), "[Neo Ores]");
+	public static final GameProfile neo_ores_profile = new GameProfile(UUID.fromString("43b3f040-0d77-4416-8c8c-f7cff76a88dd"), "[Neo Ores]");
 
 	private long magic_xp;
 	private final BlockPos pos;
@@ -33,8 +32,7 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicEx
 		this.lastTickPosY = pos.getY() + 0.5F;
 		this.lastTickPosZ = pos.getZ() + 0.5F;
 		this.face = face;
-		Vec2f direction = MathUtils.getYawPitch(this.face.getDirectionVec().getX(), this.face.getDirectionVec().getY(),
-				this.face.getDirectionVec().getZ());
+		Vec2f direction = MathUtils.getYawPitch(this.face.getDirectionVec().getX(), this.face.getDirectionVec().getY(), this.face.getDirectionVec().getZ());
 		this.rotationPitch = direction.y;
 		this.rotationYaw = direction.x;
 	}

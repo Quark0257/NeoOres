@@ -12,125 +12,128 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
-public class WorldGenMegaTree2 extends WorldGenHugeTrees {
+public class WorldGenMegaTree2 extends WorldGenHugeTrees
+{
 
-	public WorldGenMegaTree2(boolean notify, int baseHeightIn, int extraRandomHeightIn, IBlockState woodMetadataIn,
-			IBlockState leavesMetadataIn) {
+	public WorldGenMegaTree2(boolean notify, int baseHeightIn, int extraRandomHeightIn, IBlockState woodMetadataIn, IBlockState leavesMetadataIn)
+	{
 		super(notify, baseHeightIn, extraRandomHeightIn, woodMetadataIn, leavesMetadataIn);
 	}
-	
-	public static WorldGenMegaTree2 make(boolean notify, int baseHeight, int extraRandomHeightIn, Block trunk, Block leaf, DimensionName dim) {
-    	IBlockState trunkState = trunk.getDefaultState().withProperty(BlockDimension.DIM, dim);
-    	IBlockState leafState = leaf.getDefaultState().withProperty(BlockDimension.DIM, dim).withProperty(BlockDimensionLeaves.CHECK_DECAY, false).withProperty(BlockDimensionLeaves.DECAYABLE, true);
-    	return new WorldGenMegaTree2(notify,baseHeight, extraRandomHeightIn,trunkState,leafState);
-    }
 
-    public boolean generate(World worldIn, Random rand, BlockPos position)
-    {
-        int i = this.getHeight(rand);
+	public static WorldGenMegaTree2 make(boolean notify, int baseHeight, int extraRandomHeightIn, Block trunk, Block leaf, DimensionName dim)
+	{
+		IBlockState trunkState = trunk.getDefaultState().withProperty(BlockDimension.DIM, dim);
+		IBlockState leafState = leaf.getDefaultState().withProperty(BlockDimension.DIM, dim).withProperty(BlockDimensionLeaves.CHECK_DECAY, false).withProperty(BlockDimensionLeaves.DECAYABLE, true);
+		return new WorldGenMegaTree2(notify, baseHeight, extraRandomHeightIn, trunkState, leafState);
+	}
 
-        if (!this.ensureGrowable(worldIn, rand, position, i))
-        {
-            return false;
-        }
-        else
-        {
-            this.createCrown(worldIn, position.up(i), 2);
+	public boolean generate(World worldIn, Random rand, BlockPos position)
+	{
+		int i = this.getHeight(rand);
 
-            for (int j = position.getY() + i - 2 - rand.nextInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextInt(4))
-            {
-                float f = rand.nextFloat() * ((float)Math.PI * 2F);
-                int k = position.getX() + (int)(0.5F + MathHelper.cos(f) * 4.0F);
-                int l = position.getZ() + (int)(0.5F + MathHelper.sin(f) * 4.0F);
+		if (!this.ensureGrowable(worldIn, rand, position, i))
+		{
+			return false;
+		}
+		else
+		{
+			this.createCrown(worldIn, position.up(i), 2);
 
-                for (int i1 = 0; i1 < 5; ++i1)
-                {
-                    k = position.getX() + (int)(1.5F + MathHelper.cos(f) * (float)i1);
-                    l = position.getZ() + (int)(1.5F + MathHelper.sin(f) * (float)i1);
-                    this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), this.woodMetadata);
-                }
+			for (int j = position.getY() + i - 2 - rand.nextInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextInt(4))
+			{
+				float f = rand.nextFloat() * ((float) Math.PI * 2F);
+				int k = position.getX() + (int) (0.5F + MathHelper.cos(f) * 4.0F);
+				int l = position.getZ() + (int) (0.5F + MathHelper.sin(f) * 4.0F);
 
-                int j2 = 1 + rand.nextInt(2);
-                int j1 = j;
+				for (int i1 = 0; i1 < 5; ++i1)
+				{
+					k = position.getX() + (int) (1.5F + MathHelper.cos(f) * (float) i1);
+					l = position.getZ() + (int) (1.5F + MathHelper.sin(f) * (float) i1);
+					this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), this.woodMetadata);
+				}
 
-                for (int k1 = j - j2; k1 <= j1; ++k1)
-                {
-                    int l1 = k1 - j1;
-                    this.growLeavesLayer(worldIn, new BlockPos(k, k1, l), 1 - l1);
-                }
-            }
+				int j2 = 1 + rand.nextInt(2);
+				int j1 = j;
 
-            for (int i2 = 0; i2 < i; ++i2)
-            {
-                BlockPos blockpos = position.up(i2);
+				for (int k1 = j - j2; k1 <= j1; ++k1)
+				{
+					int l1 = k1 - j1;
+					this.growLeavesLayer(worldIn, new BlockPos(k, k1, l), 1 - l1);
+				}
+			}
 
-                if (this.isAirLeaves(worldIn,blockpos))
-                {
-                    this.setBlockAndNotifyAdequately(worldIn, blockpos, this.woodMetadata);
-                }
+			for (int i2 = 0; i2 < i; ++i2)
+			{
+				BlockPos blockpos = position.up(i2);
 
-                if (i2 < i - 1)
-                {
-                    BlockPos blockpos1 = blockpos.east();
+				if (this.isAirLeaves(worldIn, blockpos))
+				{
+					this.setBlockAndNotifyAdequately(worldIn, blockpos, this.woodMetadata);
+				}
 
-                    if (this.isAirLeaves(worldIn,blockpos1))
-                    {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos1, this.woodMetadata);
-                    }
+				if (i2 < i - 1)
+				{
+					BlockPos blockpos1 = blockpos.east();
 
-                    BlockPos blockpos2 = blockpos.south().east();
+					if (this.isAirLeaves(worldIn, blockpos1))
+					{
+						this.setBlockAndNotifyAdequately(worldIn, blockpos1, this.woodMetadata);
+					}
 
-                    if (this.isAirLeaves(worldIn,blockpos2))
-                    {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos2, this.woodMetadata);
-                    }
+					BlockPos blockpos2 = blockpos.south().east();
 
-                    BlockPos blockpos3 = blockpos.south();
+					if (this.isAirLeaves(worldIn, blockpos2))
+					{
+						this.setBlockAndNotifyAdequately(worldIn, blockpos2, this.woodMetadata);
+					}
 
-                    if (this.isAirLeaves(worldIn,blockpos3))
-                    {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos3, this.woodMetadata);
-                    }
-                }
-            }
+					BlockPos blockpos3 = blockpos.south();
 
-            return true;
-        }
-    }
+					if (this.isAirLeaves(worldIn, blockpos3))
+					{
+						this.setBlockAndNotifyAdequately(worldIn, blockpos3, this.woodMetadata);
+					}
+				}
+			}
 
-    private void createCrown(World worldIn, BlockPos p_175930_2_, int p_175930_3_)
-    {
-        for (int j = -2; j <= 0; ++j)
-        {
-            this.growLeavesLayerStrict(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
-        }
-    }
+			return true;
+		}
+	}
 
-    //Helper macro
-    private boolean isAirLeaves(World world, BlockPos pos)
-    {
-        IBlockState state = world.getBlockState(pos);
-        return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
-    }
-    
-    public void generateSaplings(World worldIn, Random random, BlockPos pos)
-    {
-    }
-    
-    protected int getHeight(Random rand)
-    {
-        int i = rand.nextInt(3) + this.baseHeight;
+	private void createCrown(World worldIn, BlockPos p_175930_2_, int p_175930_3_)
+	{
+		for (int j = -2; j <= 0; ++j)
+		{
+			this.growLeavesLayerStrict(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
+		}
+	}
 
-        if (this.extraRandomHeight > 1)
-        {
-            i += rand.nextInt(this.extraRandomHeight) + 5;
-        }
+	// Helper macro
+	private boolean isAirLeaves(World world, BlockPos pos)
+	{
+		IBlockState state = world.getBlockState(pos);
+		return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
+	}
 
-        return i;
-    }
-    
-    public boolean isReplaceable(World world, BlockPos pos) {
-    	IBlockState state = world.getBlockState(pos);
-        return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
-    }
+	public void generateSaplings(World worldIn, Random random, BlockPos pos)
+	{
+	}
+
+	protected int getHeight(Random rand)
+	{
+		int i = rand.nextInt(3) + this.baseHeight;
+
+		if (this.extraRandomHeight > 1)
+		{
+			i += rand.nextInt(this.extraRandomHeight) + 5;
+		}
+
+		return i;
+	}
+
+	public boolean isReplaceable(World world, BlockPos pos)
+	{
+		IBlockState state = world.getBlockState(pos);
+		return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
+	}
 }

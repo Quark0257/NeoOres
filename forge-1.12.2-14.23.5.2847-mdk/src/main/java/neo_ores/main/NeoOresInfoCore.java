@@ -2,9 +2,9 @@ package neo_ores.main;
 
 import net.minecraftforge.fml.common.ModMetadata;
 
-public class NeoOresInfoCore 
+public class NeoOresInfoCore
 {
-	public static void registerInfo(ModMetadata meta) 
+	public static void registerInfo(ModMetadata meta)
 	{
 		meta.modId = Reference.MOD_ID;
 		meta.name = Reference.MOD_NAME;

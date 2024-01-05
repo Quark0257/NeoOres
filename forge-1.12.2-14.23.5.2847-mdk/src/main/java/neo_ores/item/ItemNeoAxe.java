@@ -20,62 +20,63 @@ public class ItemNeoAxe extends ItemAxe implements IItemNeoTool, INeoOresItem
 {
 	public ItemNeoAxe(ToolMaterial material)
 	{
-		super(material, material.getAttackDamage() + 5.0F, -4 + (float)((int)((float)material.getHarvestLevel() + 8.0F)) / 10.0F);
+		super(material, material.getAttackDamage() + 5.0F, -4 + (float) ((int) ((float) material.getHarvestLevel() + 8.0F)) / 10.0F);
 	}
-	
+
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		super.addInformation(itemStack, world, list, flag);
 		this.addTierInfo(itemStack, world, list, flag);
 	}
-	
+
 	private ToolType type;
-	
+
 	@Override
-	public Item setToolType(ToolType name) 
+	public Item setToolType(ToolType name)
 	{
 		this.type = name;
 		return this;
 	}
+
 	@Override
-	public ToolType getToolType() 
+	public ToolType getToolType()
 	{
 		return this.type;
 	}
-	
+
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
-		if(entityIn.ticksExisted % 200 == 0 && entityIn instanceof EntityPlayer && !worldIn.isRemote && 0 <= itemSlot && itemSlot < 9)
+		if (entityIn.ticksExisted % 200 == 0 && entityIn instanceof EntityPlayer && !worldIn.isRemote && 0 <= itemSlot && itemSlot < 9)
 		{
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)entityIn);
-			if(pmds.getMana() > 0L)
+			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) entityIn);
+			if (pmds.getMana() > 0L)
 			{
-				stack.damageItem(-1, (EntityPlayer)entityIn);
+				stack.damageItem(-1, (EntityPlayer) entityIn);
 			}
 			pmds.addMana(-1L);
 		}
 	}
-	
+
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
-    {	
+	{
 		super.getSubItems(tab, items);
-        if (this.isInCreativeTab(tab))
-        {
-            for(ItemStack stack : items)
-            {
-            	if(stack.getItem() instanceof ItemNeoAxe)
-            	{
-            		if(((IItemNeoTool)stack.getItem()).getToolType() == ToolType.CREATIVE)
-            		{
-            			ItemStack stack1 = stack.copy();
-            			items.remove(stack);
-            			TierUtils tier = new TierUtils(stack1);
-            			tier.setTier(11, 11, 11, 11);
-            			items.add(stack1);
-            			break;
-            		}
-            	}
-            }
-        }
-    }
+		if (this.isInCreativeTab(tab))
+		{
+			for (ItemStack stack : items)
+			{
+				if (stack.getItem() instanceof ItemNeoAxe)
+				{
+					if (((IItemNeoTool) stack.getItem()).getToolType() == ToolType.CREATIVE)
+					{
+						ItemStack stack1 = stack.copy();
+						items.remove(stack);
+						TierUtils tier = new TierUtils(stack1);
+						tier.setTier(11, 11, 11, 11);
+						items.add(stack1);
+						break;
+					}
+				}
+			}
+		}
+	}
 }

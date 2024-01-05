@@ -16,17 +16,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class RendererNeoPortal extends TileEntitySpecialRenderer<TileEntityNeoPortal>
 {
-	private static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation(
-			"minecraft:textures/environment/end_sky.png");
-	private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation(
-			"minecraft:textures/entity/end_portal.png");
+	private static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation("minecraft:textures/environment/end_sky.png");
+	private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation("minecraft:textures/entity/end_portal.png");
 	private static final Random RANDOM = new Random(31100L);
 	private static final FloatBuffer MODELVIEW = GLAllocation.createDirectFloatBuffer(16);
 	private static final FloatBuffer PROJECTION = GLAllocation.createDirectFloatBuffer(16);
 	private final FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(16);
 
-	public void render(TileEntityNeoPortal te, double x, double y, double z, float partialTicks, int destroyStage,
-			float alpha)
+	public void render(TileEntityNeoPortal te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		GlStateManager.disableLighting();
 		RANDOM.setSeed(31100L);
@@ -47,8 +44,7 @@ public class RendererNeoPortal extends TileEntitySpecialRenderer<TileEntityNeoPo
 				this.bindTexture(END_SKY_TEXTURE);
 				f1 = 0.15F;
 				GlStateManager.enableBlend();
-				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
-						GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			}
 
 			if (j >= 1)
@@ -80,8 +76,7 @@ public class RendererNeoPortal extends TileEntitySpecialRenderer<TileEntityNeoPo
 			GlStateManager.translate(0.5F, 0.5F, 0.0F);
 			GlStateManager.scale(0.5F, 0.5F, 1.0F);
 			float f2 = (float) (j + 1);
-			GlStateManager.translate(17.0F / f2,
-					(2.0F + f2 / 1.5F) * ((float) Minecraft.getSystemTime() % 800000.0F / 800000.0F), 0.0F);
+			GlStateManager.translate(17.0F / f2, (2.0F + f2 / 1.5F) * ((float) Minecraft.getSystemTime() % 800000.0F / 800000.0F), 0.0F);
 			GlStateManager.rotate((f2 * f2 * 4321.0F + f2 * 9.0F) * 2.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.scale(4.5F - f2 / 4.0F, 4.5F - f2 / 4.0F, 1.0F);
 			GlStateManager.multMatrix(PROJECTION);

@@ -6,13 +6,13 @@ import neo_ores.spell.SpellItemInterfaces.HasCanApplyNBT;
 public class SpellCanApplyNBT extends SpellCorrectionSingle<HasCanApplyNBT>
 {
 
-	public SpellCanApplyNBT() 
+	public SpellCanApplyNBT()
 	{
 		super(0);
 	}
 
 	@Override
-	protected void onApply(HasCanApplyNBT spell) 
+	protected void onApply(HasCanApplyNBT spell)
 	{
 		spell.setCanApplyNBT();
 	}

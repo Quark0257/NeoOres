@@ -17,8 +17,8 @@ public class ParticleMagic1 extends Particle
 	private final TextureAtlasSprite[] textures;
 	private int index;
 
-	public ParticleMagic1(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn,
-			double ySpeedIn, double zSpeedIn, int color, int time, float size, TextureAtlasSprite... texture)
+	public ParticleMagic1(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int color, int time, float size,
+			TextureAtlasSprite... texture)
 	{
 		super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 		this.motionX = xSpeedIn;
@@ -42,8 +42,7 @@ public class ParticleMagic1 extends Particle
 		this.setParticleTexture(this.textures[this.index]);
 	}
 
-	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX,
-			float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
 	{
 
 		this.setParticleTexture(this.textures[this.particleAge % this.textures.length]);
@@ -70,15 +69,10 @@ public class ParticleMagic1 extends Particle
 		int i = 240;// this.getBrightnessForRender(partialTicks);
 		int j = i >> 16 & 65535;
 		int k = i & 65535;
-		Vec3d[] avec3d = new Vec3d[] {
-				new Vec3d((double) (-rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4),
-						(double) (-rotationYZ * f4 - rotationXZ * f4)),
-				new Vec3d((double) (-rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4),
-						(double) (-rotationYZ * f4 + rotationXZ * f4)),
-				new Vec3d((double) (rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4),
-						(double) (rotationYZ * f4 + rotationXZ * f4)),
-				new Vec3d((double) (rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4),
-						(double) (rotationYZ * f4 - rotationXZ * f4)) };
+		Vec3d[] avec3d = new Vec3d[] { new Vec3d((double) (-rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4), (double) (-rotationYZ * f4 - rotationXZ * f4)),
+				new Vec3d((double) (-rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4), (double) (-rotationYZ * f4 + rotationXZ * f4)),
+				new Vec3d((double) (rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4), (double) (rotationYZ * f4 + rotationXZ * f4)),
+				new Vec3d((double) (rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4), (double) (rotationYZ * f4 - rotationXZ * f4)) };
 
 		if (this.particleAngle != 0.0F)
 		{
@@ -91,30 +85,21 @@ public class ParticleMagic1 extends Particle
 
 			for (int l = 0; l < 4; ++l)
 			{
-				avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d))
-						.add(avec3d[l].scale((double) (f9 * f9) - vec3d.dotProduct(vec3d)))
+				avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d)).add(avec3d[l].scale((double) (f9 * f9) - vec3d.dotProduct(vec3d)))
 						.add(vec3d.crossProduct(avec3d[l]).scale((double) (2.0F * f9)));
 			}
 		}
 
 		GlStateManager.depthMask(false);
 
-		buffer.pos((double) f5 + avec3d[0].x / this.textureSize, (double) f6 + avec3d[0].y / this.textureSize,
-				(double) f7 + avec3d[0].z / this.textureSize).tex((double) f1, (double) f3)
-				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k)
-				.endVertex();
-		buffer.pos((double) f5 + avec3d[1].x / this.textureSize, (double) f6 + avec3d[1].y / this.textureSize,
-				(double) f7 + avec3d[1].z / this.textureSize).tex((double) f1, (double) f2)
-				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k)
-				.endVertex();
-		buffer.pos((double) f5 + avec3d[2].x / this.textureSize, (double) f6 + avec3d[2].y / this.textureSize,
-				(double) f7 + avec3d[2].z / this.textureSize).tex((double) f, (double) f2)
-				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k)
-				.endVertex();
-		buffer.pos((double) f5 + avec3d[3].x / this.textureSize, (double) f6 + avec3d[3].y / this.textureSize,
-				(double) f7 + avec3d[3].z / this.textureSize).tex((double) f, (double) f3)
-				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k)
-				.endVertex();
+		buffer.pos((double) f5 + avec3d[0].x / this.textureSize, (double) f6 + avec3d[0].y / this.textureSize, (double) f7 + avec3d[0].z / this.textureSize).tex((double) f1, (double) f3)
+				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+		buffer.pos((double) f5 + avec3d[1].x / this.textureSize, (double) f6 + avec3d[1].y / this.textureSize, (double) f7 + avec3d[1].z / this.textureSize).tex((double) f1, (double) f2)
+				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+		buffer.pos((double) f5 + avec3d[2].x / this.textureSize, (double) f6 + avec3d[2].y / this.textureSize, (double) f7 + avec3d[2].z / this.textureSize).tex((double) f, (double) f2)
+				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
+		buffer.pos((double) f5 + avec3d[3].x / this.textureSize, (double) f6 + avec3d[3].y / this.textureSize, (double) f7 + avec3d[3].z / this.textureSize).tex((double) f, (double) f3)
+				.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
 	}
 
 	public int getFXLayer()

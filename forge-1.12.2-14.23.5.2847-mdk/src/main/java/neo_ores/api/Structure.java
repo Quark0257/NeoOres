@@ -107,8 +107,7 @@ public class Structure extends StructureComponentTemplate
 				this.boundingBox.offset(blockpos1.getX(), 0, blockpos1.getZ());
 		}
 
-		this.boundingBox.offset(this.templatePosition.getX(), this.templatePosition.getY(),
-				this.templatePosition.getZ());
+		this.boundingBox.offset(this.templatePosition.getX(), this.templatePosition.getY(), this.templatePosition.getZ());
 	}
 
 	public Template getTemplate()

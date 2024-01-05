@@ -25,11 +25,9 @@ import net.minecraft.world.World;
 
 public class BlockDimension extends NeoOresBlock
 {
-	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension",
-			DimensionName.class);
+	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension", DimensionName.class);
 
-	public BlockDimension(String registername, Material materialIn, float hardness, float resistant, String harvest_key,
-			int harvest_level, float light, SoundType sound)
+	public BlockDimension(String registername, Material materialIn, float hardness, float resistant, String harvest_key, int harvest_level, float light, SoundType sound)
 	{
 		super(materialIn);
 		this.setHardness(hardness);
@@ -76,8 +74,7 @@ public class BlockDimension extends NeoOresBlock
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
 	}
@@ -99,8 +96,7 @@ public class BlockDimension extends NeoOresBlock
 
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_"
-				+ this.getRegistryName().getResourcePath();
+		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_" + this.getRegistryName().getResourcePath();
 	}
 
 	public int getMaxMeta()
@@ -110,10 +106,7 @@ public class BlockDimension extends NeoOresBlock
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID,
-						DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()),
-				"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	public Item getItemBlock(Block block)

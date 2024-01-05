@@ -12,8 +12,7 @@ public class MageKnowledgeTableData
 	final ResourceLocation texture;
 	final KnowledgeTab tab;
 
-	public MageKnowledgeTableData(@Nonnull SpellItem parent, int table_x, int table_y, ResourceLocation texture,
-			KnowledgeTab tab)
+	public MageKnowledgeTableData(@Nonnull SpellItem parent, int table_x, int table_y, ResourceLocation texture, KnowledgeTab tab)
 	{
 		this.parent = parent;
 		this.x = table_x;

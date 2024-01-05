@@ -16,36 +16,36 @@ import net.minecraft.world.World;
 public class ItemEssenceCoreEarth extends ItemEffected
 {
 	public ItemEssenceCoreEarth()
-    {
-        this.setHasSubtypes(true);
-        this.setMaxDamage(0);
-        this.setCreativeTab(NeoOres.neo_ores_tab);
-    }
-	
+	{
+		this.setHasSubtypes(true);
+		this.setMaxDamage(0);
+		this.setCreativeTab(NeoOres.neo_ores_tab);
+	}
+
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		int i = itemStack.getMetadata() + 1;
 		list.add("Tier:" + i);
 	}
-	
+
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
-    {
-        if (this.isInCreativeTab(tab))
-        {
-            for (int i = 0; i < 11; ++i)
-            {
-                items.add(new ItemStack(this, 1, i));
-            }
-        }
-    }
-	
+	{
+		if (this.isInCreativeTab(tab))
+		{
+			for (int i = 0; i < 11; ++i)
+			{
+				items.add(new ItemStack(this, 1, i));
+			}
+		}
+	}
+
 	public int getMaxMeta()
 	{
 		return 10;
 	}
-	
-	public ModelResourceLocation getModel(Item item,int meta)
+
+	public ModelResourceLocation getModel(Item item, int meta)
 	{
-		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID,"essence_core"),"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "essence_core"), "inventory");
 	}
 }

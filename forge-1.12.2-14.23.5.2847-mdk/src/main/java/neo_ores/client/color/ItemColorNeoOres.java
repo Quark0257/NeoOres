@@ -17,7 +17,6 @@ public class ItemColorNeoOres implements IItemColor
 	@Override
 	public int colorMultiplier(ItemStack stack, int tintIndex)
 	{
-		return ColorUtils.getColorWithWhite(ColorUtils.makeColor(DimensionHelper.colors.get(this.index)).getColor(),
-				0.75);
+		return ColorUtils.getColorWithWhite(ColorUtils.makeColor(DimensionHelper.colors.get(this.index)).getColor(), 0.75);
 	}
 }

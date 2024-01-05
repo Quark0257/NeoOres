@@ -10,8 +10,7 @@ public class MathUtils
 	public static Vec2f getYawPitch(double x, double y, double z)
 	{
 		double dh = Math.sqrt(x * x + z * z);
-		return new Vec2f((float) (-x * Math.toDegrees(Math.acos(z / dh)) / Math.abs(x)),
-				(float) (-Math.toDegrees(Math.atan(y / dh))));
+		return new Vec2f((float) (-x * Math.toDegrees(Math.acos(z / dh)) / Math.abs(x)), (float) (-Math.toDegrees(Math.atan(y / dh))));
 	}
 
 	public static boolean isInteger(double value)
@@ -44,14 +43,14 @@ public class MathUtils
 
 	public static BlockPos rot(BlockPos value, Rotation rot)
 	{
-		return new BlockPos(value.getZ() * (int) Math.sin(getRad(rot)) + value.getX() * (int) Math.cos(getRad(rot)),
-				value.getY(), value.getZ() * (int) Math.cos(getRad(rot)) - value.getX() * (int) Math.sin(getRad(rot)));
+		return new BlockPos(value.getZ() * (int) Math.sin(getRad(rot)) + value.getX() * (int) Math.cos(getRad(rot)), value.getY(),
+				value.getZ() * (int) Math.cos(getRad(rot)) - value.getX() * (int) Math.sin(getRad(rot)));
 	}
 
 	public static Vec3i rot(Vec3i value, Rotation rot)
 	{
-		return new BlockPos(value.getZ() * (int) Math.sin(getRad(rot)) + value.getX() * (int) Math.cos(getRad(rot)),
-				value.getY(), value.getZ() * (int) Math.cos(getRad(rot)) - value.getX() * (int) Math.sin(getRad(rot)));
+		return new BlockPos(value.getZ() * (int) Math.sin(getRad(rot)) + value.getX() * (int) Math.cos(getRad(rot)), value.getY(),
+				value.getZ() * (int) Math.cos(getRad(rot)) - value.getX() * (int) Math.sin(getRad(rot)));
 	}
 
 	public static Vec3i add(Vec3i a, Vec3i b)

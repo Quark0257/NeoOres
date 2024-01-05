@@ -72,8 +72,7 @@ public class ManaCraftingRecipe extends IForgeRegistryEntry.Impl<ManaCraftingRec
 
 			int j = 0;
 			Map<Character, Object> map = new HashMap<Character, Object>();
-			while (i + 2 * j + 1 < object.length && object[i + 2 * j] instanceof Character
-					&& (object[i + 2 * j + 1] instanceof ItemStack || object[i + 2 * j + 1] instanceof String))
+			while (i + 2 * j + 1 < object.length && object[i + 2 * j] instanceof Character && (object[i + 2 * j + 1] instanceof ItemStack || object[i + 2 * j + 1] instanceof String))
 			{
 				map.put((Character) object[i + 2 * j], object[i + 2 * j + 1]);
 				j++;

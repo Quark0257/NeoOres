@@ -8,11 +8,10 @@ import net.minecraft.item.Item;
 
 public class BlockNeoOreOriginal extends BlockNeoOre
 {
-	public BlockNeoOreOriginal(String registername, int harvestLevel, DimensionName dimension, float light,
-			boolean dropSelf, Item dropItem, int damage, int min, int max, int dropExpMin, int dropExpMax)
+	public BlockNeoOreOriginal(String registername, int harvestLevel, DimensionName dimension, float light, boolean dropSelf, Item dropItem, int damage, int min, int max, int dropExpMin,
+			int dropExpMax)
 	{
-		super(registername, harvestLevel, dimension, light, dropSelf, dropItem, damage, min, max, dropExpMin,
-				dropExpMax);
+		super(registername, harvestLevel, dimension, light, dropSelf, dropItem, damage, min, max, dropExpMin, dropExpMax);
 	}
 
 	public ModelResourceLocation getModel(int meta)

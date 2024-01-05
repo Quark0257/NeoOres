@@ -26,8 +26,7 @@ public class ModelItemSpell implements IModel
 	}
 
 	@Override
-	public IBakedModel bake(IModelState state, VertexFormat format,
-			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+	public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
 	{
 		return new RendererItemSpell(this.inInv, this.outInv);
 	}

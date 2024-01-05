@@ -10,16 +10,19 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class ClientProxy extends CommonProxy
 {
-	public World getClientWorld() 
+	public World getClientWorld()
 	{
-	    return (World)(FMLClientHandler.instance().getClient()).world;
+		return (World) (FMLClientHandler.instance().getClient()).world;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public void setCustomStateModel(Block block) {
-		if(block instanceof INeoOresBlock) {
-			IProperty[] props = ((INeoOresBlock)block).setNoRenderProperties();
-			if(props != null) {
+	public void setCustomStateModel(Block block)
+	{
+		if (block instanceof INeoOresBlock)
+		{
+			IProperty[] props = ((INeoOresBlock) block).setNoRenderProperties();
+			if (props != null)
+			{
 				StateMap map = (new StateMap.Builder()).ignore(props).build();
 				ModelLoader.setCustomStateMapper(block, map);
 			}

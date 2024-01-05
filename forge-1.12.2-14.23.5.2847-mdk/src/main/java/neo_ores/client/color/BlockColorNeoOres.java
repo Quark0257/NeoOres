@@ -21,7 +21,6 @@ public class BlockColorNeoOres implements IBlockColor
 	{
 		if (!(worldIn != null && pos != null))
 			return -1;
-		return ColorUtils.getColorWithWhite(ColorUtils.makeColor(DimensionHelper.colors.get(this.index)).getColor(),
-				0.75);
+		return ColorUtils.getColorWithWhite(ColorUtils.makeColor(DimensionHelper.colors.get(this.index)).getColor(), 0.75);
 	}
 }

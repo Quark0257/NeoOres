@@ -1,5 +1,6 @@
 package neo_ores.spell.effect;
 
-public class SpellGrow {
+public class SpellGrow
+{
 
 }

@@ -36,176 +36,185 @@ import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SpellDig  extends SpellEffect implements HasRange,HasSilk,HasLuck,HasHarvestLevel,HasGather
+public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck, HasHarvestLevel, HasGather
 {
 	private int range = 0;
 	private int fortune = 0;
 	private boolean isSilktouch = false;
 	private int harvestlevel = 0;
 	private boolean canGather = false;
-	
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner,RayTraceResult result, ItemStack stack)
+
+	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		if(result != null && result.typeOfHit == Type.BLOCK && runner instanceof EntityPlayer)
+		if (result != null && result.typeOfHit == Type.BLOCK && runner instanceof EntityPlayer)
 		{
 			ItemStack item = stack.copy();
 			int xpvalue = 0;
-			if(this.isSilktouch)
+			if (this.isSilktouch)
 			{
 				xpvalue = 5;
 			}
-			
-			if(this.isSilktouch)
+
+			if (this.isSilktouch)
 			{
-				item.addEnchantment(Enchantments.SILK_TOUCH,1);
+				item.addEnchantment(Enchantments.SILK_TOUCH, 1);
 			}
-			else if(this.fortune > 0)
+			else if (this.fortune > 0)
 			{
 				item.addEnchantment(Enchantments.FORTUNE, this.fortune);
 			}
 
-			EnumFacing face = EnumFacing.getFacingFromVector((float)(result.hitVec.x - runner.posX),(float)(result.hitVec.y - runner.posY - runner.getEyeHeight()),(float)(result.hitVec.z - runner.posZ));
-			for(BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
+			EnumFacing face = EnumFacing.getFacingFromVector((float) (result.hitVec.x - runner.posX), (float) (result.hitVec.y - runner.posY - runner.getEyeHeight()),
+					(float) (result.hitVec.z - runner.posZ));
+			for (BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				if(world.isRemote) this.onDisplay(world,pos, runner);
+				if (world.isRemote)
+					this.onDisplay(world, pos, runner);
 				else
 				{
 					IBlockState state = world.getBlockState(pos);
-					this.breakBlock(state, world, pos, runner, xpvalue, item);	
+					this.breakBlock(state, world, pos, runner, xpvalue, item);
 				}
 			}
-			
-			Map<Enchantment,Integer> enchs = EnchantmentHelper.getEnchantments(item);
-			if(enchs.containsKey(Enchantments.SILK_TOUCH))
+
+			Map<Enchantment, Integer> enchs = EnchantmentHelper.getEnchantments(item);
+			if (enchs.containsKey(Enchantments.SILK_TOUCH))
 			{
 				enchs.remove(Enchantments.SILK_TOUCH);
 			}
-			else if(enchs.containsKey(Enchantments.FORTUNE))
+			else if (enchs.containsKey(Enchantments.FORTUNE))
 			{
 				enchs.remove(Enchantments.FORTUNE);
 			}
-			if(item.hasTagCompound())item.getTagCompound().removeTag("ench");;
-			
-			for(Map.Entry<Enchantment,Integer> entry : enchs.entrySet())
+			if (item.hasTagCompound())
+				item.getTagCompound().removeTag("ench");
+			;
+
+			for (Map.Entry<Enchantment, Integer> entry : enchs.entrySet())
 			{
 				item.addEnchantment(entry.getKey(), entry.getValue());
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	private void breakBlock(IBlockState state,World world,BlockPos pos,EntityLivingBase runner,int silk_xp,ItemStack item)
+	private void breakBlock(IBlockState state, World world, BlockPos pos, EntityLivingBase runner, int silk_xp, ItemStack item)
 	{
-		if(state.getBlock().getHarvestLevel(state) <= this.harvestlevel || state.getBlock() instanceof IShearable)
+		if (state.getBlock().getHarvestLevel(state) <= this.harvestlevel || state.getBlock() instanceof IShearable)
 		{
-			if(state.getBlock().getBlockHardness(state, world, pos) < 0.0F)
+			if (state.getBlock().getBlockHardness(state, world, pos) < 0.0F)
 			{
-				if(this.harvestlevel == 11)
+				if (this.harvestlevel == 11)
 				{
 					ItemStack itemS = state.getBlock().getItem(world, pos, state);
-					EntityItem eitem = new EntityItem(world,pos.getX() + 0.5D,pos.getY() + 0.5D,pos.getZ() + 0.5D,itemS);
-					if(this.canGather)
+					EntityItem eitem = new EntityItem(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, itemS);
+					if (this.canGather)
 					{
 						eitem.setPosition(runner.posX, runner.posY, runner.posZ);
 						eitem.setNoPickupDelay();
 					}
 					world.spawnEntity(eitem);
-					if(!world.isRemote)
+					if (!world.isRemote)
 					{
 						world.destroyBlock(pos, false);
-						if(runner instanceof EntityPlayerMP)
+						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
-							pmds.addMXP(1L + (long)Math.pow(2,harvestlevel) + (long)Math.pow(3, fortune) + (long)silk_xp);	
+							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
 						}
 					}
 				}
 			}
 			else
 			{
-				state.getBlock().harvestBlock(world, (EntityPlayer)runner,pos ,state,world.getTileEntity(pos),item);
-				if(!this.isSilktouch)
+				state.getBlock().harvestBlock(world, (EntityPlayer) runner, pos, state, world.getTileEntity(pos), item);
+				if (!this.isSilktouch)
 				{
 					int i = state.getBlock().getExpDrop(state, world, pos, this.fortune);
-					if(i > 0)
+					if (i > 0)
 					{
 						EntityXPOrb exp = new EntityXPOrb(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, i);
 						world.spawnEntity(exp);
 					}
 				}
-				
-				if(!world.isRemote)
+
+				if (!world.isRemote)
 				{
 					world.destroyBlock(pos, false);
-					if(this.canGather)
+					if (this.canGather)
 					{
-						for(EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(),pos.getY(),pos.getZ(),pos.getX() + 1,pos.getY() + 1,pos.getZ() + 1)))
+						for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)))
 						{
 							entity.setPosition(runner.posX, runner.posY, runner.posZ);
 							entity.setNoPickupDelay();
 						}
 					}
-					
-					if(runner instanceof EntityPlayerMP)
+
+					if (runner instanceof EntityPlayerMP)
 					{
-						PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
-						pmds.addMXP(1L + (long)Math.pow(2,harvestlevel) + (long)Math.pow(3, fortune) + (long)silk_xp);	
+						PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+						pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
 					}
 				}
 			}
 		}
 	}
-	
-	public void setRange(int value) 
+
+	public void setRange(int value)
 	{
 		range = value;
 	}
-	
+
 	public void setSilkTouch()
 	{
 		this.isSilktouch = true;
 	}
-	
+
 	public void setLuck(int value)
 	{
 		this.fortune = value;
 	}
 
 	@Override
-	public void setHarvestLevel(int value) 
+	public void setHarvestLevel(int value)
 	{
 		this.harvestlevel = value;
 	}
 
 	@Override
-	public void setCanGather() 
+	public void setCanGather()
 	{
-		this.canGather = true;	
+		this.canGather = true;
 	}
 
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) {}
+	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
+	{
+	}
 
 	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) {}
-	
-	@SideOnly(Side.CLIENT)
-	private void onDisplay(World worldIn ,BlockPos pos,EntityLivingBase runner)
+	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
 	{
-		double d1 = (double)((float)pos.getX());
-        double d2 = (double)((float)pos.getY());
-        double d3 = (double)((float)pos.getZ());
-        for(Pair<Vec3d,Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1,d2,d3),new Vec3d(1.0,1.0,1.0),new Vec3d(1.0,1.0,1.0)))
-        {
-        	Vec3d start = entry.getKey();
-        	Vec3d velocity = entry.getValue();
-        	for(int j = 0;j < 8;j++)
-            {
-            	int d = (int)(10.0D / (Math.random() + 0.5D));
-            	ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d,0.0005F, NeoOresRegisterEvent.particle0);
-            	//ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z,300);
-            	Minecraft.getMinecraft().effectRenderer.addEffect(png);
-            }
-        }
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void onDisplay(World worldIn, BlockPos pos, EntityLivingBase runner)
+	{
+		double d1 = (double) ((float) pos.getX());
+		double d2 = (double) ((float) pos.getY());
+		double d3 = (double) ((float) pos.getZ());
+		for (Pair<Vec3d, Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1, d2, d3), new Vec3d(1.0, 1.0, 1.0), new Vec3d(1.0, 1.0, 1.0)))
+		{
+			Vec3d start = entry.getKey();
+			Vec3d velocity = entry.getValue();
+			for (int j = 0; j < 8; j++)
+			{
+				int d = (int) (10.0D / (Math.random() + 0.5D));
+				ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d, 0.0005F, NeoOresRegisterEvent.particle0);
+				// ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y,
+				// start.z,300);
+				Minecraft.getMinecraft().effectRenderer.addEffect(png);
+			}
+		}
 	}
 }

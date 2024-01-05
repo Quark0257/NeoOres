@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ItemSpellSheet extends INeoOresItem.Impl implements ISpellWritable
 {
 	@Override
-	public ItemStack writeActiveSpells(List<SpellItem> list,ItemStack stack) 
+	public ItemStack writeActiveSpells(List<SpellItem> list, ItemStack stack)
 	{
 		ItemStack stack1 = new ItemStack(NeoOresItems.spell);
 		stack1.setTagCompound(new NBTTagCompound());
@@ -19,5 +19,5 @@ public class ItemSpellSheet extends INeoOresItem.Impl implements ISpellWritable
 		stack1.getTagCompound().setInteger("metadata", SpellUtils.getSpellMetadata(list));
 		stack1.getTagCompound().setInteger("color", SpellUtils.getSpellColor(list));
 		return stack1;
-	}	
+	}
 }

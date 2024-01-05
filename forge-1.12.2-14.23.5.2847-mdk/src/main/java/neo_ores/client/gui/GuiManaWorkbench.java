@@ -50,18 +50,14 @@ public class GuiManaWorkbench extends GuiContainer implements IContainerListener
 	{
 		GlStateManager.disableLighting();
 		GlStateManager.disableBlend();
-		this.fontRenderer.drawString(I18n.format("container.mana_workbench"),
-				(this.xSize - this.fontRenderer.getStringWidth(I18n.format("container.mana_workbench"))) / 2, 6,
-				4210752);
-		this.fontRenderer.drawString(this.playerInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2,
-				4210752);
+		this.fontRenderer.drawString(I18n.format("container.mana_workbench"), (this.xSize - this.fontRenderer.getStringWidth(I18n.format("container.mana_workbench"))) / 2, 6, 4210752);
+		this.fontRenderer.drawString(this.playerInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
 
 		if (this.mana_workbench.cost > 0)
 		{
 			int i = 32255;
 			boolean flag = true;
-			String s = I18n.format("container.mana_workbench.cost") + " : "
-					+ LongUtils.convertString(this.mana_workbench.cost);
+			String s = I18n.format("container.mana_workbench.cost") + " : " + LongUtils.convertString(this.mana_workbench.cost);
 
 			if (!this.mana_workbench.getSlot(9).getHasStack())
 			{
@@ -118,8 +114,7 @@ public class GuiManaWorkbench extends GuiContainer implements IContainerListener
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
-		if (this.mana_workbench.getSlot(9).getHasStack()
-				&& !this.mana_workbench.getSlot(9).canTakeStack(this.playerInventory.player))
+		if (this.mana_workbench.getSlot(9).getHasStack() && !this.mana_workbench.getSlot(9).canTakeStack(this.playerInventory.player))
 		{
 			this.drawTexturedModalRect(i + 83, j + 33, 176, 0, 28, 21);
 		}

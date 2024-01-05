@@ -54,30 +54,27 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 		this.setSoundType(SoundType.PLANT);
 		this.setUnlocalizedName(registername);
 		this.setRegistryName(Reference.MOD_ID, registername);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(BlockDimension.DIM, DimensionName.EARTH)
-				.withProperty(CHECK_DECAY, Boolean.valueOf(true)).withProperty(DECAYABLE, Boolean.valueOf(true)));
+		this.setDefaultState(
+				this.blockState.getBaseState().withProperty(BlockDimension.DIM, DimensionName.EARTH).withProperty(CHECK_DECAY, Boolean.valueOf(true)).withProperty(DECAYABLE, Boolean.valueOf(true)));
 	}
 
 	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face)
 	{
-		if (world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.FIRE
-				|| world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.WATER)
+		if (world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.FIRE || world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.WATER)
 			return 0;
 		return 30;
 	}
 
 	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face)
 	{
-		if (world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.FIRE
-				|| world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.WATER)
+		if (world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.FIRE || world.getBlockState(pos).getValue(BlockDimension.DIM) == DimensionName.WATER)
 			return 0;
 		return 60;
 	}
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	@Override
@@ -122,8 +119,7 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 	{
 		if (!worldIn.isRemote)
 		{
-			if (((Boolean) state.getValue(CHECK_DECAY)).booleanValue()
-					&& ((Boolean) state.getValue(DECAYABLE)).booleanValue())
+			if (((Boolean) state.getValue(CHECK_DECAY)).booleanValue() && ((Boolean) state.getValue(DECAYABLE)).booleanValue())
 			{
 				int k = pos.getX();
 				int l = pos.getY();
@@ -148,15 +144,12 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 						{
 							for (int k2 = -4; k2 <= 4; ++k2)
 							{
-								IBlockState iblockstate = worldIn
-										.getBlockState(blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2));
+								IBlockState iblockstate = worldIn.getBlockState(blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2));
 								Block block = iblockstate.getBlock();
 
-								if (!block.canSustainLeaves(iblockstate, worldIn,
-										blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2)))
+								if (!block.canSustainLeaves(iblockstate, worldIn, blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2)))
 								{
-									if (block.isLeaves(iblockstate, worldIn,
-											blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2)))
+									if (block.isLeaves(iblockstate, worldIn, blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2)))
 									{
 										this.surroundings[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
 									}
@@ -380,17 +373,15 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(BlockDimension.DIM).getMeta());
 	}
 
 	public IBlockState getStateFromMeta(int meta)
 	{
-		return this.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.getFromMeta(meta % 4))
-				.withProperty(DECAYABLE, Boolean.valueOf((meta & 4) == 0))
-				.withProperty(CHECK_DECAY, Boolean.valueOf((meta & 8) > 0));
+		return this.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.getFromMeta(meta % 4)).withProperty(DECAYABLE, Boolean.valueOf((meta & 4) == 0)).withProperty(CHECK_DECAY,
+				Boolean.valueOf((meta & 8) > 0));
 	}
 
 	public int getMetaFromState(IBlockState state)
@@ -421,8 +412,7 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 		return 0;
 	}
 
-	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state,
-			@Nullable TileEntity te, ItemStack stack)
+	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack)
 	{
 		if (!worldIn.isRemote && stack.getItem() == Items.SHEARS)
 		{
@@ -437,18 +427,15 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 	@Override
 	public NonNullList<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
 	{
-		return NonNullList.withSize(1,
-				new ItemStack(this, 1, world.getBlockState(pos).getValue(BlockDimension.DIM).getMeta()));
+		return NonNullList.withSize(1, new ItemStack(this, 1, world.getBlockState(pos).getValue(BlockDimension.DIM).getMeta()));
 	}
 
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_"
-				+ this.getRegistryName().getResourcePath();
+		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_" + this.getRegistryName().getResourcePath();
 	}
 
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
-			float hitZ, int meta, EntityLivingBase placer)
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
 		return this.getStateFromMeta(meta).withProperty(DECAYABLE, false).withProperty(CHECK_DECAY, false);
 	}

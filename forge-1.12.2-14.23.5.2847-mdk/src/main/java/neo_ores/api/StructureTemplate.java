@@ -70,8 +70,7 @@ public class StructureTemplate
 			NBTTagList nbttaglist5 = nbttagcompound3.getTagList("pos", 6);
 			Vec3d vec3d = new Vec3d(nbttaglist5.getDoubleAt(0), nbttaglist5.getDoubleAt(1), nbttaglist5.getDoubleAt(2));
 			NBTTagList nbttaglist6 = nbttagcompound3.getTagList("blockPos", 3);
-			BlockPos blockpos1 = new BlockPos(nbttaglist6.getIntAt(0), nbttaglist6.getIntAt(1),
-					nbttaglist6.getIntAt(2));
+			BlockPos blockpos1 = new BlockPos(nbttaglist6.getIntAt(0), nbttaglist6.getIntAt(1), nbttaglist6.getIntAt(2));
 
 			if (nbttagcompound3.hasKey("nbt"))
 			{

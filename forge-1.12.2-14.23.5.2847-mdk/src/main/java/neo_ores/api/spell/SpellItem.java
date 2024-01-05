@@ -23,8 +23,7 @@ public class SpellItem extends IForgeRegistryEntry.Impl<SpellItem>
 	private final Object[] constructors;
 	// private List<ItemStackWithSizeForRecipe> consumption;
 
-	public SpellItem(BasicData bdata, String translateKey, MageKnowledgeTableData stdata,
-			Class<? extends Spell> runnable, Object... spellConstrcutors)
+	public SpellItem(BasicData bdata, String translateKey, MageKnowledgeTableData stdata, Class<? extends Spell> runnable, Object... spellConstrcutors)
 	{
 		this.bdata = bdata;
 		this.translateKey = translateKey;
@@ -38,8 +37,7 @@ public class SpellItem extends IForgeRegistryEntry.Impl<SpellItem>
 		}
 	}
 
-	public SpellItem(BasicData bdata, String translateKey, MageKnowledgeTableData stdata,
-			Class<? extends Spell> runnable)
+	public SpellItem(BasicData bdata, String translateKey, MageKnowledgeTableData stdata, Class<? extends Spell> runnable)
 	{
 		this(bdata, translateKey, stdata, runnable, new Object[0]);
 	}

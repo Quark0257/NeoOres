@@ -29,8 +29,7 @@ public class StackUtils
 
 	public static boolean compareWith(ItemStack stackA, ItemStack stackB)
 	{
-		if (stackB.getItem() == stackA.getItem() && stackB.getItemDamage() == stackA.getItemDamage()
-				&& compareNBTWith(stackB, stackA))
+		if (stackB.getItem() == stackA.getItem() && stackB.getItemDamage() == stackA.getItemDamage() && compareNBTWith(stackB, stackA))
 		{
 			return true;
 		}
@@ -39,9 +38,7 @@ public class StackUtils
 
 	public static boolean compareNBTWith(ItemStack stack1, ItemStack stack2)
 	{
-		return (!stack1.hasTagCompound() && stack2.hasTagCompound()
-				|| stack1.hasTagCompound() && !stack2.hasTagCompound()) ? false
-						: ((!stack1.hasTagCompound() && !stack2.hasTagCompound()) ? true
-								: stack1.getTagCompound().equals(stack2.getTagCompound()));
+		return (!stack1.hasTagCompound() && stack2.hasTagCompound() || stack1.hasTagCompound() && !stack2.hasTagCompound()) ? false
+				: ((!stack1.hasTagCompound() && !stack2.hasTagCompound()) ? true : stack1.getTagCompound().equals(stack2.getTagCompound()));
 	}
 }

@@ -13,9 +13,7 @@ public class ManaCraftingRecipes
 	{
 		if (reference instanceof ItemStack)
 		{
-			return ((ItemStack) reference).getItem() == target.getItem()
-					&& (((ItemStack) reference).getMetadata() == 32767
-							|| ((ItemStack) reference).getMetadata() == target.getMetadata());
+			return ((ItemStack) reference).getItem() == target.getItem() && (((ItemStack) reference).getMetadata() == 32767 || ((ItemStack) reference).getMetadata() == target.getMetadata());
 		}
 		else if (reference instanceof String)
 		{
@@ -23,8 +21,7 @@ public class ManaCraftingRecipes
 			{
 				for (ItemStack recipeitem : OreDictionary.getOres((String) reference))
 				{
-					if (recipeitem.getItem() == target.getItem()
-							&& (recipeitem.getMetadata() == 32767 || recipeitem.getMetadata() == target.getMetadata()))
+					if (recipeitem.getItem() == target.getItem() && (recipeitem.getMetadata() == 32767 || recipeitem.getMetadata() == target.getMetadata()))
 					{
 						return true;
 					}
@@ -78,8 +75,7 @@ public class ManaCraftingRecipes
 						{
 							for (int j = 0; j < 3; j++)
 							{
-								if (compareItemStacks(recipe.getShapedRecipe().get(i)[(2 - j) * n + j * (1 - n)],
-										items.get(i)[j]))
+								if (compareItemStacks(recipe.getShapedRecipe().get(i)[(2 - j) * n + j * (1 - n)], items.get(i)[j]))
 								{
 									a++;
 									if (a == 9)
@@ -102,8 +98,7 @@ public class ManaCraftingRecipes
 							{
 								for (int j = 0; j < 2; j++)
 								{
-									if (compareItemStacks(recipe.getShapedRecipe().get(i)[(1 - j) * n + j * (1 - n)],
-											items.get(i)[j + m]) && items.get(i)[2 - (2 * m)].isEmpty())
+									if (compareItemStacks(recipe.getShapedRecipe().get(i)[(1 - j) * n + j * (1 - n)], items.get(i)[j + m]) && items.get(i)[2 - (2 * m)].isEmpty())
 									{
 										a++;
 										if (a == 6)
@@ -123,8 +118,7 @@ public class ManaCraftingRecipes
 						int a = 0;
 						for (int i = 0; i < 3; i++)
 						{
-							if (compareItemStacks(recipe.getShapedRecipe().get(i)[0], items.get(i)[m])
-									&& items.get(i)[(2 - m) / 2].isEmpty() && items.get(i)[2 - (m / 2)].isEmpty())
+							if (compareItemStacks(recipe.getShapedRecipe().get(i)[0], items.get(i)[m]) && items.get(i)[(2 - m) / 2].isEmpty() && items.get(i)[2 - (m / 2)].isEmpty())
 							{
 								a++;
 								if (a == 3)
@@ -146,8 +140,7 @@ public class ManaCraftingRecipes
 							{
 								for (int j = 0; j < 3; j++)
 								{
-									if (compareItemStacks(recipe.getShapedRecipe().get(i)[(2 - j) * n + j * (1 - n)],
-											items.get(i + l)[j]) && items.get(2 - (2 * l))[j].isEmpty())
+									if (compareItemStacks(recipe.getShapedRecipe().get(i)[(2 - j) * n + j * (1 - n)], items.get(i + l)[j]) && items.get(2 - (2 * l))[j].isEmpty())
 									{
 										a++;
 										if (a == 6)
@@ -169,8 +162,7 @@ public class ManaCraftingRecipes
 							int a = 0;
 							for (int j = 0; j < 3; j++)
 							{
-								if (compareItemStacks(recipe.getShapedRecipe().get(0)[(2 - j) * n + j * (1 - n)],
-										items.get(l)[j]) && items.get((2 - l) / 2)[j].isEmpty()
+								if (compareItemStacks(recipe.getShapedRecipe().get(0)[(2 - j) * n + j * (1 - n)], items.get(l)[j]) && items.get((2 - l) / 2)[j].isEmpty()
 										&& items.get(2 - (l / 2))[j].isEmpty())
 								{
 									a++;
@@ -196,11 +188,8 @@ public class ManaCraftingRecipes
 								{
 									for (int j = 0; j < 2; j++)
 									{
-										if (compareItemStacks(
-												recipe.getShapedRecipe().get(i)[((1 - j) * n) + (j * (1 - n))],
-												items.get(i + l)[j + m]) && items.get(2 - (2 * l))[j].isEmpty()
-												&& items.get(i)[2 - (2 * m)].isEmpty()
-												&& items.get(2 - (2 * l))[2 - (2 * m)].isEmpty())
+										if (compareItemStacks(recipe.getShapedRecipe().get(i)[((1 - j) * n) + (j * (1 - n))], items.get(i + l)[j + m]) && items.get(2 - (2 * l))[j].isEmpty()
+												&& items.get(i)[2 - (2 * m)].isEmpty() && items.get(2 - (2 * l))[2 - (2 * m)].isEmpty())
 										{
 											a++;
 											if (a == 4)
@@ -223,11 +212,8 @@ public class ManaCraftingRecipes
 							int a = 0;
 							for (int i = 0; i < 2; i++)
 							{
-								if (compareItemStacks(recipe.getShapedRecipe().get(i)[0], items.get(i + l)[m])
-										&& items.get(2 - (2 * l))[0].isEmpty() && items.get(i)[(2 - m) / 2].isEmpty()
-										&& items.get(i)[2 - (m / 2)].isEmpty()
-										&& items.get(2 - (2 * l))[(2 - m) / 2].isEmpty()
-										&& items.get(2 - (2 * l))[2 - (m / 2)].isEmpty())
+								if (compareItemStacks(recipe.getShapedRecipe().get(i)[0], items.get(i + l)[m]) && items.get(2 - (2 * l))[0].isEmpty() && items.get(i)[(2 - m) / 2].isEmpty()
+										&& items.get(i)[2 - (m / 2)].isEmpty() && items.get(2 - (2 * l))[(2 - m) / 2].isEmpty() && items.get(2 - (2 * l))[2 - (m / 2)].isEmpty())
 								{
 									a++;
 									if (a == 2)
@@ -250,11 +236,8 @@ public class ManaCraftingRecipes
 								int a = 0;
 								for (int j = 0; j < 2; j++)
 								{
-									if (compareItemStacks(recipe.getShapedRecipe().get(0)[(1 - j) * n + j * (1 - n)],
-											items.get(l)[j + m]) && items.get((2 - l) / 2)[j].isEmpty()
-											&& items.get(2 - (l / 2))[j].isEmpty()
-											&& items.get(0)[2 - (2 * m)].isEmpty()
-											&& items.get((2 - l) / 2)[2 - (2 * m)].isEmpty()
+									if (compareItemStacks(recipe.getShapedRecipe().get(0)[(1 - j) * n + j * (1 - n)], items.get(l)[j + m]) && items.get((2 - l) / 2)[j].isEmpty()
+											&& items.get(2 - (l / 2))[j].isEmpty() && items.get(0)[2 - (2 * m)].isEmpty() && items.get((2 - l) / 2)[2 - (2 * m)].isEmpty()
 											&& items.get(2 - (l / 2))[2 - (2 * m)].isEmpty())
 									{
 										a++;
@@ -276,13 +259,9 @@ public class ManaCraftingRecipes
 						{
 							for (int m = 0; m < 3; m++)
 							{
-								if (compareItemStacks(recipe.getShapedRecipe().get(0)[0], items.get(l)[m])
-										&& items.get((2 - l) / 2)[0].isEmpty() && items.get(2 - (l / 2))[0].isEmpty()
-										&& items.get(0)[(2 - m) / 2].isEmpty() && items.get(0)[2 - (m / 2)].isEmpty()
-										&& items.get((2 - l) / 2)[(2 - m) / 2].isEmpty()
-										&& items.get(2 - (l / 2))[(2 - m) / 2].isEmpty()
-										&& items.get((2 - l) / 2)[2 - (m / 2)].isEmpty()
-										&& items.get(2 - (l / 2))[2 - (m / 2)].isEmpty())
+								if (compareItemStacks(recipe.getShapedRecipe().get(0)[0], items.get(l)[m]) && items.get((2 - l) / 2)[0].isEmpty() && items.get(2 - (l / 2))[0].isEmpty()
+										&& items.get(0)[(2 - m) / 2].isEmpty() && items.get(0)[2 - (m / 2)].isEmpty() && items.get((2 - l) / 2)[(2 - m) / 2].isEmpty()
+										&& items.get(2 - (l / 2))[(2 - m) / 2].isEmpty() && items.get((2 - l) / 2)[2 - (m / 2)].isEmpty() && items.get(2 - (l / 2))[2 - (m / 2)].isEmpty())
 								{
 									return new Object[] { recipe.getResult().copy(), recipe.mana() };
 								}

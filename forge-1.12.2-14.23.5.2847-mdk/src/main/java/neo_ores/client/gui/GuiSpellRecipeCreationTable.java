@@ -38,8 +38,7 @@ import net.minecraft.util.text.TextFormatting;
 public class GuiSpellRecipeCreationTable extends GuiContainer
 {
 
-	private static final ResourceLocation TEXTURES = new ResourceLocation(
-			"neo_ores:textures/gui/spell_recipe_creation_table.png");
+	private static final ResourceLocation TEXTURES = new ResourceLocation("neo_ores:textures/gui/spell_recipe_creation_table.png");
 	private final InventoryPlayer playerInventory;
 	private final TileEntitySpellRecipeCreationTable tileSRCT;
 	private String search = "";
@@ -70,50 +69,44 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		this.search = this.tileSRCT.srctSearch;
 		this.selectedSpells = this.tileSRCT.getSpellItems();
 		this.changed();
-		this.buttonList
-				.add(new GuiButton(101, (this.width - xSize) / 2 + 86, (this.height - ySize) / 2 + 148, 20, 20, ">")
-				{
-					public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
-					{
-						boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y
-								&& mouseX < this.x + this.width && mouseY < this.y + this.height;
-						if (flag)
-						{
-							if (page < maxPage)
-								page++;
-							else
-								page = 0;
-							changed();
-						}
-						return flag;
-					}
-				});
-		this.buttonList
-				.add(new GuiButton(102, (this.width - xSize) / 2 + 8, (this.height - ySize) / 2 + 148, 20, 20, "<")
-				{
-					public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
-					{
-						boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y
-								&& mouseX < this.x + this.width && mouseY < this.y + this.height;
-						if (flag)
-						{
-							if (0 < page)
-								page--;
-							else
-								page = maxPage;
-							changed();
-						}
-						return flag;
-					}
-				});
-
-		this.buttonList.add(new GuiButton(103, (this.width - xSize) / 2 + 8, (this.height - ySize) / 2 + 181, 100, 20,
-				I18n.format("gui.srct.all_delete"))
+		this.buttonList.add(new GuiButton(101, (this.width - xSize) / 2 + 86, (this.height - ySize) / 2 + 148, 20, 20, ">")
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
 			{
-				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y
-						&& mouseX < this.x + this.width && mouseY < this.y + this.height;
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if (flag)
+				{
+					if (page < maxPage)
+						page++;
+					else
+						page = 0;
+					changed();
+				}
+				return flag;
+			}
+		});
+		this.buttonList.add(new GuiButton(102, (this.width - xSize) / 2 + 8, (this.height - ySize) / 2 + 148, 20, 20, "<")
+		{
+			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+			{
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if (flag)
+				{
+					if (0 < page)
+						page--;
+					else
+						page = maxPage;
+					changed();
+				}
+				return flag;
+			}
+		});
+
+		this.buttonList.add(new GuiButton(103, (this.width - xSize) / 2 + 8, (this.height - ySize) / 2 + 181, 100, 20, I18n.format("gui.srct.all_delete"))
+		{
+			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+			{
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 				if (flag)
 				{
 					selectedSpells = new ArrayList<SpellItem>();
@@ -123,27 +116,23 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			}
 		});
 
-		this.buttonList.add(new GuiButton(104, (this.width - xSize) / 2 + 284, (this.height - ySize) / 2 + 181, 100, 20,
-				I18n.format("gui.srct.write"))
+		this.buttonList.add(new GuiButton(104, (this.width - xSize) / 2 + 284, (this.height - ySize) / 2 + 181, 100, 20, I18n.format("gui.srct.write"))
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
 			{
-				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y
-						&& mouseX < this.x + this.width && mouseY < this.y + this.height;
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 				if (flag)
 				{
 					if (tileSRCT.getStackInSlot(0).getItem() instanceof ISpellRecipeWritable)
 					{
-						((ISpellRecipeWritable) tileSRCT.getStackInSlot(0).getItem()).writeRecipeSpells(selectedSpells,
-								tileSRCT.getStackInSlot(0));
+						((ISpellRecipeWritable) tileSRCT.getStackInSlot(0).getItem()).writeRecipeSpells(selectedSpells, tileSRCT.getStackInSlot(0));
 						changed();
 					}
 				}
 				return flag;
 			}
 		});
-		this.nameField = new GuiTextField(0, this.fontRenderer, (this.width - xSize) / 2 + 9,
-				(this.height - ySize) / 2 + 15, 96, 12);
+		this.nameField = new GuiTextField(0, this.fontRenderer, (this.width - xSize) / 2 + 9, (this.height - ySize) / 2 + 15, 96, 12);
 		this.nameField.setTextColor(-1);
 		this.nameField.setDisabledTextColour(-1);
 		this.nameField.setEnableBackgroundDrawing(true);
@@ -197,13 +186,11 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		SpellItem spellitem = this.getFromCoord(mouseX, mouseY);
 		if (spellitem != null)
 		{
-			if (m + 9 <= mouseX && mouseX < m + 9 + 96 && n + 30 <= mouseY && mouseY < n + 30 + 112
-					&& this.canSelect(spellitem))
+			if (m + 9 <= mouseX && mouseX < m + 9 + 96 && n + 30 <= mouseY && mouseY < n + 30 + 112 && this.canSelect(spellitem))
 			{
 				this.selectedSpells.add(spellitem);
 			}
-			else if (m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96
-					&& this.selectedSpells.contains(spellitem))
+			else if (m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96 && this.selectedSpells.contains(spellitem))
 			{
 				this.selectedSpells.remove(spellitem);
 				List<SpellItem> removes = new ArrayList<SpellItem>();
@@ -435,22 +422,18 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			tooltip.add(TextFormatting.WHITE + getName(spellitem));
 
 			tooltip.add(TextFormatting.GRAY + I18n.format("spell." + spellitem.getTranslateKey() + ".desc"));
-			tooltip.add(TextFormatting.BLUE + I18n.format("spell.type") + " : "
-					+ SpellUtils.colorFromSpellItem(spellitem) + I18n.format(SpellUtils.typeFromSpellItem(spellitem)));
+			tooltip.add(TextFormatting.BLUE + I18n.format("spell.type") + " : " + SpellUtils.colorFromSpellItem(spellitem) + I18n.format(SpellUtils.typeFromSpellItem(spellitem)));
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : +" + spellitem.getCostsum());
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : x" + spellitem.getCostproduct());
 			if (this.canSelect(spellitem))
 			{
 				tooltip.add("");
-				tooltip.add(TextFormatting.GREEN + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE
-						+ I18n.format("spell.canClick"));
+				tooltip.add(TextFormatting.GREEN + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE + I18n.format("spell.canClick"));
 			}
-			else if (m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96
-					&& this.selectedSpells.contains(spellitem))
+			else if (m + 117 <= mouseX && mouseX < m + 117 + 256 && n + 16 <= mouseY && mouseY < n + 16 + 96 && this.selectedSpells.contains(spellitem))
 			{
 				tooltip.add("");
-				tooltip.add(TextFormatting.DARK_RED + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE
-						+ I18n.format("spell.canClickDelete"));
+				tooltip.add(TextFormatting.DARK_RED + "" + TextFormatting.ITALIC + TextFormatting.UNDERLINE + I18n.format("spell.canClickDelete"));
 			}
 			this.drawHoveringText(tooltip, mouseX, mouseY, fontRenderer);
 		}
@@ -501,8 +484,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	{
 		String s = this.tileSRCT.getDisplayName().getUnformattedText();
 		this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);
-		this.fontRenderer.drawString(this.playerInventory.getDisplayName().getUnformattedText(), 118,
-				this.ySize - 96 + 3, 4210752);
+		this.fontRenderer.drawString(this.playerInventory.getDisplayName().getUnformattedText(), 118, this.ySize - 96 + 3, 4210752);
 	}
 
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
@@ -522,8 +504,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		boolean flag = true;
 		for (String s : ss)
 		{
-			if (!(spell.getModId().contains(s) || spell.getRegisteringId().contains(s) || getName(spell).contains(s)
-					|| I18n.format("spell." + spell.getTranslateKey() + ".desc").contains(s)
+			if (!(spell.getModId().contains(s) || spell.getRegisteringId().contains(s) || getName(spell).contains(s) || I18n.format("spell." + spell.getTranslateKey() + ".desc").contains(s)
 					|| I18n.format(SpellUtils.typeFromSpellItem(spell)).contains(s)))
 			{
 				flag = false;
@@ -629,30 +610,26 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		GlStateManager.enableBlend();
 		RenderHelper.enableGUIStandardItemLighting();
 		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16, 64, 64, 0.25F);
-		
+
 		Spell sc = spell.getSpellClass();
 		if (sc instanceof Spell.SpellCorrection)
 		{
 			SpellCorrection correction = (SpellCorrection) sc;
 			if (correction.getLevel() != 0)
 			{
-				this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,
-						"textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
+				this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID, "textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableBlend();
 				RenderHelper.enableGUIStandardItemLighting();
-				this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2,
-						y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
+				this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
 			}
 		}
 
-		this.mc.getTextureManager().bindTexture(new ResourceLocation(spell.getTexturePath().getResourceDomain(),
-				"textures/gui/spellitems/" + spell.getTexturePath().getResourcePath() + ".png"));
+		this.mc.getTextureManager().bindTexture(new ResourceLocation(spell.getTexturePath().getResourceDomain(), "textures/gui/spellitems/" + spell.getTexturePath().getResourcePath() + ".png"));
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
 		RenderHelper.enableGUIStandardItemLighting();
-		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2,
-				y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
+		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
 
 		if (inactive)
 		{
@@ -664,43 +641,31 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		}
 	}
 
-	public void drawTexturedWithTextureSizeModalRect(int x, int y, int textureX, int textureY, int width, int height,
-			float textureWidth, float textureHeight)
+	public void drawTexturedWithTextureSizeModalRect(int x, int y, int textureX, int textureY, int width, int height, float textureWidth, float textureHeight)
 	{
 		float f = 1.0F / textureWidth;
 		float f1 = 1.0F / textureHeight;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1))
-				.endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
 		tessellator.draw();
 	}
 
-	public void drawTexturedWithTextureSizeAndScaleModalRect(int x, int y, int textureX, int textureY, int width,
-			int height, float textureWidth, float textureHeight, float scale)
+	public void drawTexturedWithTextureSizeAndScaleModalRect(int x, int y, int textureX, int textureY, int width, int height, float textureWidth, float textureHeight, float scale)
 	{
 		float f = 1.0F / (textureWidth * scale);
 		float f1 = 1.0F / (textureHeight * scale);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1))
-				.endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
 		tessellator.draw();
 	}
 
@@ -710,8 +675,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		if (sc instanceof Spell.SpellCorrection)
 		{
 			SpellCorrection correction = (SpellCorrection) sc;
-			return I18n.format("spell." + spellitem.getTranslateKey() + ".name")
-					+ I18n.format("correction." + correction.getLevel());
+			return I18n.format("spell." + spellitem.getTranslateKey() + ".name") + I18n.format("correction." + correction.getLevel());
 		}
 		else
 		{

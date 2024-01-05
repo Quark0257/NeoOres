@@ -15,43 +15,43 @@ public class MakePortalCategory implements IRecipeCategory<MakePortalWrapper>
 {
 	@SuppressWarnings("unused")
 	private final ICraftingGridHelper gridHelper;
-	
+
 	public MakePortalCategory(IGuiHelper helper)
 	{
 		this.gridHelper = helper.createCraftingGridHelper(0, 2);
 	}
-	
+
 	@Override
-	public IDrawable getBackground() 
+	public IDrawable getBackground()
 	{
 		return NeoOresJEIPlugin.make_portal;
 	}
 
 	@Override
-	public String getModName() 
+	public String getModName()
 	{
 		return Reference.MOD_NAME;
 	}
 
 	@Override
-	public String getTitle() 
+	public String getTitle()
 	{
 		return I18n.format("recipe.mana_composition");
 	}
 
 	@Override
-	public String getUid() 
+	public String getUid()
 	{
 		return "recipe.make_portal";
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout arg0, MakePortalWrapper arg1, IIngredients arg2) 
+	public void setRecipe(IRecipeLayout arg0, MakePortalWrapper arg1, IIngredients arg2)
 	{
 		IGuiItemStackGroup guiItems = arg0.getItemStacks();
 		guiItems.init(0, true, 48, 45);
 		guiItems.init(1, true, 48, 11);
-		guiItems.init(2,false,118,44);
+		guiItems.init(2, false, 118, 44);
 		guiItems.set(arg2);
 	}
 

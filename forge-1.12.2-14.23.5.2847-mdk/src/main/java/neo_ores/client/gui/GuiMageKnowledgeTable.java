@@ -75,13 +75,11 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	public void initGui()
 	{
 		tabs = SpellUtils.getAllStudyTabs();
-		this.buttonList.add(new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2,
-				100, 20, I18n.format(tab.getKey()))
+		this.buttonList.add(new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2, 100, 20, I18n.format(tab.getKey()))
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
 			{
-				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y
-						&& mouseX < this.x + this.width && mouseY < this.y + this.height;
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 				if (flag)
 				{
 					tab = tabs.get((tabs.indexOf(tab) + 1) < tabs.size() ? tabs.indexOf(tab) + 1 : 0);
@@ -183,8 +181,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	{
 		for (SpellItem spellitem : SpellUtils.registry)
 		{
-			if (spellitem.getTab() == this.tab && spellitem.getParent() != null
-					&& spellitem.getParent().getTab() == this.tab)
+			if (spellitem.getTab() == this.tab && spellitem.getParent() != null && spellitem.getParent().getTab() == this.tab)
 			{
 				int startX = spellitem.getPositionX() * interval + x + 16;
 				int endX = spellitem.getParent().getPositionX() * interval + x + 16;
@@ -200,8 +197,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				}
 				else
 				{
-					if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player)
-							&& this.canGetSpellItemByTree(spellitem, this.mc.player))
+					if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player) && this.canGetSpellItemByTree(spellitem, this.mc.player))
 					{
 						this.drawLine(startX, endX, startY, endY, 0x0000FF);
 					}
@@ -233,8 +229,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	private void drawTooltip(int mouseX, int mouseY)
 	{
 		StudyTableUtils stUtils = StudyTableUtils.set(tab);
-		if (this.isMouseInsideWindow(mouseX, mouseY)
-				&& stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height) != null)
+		if (this.isMouseInsideWindow(mouseX, mouseY) && stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height) != null)
 		{
 			List<String> tooltip = new ArrayList<String>();
 			SpellItem spellitem = stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height);
@@ -242,8 +237,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			tooltip.add(TextFormatting.WHITE + getName(spellitem));
 
 			tooltip.add(TextFormatting.GRAY + I18n.format("spell." + spellitem.getTranslateKey() + ".desc"));
-			tooltip.add(TextFormatting.BLUE + I18n.format("spell.type") + " : "
-					+ SpellUtils.colorFromSpellItem(spellitem) + I18n.format(SpellUtils.typeFromSpellItem(spellitem)));
+			tooltip.add(TextFormatting.BLUE + I18n.format("spell.type") + " : " + SpellUtils.colorFromSpellItem(spellitem) + I18n.format(SpellUtils.typeFromSpellItem(spellitem)));
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : +" + spellitem.getCostsum());
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : x" + spellitem.getCostproduct());
 
@@ -255,22 +249,18 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			{
 				if (!this.canGetSpellItemByMagicPoint(spellitem, this.mc.player))
 				{
-					tooltip.add(
-							(TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : "))
-									+ TextFormatting.BLUE + spellitem.getTier() + " "
-									+ I18n.format("spell.magic_point"));
+					tooltip.add((TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " "
+							+ I18n.format("spell.magic_point"));
 				}
 				else
 				{
-					tooltip.add((TextFormatting.BOLD + (TextFormatting.BLUE + I18n.format("spell.required") + " : "))
-							+ TextFormatting.BLUE + spellitem.getTier() + " " + I18n.format("spell.magic_point"));
+					tooltip.add(
+							(TextFormatting.BOLD + (TextFormatting.BLUE + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " " + I18n.format("spell.magic_point"));
 				}
 
 				if (!this.canGetSpellItemByTree(spellitem, this.mc.player))
 				{
-					tooltip.add(
-							(TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : "))
-									+ TextFormatting.BLUE + getName(spellitem.getParent()));
+					tooltip.add((TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + getName(spellitem.getParent()));
 				}
 			}
 
@@ -325,11 +315,9 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			{
 				int d = Math.sqrt(1 + m * m) > 1.5 ? 0 : 1;
 				if (m < 0)
-					this.drawHorizontalLine(minX + (int) (i * -m) - 1, minX + (int) ((i + 1) * -m + d), maxY - i,
-							color - 0x1000000);
+					this.drawHorizontalLine(minX + (int) (i * -m) - 1, minX + (int) ((i + 1) * -m + d), maxY - i, color - 0x1000000);
 				else
-					this.drawHorizontalLine(minX + (int) (i * m) - 1, minX + (int) ((i + 1) * m + d), minY + i,
-							color - 0x1000000);
+					this.drawHorizontalLine(minX + (int) (i * m) - 1, minX + (int) ((i + 1) * m + d), minY + i, color - 0x1000000);
 			}
 		}
 		else
@@ -338,11 +326,9 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			{
 				int d = Math.sqrt(1 + m * m) > 1.5 ? 0 : 1;
 				if (m < 0)
-					this.drawVerticalLine(maxX - i, minY + (int) (i * -m) - 1, minY + (int) ((i + 1) * -m + d),
-							color - 0x1000000);
+					this.drawVerticalLine(maxX - i, minY + (int) (i * -m) - 1, minY + (int) ((i + 1) * -m + d), color - 0x1000000);
 				else
-					this.drawVerticalLine(minX + i, minY + (int) (i * m) - 1, minY + (int) ((i + 1) * m + d),
-							color - 0x1000000);
+					this.drawVerticalLine(minX + i, minY + (int) (i * m) - 1, minY + (int) ((i + 1) * m + d), color - 0x1000000);
 			}
 		}
 	}
@@ -357,47 +343,38 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItem(spellitem));
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableBlend();
-				this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval,
-						y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
+				this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
 				RenderHelper.enableGUIStandardItemLighting();
-				
+
 				Spell sc = spellitem.getSpellClass();
 				if (sc instanceof Spell.SpellCorrection)
 				{
 					SpellCorrection correction = (SpellCorrection) sc;
 					if (correction.getLevel() != 0)
 					{
-						this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,
-								"textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
+						this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID, "textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
 						GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 						GlStateManager.enableBlend();
-						this.drawTexturedWithTextureSizeModalRect(
-								x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
-								y + spellitem.getPositionY() * interval + SpellUtils.offsetY(spellitem), 0, 0, 16, 16,
-								16, 16);
+						this.drawTexturedWithTextureSizeModalRect(x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
+								y + spellitem.getPositionY() * interval + SpellUtils.offsetY(spellitem), 0, 0, 16, 16, 16, 16);
 						RenderHelper.enableGUIStandardItemLighting();
 					}
 				}
 
 				this.mc.getTextureManager()
-						.bindTexture(new ResourceLocation(spellitem.getTexturePath().getResourceDomain(),
-								"textures/gui/spellitems/" + spellitem.getTexturePath().getResourcePath() + ".png"));
+						.bindTexture(new ResourceLocation(spellitem.getTexturePath().getResourceDomain(), "textures/gui/spellitems/" + spellitem.getTexturePath().getResourcePath() + ".png"));
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableBlend();
-				this.drawTexturedWithTextureSizeModalRect(
-						x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
+				this.drawTexturedWithTextureSizeModalRect(x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
 						y + spellitem.getPositionY() * interval + SpellUtils.offsetY(spellitem), 0, 0, 16, 16, 16, 16);
 				RenderHelper.enableGUIStandardItemLighting();
 
-				if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player)
-						&& this.canGetSpellItemByTree(spellitem, this.mc.player))
+				if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player) && this.canGetSpellItemByTree(spellitem, this.mc.player))
 				{
 					this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItemInactive(spellitem));
-					GlStateManager.color(1.0F, 1.0F, 1.0F,
-							(float) Math.sin(this.mc.getSystemTime() / 100.0D) / 2.5F + 0.6F);
+					GlStateManager.color(1.0F, 1.0F, 1.0F, (float) Math.sin(this.mc.getSystemTime() / 100.0D) / 2.5F + 0.6F);
 					GlStateManager.enableBlend();
-					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval,
-							y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
+					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
 					RenderHelper.enableGUIStandardItemLighting();
 				}
 				else if (!this.simc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
@@ -405,8 +382,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 					this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItemInactive(spellitem));
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 					GlStateManager.enableBlend();
-					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval,
-							y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
+					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
 					RenderHelper.enableGUIStandardItemLighting();
 				}
 			}
@@ -417,18 +393,11 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	{
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.getTextureManager()
-				.bindTexture(new ResourceLocation(Reference.MOD_ID, "textures/gui/study_table_window.png"));
+		this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID, "textures/gui/study_table_window.png"));
 		this.drawTexturedWithTextureSizeModalRect(x, y, 0, 0, windowSizeX, windowSizeY, 512, 512);
-		this.fontRenderer.drawString(I18n.format("gui.mage_knowledge_table"),
-				x + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("gui.mage_knowledge_table"))) / 2,
-				y + 14, 4210752);
-		this.fontRenderer.drawString(
-				TextFormatting.BLUE + I18n.format("spell.magic_point") + " : "
-						+ LongUtils.convertString(this.pmdc.getMagicPoint()),
-				x - 28 + (windowSizeX - this.fontRenderer.getStringWidth(
-						I18n.format("spell.magic_point") + ":" + LongUtils.convertString(this.pmdc.getMagicPoint()))),
-				y + 14, 4210752);
+		this.fontRenderer.drawString(I18n.format("gui.mage_knowledge_table"), x + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("gui.mage_knowledge_table"))) / 2, y + 14, 4210752);
+		this.fontRenderer.drawString(TextFormatting.BLUE + I18n.format("spell.magic_point") + " : " + LongUtils.convertString(this.pmdc.getMagicPoint()),
+				x - 28 + (windowSizeX - this.fontRenderer.getStringWidth(I18n.format("spell.magic_point") + ":" + LongUtils.convertString(this.pmdc.getMagicPoint()))), y + 14, 4210752);
 	}
 
 	public boolean doesGuiPauseGame()
@@ -440,60 +409,45 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	private void mouseLeftClicked(int mouseX, int mouseY)
 	{
 		StudyTableUtils stUtils = StudyTableUtils.set(tab);
-		if (this.isMouseInsideWindow(mouseX, mouseY)
-				&& stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height) != null)
+		if (this.isMouseInsideWindow(mouseX, mouseY) && stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height) != null)
 			;
 		{
 			SpellItem spellitem = stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height);
-			if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player)
-					&& this.canGetSpellItemByTree(spellitem, this.mc.player))
+			if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player) && this.canGetSpellItemByTree(spellitem, this.mc.player))
 			{
 				NBTTagCompound magic = this.pmdc.addMagicPoint((long) -spellitem.getTier());
 				NBTTagCompound study = this.simc.set(spellitem.getModId(), spellitem.getRegisteringId());
 				this.pmdc.sendToServer(magic, study);
-				this.mc.world.playSound(this.mc.player, this.mc.player.getPosition(),
-						SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1.0F, 2.0F);
+				this.mc.world.playSound(this.mc.player, this.mc.player.getPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1.0F, 2.0F);
 			}
 		}
 	}
 
-	public void drawTexturedWithTextureSizeModalRect(int x, int y, int textureX, int textureY, int width, int height,
-			float textureWidth, float textureHeight)
+	public void drawTexturedWithTextureSizeModalRect(int x, int y, int textureX, int textureY, int width, int height, float textureWidth, float textureHeight)
 	{
 		float f = 1.0F / textureWidth;
 		float f1 = 1.0F / textureHeight;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1))
-				.endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
 		tessellator.draw();
 	}
 
-	public void drawTexturedWithTextureSizeAndScaleModalRect(int x, int y, int textureX, int textureY, int width,
-			int height, float textureWidth, float textureHeight, float scale)
+	public void drawTexturedWithTextureSizeAndScaleModalRect(int x, int y, int textureX, int textureY, int width, int height, float textureWidth, float textureHeight, float scale)
 	{
 		float f = 1.0F / (textureWidth * scale);
 		float f1 = 1.0F / (textureHeight * scale);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1))
-				.endVertex();
-		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
-		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel)
-				.tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + height), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + height) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + width), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + width) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
+		bufferbuilder.pos((double) (x + 0), (double) (y + 0), (double) this.zLevel).tex((double) ((float) (textureX + 0) * f), (double) ((float) (textureY + 0) * f1)).endVertex();
 		tessellator.draw();
 	}
 
@@ -525,9 +479,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	private boolean canGetSpellItemByTree(SpellItem spellitem, EntityPlayerSP player)
 	{
 		StudyItemManagerClient simc = new StudyItemManagerClient(player);
-		return (spellitem.getParent() != null)
-				? simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(),
-						spellitem.getModId(), spellitem.getRegisteringId())
+		return (spellitem.getParent() != null) ? simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId())
 				: simc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
 	}
 
@@ -563,8 +515,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		if (sc instanceof Spell.SpellCorrection)
 		{
 			SpellCorrection correction = (SpellCorrection) sc;
-			return I18n.format("spell." + spellitem.getTranslateKey() + ".name")
-					+ I18n.format("correction." + correction.getLevel());
+			return I18n.format("spell." + spellitem.getTranslateKey() + ".name") + I18n.format("correction." + correction.getLevel());
 		}
 		else
 		{

@@ -61,8 +61,7 @@ public class VectorUtils
 
 		for (int i = 0; i < 3; i++)
 		{
-			clampedOrigins[i] = new Vec3d(origin.x + offsets[i].x + x * t[i], origin.y + offsets[i].y + y * t[i],
-					origin.z + offsets[i].z + z * t[i]);
+			clampedOrigins[i] = new Vec3d(origin.x + offsets[i].x + x * t[i], origin.y + offsets[i].y + y * t[i], origin.z + offsets[i].z + z * t[i]);
 		}
 
 		int i;
@@ -74,8 +73,7 @@ public class VectorUtils
 			for (int d = 0; d < 3; d++)
 			{
 				ranges[d] = dvec.add(clampedOrigins[d]);
-				BlockPos pos = new BlockPos(MathHelper.floor(ranges[d].x), MathHelper.floor(ranges[d].y),
-						MathHelper.floor(ranges[d].z));
+				BlockPos pos = new BlockPos(MathHelper.floor(ranges[d].x), MathHelper.floor(ranges[d].y), MathHelper.floor(ranges[d].z));
 				if (!poss.contains(pos))
 					poss.add(pos);
 			}

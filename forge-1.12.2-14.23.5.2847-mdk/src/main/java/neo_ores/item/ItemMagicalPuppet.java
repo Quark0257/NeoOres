@@ -15,16 +15,16 @@ public class ItemMagicalPuppet extends INeoOresItem.Impl
 	{
 		ItemStack stack = player.getHeldItem(hand);
 		ManaLinkUtils utils = new ManaLinkUtils(stack);
-		if(player instanceof EntityPlayerMP) 
+		if (player instanceof EntityPlayerMP)
 		{
-			utils.setPlayer((EntityPlayerMP)player);
-			if(player.capabilities.isCreativeMode) 
+			utils.setPlayer((EntityPlayerMP) player);
+			if (player.capabilities.isCreativeMode)
 			{
 				ItemStack copied = stack.copy();
 				player.setHeldItem(hand, copied);
 			}
 		}
-		
+
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 	}
 }

@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 
 public interface ISpellRecipeWritable
 {
-	public void writeRecipeSpells(List<SpellItem> list,ItemStack stack);
-	
+	public void writeRecipeSpells(List<SpellItem> list, ItemStack stack);
+
 	public List<SpellItem> readRecipeSpells(ItemStack stack);
-	
+
 	public boolean hasRecipe(ItemStack stack);
 }

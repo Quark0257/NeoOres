@@ -36,8 +36,7 @@ public class GuiUtils
 				return simc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
 			}
 
-			return simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(),
-					spellitem.getModId(), spellitem.getRegisteringId());
+			return simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId());
 		}
 
 		@Nullable
@@ -98,8 +97,7 @@ public class GuiUtils
 				offsetY = -1;
 			}
 
-			return SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX,
-					y / GuiMageKnowledgeTable.interval + offsetY);
+			return SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX, y / GuiMageKnowledgeTable.interval + offsetY);
 		}
 
 		private static boolean canGetProvisionalSpell(int X, int Y)
@@ -120,10 +118,8 @@ public class GuiUtils
 				offsetY = -1;
 			}
 
-			return (SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX,
-					y / GuiMageKnowledgeTable.interval + offsetY) != null
-					&& SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX,
-							y / GuiMageKnowledgeTable.interval + offsetY).getTab() == StudyTableUtils.tab);
+			return (SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX, y / GuiMageKnowledgeTable.interval + offsetY) != null
+					&& SpellUtils.getFromXY(x / GuiMageKnowledgeTable.interval + offsetX, y / GuiMageKnowledgeTable.interval + offsetY).getTab() == StudyTableUtils.tab);
 		}
 	}
 }

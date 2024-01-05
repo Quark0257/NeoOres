@@ -56,8 +56,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		this.setResistance(Float.MAX_VALUE);
 	}
 
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
-			List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
 	{
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BOTTOM);
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_WEST);
@@ -99,8 +98,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		super.breakBlock(worldIn, pos, state);
 	}
 
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		if (worldIn.isRemote)
 			return true;
@@ -148,8 +146,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		if (world.isRemote)
 			return;
 		@SuppressWarnings("deprecation")
-		RayTraceResult result = ForgeHooks.rayTraceEyes(player,
-				((EntityPlayerMP) player).interactionManager.getBlockReachDistance() + 1.0D);
+		RayTraceResult result = ForgeHooks.rayTraceEyes(player, ((EntityPlayerMP) player).interactionManager.getBlockReachDistance() + 1.0D);
 		if (result == null || result.typeOfHit != Type.BLOCK)
 			return;
 		TileEntity tileentity = world.getTileEntity(pos);
@@ -253,8 +250,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
 	}
@@ -287,8 +283,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 
 			if (flag)
 			{
-				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY,
-						entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
+				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
 						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
 				entityplayer.inventoryContainer.detectAndSendChanges();
 			}

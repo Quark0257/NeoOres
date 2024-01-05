@@ -1,5 +1,6 @@
 package neo_ores.event;
 
-public class NeoOresBlockEvent {
+public class NeoOresBlockEvent
+{
 
 }

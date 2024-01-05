@@ -43,8 +43,7 @@ public class RendererItemSpell extends PerspectiveMapWrapper
 		ModelManager manager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
 
 		IBakedModel model;
-		if (cameraTransformType != TransformType.GUI && cameraTransformType != TransformType.GROUND
-				&& cameraTransformType != TransformType.FIXED)
+		if (cameraTransformType != TransformType.GUI && cameraTransformType != TransformType.GROUND && cameraTransformType != TransformType.FIXED)
 			model = manager.getModel(outInv);
 		else
 			model = manager.getModel(inInv);

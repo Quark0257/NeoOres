@@ -5,13 +5,14 @@ import neo_ores.spell.SpellItemInterfaces.HasRange;
 
 public class SpellRange extends SpellCorrectionSingle<HasRange>
 {
-	public SpellRange(int level) 
+	public SpellRange(int level)
 	{
 		super(level);
 	}
 
 	@Override
-	protected void onApply(HasRange spell) {
+	protected void onApply(HasRange spell)
+	{
 		spell.setRange(this.getLevel());
 	}
 }

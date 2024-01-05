@@ -7,15 +7,17 @@ import net.minecraft.util.ResourceLocation;
 
 public interface INeoOresItem
 {
-	public default ModelResourceLocation getModel(Item item,int meta)
+	public default ModelResourceLocation getModel(Item item, int meta)
 	{
-		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID,item.getRegistryName().getResourcePath()),"inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, item.getRegistryName().getResourcePath()), "inventory");
 	}
-	
+
 	public default int getMaxMeta()
 	{
 		return 0;
 	}
-	
-	public static class Impl extends Item implements INeoOresItem {}
+
+	public static class Impl extends Item implements INeoOresItem
+	{
+	}
 }

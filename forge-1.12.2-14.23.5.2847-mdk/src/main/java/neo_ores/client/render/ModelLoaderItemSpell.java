@@ -33,8 +33,7 @@ public class ModelLoaderItemSpell implements ICustomModelLoader
 	@Override
 	public boolean accepts(ResourceLocation modelLocation)
 	{
-		return (new ResourceLocation(key.getResourceDomain(), "models/item/" + key.getResourcePath())).toString()
-				.equals(modelLocation.toString());
+		return (new ResourceLocation(key.getResourceDomain(), "models/item/" + key.getResourcePath())).toString().equals(modelLocation.toString());
 	}
 
 	@Override

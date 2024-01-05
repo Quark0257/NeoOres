@@ -6,7 +6,6 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import neo_ores.block.BlockDimension;
-import neo_ores.block.BlockDimensionLeaves;
 import neo_ores.block.BlockEnhancedPedestal;
 import neo_ores.block.BlockPedestal;
 import neo_ores.client.gui.GuiNeoGameOverlay;
@@ -67,134 +66,66 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresEntityEvent 
+public class NeoOresEntityEvent
 {
 	public static final String nbtsoulboundtag = "soulboundslot";
-	
-	/*
-	@SubscribeEvent(priority=EventPriority.HIGH)
-	public void onRightClickItem(PlayerInteractEvent.RightClickItem event)
-	{
-		if(!event.getEntityPlayer().world.isRemote && event.getEntityPlayer() != null && event.getItemStack().getItem() instanceof ItemArmor && event.getItemStack().equals(event.getEntityPlayer().getHeldItemMainhand()))
-		{
-			ItemArmor armor = (ItemArmor)event.getItemStack().getItem();
-			ItemStack headItem = event.getEntityPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-			if(headItem != ItemStack.EMPTY && armor.getEquipmentSlot() == EntityEquipmentSlot.HEAD && headItem.getTagCompound() != null)
-			{
-				NBTTagList headNBTList = headItem.getTagCompound().getTagList("neo_ores", 10);
-				if(headNBTList != null && headNBTList.getCompoundTagAt(0) != null)
-				{
-					ItemStack item = event.getItemStack().copy();
-					NBTTagCompound headNBT = headNBTList.getCompoundTagAt(0);
-					if(headNBT.hasKey("ML") && headNBT.hasKey("maxMP") && headNBT.hasKey("MP") && headNBT.hasKey("MXP") && headNBT.hasKey("isSoulBound"))
-					{
-						//set tag of held item from head item and put held item on head 
-						int ML = headNBT.getInteger("ML");
-						int maxMP = headNBT.getInteger("maxMP");
-						int MP = headNBT.getInteger("MP");
-						int MXP = headNBT.getInteger("MXP");
-						int isSoulBound = headNBT.getInteger("isSoulBound");
-						event.getEntityPlayer().inventory.setInventorySlotContents(39,item);
-						ItemStack headItemFromHand = event.getEntityPlayer().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-						if(headItemFromHand.getTagCompound() == null)
-						{
-							headItemFromHand.setTagCompound(new NBTTagCompound());
-						}
 
-						if(!headItemFromHand.getTagCompound().hasKey("neo_ores", 9))
-						{
-							headItemFromHand.getTagCompound().setTag("neo_ores", new NBTTagList());
-						}
-						NBTTagList tag = headItemFromHand.getTagCompound().getTagList("neo_ores", 10);
-						NBTTagCompound itemNBT = new NBTTagCompound();
-						itemNBT.setInteger("ML", ML);
-						itemNBT.setInteger("maxMP", maxMP);
-						itemNBT.setInteger("MP", MP);
-						itemNBT.setInteger("MXP", MXP);
-						itemNBT.setInteger("isSoulBound", isSoulBound);
-						if(tag.tagCount() > 0)
-						{
-							tag.set(0, itemNBT);
-						}
-						else
-						{
-							tag.appendTag(itemNBT);
-						}
-						headItemFromHand.getTagCompound().setBoolean("Unbreakable", true);
-						headItemFromHand.addEnchantment(Enchantment.getEnchantmentByID(10), 1);
-						//clear held item
-						NBTTagCompound nbtClear = new NBTTagCompound();
-						nbtClear.setBoolean("clear", true);
-						event.getEntityPlayer().getHeldItemMainhand().setTagCompound(nbtClear);
-						event.getEntityPlayer().inventory.clearMatchingItems(event.getEntityPlayer().getHeldItemMainhand().getItem(), event.getEntityPlayer().getHeldItemMainhand().getMetadata(), event.getEntityPlayer().getHeldItemMainhand().getCount(), event.getEntityPlayer().getHeldItemMainhand().getTagCompound());
-						//give old head item and clear tag
-						NBTTagCompound headNBTOld = headItem.getTagCompound();
-						headNBTOld.removeTag("ench");
-						headNBTOld.removeTag("neo_ores");
-						if(isSoulBound == 1)
-						{
-							headNBTOld.removeTag("Unbreakable");
-						}
-						event.getEntityPlayer().addItemStackToInventory(headItem.copy());
-					}
-				}
-			}
-		}
-	}
-	*/
-
-	//TODO Fire:Reflection,Water:CancelDamage,Earth:CancelDeath(MP:N%),Air:CreativeFlying(with Increase Speed)
+	// TODO
+	// Fire:Reflection,Water:CancelDamage,Earth:CancelDeath(MP:N%),Air:CreativeFlying(with
+	// Increase Speed)
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void onEntityJump(LivingEvent.LivingJumpEvent event) 
+	public void onEntityJump(LivingEvent.LivingJumpEvent event)
 	{
-		if(event.getEntityLiving() != null && event.getEntityLiving().isServerWorld()) 
+		if (event.getEntityLiving() != null && event.getEntityLiving().isServerWorld())
 		{
-			if(event.getEntityLiving().isPotionActive(NeoOres.freeze))
+			if (event.getEntityLiving().isPotionActive(NeoOres.freeze))
 			{
 				event.getEntityLiving().motionX = 0.0D;
 				event.getEntityLiving().motionY = -1.0D;
 				event.getEntityLiving().motionZ = 0.0D;
 			}
-			
-			if(event.getEntityLiving().isPotionActive(NeoOres.gravity))
+
+			if (event.getEntityLiving().isPotionActive(NeoOres.gravity))
 			{
 				event.getEntityLiving().motionY = -1.0D;
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityWasAttacked(LivingHurtEvent event) 
+	public void onEntityWasAttacked(LivingHurtEvent event)
 	{
-		if(event.getEntityLiving() == null || event.isCanceled()) return;
-		
-		for(PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
+		if (event.getEntityLiving() == null || event.isCanceled())
+			return;
+
+		for (PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
 		{
-			if(effect.getPotion() == NeoOres.shield)
+			if (effect.getPotion() == NeoOres.shield)
 			{
 				event.setCanceled(true);
-				if(!event.getEntityLiving().world.isRemote)
+				if (!event.getEntityLiving().world.isRemote)
 				{
 					event.getEntityLiving().removePotionEffect(effect.getPotion());
-					if(effect.getAmplifier() > 0) 
+					if (effect.getAmplifier() > 0)
 					{
-						event.getEntityLiving().addPotionEffect(new PotionEffect(effect.getPotion(),effect.getDuration(),effect.getAmplifier() -  1,effect.getIsAmbient(),effect.doesShowParticles()));
+						event.getEntityLiving()
+								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
 					}
 				}
 				return;
 			}
 		}
-		
-		if (event.getEntityLiving() instanceof EntityPlayer && event.getSource() instanceof EntityDamageSource) 
+
+		if (event.getEntityLiving() instanceof EntityPlayer && event.getSource() instanceof EntityDamageSource)
 		{
 			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemPaxel) 
+			if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemPaxel)
 			{
 				ItemPaxel paxel = (ItemPaxel) player.getHeldItem(EnumHand.MAIN_HAND).getItem();
-				if (paxel.isShielding()) 
+				if (paxel.isShielding())
 				{
-					if (this.rotationInVector(event.getSource().getDamageLocation(), player, 70.0F, 50.0F)) 
+					if (this.rotationInVector(event.getSource().getDamageLocation(), player, 70.0F, 50.0F))
 					{
 						event.setAmount(event.getAmount() / 2.0F);
 						player.getHeldItem(EnumHand.MAIN_HAND).damageItem(1, player);
@@ -202,7 +133,7 @@ public class NeoOresEntityEvent
 				}
 				paxel.setShielding(false);
 
-				if (event.getAmount() <= 0.0F) 
+				if (event.getAmount() <= 0.0F)
 				{
 					paxel.setShielded(false);
 				}
@@ -211,17 +142,17 @@ public class NeoOresEntityEvent
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityKnockback(LivingKnockBackEvent event) 
+	public void onEntityKnockback(LivingKnockBackEvent event)
 	{
-		if (event.getEntityLiving() instanceof EntityPlayer) 
+		if (event.getEntityLiving() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemPaxel) 
+			if (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemPaxel)
 			{
 				ItemPaxel paxel = (ItemPaxel) player.getHeldItem(EnumHand.MAIN_HAND).getItem();
-				if (paxel.wasShielding()) 
+				if (paxel.wasShielding())
 				{
-					if (this.rotationInVector(new Vec3d(event.getAttacker().posX, event.getAttacker().posY, event.getAttacker().posZ), player, 70.0F, 50.0F)) 
+					if (this.rotationInVector(new Vec3d(event.getAttacker().posX, event.getAttacker().posY, event.getAttacker().posZ), player, 70.0F, 50.0F))
 					{
 						event.setStrength(event.getStrength() / 2);
 					}
@@ -232,128 +163,136 @@ public class NeoOresEntityEvent
 	}
 
 	@SubscribeEvent
-	public void onEntitySpawnEvent(EntityJoinWorldEvent event) 
+	public void onEntitySpawnEvent(EntityJoinWorldEvent event)
 	{
-		if(event.getEntity() instanceof EntityPlayerMP)
+		if (event.getEntity() instanceof EntityPlayerMP)
 		{
-			EntityPlayerMP playermp = (EntityPlayerMP)event.getEntity();
-			for(PotionEffect effect : playermp.getActivePotionEffects())
+			EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
+			for (PotionEffect effect : playermp.getActivePotionEffects())
 			{
-				if(effect.getPotion() instanceof PotionNeoOres.IFakeAttributeModified)
+				if (effect.getPotion() instanceof PotionNeoOres.IFakeAttributeModified)
 				{
-					((PotionNeoOres.IFakeAttributeModified)effect.getPotion()).applyAttributesModifiersToEntity(playermp, effect.getAmplifier());
+					((PotionNeoOres.IFakeAttributeModified) effect.getPotion()).applyAttributesModifiersToEntity(playermp, effect.getAmplifier());
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onEntityTravelToDimensionEvent(EntityTravelToDimensionEvent event)
 	{
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerInteractEvent(PlayerInteractEvent.LeftClickBlock event)
 	{
-		if(!event.getWorld().isRemote && event.getEntityPlayer() != null && event.getEntityPlayer().capabilities.isCreativeMode && event.getItemStack().getItem() == NeoOresItems.mana_wrench)
+		if (!event.getWorld().isRemote && event.getEntityPlayer() != null && event.getEntityPlayer().capabilities.isCreativeMode && event.getItemStack().getItem() == NeoOresItems.mana_wrench)
 		{
 			IBlockState state = event.getWorld().getBlockState(event.getPos());
-			if(state != null && ((state.getBlock() instanceof BlockEnhancedPedestal) || state.getBlock() instanceof BlockPedestal))
+			if (state != null && ((state.getBlock() instanceof BlockEnhancedPedestal) || state.getBlock() instanceof BlockPedestal))
 			{
 				state.getBlock().onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
-	public void onLivingEvent(LivingUpdateEvent event) 
+	public void onLivingEvent(LivingUpdateEvent event)
 	{
-		if (event.getEntity() != null) 
+		if (event.getEntity() != null)
 		{
 			World worldIn = event.getEntity().getEntityWorld();
-			//MP updater
-			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP) 
+			// MP updater
+			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP)
 			{
 				EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
 				PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
-				if (playermp.ticksExisted % 20 == 0) 
+				if (playermp.ticksExisted % 20 == 0)
 				{
-					//pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() * 0.0001F) + 1.0F));
-					//System.out.println(SpellUtils.getItemStackNBTFromList(Arrays.asList(new SpellItemManager[] {NeoOres.spell_dig,NeoOres.spell_touch}), new NBTTagCompound()).toString());
+					// pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() *
+					// 0.0001F) + 1.0F));
+					// System.out.println(SpellUtils.getItemStackNBTFromList(Arrays.asList(new
+					// SpellItemManager[] {NeoOres.spell_dig,NeoOres.spell_touch}), new
+					// NBTTagCompound()).toString());
 					double x = pmd.getLevel();
 					pmd.addMana((long) ((0.000007 * x * (x + 1) * (2 * x + 1) / 6 + x + NeoOresConfig.magic.init_max_mana) * (0.01 * Math.pow(2, -0.0007 * x) + 0.01)));
 				}
-				
+
 				FakeAttributeMaxMana famm = new FakeAttributeMaxMana(playermp);
 				famm.initialize();
 				famm.applyToPlayer();
-				
-				
+
 				/*
-				ItemStack stack = playermp.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-				if(!stack.isEmpty())
-				{
-					if(!FakeAttributeMaxMana.hasModifier(stack, EntityEquipmentSlot.CHEST))
-					{
-						FakeAttributeMaxMana.setToStack(stack, EntityEquipmentSlot.CHEST, 10, 1.0F);
-						famm.modifierToPlayer(10, 2.0F);
-					}
-				}
-				*/
+				 * ItemStack stack = playermp.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+				 * if(!stack.isEmpty()) { if(!FakeAttributeMaxMana.hasModifier(stack,
+				 * EntityEquipmentSlot.CHEST)) { FakeAttributeMaxMana.setToStack(stack,
+				 * EntityEquipmentSlot.CHEST, 10, 1.0F); famm.modifierToPlayer(10, 2.0F); } }
+				 */
 				/*
-				Set<IWorldGenerator> o = ReflectionHelper.getPrivateValue(GameRegistry.class,new GameRegistry(), "worldGenerators");
-				if(o !=null && !o.isEmpty()) System.out.println(o);
-				*/
+				 * Set<IWorldGenerator> o =
+				 * ReflectionHelper.getPrivateValue(GameRegistry.class,new GameRegistry(),
+				 * "worldGenerators"); if(o !=null && !o.isEmpty()) System.out.println(o);
+				 */
 			}
-			
-			//Environmental Controller
-			if (!event.getEntity().getEntityWorld().isRemote && event.getEntityLiving() != null) {
-				if(event.getEntityLiving().getEntityBoundingBox() != null) {
-					for(BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3)) {
+
+			// Environmental Controller
+			if (!event.getEntity().getEntityWorld().isRemote && event.getEntityLiving() != null)
+			{
+				if (event.getEntityLiving().getEntityBoundingBox() != null)
+				{
+					for (BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3))
+					{
 						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
-						if(state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves 
-								|| state.getBlock() == NeoOresBlocks.dim_log) {
-							if(state.getValue(BlockDimension.DIM) == DimensionName.WATER) {
+						if (state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves
+								|| state.getBlock() == NeoOresBlocks.dim_log)
+						{
+							if (state.getValue(BlockDimension.DIM) == DimensionName.WATER)
+							{
 								event.getEntityLiving().extinguish();
 								break;
 							}
 						}
-						if(NeoOresBlocks.color_saplings.subList(3, 6).contains(state.getBlock())) {
+						if (NeoOresBlocks.color_saplings.subList(3, 6).contains(state.getBlock()))
+						{
 							event.getEntityLiving().extinguish();
 							break;
 						}
 					}
-					for(BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3)) {
+					for (BlockPos pos : getBlockPositions(event.getEntityLiving().getEntityBoundingBox(), 0.3))
+					{
 						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
-						if(state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves 
-								|| state.getBlock() == NeoOresBlocks.dim_log) {
-							if(state.getValue(BlockDimension.DIM) == DimensionName.FIRE) {
+						if (state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves
+								|| state.getBlock() == NeoOresBlocks.dim_log)
+						{
+							if (state.getValue(BlockDimension.DIM) == DimensionName.FIRE)
+							{
 								event.getEntityLiving().setFire(worldIn.rand.nextInt(10) + 5);
 								break;
 							}
 						}
-						if(NeoOresBlocks.color_saplings.subList(6, 9).contains(state.getBlock())) {
+						if (NeoOresBlocks.color_saplings.subList(6, 9).contains(state.getBlock()))
+						{
 							event.getEntityLiving().setFire(worldIn.rand.nextInt(10) + 5);
 							break;
 						}
 					}
 				}
 			}
-			
-			//Air Teleporter
+
+			// Air Teleporter
 			MinecraftServer server = event.getEntity().getServer();
-			if (server != null && event.getEntity().dimension == NeoOres.THE_AIR.getId() && event.getEntity().posY < -64) 
+			if (server != null && event.getEntity().dimension == NeoOres.THE_AIR.getId() && event.getEntity().posY < -64)
 			{
 				PlayerList playerList = server.getPlayerList();
 				int dest = DimensionType.OVERWORLD.getId();
 
 				Teleporter teleporter = new FromAirTeleporter(server.getWorld(dest));
 
-				if (event.getEntity() instanceof EntityPlayerMP) 
+				if (event.getEntity() instanceof EntityPlayerMP)
 				{
 					playerList.transferPlayerToDimension((EntityPlayerMP) event.getEntity(), dest, teleporter);
-				} 
-				else 
+				}
+				else
 				{
 					int origin = event.getEntity().dimension;
 					event.getEntity().dimension = dest;
@@ -368,42 +307,43 @@ public class NeoOresEntityEvent
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onLivingDeath(LivingDeathEvent event) 
+	public void onLivingDeath(LivingDeathEvent event)
 	{
-		if ((event.getEntityLiving() == null) || ((event.getEntityLiving() instanceof FakePlayer)) || (event.isCanceled())) 
+		if ((event.getEntityLiving() == null) || ((event.getEntityLiving() instanceof FakePlayer)) || (event.isCanceled()))
 		{
 			return;
 		}
-		
-		for(PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
+
+		for (PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
 		{
-			if(effect.getPotion() == NeoOres.undying)
+			if (effect.getPotion() == NeoOres.undying)
 			{
 				event.setCanceled(true);
-				if(!event.getEntityLiving().world.isRemote)
+				if (!event.getEntityLiving().world.isRemote)
 				{
 					event.getEntityLiving().removePotionEffect(effect.getPotion());
-					if(effect.getAmplifier() > 0) 
+					if (effect.getAmplifier() > 0)
 					{
-						event.getEntityLiving().addPotionEffect(new PotionEffect(effect.getPotion(),effect.getDuration(),effect.getAmplifier() -  1,effect.getIsAmbient(),effect.doesShowParticles()));
+						event.getEntityLiving()
+								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
 					}
 				}
 				event.getEntityLiving().setHealth(event.getEntityLiving().getMaxHealth() / 2);
 				return;
 			}
 		}
-		
-		if (event.getEntityLiving().getEntityWorld().getGameRules().getBoolean("keepInventory")) 
+
+		if (event.getEntityLiving().getEntityWorld().getGameRules().getBoolean("keepInventory"))
 		{
 			return;
 		}
 
-		if (event.getEntityLiving() instanceof EntityPlayer) 
+		if (event.getEntityLiving() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			for (int i = 0; i < player.inventory.getSizeInventory(); i++) 
+			for (int i = 0; i < player.inventory.getSizeInventory(); i++)
 			{
-				if (EnchantmentHelper.getEnchantments(player.inventory.getStackInSlot(i)).containsKey(NeoOres.soulbound)) 
+				if (EnchantmentHelper.getEnchantments(player.inventory.getStackInSlot(i)).containsKey(NeoOres.soulbound))
 				{
 					NBTTagCompound nbt = player.inventory.getStackInSlot(i).getTagCompound();
 					nbt.setInteger(nbtsoulboundtag, i);
@@ -414,13 +354,13 @@ public class NeoOresEntityEvent
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void onPlayerDrop(PlayerDropsEvent event) 
+	public void onPlayerDrop(PlayerDropsEvent event)
 	{
-		if ((event.getEntityPlayer() == null) || ((event.getEntityPlayer() instanceof FakePlayer)) || (event.isCanceled())) 
+		if ((event.getEntityPlayer() == null) || ((event.getEntityPlayer() instanceof FakePlayer)) || (event.isCanceled()))
 		{
 			return;
 		}
-		if (event.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory")) 
+		if (event.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory"))
 		{
 			return;
 		}
@@ -428,23 +368,24 @@ public class NeoOresEntityEvent
 		int space = 0;
 		int count = 0;
 
-		for (int i = 0; i < event.getEntityPlayer().inventory.mainInventory.size(); i++) 
+		for (int i = 0; i < event.getEntityPlayer().inventory.mainInventory.size(); i++)
 		{
-			if (event.getEntityPlayer().inventory.mainInventory.get(i).isEmpty()) 
+			if (event.getEntityPlayer().inventory.mainInventory.get(i).isEmpty())
 			{
 				space++;
 			}
 		}
 
 		ListIterator<EntityItem> iter = event.getDrops().listIterator();
-		while (iter.hasNext()) 
+		while (iter.hasNext())
 		{
 			EntityItem ei = (EntityItem) iter.next();
 			ItemStack stack = ei.getItem();
-			if (EnchantmentHelper.getEnchantments(stack).containsKey(NeoOres.soulbound)) 
+			if (EnchantmentHelper.getEnchantments(stack).containsKey(NeoOres.soulbound))
 			{
-				if (count < space) {
-					if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag)) 
+				if (count < space)
+				{
+					if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag))
 					{
 						NBTTagCompound nbt = stack.getTagCompound();
 						int slot = nbt.getInteger(nbtsoulboundtag);
@@ -452,18 +393,18 @@ public class NeoOresEntityEvent
 						stack.setTagCompound(nbt);
 
 						event.getEntityPlayer().inventory.setInventorySlotContents(slot, stack);
-					} 
-					else 
+					}
+					else
 					{
 						event.getEntityPlayer().inventory.addItemStackToInventory(stack);
 					}
 
 					iter.remove();
 					count++;
-				} 
-				else 
+				}
+				else
 				{
-					if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag)) 
+					if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag))
 					{
 						NBTTagCompound nbt = stack.getTagCompound();
 						nbt.removeTag(nbtsoulboundtag);
@@ -480,34 +421,34 @@ public class NeoOresEntityEvent
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerClone(PlayerEvent.Clone evt)
-	{	
-		if (evt.getEntityPlayer() instanceof EntityPlayerMP) 
+	{
+		if (evt.getEntityPlayer() instanceof EntityPlayerMP)
 		{
 			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)evt.getEntityPlayer());
+			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) evt.getEntityPlayer());
 			pmds.sendToClient();
 		}
-		
-		if ((!evt.isWasDeath()) || (evt.isCanceled())) 
+
+		if ((!evt.isWasDeath()) || (evt.isCanceled()))
 		{
 			return;
 		}
-		if ((evt.getOriginal() == null) || (evt.getEntityPlayer() == null) || ((evt.getEntityPlayer() instanceof FakePlayer))) 
-		{
-			return;
-		}
-		
-		if (evt.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory")) 
+		if ((evt.getOriginal() == null) || (evt.getEntityPlayer() == null) || ((evt.getEntityPlayer() instanceof FakePlayer)))
 		{
 			return;
 		}
 
-		for (int i = 0; i < evt.getOriginal().inventory.getSizeInventory(); i++) 
+		if (evt.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory"))
+		{
+			return;
+		}
+
+		for (int i = 0; i < evt.getOriginal().inventory.getSizeInventory(); i++)
 		{
 			ItemStack stack = (ItemStack) evt.getOriginal().inventory.getStackInSlot(i);
-			if (EnchantmentHelper.getEnchantments(stack).containsKey(NeoOres.soulbound)) 
+			if (EnchantmentHelper.getEnchantments(stack).containsKey(NeoOres.soulbound))
 			{
-				if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag)) 
+				if (stack.hasTagCompound() && stack.getTagCompound().hasKey(nbtsoulboundtag))
 				{
 					NBTTagCompound nbt = stack.getTagCompound();
 					nbt.removeTag(nbtsoulboundtag);
@@ -521,25 +462,25 @@ public class NeoOresEntityEvent
 	}
 
 	@SubscribeEvent
-	public void onAttackEntity(AttackEntityEvent event) 
+	public void onAttackEntity(AttackEntityEvent event)
 	{
-		if (event.getEntityPlayer() != null) 
+		if (event.getEntityPlayer() != null)
 		{
 			Random rand = new Random();
 			EntityPlayer player = event.getEntityPlayer();
 			ItemStack stack = player.getHeldItemMainhand();
-			if (stack.hasTagCompound()) 
+			if (stack.hasTagCompound())
 			{
 				NBTTagCompound nbt = stack.getTagCompound();
-				if (nbt.hasKey(NeoOres.LEGACY) && nbt.getBoolean(NeoOres.LEGACY)) 
+				if (nbt.hasKey(NeoOres.LEGACY) && nbt.getBoolean(NeoOres.LEGACY))
 				{
-					if (rand.nextInt(8) == 0) 
+					if (rand.nextInt(8) == 0)
 					{
 						player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-						if (!player.world.isRemote) 
+						if (!player.world.isRemote)
 						{
-						} 
-						else 
+						}
+						else
 						{
 							player.playSound(SoundEvents.ENTITY_ITEM_BREAK, 1.0F, 1.0F);
 						}
@@ -551,26 +492,29 @@ public class NeoOresEntityEvent
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	@SideOnly(Side.CLIENT)
-	public void onRenderGui(RenderGameOverlayEvent event) 
+	public void onRenderGui(RenderGameOverlayEvent event)
 	{
-		if (event.getType() == ElementType.EXPERIENCE) 
+		if (event.getType() == ElementType.EXPERIENCE)
 		{
 			new GuiNeoGameOverlay(Minecraft.getMinecraft());
-		} 
-		else 
+		}
+		else
 		{
 			return;
 		}
 	}
 
-	private boolean rotationInVector(Vec3d vec, Entity source, float yawWidth, float pitchWidth) {
+	private boolean rotationInVector(Vec3d vec, Entity source, float yawWidth, float pitchWidth)
+	{
 		double vecX = vec.x - source.posX;
 		double vecY = vec.y - (source.posY + source.getEyeHeight());
 		double vecZ = vec.z - source.posZ;
 		float sourceYaw = (float) Math.toDegrees(Math.atan(vecX / vecZ));
-		if (vecZ < 0.0D) {
+		if (vecZ < 0.0D)
+		{
 			sourceYaw = (float) (180.0D - Math.toDegrees(Math.atan(vecX / vecZ + Float.MIN_NORMAL)));
-			if (vecX > 0.0D) {
+			if (vecX > 0.0D)
+			{
 				sourceYaw = (float) (-180.0D + Math.toDegrees(Math.atan(vecX / vecZ + Float.MIN_NORMAL)));
 			}
 		}
@@ -578,20 +522,23 @@ public class NeoOresEntityEvent
 		float playerYaw = MathHelper.wrapDegrees(source.rotationYaw);
 		float playerPitch = MathHelper.wrapDegrees(source.rotationPitch);
 
-		return (playerYaw - 360.0F < sourceYaw + yawWidth || playerYaw < sourceYaw + yawWidth || playerYaw + 360.0F < sourceYaw + yawWidth) && (sourceYaw - yawWidth < playerYaw - 360.0F || sourceYaw - yawWidth < playerYaw || sourceYaw - yawWidth < playerYaw + 360.0F) && sourcePitch - pitchWidth < playerPitch && playerPitch < sourcePitch + pitchWidth;
+		return (playerYaw - 360.0F < sourceYaw + yawWidth || playerYaw < sourceYaw + yawWidth || playerYaw + 360.0F < sourceYaw + yawWidth)
+				&& (sourceYaw - yawWidth < playerYaw - 360.0F || sourceYaw - yawWidth < playerYaw || sourceYaw - yawWidth < playerYaw + 360.0F) && sourcePitch - pitchWidth < playerPitch
+				&& playerPitch < sourcePitch + pitchWidth;
 	}
-	
+
 	@SubscribeEvent
 	public void onLootingLevelEvent(LootingLevelEvent event)
 	{
-		if(event.getDamageSource() != null && event.getDamageSource() instanceof EntityDamageSourceWithItem)
+		if (event.getDamageSource() != null && event.getDamageSource() instanceof EntityDamageSourceWithItem)
 		{
-			EntityDamageSourceWithItem edsw = (EntityDamageSourceWithItem)event.getDamageSource();
+			EntityDamageSourceWithItem edsw = (EntityDamageSourceWithItem) event.getDamageSource();
 			event.setLootingLevel(EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, edsw.getStack()));
 		}
 	}
-	
-	public static List<BlockPos> getBlockPositions(AxisAlignedBB aabb, double margin) {
+
+	public static List<BlockPos> getBlockPositions(AxisAlignedBB aabb, double margin)
+	{
 		List<BlockPos> poses = new ArrayList<BlockPos>();
 		int minX = MathHelper.floor(aabb.minX - margin);
 		int minY = MathHelper.floor(aabb.minY - margin);
@@ -599,11 +546,15 @@ public class NeoOresEntityEvent
 		int maxX = MathHelper.floor(aabb.maxX + margin);
 		int maxY = MathHelper.floor(aabb.maxY + margin);
 		int maxZ = MathHelper.floor(aabb.maxZ + margin);
-		for(int x = minX;x <= maxX;x++) {
-			for(int y = minY;y <= maxY;y++) {
-				for(int z = minZ;z <= maxZ;z++) {
-					if(0 <= y && y <= 255) {
-						poses.add(new BlockPos(x,y,z));
+		for (int x = minX; x <= maxX; x++)
+		{
+			for (int y = minY; y <= maxY; y++)
+			{
+				for (int z = minZ; z <= maxZ; z++)
+				{
+					if (0 <= y && y <= 255)
+					{
+						poses.add(new BlockPos(x, y, z));
 					}
 				}
 			}

@@ -18,47 +18,51 @@ public class PacketManaDataToClient implements IMessage
 {
 	private NBTTagCompound nbt;
 
-	public PacketManaDataToClient() {}
-	
-	public PacketManaDataToClient(NBTTagCompound nbt) 
+	public PacketManaDataToClient()
 	{
-	    this.nbt = nbt;
 	}
-	
+
+	public PacketManaDataToClient(NBTTagCompound nbt)
+	{
+		this.nbt = nbt;
+	}
+
 	@Override
-	public void fromBytes(ByteBuf buf) 
+	public void fromBytes(ByteBuf buf)
 	{
 		this.nbt = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
-	public void toBytes(ByteBuf buf) 
+	public void toBytes(ByteBuf buf)
 	{
 		ByteBufUtils.writeTag(buf, nbt);
 	}
-	
+
 	public static class Handler implements IMessageHandler<PacketManaDataToClient, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final PacketManaDataToClient message, MessageContext ctx) 
+		public IMessage onMessage(final PacketManaDataToClient message, MessageContext ctx)
 		{
 			Minecraft.getMinecraft().addScheduledTask(new Runnable()
 			{
-	            public void run() 
-	            {
-	            	World world = NeoOres.proxy.getClientWorld();
-	              	if (world == null) return; 
-	              	int playerid = message.nbt.getInteger("playerID");
-	              	Entity player = world.getEntityByID(playerid);	              	
-	              	if (player != null && player instanceof EntityPlayerSP) 
-	              	{
-	              		NBTTagCompound nbt = player.getEntityData();
-	              		
-	              		if(!message.nbt.hasKey(Reference.MOD_ID, 10)) return;
-	              		nbt.setTag(Reference.MOD_ID, (NBTBase)message.nbt.getCompoundTag(Reference.MOD_ID).copy());
-	              	} 
-	            }
-	        });
+				public void run()
+				{
+					World world = NeoOres.proxy.getClientWorld();
+					if (world == null)
+						return;
+					int playerid = message.nbt.getInteger("playerID");
+					Entity player = world.getEntityByID(playerid);
+					if (player != null && player instanceof EntityPlayerSP)
+					{
+						NBTTagCompound nbt = player.getEntityData();
+
+						if (!message.nbt.hasKey(Reference.MOD_ID, 10))
+							return;
+						nbt.setTag(Reference.MOD_ID, (NBTBase) message.nbt.getCompoundTag(Reference.MOD_ID).copy());
+					}
+				}
+			});
 			return null;
 		}
 	}

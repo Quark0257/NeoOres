@@ -21,197 +21,200 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 
 public class TileEntitySpellRecipeCreationTable extends TileEntityLockable implements ITickable, IInventory
-{   
-    
-    private List<SpellItem> selectedSpells = new ArrayList<SpellItem>();
-    private NonNullList<ItemStack> srctItemStacks = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
+{
 
-    public String srctSearch = "";
+	private List<SpellItem> selectedSpells = new ArrayList<SpellItem>();
+	private NonNullList<ItemStack> srctItemStacks = NonNullList.<ItemStack>withSize(1, ItemStack.EMPTY);
 
-    public int getSizeInventory()
-    {
-        return this.srctItemStacks.size();
-    }
+	public String srctSearch = "";
 
-    public boolean isEmpty()
-    {
-        for (ItemStack itemstack : this.srctItemStacks)
-        {
-            if (!itemstack.isEmpty())
-            {
-                return false;
-            }
-        }
+	public int getSizeInventory()
+	{
+		return this.srctItemStacks.size();
+	}
 
-        return true;
-    }
+	public boolean isEmpty()
+	{
+		for (ItemStack itemstack : this.srctItemStacks)
+		{
+			if (!itemstack.isEmpty())
+			{
+				return false;
+			}
+		}
 
-    public ItemStack getStackInSlot(int index)
-    {
-        return this.srctItemStacks.get(index);
-    }
+		return true;
+	}
 
-    public ItemStack decrStackSize(int index, int count)
-    {
-        return ItemStackHelper.getAndSplit(this.srctItemStacks, index, count);
-    }
+	public ItemStack getStackInSlot(int index)
+	{
+		return this.srctItemStacks.get(index);
+	}
 
-    public ItemStack removeStackFromSlot(int index)
-    {
-        return ItemStackHelper.getAndRemove(this.srctItemStacks, index);
-    }
+	public ItemStack decrStackSize(int index, int count)
+	{
+		return ItemStackHelper.getAndSplit(this.srctItemStacks, index, count);
+	}
 
-    public void setInventorySlotContents(int index, ItemStack stack)
-    {
-        ItemStack itemstack = this.srctItemStacks.get(index);
-        boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
-        this.srctItemStacks.set(index, stack);
+	public ItemStack removeStackFromSlot(int index)
+	{
+		return ItemStackHelper.getAndRemove(this.srctItemStacks, index);
+	}
 
-        if (stack.getCount() > this.getInventoryStackLimit())
-        {
-            stack.setCount(this.getInventoryStackLimit());
-        }
+	public void setInventorySlotContents(int index, ItemStack stack)
+	{
+		ItemStack itemstack = this.srctItemStacks.get(index);
+		boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
+		this.srctItemStacks.set(index, stack);
 
-        if (index == 0 && !flag)
-        {
-            this.markDirty();
-        }
-    }
+		if (stack.getCount() > this.getInventoryStackLimit())
+		{
+			stack.setCount(this.getInventoryStackLimit());
+		}
 
-    public String getName()
-    {
-        return "container.spell_recipe_creation_table";
-    }
+		if (index == 0 && !flag)
+		{
+			this.markDirty();
+		}
+	}
 
-    public boolean hasCustomName()
-    {
-        return false;
-    }
+	public String getName()
+	{
+		return "container.spell_recipe_creation_table";
+	}
 
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        this.selectedSpells = SpellUtils.getListFromNBT(compound.getCompoundTag("selectedSpells"));
-        this.srctItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(compound, this.srctItemStacks);
+	public boolean hasCustomName()
+	{
+		return false;
+	}
 
-        this.srctSearch = compound.getString("search");
-    }
+	public void readFromNBT(NBTTagCompound compound)
+	{
+		super.readFromNBT(compound);
+		this.selectedSpells = SpellUtils.getListFromNBT(compound.getCompoundTag("selectedSpells"));
+		this.srctItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		ItemStackHelper.loadAllItems(compound, this.srctItemStacks);
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        compound.setTag("selectedSpells", SpellUtils.getNBTFromList(this.selectedSpells));
-        ItemStackHelper.saveAllItems(compound, this.srctItemStacks);
+		this.srctSearch = compound.getString("search");
+	}
 
-        compound.setString("CustomName", this.srctSearch);
+	public NBTTagCompound writeToNBT(NBTTagCompound compound)
+	{
+		super.writeToNBT(compound);
+		compound.setTag("selectedSpells", SpellUtils.getNBTFromList(this.selectedSpells));
+		ItemStackHelper.saveAllItems(compound, this.srctItemStacks);
 
-        return compound;
-    }
+		compound.setString("CustomName", this.srctSearch);
 
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
+		return compound;
+	}
 
-    public void update()
-    {
-        boolean flag1 = false;
+	public int getInventoryStackLimit()
+	{
+		return 64;
+	}
 
-        if (flag1)
-        {
-            this.markDirty();
-        }
-        
-        NBTTagCompound nbt = new NBTTagCompound();
+	public void update()
+	{
+		boolean flag1 = false;
+
+		if (flag1)
+		{
+			this.markDirty();
+		}
+
+		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("x", this.getPos().getX());
 		nbt.setInteger("y", this.getPos().getY());
 		nbt.setInteger("z", this.getPos().getZ());
 		nbt.setTag("recipeSpells", SpellUtils.getNBTFromList(selectedSpells));
-		
+
 		PacketSRCTToClient psrcts = new PacketSRCTToClient(nbt);
 		NeoOres.PACKET.sendToAll(psrcts);
-    }
+	}
 
-    public boolean isUsableByPlayer(EntityPlayer player)
-    {
-        if (this.world.getTileEntity(this.pos) != this)
-        {
-            return false;
-        }
-        else
-        {
-            return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
-        }
-    }
+	public boolean isUsableByPlayer(EntityPlayer player)
+	{
+		if (this.world.getTileEntity(this.pos) != this)
+		{
+			return false;
+		}
+		else
+		{
+			return player.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D, (double) this.pos.getZ() + 0.5D) <= 64.0D;
+		}
+	}
 
-    public void openInventory(EntityPlayer player) 
-    {
-    
-    }
+	public void openInventory(EntityPlayer player)
+	{
 
-    public void closeInventory(EntityPlayer player) {}
+	}
 
-    public boolean isItemValidForSlot(int index, ItemStack stack)
-    {
-        if(index == 0)
-        {
-        	
-        }
-        return false;
-    }
+	public void closeInventory(EntityPlayer player)
+	{
+	}
 
-    public int[] getSlotsForFace(EnumFacing side)
-    {
-    	return new int[] {0};
-    }
+	public boolean isItemValidForSlot(int index, ItemStack stack)
+	{
+		if (index == 0)
+		{
 
-    public String getGuiID()
-    {
-        return "neo_ores:spell_recipe_creation_table";
-    }
+		}
+		return false;
+	}
 
-    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
-    {
-        return new ContainerSpellRecipeCreationTable(playerInventory, this);
-    }
+	public int[] getSlotsForFace(EnumFacing side)
+	{
+		return new int[] { 0 };
+	}
 
-    public int getField(int id)
-    {
-    	return 0;
-    }
+	public String getGuiID()
+	{
+		return "neo_ores:spell_recipe_creation_table";
+	}
 
-    public void setField(int id, int value)
-    {
-    }
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+	{
+		return new ContainerSpellRecipeCreationTable(playerInventory, this);
+	}
 
-    public int getFieldCount()
-    {
-        return 0;
-    }
+	public int getField(int id)
+	{
+		return 0;
+	}
 
-    public void clear()
-    {
-        this.srctItemStacks.clear();
-    }
-    
-    public List<SpellItem> getSpellItems()
-    {
-    	return this.selectedSpells;
-    }
-    
-    public void setSpellItems(List<SpellItem> list)
-    {
-    	this.selectedSpells = list;
-    }
-    
-    public void addSpellItem(SpellItem item)
-    {
-    	if(!this.selectedSpells.contains(item)) this.selectedSpells.add(item);
-    }
-    
-    public void removeSpellItem(SpellItem item)
-    {
-    	this.selectedSpells.remove(item);
-    }
+	public void setField(int id, int value)
+	{
+	}
+
+	public int getFieldCount()
+	{
+		return 0;
+	}
+
+	public void clear()
+	{
+		this.srctItemStacks.clear();
+	}
+
+	public List<SpellItem> getSpellItems()
+	{
+		return this.selectedSpells;
+	}
+
+	public void setSpellItems(List<SpellItem> list)
+	{
+		this.selectedSpells = list;
+	}
+
+	public void addSpellItem(SpellItem item)
+	{
+		if (!this.selectedSpells.contains(item))
+			this.selectedSpells.add(item);
+	}
+
+	public void removeSpellItem(SpellItem item)
+	{
+		this.selectedSpells.remove(item);
+	}
 }

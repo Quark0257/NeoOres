@@ -31,26 +31,26 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresItemEvent 
+public class NeoOresItemEvent
 {
 	private static Random random = new Random();
-	
+
 	private static boolean isShift()
 	{
 		return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 	}
-	
+
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onTooltip(ItemTooltipEvent e)
 	{
 		ItemStack stack = e.getItemStack();
-		if(stack.getItem() instanceof ItemSpell)
+		if (stack.getItem() instanceof ItemSpell)
 		{
 			e.getToolTip().add("");
-			if(isShift())
+			if (isShift())
 			{
-				for(SpellItem item : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
+				for (SpellItem item : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
 				{
 					e.getToolTip().add(TextFormatting.BLUE + ItemRecipeSheet.getName(item) + (e.getFlags().isAdvanced() ? " (" + item.toString() + ")" : ""));
 				}
@@ -61,64 +61,66 @@ public class NeoOresItemEvent
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void onHarvestBlock(BlockEvent.HarvestDropsEvent event)
 	{
-		if(event.getHarvester() != null)
+		if (event.getHarvester() != null)
 		{
 			ItemStack heldItem = event.getHarvester().getHeldItemMainhand().copy();
 			float totalXp = 0;
 			TierUtils tier = new TierUtils(heldItem);
-			if(heldItem !=null)
+			if (heldItem != null)
 			{
-				if(heldItem.getItem() == NeoOresItems.undite_axe || heldItem.getItem() == NeoOresItems.undite_hoe || heldItem.getItem() == NeoOresItems.undite_pickaxe || heldItem.getItem() == NeoOresItems.undite_shovel || heldItem.getItem() == NeoOresItems.undite_sword)
+				if (heldItem.getItem() == NeoOresItems.undite_axe || heldItem.getItem() == NeoOresItems.undite_hoe || heldItem.getItem() == NeoOresItems.undite_pickaxe
+						|| heldItem.getItem() == NeoOresItems.undite_shovel || heldItem.getItem() == NeoOresItems.undite_sword)
 				{
 					int level = tier.getWater();
-					if(level == 1)
+					if (level == 1)
 					{
 						event.getHarvester().addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 100, 0));
 					}
 				}
-				else if(heldItem.getItem() == NeoOresItems.salamite_axe || heldItem.getItem() == NeoOresItems.salamite_hoe || heldItem.getItem() == NeoOresItems.salamite_pickaxe || heldItem.getItem() == NeoOresItems.salamite_shovel || heldItem.getItem() == NeoOresItems.salamite_sword)
+				else if (heldItem.getItem() == NeoOresItems.salamite_axe || heldItem.getItem() == NeoOresItems.salamite_hoe || heldItem.getItem() == NeoOresItems.salamite_pickaxe
+						|| heldItem.getItem() == NeoOresItems.salamite_shovel || heldItem.getItem() == NeoOresItems.salamite_sword)
 				{
 					List<ItemStack> drops = new ArrayList<ItemStack>();
 					drops.clear();
-					for(int i = 0;i < event.getDrops().size();i++)
+					for (int i = 0; i < event.getDrops().size(); i++)
 					{
 						ItemStack itemStack = FurnaceRecipes.instance().getSmeltingResult(event.getDrops().get(i));
-						
-						if(itemStack == ItemStack.EMPTY)
+
+						if (itemStack == ItemStack.EMPTY)
 						{
 							drops.add(event.getDrops().get(i));
 						}
-						else if(Block.getBlockFromItem(event.getDrops().get(i).getItem()) == Blocks.AIR)
+						else if (Block.getBlockFromItem(event.getDrops().get(i).getItem()) == Blocks.AIR)
 						{
 							float xp = FurnaceRecipes.instance().getSmeltingExperience(event.getDrops().get(i));
 							drops.add(itemStack);
-							event.getHarvester().addExperience((int)xp);
+							event.getHarvester().addExperience((int) xp);
 						}
 						else
 						{
 							float xp = FurnaceRecipes.instance().getSmeltingExperience(event.getDrops().get(i));
 							int count = itemStack.getCount();
-							int fortuneLevel = 0; 
+							int fortuneLevel = 0;
 							fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, heldItem);
-							if(fortuneLevel > 0)
+							if (fortuneLevel > 0)
 							{
-								xp *= (float)(1 + random.nextInt(fortuneLevel));
+								xp *= (float) (1 + random.nextInt(fortuneLevel));
 								count += random.nextInt(fortuneLevel);
 							}
 							ItemStack copyItem = itemStack.copy();
 							copyItem.setCount(count);
-							//drops.add(new ItemStack(itemStack.getItem(),count,itemStack.getMetadata()));
+							// drops.add(new ItemStack(itemStack.getItem(),count,itemStack.getMetadata()));
 							drops.add(copyItem);
 							totalXp += xp;
 						}
 					}
 					event.getDrops().clear();
 					event.getDrops().addAll(drops);
-					event.getHarvester().addExperience((int)totalXp);
+					event.getHarvester().addExperience((int) totalXp);
 				}
 			}
 		}

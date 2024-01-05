@@ -13,12 +13,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class RendererMageKnowledgeTable extends TileEntitySpecialRenderer<TileEntityMageKnowledgeTable>
 {
-	private static final ResourceLocation TEXTURE_BOOK = new ResourceLocation(
-			"minecraft:textures/entity/enchanting_table_book.png");
+	private static final ResourceLocation TEXTURE_BOOK = new ResourceLocation("minecraft:textures/entity/enchanting_table_book.png");
 	private final ModelBook modelBook = new ModelBook();
 
-	public void render(TileEntityMageKnowledgeTable te, double x, double y, double z, float partialTicks,
-			int destroyStage, float alpha)
+	public void render(TileEntityMageKnowledgeTable te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) x + 0.5F, (float) y + 0.80F, (float) z + 0.5F);

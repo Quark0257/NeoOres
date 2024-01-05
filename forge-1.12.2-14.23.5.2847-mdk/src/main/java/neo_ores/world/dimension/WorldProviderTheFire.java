@@ -11,59 +11,59 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldProviderTheFire extends WorldProvider
-{	
+{
 	@Override
-	public DimensionType getDimensionType() 
+	public DimensionType getDimensionType()
 	{
 		return NeoOres.THE_FIRE;
 	}
-	
-    public void init()
-    {
-        this.biomeProvider = new BiomeProviderSingle(NeoOres.fire);
-        this.hasSkyLight = true;
-        this.setSkyRenderer(new RenderSkyDimensions(true));
-    }
-    
-    @Override
+
+	public void init()
+	{
+		this.biomeProvider = new BiomeProviderSingle(NeoOres.fire);
+		this.hasSkyLight = true;
+		this.setSkyRenderer(new RenderSkyDimensions(true));
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public MusicTicker.MusicType getMusicType()
-    {
-        return NeoOres.salamandra;
-    }
+	{
+		return NeoOres.salamandra;
+	}
 
-    public IChunkGenerator createChunkGenerator()
-    {
-        return new ChunkGeneratorTheFire(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
-    }
+	public IChunkGenerator createChunkGenerator()
+	{
+		return new ChunkGeneratorTheFire(this.world, this.world.getWorldInfo().isMapFeaturesEnabled(), this.world.getSeed());
+	}
 
-    public boolean isSurfaceWorld()
-    {
-        return false;
-    }
+	public boolean isSurfaceWorld()
+	{
+		return false;
+	}
 
-    public boolean canCoordinateBeSpawn(int x, int z)
-    {
-        return false;
-    }
+	public boolean canCoordinateBeSpawn(int x, int z)
+	{
+		return false;
+	}
 
-    public boolean canRespawnHere()
-    {
-        return false;
-    }
-    
-    public double getHorizon()
-    {
-    	return -64.0D;
-    }
-    
-    public boolean shouldMapSpin(String entity, double x, double z, double rotation)
-    {
-    	return false;
-    }
-    
-    public float calculateCelestialAngle(long worldTime, float partialTicks)
-    {
-        return 0.5F;
-    }
+	public boolean canRespawnHere()
+	{
+		return false;
+	}
+
+	public double getHorizon()
+	{
+		return -64.0D;
+	}
+
+	public boolean shouldMapSpin(String entity, double x, double z, double rotation)
+	{
+		return false;
+	}
+
+	public float calculateCelestialAngle(long worldTime, float partialTicks)
+	{
+		return 0.5F;
+	}
 }

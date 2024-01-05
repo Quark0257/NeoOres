@@ -21,11 +21,9 @@ public class GuiHandler implements IGuiHandler
 		if (ID == NeoOres.guiIDManaWorkbench)
 			return new ContainerManaWorkbench(player.inventory, world, new BlockPos(x, y, z), player);
 		if (ID == NeoOres.guiIDManaFurnace)
-			return new ContainerManaFurnace(player.inventory,
-					((TileEntityManaFurnace) world.getTileEntity(new BlockPos(x, y, z))));
+			return new ContainerManaFurnace(player.inventory, ((TileEntityManaFurnace) world.getTileEntity(new BlockPos(x, y, z))));
 		if (ID == NeoOres.guiIDSRCT)
-			return new ContainerSpellRecipeCreationTable(player.inventory,
-					((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
+			return new ContainerSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
 		return null;
 	}
 
@@ -36,13 +34,11 @@ public class GuiHandler implements IGuiHandler
 		if (ID == NeoOres.guiIDManaWorkbench)
 			return new GuiManaWorkbench(player.inventory, world);
 		if (ID == NeoOres.guiIDManaFurnace)
-			return new GuiManaFurnace(player.inventory,
-					((TileEntityManaFurnace) world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiManaFurnace(player.inventory, ((TileEntityManaFurnace) world.getTileEntity(new BlockPos(x, y, z))));
 		if (ID == NeoOres.guiIDStudyTable)
 			return new GuiMageKnowledgeTable();
 		if (ID == NeoOres.guiIDSRCT)
-			return new GuiSpellRecipeCreationTable(player.inventory,
-					((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
 		return null;
 	}
 }

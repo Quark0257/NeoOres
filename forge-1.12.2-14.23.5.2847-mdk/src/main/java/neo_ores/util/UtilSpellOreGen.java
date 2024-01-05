@@ -20,42 +20,41 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class UtilSpellOreGen 
+public class UtilSpellOreGen
 {
-	public static final Set<Entry<ResourceLocation,OreWeightRecipe>> oreWeightRecipes = GameRegistry.findRegistry(OreWeightRecipe.class).getEntries();
-	
+	public static final Set<Entry<ResourceLocation, OreWeightRecipe>> oreWeightRecipes = GameRegistry.findRegistry(OreWeightRecipe.class).getEntries();
+
 	public static List<JsonObject> getObjects()
 	{
 		List<JsonObject> ores = new ArrayList<JsonObject>();
-		for(Entry<ResourceLocation,OreWeightRecipe> recipe : oreWeightRecipes)
+		for (Entry<ResourceLocation, OreWeightRecipe> recipe : oreWeightRecipes)
 		{
 			ores.add(recipe.getValue().getObject());
 		}
 		return ores;
 	}
-	
-	public static Map<ItemStack,Integer> getOres(IBlockState target)
+
+	public static Map<ItemStack, Integer> getOres(IBlockState target)
 	{
-		Map<ItemStack,Integer> ores = new HashMap<ItemStack,Integer>();
-		try 
+		Map<ItemStack, Integer> ores = new HashMap<ItemStack, Integer>();
+		try
 		{
-			for(JsonObject object : getObjects())
+			for (JsonObject object : getObjects())
 			{
 				ItemStack output = ItemStack.EMPTY;
 				String[] idSplitted = object.get("id").getAsString().split(":");
 				String modid = idSplitted[0];
 				String blockid = idSplitted[1];
-				if(modid.equals("ore"))
+				if (modid.equals("ore"))
 				{
-					if(object.has("acceptMods")) 
+					if (object.has("acceptMods"))
 					{
 						JsonArray acceptMods = object.get("acceptMods").getAsJsonArray();
-						oreDicSearch :
-						for(ItemStack stack : OreDictionary.getOres(blockid))
+						oreDicSearch: for (ItemStack stack : OreDictionary.getOres(blockid))
 						{
-							for(JsonElement mod : acceptMods)
+							for (JsonElement mod : acceptMods)
 							{
-								if(stack.getItem().getRegistryName().getResourceDomain().equals(mod.getAsString()))
+								if (stack.getItem().getRegistryName().getResourceDomain().equals(mod.getAsString()))
 								{
 									output = stack.copy();
 									break oreDicSearch;
@@ -67,28 +66,29 @@ public class UtilSpellOreGen
 					{
 						output = OreDictionary.getOres(blockid).get(0).copy();
 					}
-					
-					if(output.isEmpty()) continue;
+
+					if (output.isEmpty())
+						continue;
 				}
 				else
 				{
 					output = new ItemStack(Item.getByNameOrId(modid + ":" + blockid), 1, (object.has("metadata") ? object.get("metadata").getAsInt() : 0));
 				}
-				
+
 				JsonObject replace_block = object.get("replace_block").getAsJsonObject();
 				String[] idSplittedReplace = replace_block.get("id").getAsString().split(":");
 				String modidReplace = idSplittedReplace[0];
 				String blockidReplace = idSplittedReplace[1];
 				Item target_blockitem = Item.getItemFromBlock(target.getBlock());
 				int target_blockmeta = target.getBlock().getMetaFromState(target);
-				ItemStack target_stack = new ItemStack(target_blockitem,1,target_blockmeta);
-				if(modidReplace.equals("ore"))
+				ItemStack target_stack = new ItemStack(target_blockitem, 1, target_blockmeta);
+				if (modidReplace.equals("ore"))
 				{
-					for(int oreID : OreDictionary.getOreIDs(target_stack))
+					for (int oreID : OreDictionary.getOreIDs(target_stack))
 					{
-						if(OreDictionary.getOreName(oreID).equals(blockidReplace))
+						if (OreDictionary.getOreName(oreID).equals(blockidReplace))
 						{
-							ores.put(output,object.get("weight").getAsInt());
+							ores.put(output, object.get("weight").getAsInt());
 							break;
 						}
 					}
@@ -96,13 +96,15 @@ public class UtilSpellOreGen
 				else
 				{
 					ItemStack replace = new ItemStack(Item.getByNameOrId(modidReplace + ":" + blockidReplace), 1, (replace_block.has("metadata") ? replace_block.get("metadata").getAsInt() : 0));
-					if(replace.getItem() == target_blockitem && replace.getMetadata() == target_blockmeta)
+					if (replace.getItem() == target_blockitem && replace.getMetadata() == target_blockmeta)
 					{
-						ores.put(output,object.get("weight").getAsInt());
+						ores.put(output, object.get("weight").getAsInt());
 					}
 				}
 			}
-		} catch(Exception e) {
+		}
+		catch (Exception e)
+		{
 			FMLLog.log.error("Unable to load oreWeightRecipe");
 		}
 		return ores;

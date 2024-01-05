@@ -6,14 +6,14 @@ import neo_ores.spell.SpellItemInterfaces.HasNoGravity;
 public class SpellNoGravity extends SpellCorrectionSingle<HasNoGravity>
 {
 
-	public SpellNoGravity() 
+	public SpellNoGravity()
 	{
 		super(0);
 	}
 
 	@Override
-	public void onApply(HasNoGravity spell) 
+	public void onApply(HasNoGravity spell)
 	{
-		spell.setNoGravity();	
+		spell.setNoGravity();
 	}
 }

@@ -25,8 +25,7 @@ public class NeoOresBlock extends Block implements INeoOresBlock
 
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(
-				new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
 	}
 
 	// 0~15 available

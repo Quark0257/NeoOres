@@ -5,13 +5,14 @@ import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
 
 public class SpellSupportLiquid extends SpellCorrectionSingle<HasChanceLiquid>
 {
-	public SpellSupportLiquid() 
+	public SpellSupportLiquid()
 	{
 		super(0);
 	}
 
 	@Override
-	protected void onApply(HasChanceLiquid spell) {
+	protected void onApply(HasChanceLiquid spell)
+	{
 		spell.setSupport();
 	}
 }

@@ -16,43 +16,50 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.loot.LootTableList;
 
-public class EarthStructurePieceComponent extends StructurePieceComponent {
-	public EarthStructurePieceComponent() {}
-	
-	public EarthStructurePieceComponent(WorldServer world, StructurePieceAndOption spao) {
+public class EarthStructurePieceComponent extends StructurePieceComponent
+{
+	public EarthStructurePieceComponent()
+	{
+	}
+
+	public EarthStructurePieceComponent(WorldServer world, StructurePieceAndOption spao)
+	{
 		super(world, spao, "earth/");
 	}
 
 	@Override
-	protected void handleDataMarker(String function, BlockPos pos, World worldIn, Random rand,
-			StructureBoundingBox sbb) {
+	protected void handleDataMarker(String function, BlockPos pos, World worldIn, Random rand, StructureBoundingBox sbb)
+	{
 		if (function.startsWith("Chest"))
-        {
+		{
 			worldIn.setBlockState(pos, Blocks.CHEST.getDefaultState());
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+			TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            if (tileentity instanceof TileEntityChest)
-            {
-                ((TileEntityChest)tileentity).setLootTable(LootTableList.CHESTS_END_CITY_TREASURE, rand.nextLong());
-            }
-        }
+			if (tileentity instanceof TileEntityChest)
+			{
+				((TileEntityChest) tileentity).setLootTable(LootTableList.CHESTS_END_CITY_TREASURE, rand.nextLong());
+			}
+		}
 		else if (function.startsWith("Pillar"))
-        {
+		{
 			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
-            BlockPos blockpos = pos;
-            while(worldIn.getBlockState(blockpos).getBlock() == Blocks.AIR || worldIn.getBlockState(blockpos).getBlock() == Blocks.WATER || worldIn.getBlockState(blockpos).getBlock() == Blocks.FLOWING_WATER) {
-            	worldIn.setBlockState(blockpos, NeoOresBlocks.dim_brick.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.EARTH));
-            	blockpos = blockpos.down();
-            	if(blockpos.getY() < 0) break;
-            }
-        }
+			BlockPos blockpos = pos;
+			while (worldIn.getBlockState(blockpos).getBlock() == Blocks.AIR || worldIn.getBlockState(blockpos).getBlock() == Blocks.WATER
+					|| worldIn.getBlockState(blockpos).getBlock() == Blocks.FLOWING_WATER)
+			{
+				worldIn.setBlockState(blockpos, NeoOresBlocks.dim_brick.getDefaultState().withProperty(BlockDimension.DIM, DimensionName.EARTH));
+				blockpos = blockpos.down();
+				if (blockpos.getY() < 0)
+					break;
+			}
+		}
 		else if (function.startsWith("Spawner"))
-        {
-            BlockPos blockpos = pos.down();
-        }
+		{
+			BlockPos blockpos = pos.down();
+		}
 		else if (function.startsWith("Boss"))
-        {
-            BlockPos blockpos = pos.down();
-        }
+		{
+			BlockPos blockpos = pos.down();
+		}
 	}
 }

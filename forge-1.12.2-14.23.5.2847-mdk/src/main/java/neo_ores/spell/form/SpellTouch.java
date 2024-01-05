@@ -19,71 +19,71 @@ import net.minecraft.world.World;
 public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 {
 	private boolean liquid = false;
-	
+
 	@Override
-	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack,RayTraceResult result, NBTTagCompound spells) 
+	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack, RayTraceResult result, NBTTagCompound spells)
 	{
 		List<Spell> corrections = new ArrayList<Spell>();
 		List<Spell> effects = new ArrayList<Spell>();
-		
-		for(SpellItem spell : SpellUtils.getListFromItemStackNBT(spells))
+
+		for (SpellItem spell : SpellUtils.getListFromItemStackNBT(spells))
 		{
 			Spell sc = spell.getSpellClass();
-			if(sc instanceof Spell.SpellCorrection)
+			if (sc instanceof Spell.SpellCorrection)
 			{
 				corrections.add(sc);
 			}
-			else if(sc instanceof Spell.SpellEffect)
+			else if (sc instanceof Spell.SpellEffect)
 			{
 				effects.add(sc);
 			}
 		}
-		
-		if(result != null && result.typeOfHit == Type.ENTITY)
+
+		if (result != null && result.typeOfHit == Type.ENTITY)
 		{
-			for(Spell effect : effects)
+			for (Spell effect : effects)
 			{
-				Spell.SpellEffect spell = (Spell.SpellEffect)effect;
-				for(Spell correction : corrections)
+				Spell.SpellEffect spell = (Spell.SpellEffect) effect;
+				for (Spell correction : corrections)
 				{
-					((Spell.SpellCorrection)correction).onCorrection(spell);
+					((Spell.SpellCorrection) correction).onCorrection(spell);
 				}
-				spell.onEffectRunToSelfAndOther(world, runner, result,stack);
-				spell.onEffectRunToOther(world, result,stack);
+				spell.onEffectRunToSelfAndOther(world, runner, result, stack);
+				spell.onEffectRunToOther(world, result, stack);
 			}
 		}
 		else
 		{
 			RayTraceResult blockresult = result;
-			if(blockresult == null && runner instanceof EntityPlayer)
+			if (blockresult == null && runner instanceof EntityPlayer)
 			{
-				blockresult = SpellUtils.rayTrace(world, (EntityPlayer)runner, this.liquid);
+				blockresult = SpellUtils.rayTrace(world, (EntityPlayer) runner, this.liquid);
 			}
-			
-			if(blockresult != null)
+
+			if (blockresult != null)
 			{
-				for(Spell effect : effects)
+				for (Spell effect : effects)
 				{
-					Spell.SpellEffect spell = (Spell.SpellEffect)effect;
-					for(Spell correction : corrections)
+					Spell.SpellEffect spell = (Spell.SpellEffect) effect;
+					for (Spell correction : corrections)
 					{
-						((Spell.SpellCorrection)correction).onCorrection(spell);
+						((Spell.SpellCorrection) correction).onCorrection(spell);
 					}
-					spell.onEffectRunToSelfAndOther(world, runner, blockresult,stack);
-					spell.onEffectRunToOther(world, blockresult,stack);
+					spell.onEffectRunToSelfAndOther(world, runner, blockresult, stack);
+					spell.onEffectRunToOther(world, blockresult, stack);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void setSupport() 
+	public void setSupport()
 	{
 		this.liquid = true;
 	}
 
 	@Override
-	public boolean needConditional() 
+	public boolean needConditional()
 	{
 		return false;
 	}

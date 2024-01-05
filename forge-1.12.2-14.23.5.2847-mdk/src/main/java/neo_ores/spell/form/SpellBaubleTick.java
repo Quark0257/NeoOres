@@ -1,5 +1,6 @@
 package neo_ores.spell.form;
 
-public class SpellBaubleTick {
+public class SpellBaubleTick
+{
 
 }

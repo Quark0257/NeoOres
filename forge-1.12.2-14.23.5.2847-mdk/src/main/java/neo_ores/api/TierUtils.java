@@ -8,8 +8,7 @@ import net.minecraft.item.ItemStack;
 
 public class TierUtils
 {
-	public static final RingArray<ToolType> tiers = new RingArray<ToolType>(ToolType.AIR, ToolType.EARTH,
-			ToolType.WATER, ToolType.FIRE);
+	public static final RingArray<ToolType> tiers = new RingArray<ToolType>(ToolType.AIR, ToolType.EARTH, ToolType.WATER, ToolType.FIRE);
 
 	public final ItemStack stack;
 

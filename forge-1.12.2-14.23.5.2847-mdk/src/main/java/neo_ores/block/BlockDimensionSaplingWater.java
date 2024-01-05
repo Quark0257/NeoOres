@@ -16,8 +16,7 @@ import net.minecraftforge.common.EnumPlantType;
 public class BlockDimensionSaplingWater extends BlockDimensionSapling
 {
 
-	public BlockDimensionSaplingWater(String registername, Block sustainStates, float hardness, float resistant,
-			float light, SoundType sound)
+	public BlockDimensionSaplingWater(String registername, Block sustainStates, float hardness, float resistant, float light, SoundType sound)
 	{
 		super(registername, Material.WATER, sustainStates, hardness, resistant, light, sound);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, 0).withProperty(BlockLiquid.LEVEL, 15));
@@ -35,12 +34,10 @@ public class BlockDimensionSaplingWater extends BlockDimensionSapling
 		{
 			IBlockState soil = worldIn.getBlockState(pos.down());
 			return soil.getBlock() == this.sustainState
-					&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER
-							|| worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
+					&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER || worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
 		}
 		return this.canSustainBush(worldIn.getBlockState(pos.down()))
-				&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER
-						|| worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
+				&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER || worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
 	}
 
 	@Override
@@ -51,11 +48,8 @@ public class BlockDimensionSaplingWater extends BlockDimensionSapling
 
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
 	{
-		return super.canPlaceBlockAt(worldIn, pos)
-				&& (worldIn.getBlockState(pos).getBlock() == Blocks.FLOWING_WATER
-						|| worldIn.getBlockState(pos).getBlock() == Blocks.WATER)
-				&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER
-						|| worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
+		return super.canPlaceBlockAt(worldIn, pos) && (worldIn.getBlockState(pos).getBlock() == Blocks.FLOWING_WATER || worldIn.getBlockState(pos).getBlock() == Blocks.WATER)
+				&& (worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.FLOWING_WATER || worldIn.getBlockState(pos.add(0, 1, 0)).getBlock() == Blocks.WATER);
 	}
 
 	@SuppressWarnings("rawtypes")

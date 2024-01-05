@@ -7,25 +7,25 @@ import net.minecraft.item.ItemStack;
 
 public class SlotManaFurnaceOutput extends Slot
 {
-	
-    public SlotManaFurnaceOutput(EntityPlayer player, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
-    {
-        super(inventoryIn, slotIndex, xPosition, yPosition);
-    }
 
-    public boolean isItemValid(ItemStack stack)
-    {
-        return false;
-    }
+	public SlotManaFurnaceOutput(EntityPlayer player, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
+	{
+		super(inventoryIn, slotIndex, xPosition, yPosition);
+	}
 
-    public ItemStack decrStackSize(int amount)
-    {
-        return super.decrStackSize(amount);
-    }
+	public boolean isItemValid(ItemStack stack)
+	{
+		return false;
+	}
 
-    public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack)
-    {
-        super.onTake(thePlayer, stack);
-        return stack;
-    }
+	public ItemStack decrStackSize(int amount)
+	{
+		return super.decrStackSize(amount);
+	}
+
+	public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack)
+	{
+		super.onTake(thePlayer, stack);
+		return stack;
+	}
 }

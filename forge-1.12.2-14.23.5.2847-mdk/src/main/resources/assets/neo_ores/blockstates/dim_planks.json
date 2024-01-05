@@ -1,0 +1,9 @@
+{
+	"variants": 
+  	{
+    	"dimension=earth":{"textures": {"particle": "neo_ores:blocks/planks_base"},"model": "neo_ores:dim_planks"},
+    	"dimension=water":{"textures": {"particle": "neo_ores:blocks/planks_base"},"model": "neo_ores:dim_planks"},
+    	"dimension=fire":{"textures": {"particle": "neo_ores:blocks/planks_base"},"model": "neo_ores:dim_planks"},
+    	"dimension=air":{"textures": {"particle": "neo_ores:blocks/planks_base"},"model": "neo_ores:dim_planks"}
+  	}
+}

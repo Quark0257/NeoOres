@@ -1,0 +1,6 @@
+{
+	"parent": "neo_ores:block/colored_cube",
+    "textures": {
+        "all": "neo_ores:blocks/planks_base"
+    }
+}

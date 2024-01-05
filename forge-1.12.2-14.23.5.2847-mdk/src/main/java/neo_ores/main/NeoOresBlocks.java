@@ -9,6 +9,7 @@ import neo_ores.block.BlockAirEssence;
 import neo_ores.block.BlockDimension;
 import neo_ores.block.BlockDimensionLeaves;
 import neo_ores.block.BlockDimensionLog;
+import neo_ores.block.BlockDimensionPlanks;
 import neo_ores.block.BlockDimensionSapling;
 import neo_ores.block.BlockDimensionSaplingWater;
 import neo_ores.block.BlockDrenite;
@@ -19,6 +20,7 @@ import neo_ores.block.BlockFlamite;
 import neo_ores.block.BlockForcite;
 import neo_ores.block.BlockGnomite;
 import neo_ores.block.BlockGuardite;
+import neo_ores.block.BlockInstantAlter;
 import neo_ores.block.BlockLandite;
 import neo_ores.block.BlockMageKnowledgeTable;
 import neo_ores.block.BlockMana;
@@ -162,6 +164,10 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID,"water_essence_block")
 			.setUnlocalizedName("water_essence_block")
 			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block instant_alter = new BlockInstantAlter()
+			.setRegistryName(Reference.MOD_ID,"instant_alter")
+			.setUnlocalizedName("instant_alter")
+			.setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block custom_lit_redstone_ore = new BlockNeoOre("custom_lit_redstone_ore",2,null, 0.625F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(null);
 	public static final Block custom_redstone_ore = new BlockNeoOre("custom_redstone_ore",2,null, 0.0F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block custom_coal_ore = new BlockNeoOre("custom_coal_ore",0,null, 0.0F, false, Items.COAL,0, 1, 1, 0, 2).setCreativeTab(NeoOres.neo_ores_tab);
@@ -184,6 +190,7 @@ public class NeoOresBlocks
 	public static final Block dim_stone = new BlockDimension("dim_stone", Material.ROCK, 1.5F, 10.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block dim_brick = new BlockDimension("dim_brick", Material.ROCK, 2.5F, 20.0F, "pickaxe", 0, 0.0F, SoundType.STONE).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block dim_log = new BlockDimensionLog("dim_log", Material.WOOD, 2.0F, 5.0F, "axe", 0, 0.0F, SoundType.WOOD).setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block dim_planks = new BlockDimensionPlanks("dim_planks", Material.WOOD, 2.0F, 5.0F, "axe", 0, 0.0F, SoundType.WOOD).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block corroded_dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "corroded_dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block corroding_dim_leaves = new BlockDimensionLeaves(Material.LEAVES, "corroding_dim_leaves").setCreativeTab(NeoOres.neo_ores_tab);
@@ -219,6 +226,7 @@ public class NeoOresBlocks
 			mana_workbench,
 			mana_furnace,
 			mage_knowledge_table,
+			instant_alter,
 			lit_mana_furnace,
 			spell_recipe_creation_table,
 			mana_block,
@@ -265,6 +273,7 @@ public class NeoOresBlocks
 			dim_stone,
 			dim_brick,
 			dim_log,
+			dim_planks,
 			dim_leaves,
 			corroded_dim_leaves,
 			corroding_dim_leaves

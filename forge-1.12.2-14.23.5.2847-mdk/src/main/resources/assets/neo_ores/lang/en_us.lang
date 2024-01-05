@@ -110,6 +110,11 @@ tile.water_dim_log.name=Gabrywood Log
 tile.earth_dim_log.name=Urywood Log
 tile.fire_dim_log.name=Michawood Log
 tile.air_dim_log.name=Raphawood Log
+tile.water_dim_planks.name=Gabrywood Planks
+tile.earth_dim_planks.name=Urywood Planks
+tile.fire_dim_planks.name=Michawood Planks
+tile.air_dim_planks.name=Raphawood Planks
+tile.instant_alter.name=Instant Alter
 
 size.= (Size:
 hoppered.0=

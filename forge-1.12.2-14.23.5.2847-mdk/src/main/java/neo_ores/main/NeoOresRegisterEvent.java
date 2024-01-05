@@ -125,7 +125,8 @@ public class NeoOresRegisterEvent
 			}
 		};
 		event.getItemColors().registerItemColorHandler(logColor, Item.getItemFromBlock(NeoOresBlocks.dim_log));
-
+		event.getItemColors().registerItemColorHandler(logColor, Item.getItemFromBlock(NeoOresBlocks.dim_planks));
+		
 		IItemColor leavesDim = new IItemColor()
 		{
 			@Override
@@ -182,6 +183,7 @@ public class NeoOresRegisterEvent
 			}
 		};
 		event.getBlockColors().registerBlockColorHandler(logColor, NeoOresBlocks.dim_log);
+		event.getBlockColors().registerBlockColorHandler(logColor, NeoOresBlocks.dim_planks);
 
 		for (int i = 0; i < 12; i++)
 		{

@@ -110,6 +110,11 @@ tile.water_dim_log.name=ガブリーウッドの原木
 tile.earth_dim_log.name=ユリーウッドの原木
 tile.fire_dim_log.name=マイカウッドの原木
 tile.air_dim_log.name=ラファウッドの原木
+tile.water_dim_planks.name=ガブリーウッドの木材
+tile.earth_dim_planks.name=ユリーウッドの木材
+tile.fire_dim_planks.name=マイカウッドの木材
+tile.air_dim_planks.name=ラファウッドの木材
+tile.instant_alter.name=インスタントアルター
 
 size.= (サイズ:
 hoppered.0=

@@ -244,7 +244,7 @@ public class NeoOresEntityEvent
 					{
 						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
 						if (state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves
-								|| state.getBlock() == NeoOresBlocks.dim_log)
+								|| state.getBlock() == NeoOresBlocks.dim_log || state.getBlock() == NeoOresBlocks.dim_planks)
 						{
 							if (state.getValue(BlockDimension.DIM) == DimensionName.WATER)
 							{
@@ -262,7 +262,7 @@ public class NeoOresEntityEvent
 					{
 						IBlockState state = event.getEntityLiving().getEntityWorld().getBlockState(pos);
 						if (state.getBlock() == NeoOresBlocks.corroded_dim_leaves || state.getBlock() == NeoOresBlocks.corroding_dim_leaves || state.getBlock() == NeoOresBlocks.dim_leaves
-								|| state.getBlock() == NeoOresBlocks.dim_log)
+								|| state.getBlock() == NeoOresBlocks.dim_log || state.getBlock() == NeoOresBlocks.dim_planks)
 						{
 							if (state.getValue(BlockDimension.DIM) == DimensionName.FIRE)
 							{

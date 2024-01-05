@@ -37,7 +37,7 @@ public class CompareStateAlter implements ICompareBlockState {
 				}
 			}
 		}
-		if(b.getBlock() == Blocks.GLOWSTONE) return a.getBlock().getLightValue(a) == 15;
+		if(b.getBlock() == Blocks.SEA_LANTERN) return a.getBlock().getLightValue(a) == 15;
 		if(b.getBlock() instanceof BlockEnhancedPedestal) return a.getBlock() instanceof BlockEnhancedPedestal;
 		return a == b;
 	}

@@ -12,50 +12,51 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-public class MCPRUtils 
+public class MCPRUtils
 {
 	@SuppressWarnings("deprecation")
-	private static ItemStack getResultFromList(int tier,World world,BlockPos pos)
+	private static ItemStack getResultFromList(int tier, World world, BlockPos pos)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityEnhancedPedestal)
+		if (te instanceof TileEntityEnhancedPedestal)
 		{
-			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)te;
+			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) te;
 			List<LargeItemStack> inputitems = new ArrayList<LargeItemStack>();
-			for(LargeItemStack stack : teep.getItems())
+			for (LargeItemStack stack : teep.getItems())
 			{
-				if(!stack.isEmpty())
+				if (!stack.isEmpty())
 				{
 					boolean flag = true;
 					int size = inputitems.size();
-					for(int i = 0;i <  size;i++)
+					for (int i = 0; i < size; i++)
 					{
 						LargeItemStack input = inputitems.get(i);
-						if(input.compareWith(stack.getStack()))
+						if (input.compareWith(stack.getStack()))
 						{
 							input.addSize(stack.getSize());
-							inputitems.set(i,input);
+							inputitems.set(i, input);
 							flag = false;
 						}
 					}
-					if(flag) inputitems.add(stack);
+					if (flag)
+						inputitems.add(stack);
 				}
 			}
-			
-			for(ManaCompositionRecipe recipe : GameRegistry.findRegistry(ManaCompositionRecipe.class).getValues())
+
+			for (ManaCompositionRecipe recipe : GameRegistry.findRegistry(ManaCompositionRecipe.class).getValues())
 			{
-				if(recipe.getTier() <= tier)
+				if (recipe.getTier() <= tier)
 				{
 					boolean b = false;
-					for(RecipeOreStack list : recipe.getRecipe())
+					for (RecipeOreStack list : recipe.getRecipe())
 					{
-						for(LargeItemStack input : inputitems)
+						for (LargeItemStack input : inputitems)
 						{
-							if((list.compareStackWith(input.getStack()) || list.compareOreDicWith(input.getStack())))
+							if ((list.compareStackWith(input.getStack()) || list.compareOreDicWith(input.getStack())))
 							{
-								if(input.getSize() % list.getSize() == 0)
+								if (input.getSize() % list.getSize() == 0)
 								{
-									if(input.getSize() / list.getSize() > 0)
+									if (input.getSize() / list.getSize() > 0)
 									{
 										b = true;
 									}
@@ -68,40 +69,41 @@ public class MCPRUtils
 								{
 									b = false;
 								}
-								
+
 							}
-							
+
 						}
 					}
-					
-					if(b)
+
+					if (b)
 					{
-						if(world.isRemote) return recipe.getResult().copy();
+						if (world.isRemote)
+							return recipe.getResult().copy();
 						List<RecipeOreStack> recipeCopy = new ArrayList<RecipeOreStack>();
 						recipeCopy.addAll(recipe.getRecipe());
-						for(RecipeOreStack list : recipeCopy)
+						for (RecipeOreStack list : recipeCopy)
 						{
 							int size = list.getSize();
 							int n = 0;
-							for(LargeItemStack isws : teep.getItems())
+							for (LargeItemStack isws : teep.getItems())
 							{
-								if(list.compareStackWith(isws.getStack()) || list.compareOreDicWith(isws.getStack()))
+								if (list.compareStackWith(isws.getStack()) || list.compareOreDicWith(isws.getStack()))
 								{
-									if(size != 0)
+									if (size != 0)
 									{
-										if(size < isws.getSize())
+										if (size < isws.getSize())
 										{
 											teep.decrStackSize(n, size);
 											size = 0;
 											break;
 										}
-										else if(size == isws.getSize())
+										else if (size == isws.getSize())
 										{
 											teep.removeStackFromSlot(n);
 											size = 0;
 											break;
 										}
-										else if(isws.getSize() < size)
+										else if (isws.getSize() < size)
 										{
 											teep.removeStackFromSlot(n);
 											size -= isws.getSize();
@@ -111,19 +113,18 @@ public class MCPRUtils
 								n++;
 							}
 						}
-						
+
 						return recipe.getResult().copy();
 					}
 				}
 			}
 		}
-		
-		
+
 		return ItemStack.EMPTY;
 	}
-	
+
 	public static ItemStack getResult(World world, BlockPos pos, int tier)
 	{
-		return getResultFromList(tier,world,pos);
+		return getResultFromList(tier, world, pos);
 	}
 }

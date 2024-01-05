@@ -14,13 +14,14 @@ import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicExperienceContainer
 {
-	public static final GameProfile neo_ores_profile = new GameProfile(UUID.fromString("43b3f040-0d77-4416-8c8c-f7cff76a88dd"),"[Neo Ores]");
-	
+	public static final GameProfile neo_ores_profile = new GameProfile(
+			UUID.fromString("43b3f040-0d77-4416-8c8c-f7cff76a88dd"), "[Neo Ores]");
+
 	private long magic_xp;
 	private final BlockPos pos;
 	private final EnumFacing face;
-	
-	public FakePlayerMechanicalMagician(WorldServer world, BlockPos pos, EnumFacing face) 
+
+	public FakePlayerMechanicalMagician(WorldServer world, BlockPos pos, EnumFacing face)
 	{
 		super(world, neo_ores_profile);
 		this.magic_xp = 0L;
@@ -32,39 +33,42 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicEx
 		this.lastTickPosY = pos.getY() + 0.5F;
 		this.lastTickPosZ = pos.getZ() + 0.5F;
 		this.face = face;
-		Vec2f direction = MathUtils.getYawPitch(this.face.getDirectionVec().getX(), this.face.getDirectionVec().getY(), this.face.getDirectionVec().getZ());
+		Vec2f direction = MathUtils.getYawPitch(this.face.getDirectionVec().getX(), this.face.getDirectionVec().getY(),
+				this.face.getDirectionVec().getZ());
 		this.rotationPitch = direction.y;
 		this.rotationYaw = direction.x;
 	}
-	
+
 	public void readEntityFromNBT(NBTTagCompound compound)
-    {
-        super.readEntityFromNBT(compound);
-        
-        this.magic_xp = compound.getLong("magicXp");
-    }
-	
+	{
+		super.readEntityFromNBT(compound);
+
+		this.magic_xp = compound.getLong("magicXp");
+	}
+
 	public void writeEntityToNBT(NBTTagCompound compound)
-    {
-        super.writeEntityToNBT(compound);
-        
-        compound.setLong("magicXp", this.magic_xp);
-    }
-	
+	{
+		super.writeEntityToNBT(compound);
+
+		compound.setLong("magicXp", this.magic_xp);
+	}
+
 	@Override
-	public void setMagicXp(long value) 
+	public void setMagicXp(long value)
 	{
 		magic_xp = value;
 	}
-	
-	@Override public Vec3d getPositionVector()
-	{ 
-		if(this.pos != null) return new Vec3d(this.posX, this.posY, this.posZ);
+
+	@Override
+	public Vec3d getPositionVector()
+	{
+		if (this.pos != null)
+			return new Vec3d(this.posX, this.posY, this.posZ);
 		return new Vec3d(0, 0, 0);
 	}
 
 	@Override
-	public long getMagicXp() 
+	public long getMagicXp()
 	{
 		return magic_xp;
 	}

@@ -9,16 +9,17 @@ import net.minecraft.item.ItemStack;
 public interface INeoOresBlock
 {
 	public ModelResourceLocation getModel(int meta);
-	
-	//0~15 available
+
+	// 0~15 available
 	public int getMaxMeta();
-	
+
 	public Item getItemBlock(Block block);
-	
+
 	public String getUnlocalizedName(ItemStack stack);
-	
+
 	@SuppressWarnings("rawtypes")
-	public default IProperty[] setNoRenderProperties() {
+	public default IProperty[] setNoRenderProperties()
+	{
 		return null;
 	}
 }

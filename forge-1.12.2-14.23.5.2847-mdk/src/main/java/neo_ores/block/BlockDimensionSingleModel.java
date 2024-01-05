@@ -6,15 +6,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 
-public class BlockDimensionSingleModel extends BlockDimension {
+public class BlockDimensionSingleModel extends BlockDimension
+{
 
 	public BlockDimensionSingleModel(String registername, Material materialIn, float hardness, float resistant,
-			String harvest_key, int harvest_level, float light, SoundType sound) {
+			String harvest_key, int harvest_level, float light, SoundType sound)
+	{
 		super(registername, materialIn, hardness, resistant, harvest_key, harvest_level, light, sound);
 	}
-	
+
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()),"inventory");
+		return new ModelResourceLocation(
+				new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
 	}
 }

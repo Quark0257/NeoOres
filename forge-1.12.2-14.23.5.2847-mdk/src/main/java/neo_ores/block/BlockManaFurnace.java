@@ -34,156 +34,159 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockManaFurnace extends NeoOresBlock implements ITileEntityProvider
 {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    private final boolean isBurning;
-    private static boolean keepInventory;
-    
+	private final boolean isBurning;
+	private static boolean keepInventory;
+
 	public BlockManaFurnace(boolean isBurning)
 	{
 		super(Material.IRON, MapColor.IRON);
 		this.setHardness(3.5F);
 		this.setSoundType(SoundType.STONE);
-        this.isBurning = isBurning;
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.isBurning = isBurning;
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 	}
 
-    public Item getItemDropped(IBlockState state, Random rand, int fortune)
-    {
-        return Item.getItemFromBlock(NeoOresBlocks.mana_furnace);
-    }
+	public Item getItemDropped(IBlockState state, Random rand, int fortune)
+	{
+		return Item.getItemFromBlock(NeoOresBlocks.mana_furnace);
+	}
 
-    @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand)
-    {
-        if (this.isBurning)
-        {
-            double d0 = (double)pos.getX() + 0.5D;
-            double d1 = (double)pos.getY() + 1.0D - (rand.nextDouble() * 6.0D) / 16.0D;
-            double d2 = (double)pos.getZ() + 0.5D;
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand)
+	{
+		if (this.isBurning)
+		{
+			double d0 = (double) pos.getX() + 0.5D;
+			double d1 = (double) pos.getY() + 1.0D - (rand.nextDouble() * 6.0D) / 16.0D;
+			double d2 = (double) pos.getZ() + 0.5D;
 
-            if (rand.nextDouble() < 0.1D)
-            {
-                worldIn.playSound((double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
-            }
+			if (rand.nextDouble() < 0.1D)
+			{
+				worldIn.playSound((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D,
+						SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+			}
 
-            worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, 0.0D, 0.0D, 0.0D);
-        }
-    }
-    
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
-        if (worldIn.isRemote)
-        {
-            return true;
-        }
-        else
-        {
-        	playerIn.openGui(NeoOres.instance, NeoOres.guiIDManaFurnace, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+		}
+	}
 
-            return true;
-        }
-    }
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		if (worldIn.isRemote)
+		{
+			return true;
+		}
+		else
+		{
+			playerIn.openGui(NeoOres.instance, NeoOres.guiIDManaFurnace, worldIn, pos.getX(), pos.getY(), pos.getZ());
 
-    public static void setState(boolean active, World worldIn, BlockPos pos)
-    {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-        keepInventory = true;
+			return true;
+		}
+	}
 
-        if (active)
-        {
-            worldIn.setBlockState(pos, NeoOresBlocks.lit_mana_furnace.getDefaultState(), 3);
-            worldIn.setBlockState(pos, NeoOresBlocks.lit_mana_furnace.getDefaultState(), 3);
-        }
-        else
-        {
-            worldIn.setBlockState(pos, NeoOresBlocks.mana_furnace.getDefaultState(), 3);
-            worldIn.setBlockState(pos, NeoOresBlocks.mana_furnace.getDefaultState(), 3);
-        }
+	public static void setState(boolean active, World worldIn, BlockPos pos)
+	{
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+		keepInventory = true;
 
-        keepInventory = false;
+		if (active)
+		{
+			worldIn.setBlockState(pos, NeoOresBlocks.lit_mana_furnace.getDefaultState(), 3);
+			worldIn.setBlockState(pos, NeoOresBlocks.lit_mana_furnace.getDefaultState(), 3);
+		}
+		else
+		{
+			worldIn.setBlockState(pos, NeoOresBlocks.mana_furnace.getDefaultState(), 3);
+			worldIn.setBlockState(pos, NeoOresBlocks.mana_furnace.getDefaultState(), 3);
+		}
 
-        if (tileentity != null)
-        {
-            tileentity.validate();
-            worldIn.setTileEntity(pos, tileentity);
-        }
-    }
+		keepInventory = false;
 
-    public TileEntity createNewTileEntity(World worldIn, int meta)
-    {
-        return new  TileEntityManaFurnace();
-    }
+		if (tileentity != null)
+		{
+			tileentity.validate();
+			worldIn.setTileEntity(pos, tileentity);
+		}
+	}
 
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        if (stack.hasDisplayName())
-        {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+	public TileEntity createNewTileEntity(World worldIn, int meta)
+	{
+		return new TileEntityManaFurnace();
+	}
 
-            if (tileentity instanceof TileEntityManaFurnace)
-            {
-                ((TileEntityManaFurnace)tileentity).setCustomInventoryName(stack.getDisplayName());
-            }
-        }
-    }
-    
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
-    {
-        if (!keepInventory)
-        {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
+			ItemStack stack)
+	{
+		if (stack.hasDisplayName())
+		{
+			TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            if (tileentity instanceof TileEntityManaFurnace)
-            {
-                InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityManaFurnace)tileentity);
-                worldIn.updateComparatorOutputLevel(pos, this);
-            }
-        }
+			if (tileentity instanceof TileEntityManaFurnace)
+			{
+				((TileEntityManaFurnace) tileentity).setCustomInventoryName(stack.getDisplayName());
+			}
+		}
+	}
 
-        super.breakBlock(worldIn, pos, state);
-    }
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+	{
+		if (!keepInventory)
+		{
+			TileEntity tileentity = worldIn.getTileEntity(pos);
 
-    public boolean hasComparatorInputOverride(IBlockState state)
-    {
-        return true;
-    }
+			if (tileentity instanceof TileEntityManaFurnace)
+			{
+				InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityManaFurnace) tileentity);
+				worldIn.updateComparatorOutputLevel(pos, this);
+			}
+		}
 
-    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
-    {
-        return Container.calcRedstone(worldIn.getTileEntity(pos));
-    }
+		super.breakBlock(worldIn, pos, state);
+	}
 
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
-    {
-        return new ItemStack(NeoOresBlocks.mana_furnace);
-    }
+	public boolean hasComparatorInputOverride(IBlockState state)
+	{
+		return true;
+	}
 
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
-    }
-    
-    public IBlockState getStateFromMeta(int meta)
-    {
-        return this.getDefaultState().withProperty(FACING, EnumFacing.NORTH);
-    }
+	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
+	{
+		return Container.calcRedstone(worldIn.getTileEntity(pos));
+	}
 
-    public int getMetaFromState(IBlockState state)
-    {
-        return 0;
-    }
-    
-    public int damageDropped(IBlockState state) 
-    {
-    	return 0;
-    }
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+	{
+		return new ItemStack(NeoOresBlocks.mana_furnace);
+	}
 
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
-    }
-    
-    protected ItemStack getSilkTouchDrop(IBlockState state)
-    {
-    	return new ItemStack(NeoOresBlocks.mana_furnace);
-    }
+	public EnumBlockRenderType getRenderType(IBlockState state)
+	{
+		return EnumBlockRenderType.MODEL;
+	}
+
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return this.getDefaultState().withProperty(FACING, EnumFacing.NORTH);
+	}
+
+	public int getMetaFromState(IBlockState state)
+	{
+		return 0;
+	}
+
+	public int damageDropped(IBlockState state)
+	{
+		return 0;
+	}
+
+	protected BlockStateContainer createBlockState()
+	{
+		return new BlockStateContainer(this, new IProperty[] { FACING });
+	}
+
+	protected ItemStack getSilkTouchDrop(IBlockState state)
+	{
+		return new ItemStack(NeoOresBlocks.mana_furnace);
+	}
 }

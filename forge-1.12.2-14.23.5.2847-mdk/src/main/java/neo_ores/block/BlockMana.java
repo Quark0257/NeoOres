@@ -14,8 +14,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockMana extends NeoOresBlock {
-	public BlockMana() {
+public class BlockMana extends NeoOresBlock
+{
+	public BlockMana()
+	{
 		super(Material.IRON);
 		this.setHardness(5.0F);
 		this.setResistance(10.0F);
@@ -24,33 +26,38 @@ public class BlockMana extends NeoOresBlock {
 		this.setLightLevel(1.0F);
 	}
 
-	public EnumPushReaction getMobilityFlag(IBlockState state) {
+	public EnumPushReaction getMobilityFlag(IBlockState state)
+	{
 		return EnumPushReaction.NORMAL;
 	}
 
 	@SuppressWarnings("deprecation")
 	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-			EnumFacing side) {
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+	{
 		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();
 		return (block == this) ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getBlockLayer()
+	{
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 
-	public boolean isFullCube(IBlockState iblockstate) {
+	public boolean isFullCube(IBlockState iblockstate)
+	{
 		return false;
 	}
 
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube(IBlockState state)
+	{
 		return false;
 	}
 
-	public Item getItemBlock(Block block) {
+	public Item getItemBlock(Block block)
+	{
 		return new ItemManaBlock(block).setRegistryName(block.getRegistryName());
 	}
 }

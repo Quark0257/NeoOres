@@ -30,68 +30,77 @@ public class RendererItemSpell extends PerspectiveMapWrapper
 	private final ModelResourceLocation inInv;
 	private final ModelResourceLocation outInv;
 
-	public RendererItemSpell(ModelResourceLocation inInventory,ModelResourceLocation in3d) 
+	public RendererItemSpell(ModelResourceLocation inInventory, ModelResourceLocation in3d)
 	{
 		super(new RendererItemSpell.Model(), ImmutableMap.copyOf(new HashMap<TransformType, TRSRTransformation>()));
 		inInv = inInventory;
 		outInv = in3d;
 	}
+
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
 	{
 		ModelManager manager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
-		
+
 		IBakedModel model;
-		if(cameraTransformType != TransformType.GUI && cameraTransformType != TransformType.GROUND && cameraTransformType != TransformType.FIXED) 
-			 model = manager.getModel(outInv); 
-		else model = manager.getModel(inInv);
-		
+		if (cameraTransformType != TransformType.GUI && cameraTransformType != TransformType.GROUND
+				&& cameraTransformType != TransformType.FIXED)
+			model = manager.getModel(outInv);
+		else
+			model = manager.getModel(inInv);
+
 		return Pair.of(model, TRSRTransformation.identity().getMatrix());
 	}
-	
+
 	public static class Model implements IBakedModel
 	{
 
-		public Model() {}
-		
-		@Override
-		public ItemCameraTransforms getItemCameraTransforms()
+		public Model()
 		{
-			return ItemCameraTransforms.DEFAULT; //The requirement for this is a bug
 		}
 
 		@Override
-		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
+		public ItemCameraTransforms getItemCameraTransforms()
+		{
+			return ItemCameraTransforms.DEFAULT; // The requirement for this is a bug
+		}
+
+		@Override
+		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
 		{
 			return new ArrayList<BakedQuad>();
 		}
 
 		@Override
-		public ItemOverrideList getOverrides() 
+		public ItemOverrideList getOverrides()
 		{
 			return new ItemOverrideList(new ArrayList<ItemOverride>());
-		}	
+		}
 
 		@Override
-		public boolean isAmbientOcclusion() {
+		public boolean isAmbientOcclusion()
+		{
 			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
-		public boolean isGui3d() {
+		public boolean isGui3d()
+		{
 			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
-		public boolean isBuiltInRenderer() {
+		public boolean isBuiltInRenderer()
+		{
 			// TODO Auto-generated method stub
 			return false;
 		}
 
 		@Override
-		public TextureAtlasSprite getParticleTexture() {
+		public TextureAtlasSprite getParticleTexture()
+		{
 			// TODO Auto-generated method stub
 			return null;
 		}

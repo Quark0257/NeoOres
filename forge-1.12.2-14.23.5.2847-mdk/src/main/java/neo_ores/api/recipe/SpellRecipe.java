@@ -15,19 +15,20 @@ public class SpellRecipe extends IForgeRegistryEntry.Impl<SpellRecipe>
 {
 	private final SpellItem result;
 	private final List<RecipeOreStack> consumption;
-	public SpellRecipe(SpellItem spell,RecipeOreStack... recipe)
+
+	public SpellRecipe(SpellItem spell, RecipeOreStack... recipe)
 	{
 		this.result = spell;
 		this.consumption = Arrays.asList(recipe);
-		
+
 		this.setRegistryName(new ResourceLocation(spell.getModId(), "spellRecipe." + spell.getRegisteringId()));
 	}
-	
+
 	public SpellItem getSpell()
 	{
 		return this.result;
 	}
-	
+
 	public List<RecipeOreStack> getRecipe()
 	{
 		return this.consumption;

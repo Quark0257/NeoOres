@@ -23,67 +23,70 @@ import net.minecraft.world.World;
 
 public class BlockManaWorkbench extends NeoOresBlock
 {
-	public BlockManaWorkbench() 
+	public BlockManaWorkbench()
 	{
 		super(Material.WOOD);
 		this.setHardness(2.5F);
 		this.setSoundType(SoundType.WOOD);
 	}
-	
+
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)
-    {
-        return Item.getItemFromBlock(NeoOresBlocks.mana_workbench);
-    }
+	{
+		return Item.getItemFromBlock(NeoOresBlocks.mana_workbench);
+	}
 
-	
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
 		if (!worldIn.isRemote)
-        {
-            playerIn.openGui(NeoOres.instance, NeoOres.guiIDManaWorkbench, worldIn, pos.getX(), pos.getY(), pos.getZ());
-            playerIn.displayGui(new ThisGui(worldIn, pos));
-        }
+		{
+			playerIn.openGui(NeoOres.instance, NeoOres.guiIDManaWorkbench, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.displayGui(new ThisGui(worldIn, pos));
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
-    {
-        return new ItemStack(NeoOresBlocks.mana_workbench);
-    }
-    
-    public static class ThisGui implements IInteractionObject 
-    {
-        private final World world;
-        private final BlockPos position;
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+	{
+		return new ItemStack(NeoOresBlocks.mana_workbench);
+	}
 
-        public ThisGui(World worldIn, BlockPos pos)
-        {
-            this.world = worldIn;
-            this.position = pos;
-        }
-        public String getName()
-        {
-            return "mana_workbench";
-        }
-        public boolean hasCustomName()
-        {
-            return false;
-        }
+	public static class ThisGui implements IInteractionObject
+	{
+		private final World world;
+		private final BlockPos position;
 
-        public ITextComponent getDisplayName()
-        {
-            return new TextComponentTranslation(NeoOresBlocks.mana_workbench.getUnlocalizedName() + ".name", new Object[0]);
-        }
+		public ThisGui(World worldIn, BlockPos pos)
+		{
+			this.world = worldIn;
+			this.position = pos;
+		}
 
-        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
-        {
-            return new ContainerManaWorkbench(playerInventory, this.world, this.position, playerIn);
-        }
+		public String getName()
+		{
+			return "mana_workbench";
+		}
 
-        public String getGuiID()
-        {
-            return "neo_ores:mana_workbench";
-        }
-    }
+		public boolean hasCustomName()
+		{
+			return false;
+		}
+
+		public ITextComponent getDisplayName()
+		{
+			return new TextComponentTranslation(NeoOresBlocks.mana_workbench.getUnlocalizedName() + ".name",
+					new Object[0]);
+		}
+
+		public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
+		{
+			return new ContainerManaWorkbench(playerInventory, this.world, this.position, playerIn);
+		}
+
+		public String getGuiID()
+		{
+			return "neo_ores:mana_workbench";
+		}
+	}
 }

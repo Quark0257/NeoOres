@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockFireEssence extends NeoOresBlock
 {
-	public BlockFireEssence() 
+	public BlockFireEssence()
 	{
 		super(Material.IRON);
 		this.setHardness(5.0F);
@@ -23,34 +23,34 @@ public class BlockFireEssence extends NeoOresBlock
 		this.setHarvestLevel("pickaxe", 0);
 		this.setLightLevel(1.0F);
 	}
-	  
-	public EnumPushReaction getMobilityFlag(IBlockState state) 
+
+	public EnumPushReaction getMobilityFlag(IBlockState state)
 	{
-	    return EnumPushReaction.NORMAL;
+		return EnumPushReaction.NORMAL;
 	}
-	  
+
 	@SuppressWarnings("deprecation")
 	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) 
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
-	    IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
-	    Block block = iblockstate.getBlock();
-	    return (block == this) ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+		Block block = iblockstate.getBlock();
+		return (block == this) ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
 	}
-	  
+
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() 
+	public BlockRenderLayer getBlockLayer()
 	{
-	    return BlockRenderLayer.TRANSLUCENT;
+		return BlockRenderLayer.TRANSLUCENT;
 	}
-	
-	public boolean isFullCube(IBlockState iblockstate) 
+
+	public boolean isFullCube(IBlockState iblockstate)
 	{
-	    return false;
+		return false;
 	}
-	
+
 	public boolean isOpaqueCube(IBlockState state)
 	{
-	    return false;
+		return false;
 	}
 }

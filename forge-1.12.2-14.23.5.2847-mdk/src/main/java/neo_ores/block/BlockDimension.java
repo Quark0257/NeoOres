@@ -25,9 +25,11 @@ import net.minecraft.world.World;
 
 public class BlockDimension extends NeoOresBlock
 {
-	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension", DimensionName.class);
-	
-	public BlockDimension(String registername,Material materialIn,float hardness,float resistant,String harvest_key,int harvest_level,float light,SoundType sound) 
+	public static final PropertyEnum<DimensionName> DIM = PropertyEnum.<DimensionName>create("dimension",
+			DimensionName.class);
+
+	public BlockDimension(String registername, Material materialIn, float hardness, float resistant, String harvest_key,
+			int harvest_level, float light, SoundType sound)
 	{
 		super(materialIn);
 		this.setHardness(hardness);
@@ -36,81 +38,86 @@ public class BlockDimension extends NeoOresBlock
 		this.setLightLevel(light);
 		this.setSoundType(sound);
 		this.setUnlocalizedName(registername);
-		this.setRegistryName(Reference.MOD_ID,registername);
+		this.setRegistryName(Reference.MOD_ID, registername);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(DIM, DimensionName.EARTH));
-	}	
-	
+	}
+
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)
 	{
 		return Item.getItemFromBlock(this);
 	}
-	
+
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(worldIn.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)));
 	}
-	
+
 	protected ItemStack getSilkTouchDrop(IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(state));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
-	
+
 	@Override
-	public int damageDropped(IBlockState state) 
+	public int damageDropped(IBlockState state)
 	{
 		return this.getSilkTouchDrop(state).getMetadata();
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return ((DimensionName)state.getValue(DIM)).getMeta();
+		return ((DimensionName) state.getValue(DIM)).getMeta();
 	}
-	
+
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
 		return this.getDefaultState().withProperty(DIM, DimensionName.getFromMeta(meta));
 	}
-	
+
 	@Override
-	public ItemStack getPickBlock(IBlockState state,RayTraceResult target,World world,BlockPos pos,EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
+			EntityPlayer player)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
 	}
-	
+
 	@Override
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> stacks)
 	{
-		for(DimensionName name : DimensionName.values())
+		for (DimensionName name : DimensionName.values())
 		{
-			stacks.add(new ItemStack(Item.getItemFromBlock(this),1,name.getMeta()));
+			stacks.add(new ItemStack(Item.getItemFromBlock(this), 1, name.getMeta()));
 		}
 	}
-	
+
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this,new IProperty[] {DIM});
+		return new BlockStateContainer(this, new IProperty[] { DIM });
 	}
-	
+
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_" + this.getRegistryName().getResourcePath();
+		return "tile." + DimensionName.getFromMeta(stack.getItemDamage()).getName() + "_"
+				+ this.getRegistryName().getResourcePath();
 	}
-	
+
 	public int getMaxMeta()
 	{
 		return 3;
 	}
-	
+
 	public ModelResourceLocation getModel(int meta)
 	{
-		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID,DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()),"inventory");
+		return new ModelResourceLocation(
+				new ResourceLocation(Reference.MOD_ID,
+						DimensionName.getFromMeta(meta).getName() + "_" + this.getRegistryName().getResourcePath()),
+				"inventory");
 	}
-	
+
 	public Item getItemBlock(Block block)
 	{
-		return new ItemBlockDimension((NeoOresBlock)block).setRegistryName(block.getRegistryName());
+		return new ItemBlockDimension((NeoOresBlock) block).setRegistryName(block.getRegistryName());
 	}
 }

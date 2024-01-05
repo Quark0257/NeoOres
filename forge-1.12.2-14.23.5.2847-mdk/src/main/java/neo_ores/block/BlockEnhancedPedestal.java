@@ -40,13 +40,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityProvider
 {
-	protected static final AxisAlignedBB AABB_BOUNDING = new AxisAlignedBB(0.0D,0.0D,0.0D,1.0D,0.8125D,1.0D);
+	protected static final AxisAlignedBB AABB_BOUNDING = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8125D, 1.0D);
 	protected static final AxisAlignedBB AABB_BOTTOM = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5625D, 1.0D);
-    protected static final AxisAlignedBB AABB_WALL_NORTH = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8125D, 0.125D);
-    protected static final AxisAlignedBB AABB_WALL_SOUTH = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 0.8125D, 1.0D);
-    protected static final AxisAlignedBB AABB_WALL_EAST = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 0.8125D, 1.0D);
-    protected static final AxisAlignedBB AABB_WALL_WEST = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 0.8125D, 1.0D);
-	
+	protected static final AxisAlignedBB AABB_WALL_NORTH = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8125D, 0.125D);
+	protected static final AxisAlignedBB AABB_WALL_SOUTH = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 0.8125D, 1.0D);
+	protected static final AxisAlignedBB AABB_WALL_EAST = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 0.8125D, 1.0D);
+	protected static final AxisAlignedBB AABB_WALL_WEST = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 0.8125D, 1.0D);
+
 	public BlockEnhancedPedestal()
 	{
 		super(Material.ANVIL);
@@ -56,136 +56,142 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		this.setResistance(Float.MAX_VALUE);
 	}
 
-	public void addCollisionBoxToList( IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
-    {
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BOTTOM);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_WEST);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_NORTH);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_EAST);
-        addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_SOUTH);
-    }
-	
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
+			List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
+	{
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BOTTOM);
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_WEST);
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_NORTH);
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_EAST);
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_WALL_SOUTH);
+	}
+
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
 	{
 		return AABB_BOUNDING;
 	}
-	
-	public boolean isFullCube(IBlockState iblockstate) 
-	{
-	    return false;
-	}
-	
-	public boolean isOpaqueCube(IBlockState state)
-	{
-	    return false;
-	}
-	
-	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() 
-	{
-	    return BlockRenderLayer.CUTOUT_MIPPED;
-	}
-	
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
-    {
-		TileEntity tileentity = worldIn.getTileEntity(pos);
 
-	    if (tileentity instanceof TileEntityEnhancedPedestal)
-	    {
-	        TileEntityEnhancedPedestal.dropInventoryItems(worldIn, pos, (TileEntityEnhancedPedestal)tileentity);
-	    }
-
-        super.breakBlock(worldIn, pos, state);
-    }
-
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public boolean isFullCube(IBlockState iblockstate)
 	{
-		if(worldIn.isRemote) return true;
-		ItemStack itemstack = playerIn.getHeldItem(hand);
-		
-		TileEntity tileentity = worldIn.getTileEntity(pos);
-
-	    if (tileentity instanceof TileEntityEnhancedPedestal)
-	    {
-	        TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)tileentity;
-	        if (itemstack.isEmpty())
-	        {
-	            return false;
-	        }
-	        else
-	        {
-	        	Item item = itemstack.getItem();
-	        	if(!playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
-	        	{
-	        		teep.addSlot(1);
-	        		return true;
-	        	}
-	        	else if(playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
-	        	{
-	        		teep.addSlot(-1);
-	        		return true;
-	        	}
-	        	else if(item == NeoOresItems.spell)
-	        	{
-	        		return false;
-	        	}
-	        	else if(!playerIn.isSneaking())
-	        	{
-	        		playerIn.setHeldItem(hand, teep.addItemStackToInventory(itemstack));
-	        		return true;
-	        	}
-	        }
-	    }
-		
 		return false;
 	}
-	
-	public void onBlockClicked(World world,BlockPos pos,EntityPlayer player)
+
+	public boolean isOpaqueCube(IBlockState state)
 	{
-		if(world.isRemote) return;
+		return false;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public BlockRenderLayer getBlockLayer()
+	{
+		return BlockRenderLayer.CUTOUT_MIPPED;
+	}
+
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+	{
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		if (tileentity instanceof TileEntityEnhancedPedestal)
+		{
+			TileEntityEnhancedPedestal.dropInventoryItems(worldIn, pos, (TileEntityEnhancedPedestal) tileentity);
+		}
+
+		super.breakBlock(worldIn, pos, state);
+	}
+
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		if (worldIn.isRemote)
+			return true;
+		ItemStack itemstack = playerIn.getHeldItem(hand);
+
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		if (tileentity instanceof TileEntityEnhancedPedestal)
+		{
+			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) tileentity;
+			if (itemstack.isEmpty())
+			{
+				return false;
+			}
+			else
+			{
+				Item item = itemstack.getItem();
+				if (!playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
+				{
+					teep.addSlot(1);
+					return true;
+				}
+				else if (playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
+				{
+					teep.addSlot(-1);
+					return true;
+				}
+				else if (item == NeoOresItems.spell)
+				{
+					return false;
+				}
+				else if (!playerIn.isSneaking())
+				{
+					playerIn.setHeldItem(hand, teep.addItemStackToInventory(itemstack));
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player)
+	{
+		if (world.isRemote)
+			return;
 		@SuppressWarnings("deprecation")
-		RayTraceResult result = ForgeHooks.rayTraceEyes(player,((EntityPlayerMP)player).interactionManager.getBlockReachDistance() + 1.0D);
-		if(result == null || result.typeOfHit != Type.BLOCK) return;
+		RayTraceResult result = ForgeHooks.rayTraceEyes(player,
+				((EntityPlayerMP) player).interactionManager.getBlockReachDistance() + 1.0D);
+		if (result == null || result.typeOfHit != Type.BLOCK)
+			return;
 		TileEntity tileentity = world.getTileEntity(pos);
 
-	    if (tileentity instanceof TileEntityEnhancedPedestal)
-	    {
-	    	TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal)tileentity;
-    		int slot = teep.getSlot();
-    		LargeItemStack isws = teep.getItems().get(slot);
-    		ItemStack stack = isws.getStack().copy();
+		if (tileentity instanceof TileEntityEnhancedPedestal)
+		{
+			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) tileentity;
+			int slot = teep.getSlot();
+			LargeItemStack isws = teep.getItems().get(slot);
+			ItemStack stack = isws.getStack().copy();
 
-    		if(player.isSneaking())
-	    	{
-	    		if(isws.getSize() > stack.getMaxStackSize())
-	    		{
-	    			stack.setCount(stack.getMaxStackSize());
-	    			this.addStackToPlayer(player, stack.copy());
-	    			teep.decrStackSize(slot, stack.getMaxStackSize());
-	    		}
-	    		else
-	    		{
-	    			stack.setCount(isws.getSize());
-	    			this.addStackToPlayer(player, stack.copy());
-	    			teep.removeStackFromSlot(slot);
-	    		}
-	    	}
-	    	else
-	    	{
-	    		if(isws.getSize() > 1)
-	    		{
-	    			stack.setCount(1);
-	    			this.addStackToPlayer(player, stack.copy());
-	    			teep.decrStackSize(slot, 1);
-	    		}
-	    		else
-	    		{
-	    			stack.setCount(1);
-	    			this.addStackToPlayer(player, stack.copy());
-	    			teep.removeStackFromSlot(slot);
-	    		}
-	    	}
-	    }
+			if (player.isSneaking())
+			{
+				if (isws.getSize() > stack.getMaxStackSize())
+				{
+					stack.setCount(stack.getMaxStackSize());
+					this.addStackToPlayer(player, stack.copy());
+					teep.decrStackSize(slot, stack.getMaxStackSize());
+				}
+				else
+				{
+					stack.setCount(isws.getSize());
+					this.addStackToPlayer(player, stack.copy());
+					teep.removeStackFromSlot(slot);
+				}
+			}
+			else
+			{
+				if (isws.getSize() > 1)
+				{
+					stack.setCount(1);
+					this.addStackToPlayer(player, stack.copy());
+					teep.decrStackSize(slot, 1);
+				}
+				else
+				{
+					stack.setCount(1);
+					this.addStackToPlayer(player, stack.copy());
+					teep.removeStackFromSlot(slot);
+				}
+			}
+		}
 	}
 
 	public int getTier(int meta)
@@ -210,7 +216,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		return teep;
 	}
 
-	//Property
+	// Property
 	public static final PropertyEnum<PedestalTiers> TIER = PropertyEnum.create("tier", PedestalTiers.class);
 
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)
@@ -220,12 +226,12 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(worldIn.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)));
 	}
 
 	protected ItemStack getSilkTouchDrop(IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(state));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
 
 	@Override
@@ -247,65 +253,68 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
+			EntityPlayer player)
 	{
-		return new ItemStack(Item.getItemFromBlock(this),1,this.getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
 	}
 
 	@Override
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> stacks)
 	{
-		for(PedestalTiers name : PedestalTiers.values())
+		for (PedestalTiers name : PedestalTiers.values())
 		{
-			stacks.add(new ItemStack(Item.getItemFromBlock(this),1,name.getMeta()));
+			stacks.add(new ItemStack(Item.getItemFromBlock(this), 1, name.getMeta()));
 		}
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this,new IProperty[] {TIER});
+		return new BlockStateContainer(this, new IProperty[] { TIER });
 	}
 
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		return this.getUnlocalizedName();
 	}
-	
-	private void addStackToPlayer(EntityPlayer entityplayer,ItemStack itemstack)
+
+	private void addStackToPlayer(EntityPlayer entityplayer, ItemStack itemstack)
 	{
-		if(!itemstack.isEmpty() && entityplayer.isServerWorld())
+		if (!itemstack.isEmpty() && entityplayer.isServerWorld())
 		{
 			boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
 
-	        if (flag)
-	        {
-	            entityplayer.world.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-	            entityplayer.inventoryContainer.detectAndSendChanges();
-	        }
-	        
-	        if (flag && itemstack.isEmpty())
-	        {
-	        }
-	        else
-	        {
-	            EntityItem entityitem = entityplayer.dropItem(itemstack, false);
+			if (flag)
+			{
+				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY,
+						entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
+						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+				entityplayer.inventoryContainer.detectAndSendChanges();
+			}
 
-	            if (entityitem != null)
-	            {
-	                entityitem.setNoPickupDelay();
-	                entityitem.setOwner(entityplayer.getName());
-	            }
-	        }
+			if (flag && itemstack.isEmpty())
+			{
+			}
+			else
+			{
+				EntityItem entityitem = entityplayer.dropItem(itemstack, false);
+
+				if (entityitem != null)
+				{
+					entityitem.setNoPickupDelay();
+					entityitem.setOwner(entityplayer.getName());
+				}
+			}
 		}
 	}
 
-	//0~15 available
+	// 0~15 available
 	public int getMaxMeta()
 	{
 		return 15;
 	}
-	
+
 	public Item getItemBlock(Block block)
 	{
 		return new ItemBlockEnhancedPedestal(block).setRegistryName(block.getRegistryName());

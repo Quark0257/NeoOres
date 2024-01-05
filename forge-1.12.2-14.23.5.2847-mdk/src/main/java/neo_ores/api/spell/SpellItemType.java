@@ -1,9 +1,6 @@
 package neo_ores.api.spell;
 
-public enum SpellItemType 
+public enum SpellItemType
 {
-	WATER,
-	FIRE,
-	AIR,
-	EARTH
+	WATER, FIRE, AIR, EARTH
 }

@@ -18,8 +18,8 @@ public class ModelItemSpell implements IModel
 {
 	private final ModelResourceLocation inInv;
 	private final ModelResourceLocation outInv;
-	
-	public ModelItemSpell(ModelResourceLocation inInv,ModelResourceLocation outInv)
+
+	public ModelItemSpell(ModelResourceLocation inInv, ModelResourceLocation outInv)
 	{
 		this.inInv = inInv;
 		this.outInv = outInv;
@@ -27,10 +27,11 @@ public class ModelItemSpell implements IModel
 
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
-			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		return new RendererItemSpell(this.inInv,this.outInv);
+			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+	{
+		return new RendererItemSpell(this.inInv, this.outInv);
 	}
-	
+
 	@Override
 	public Collection<ResourceLocation> getDependencies()
 	{
@@ -42,7 +43,7 @@ public class ModelItemSpell implements IModel
 	{
 		return ImmutableList.of();
 	}
-	
+
 	@Override
 	public IModelState getDefaultState()
 	{

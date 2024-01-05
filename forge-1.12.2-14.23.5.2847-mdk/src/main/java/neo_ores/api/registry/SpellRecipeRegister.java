@@ -10,10 +10,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
-public class SpellRecipeRegister 
-{	
+public class SpellRecipeRegister
+{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@SubscribeEvent(priority=EventPriority.LOWEST)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void create(RegistryEvent.NewRegistry event)
 	{
 		RegistryBuilder<SpellRecipe> spell = new RegistryBuilder();

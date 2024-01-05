@@ -17,30 +17,30 @@ public class ManaCompositionRecipe extends IForgeRegistryEntry.Impl<ManaComposit
 	public List<RecipeOreStack> recipe;
 	public int tier;
 	public ItemStack result;
-	
-	public ManaCompositionRecipe(int tier,@Nonnull ItemStack result,List<RecipeOreStack> objects)
-	{	
+
+	public ManaCompositionRecipe(int tier, @Nonnull ItemStack result, List<RecipeOreStack> objects)
+	{
 		this.tier = tier;
 		this.result = result;
 		this.recipe = objects;
-		
+
 	}
-	
-	public ManaCompositionRecipe setRegistryKey(String modid,String key)
+
+	public ManaCompositionRecipe setRegistryKey(String modid, String key)
 	{
 		return this.setRegistryName(new ResourceLocation(modid, "manaCompositionRecipe." + key));
 	}
-	
+
 	public List<RecipeOreStack> getRecipe()
 	{
 		return this.recipe;
 	}
-	
+
 	public ItemStack getResult()
 	{
 		return this.result;
 	}
-	
+
 	public int getTier()
 	{
 		return this.tier;

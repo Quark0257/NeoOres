@@ -7,7 +7,7 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockMarlite extends NeoOresBlock
 {
-	public BlockMarlite() 
+	public BlockMarlite()
 	{
 		super(Material.IRON);
 		this.setHardness(5.0F);
@@ -16,8 +16,8 @@ public class BlockMarlite extends NeoOresBlock
 		this.setHarvestLevel("pickaxe", 2);
 		this.setLightLevel(0.0F);
 	}
-	
-	public boolean isBeaconBase(IBlockAccess worldObj,BlockPos pos, BlockPos beacon)
+
+	public boolean isBeaconBase(IBlockAccess worldObj, BlockPos pos, BlockPos beacon)
 	{
 		return true;
 	}

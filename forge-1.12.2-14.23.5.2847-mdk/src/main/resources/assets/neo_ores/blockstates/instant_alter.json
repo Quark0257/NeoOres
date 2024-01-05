@@ -1,0 +1,17 @@
+{
+	"forge_marker": 1,
+  	"defaults": 
+  	{
+    	"textures": 
+    	{
+      		"particle": "neo_ores:blocks/instant_alter"
+    	},
+    	"model": "neo_ores:instant_alter",
+    	"uvlock": false
+  	},
+  	"variants": 
+  	{
+    	"normal": [{}],
+    	"inventory": [{}]
+  	}
+}

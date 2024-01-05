@@ -28,6 +28,7 @@ public class BlockManaWorkbench extends NeoOresBlock
 		super(Material.WOOD);
 		this.setHardness(2.5F);
 		this.setSoundType(SoundType.WOOD);
+		this.setHarvestLevel("axe", 0);
 	}
 
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)

@@ -22,7 +22,7 @@ public class BlockSpellRecipeCreationTable extends NeoOresBlock implements ITile
 		this.setHardness(5.0F);
 		this.setResistance(Float.MAX_VALUE);
 		this.setSoundType(SoundType.WOOD);
-		this.setHarvestLevel("pickaxe", 0);
+		this.setHarvestLevel("axe", 0);
 	}
 
 	@Override

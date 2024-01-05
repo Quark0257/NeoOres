@@ -229,148 +229,6 @@ public class NeoOresRecipeRegisterEvent
 		}
 	}
 
-	public static void registerFromJson(FMLPreInitializationEvent event)
-	{
-		File configFile = new File(event.getModConfigurationDirectory(), "neo_ores.json");
-		if (!configFile.exists())
-		{
-			try
-			{
-				JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8));
-				JsonObject configDefault = new JsonObject();
-				JsonArray spell_ore_gen = new JsonArray();
-
-				JsonObject stone = new JsonObject();
-				stone.addProperty("id", "minecraft:stone");
-				stone.addProperty("metadata", 0);
-				// OreDic Only
-				JsonArray acceptModsStoneOre = new JsonArray();
-				acceptModsStoneOre.add("minecraft");
-				acceptModsStoneOre.add("thermalfoundation");
-				acceptModsStoneOre.add("nuclearcraft");
-				acceptModsStoneOre.add("ic2");
-				acceptModsStoneOre.add("mekanism");
-				acceptModsStoneOre.add("roots");
-				acceptModsStoneOre.add("thaumcraft");
-				acceptModsStoneOre.add("actuallyaddition");
-				acceptModsStoneOre.add("biomesoplenty");
-				acceptModsStoneOre.add("appliedenergistics2");
-				acceptModsStoneOre.add("immersiveengineering");
-				acceptModsStoneOre.add("astralsorcery");
-				acceptModsStoneOre.add("draconicevolution");
-				acceptModsStoneOre.add("embers");
-				acceptModsStoneOre.add("rftools");
-				acceptModsStoneOre.add("forestry");
-				acceptModsStoneOre.add("projectred-exploration");
-				acceptModsStoneOre.add("metallurgy");
-				acceptModsStoneOre.add("iceandfire");
-
-				JsonObject oreIronStone = new JsonObject();
-				oreIronStone.addProperty("registry_name", "oredic_ore_iron_stone");
-				oreIronStone.addProperty("id", "ore:oreIron");
-				oreIronStone.addProperty("weight", 11520);
-				oreIronStone.add("replace_block", stone);
-				oreIronStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreIronStone);
-
-				JsonObject oreGoldStone = new JsonObject();
-				oreGoldStone.addProperty("registry_name", "oredic_ore_gold_stone");
-				oreGoldStone.addProperty("id", "ore:oreGold");
-				oreGoldStone.addProperty("weight", 576);
-				oreGoldStone.add("replace_block", stone);
-				oreGoldStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreGoldStone);
-
-				JsonObject oreDiamondStone = new JsonObject();
-				oreDiamondStone.addProperty("registry_name", "oredic_ore_diamond_stone");
-				oreDiamondStone.addProperty("id", "ore:oreDiamond");
-				oreDiamondStone.addProperty("weight", 128);
-				oreDiamondStone.add("replace_block", stone);
-				oreDiamondStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreDiamondStone);
-
-				JsonObject oreEmeraldStone = new JsonObject();
-				oreEmeraldStone.addProperty("registry_name", "oredic_ore_emerald_stone");
-				oreEmeraldStone.addProperty("id", "ore:oreEmerald");
-				oreEmeraldStone.addProperty("weight", 112);
-				oreEmeraldStone.add("replace_block", stone);
-				oreEmeraldStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreEmeraldStone);
-
-				JsonObject oreRedstoneStone = new JsonObject();
-				oreRedstoneStone.addProperty("registry_name", "oredic_ore_redstone_stone");
-				oreRedstoneStone.addProperty("id", "ore:oreRedstone");
-				oreRedstoneStone.addProperty("weight", 1024);
-				oreRedstoneStone.add("replace_block", stone);
-				oreRedstoneStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreRedstoneStone);
-
-				JsonObject oreLapisStone = new JsonObject();
-				oreLapisStone.addProperty("registry_name", "oredic_ore_lapis_stone");
-				oreLapisStone.addProperty("id", "ore:oreLapis");
-				oreLapisStone.addProperty("weight", 224);
-				oreLapisStone.add("replace_block", stone);
-				oreLapisStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreLapisStone);
-
-				JsonObject oreCoalStone = new JsonObject();
-				oreCoalStone.addProperty("registry_name", "oredic_ore_coal_stone");
-				oreCoalStone.addProperty("id", "ore:oreCoal");
-				oreCoalStone.addProperty("weight", 43520);
-				oreCoalStone.add("replace_block", stone);
-				oreCoalStone.add("acceptMods", acceptModsStoneOre);
-				spell_ore_gen.add(oreCoalStone);
-
-				configDefault.add("spell_ore_gen", spell_ore_gen);
-
-				Gson gson = new GsonBuilder().serializeNulls().create();
-				writer.setIndent("  ");
-				gson.toJson(configDefault, writer);
-				writer.close();
-			}
-			catch (Exception e)
-			{
-				FMLLog.log.error("Unable to create {} - skipping", configFile);
-			}
-		}
-		JsonParser parser = new JsonParser();
-		JsonElement config;
-		try
-		{
-			try (Reader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))
-			{
-				config = parser.parse(reader);
-			}
-
-			if (config.isJsonObject())
-			{
-				JsonObject jo = config.getAsJsonObject();
-				for (JsonElement genE : jo.get("spell_ore_gen").getAsJsonArray())
-				{
-					try
-					{
-						JsonObject gen = genE.getAsJsonObject();
-						GameRegistry.findRegistry(OreWeightRecipe.class)
-								.register(new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString())));
-					}
-					catch (Exception e)
-					{
-						FMLLog.log.error("Unable to register");
-					}
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			FMLLog.log.error("Unable to parse {} - skipping", configFile);
-		}
-	}
-
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public static void registerOreWeightRecipes(RegistryEvent.Register<OreWeightRecipe> event)
-	{
-		// event.getR
-	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
@@ -572,5 +430,520 @@ public class NeoOresRecipeRegisterEvent
 		{
 			GameRegistry.addSmelting(stack, result, exp);
 		}
+	}
+	
+
+	public static void registerFromJson(FMLPreInitializationEvent event)
+	{
+		File configFile = new File(event.getModConfigurationDirectory(), "neo_ores.json");
+		if (!configFile.exists())
+		{
+			try
+			{
+				JsonWriter writer = new JsonWriter(new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8));
+				JsonObject configDefault = new JsonObject();
+				JsonArray spell_ore_gen = new JsonArray();
+
+				JsonObject stone = new JsonObject();
+				stone.addProperty("id", "minecraft:stone");
+				stone.addProperty("metadata", 0);
+				// OreDic Only
+				JsonArray acceptModsStoneOre = new JsonArray();
+				acceptModsStoneOre.add("minecraft");
+				acceptModsStoneOre.add("thermalfoundation");
+				acceptModsStoneOre.add("nuclearcraft");
+				acceptModsStoneOre.add("ic2");
+				acceptModsStoneOre.add("mekanism");
+				acceptModsStoneOre.add("roots");
+				acceptModsStoneOre.add("thaumcraft");
+				acceptModsStoneOre.add("actuallyaddition");
+				acceptModsStoneOre.add("biomesoplenty");
+				acceptModsStoneOre.add("appliedenergistics2");
+				acceptModsStoneOre.add("immersiveengineering");
+				acceptModsStoneOre.add("astralsorcery");
+				acceptModsStoneOre.add("draconicevolution");
+				acceptModsStoneOre.add("embers");
+				acceptModsStoneOre.add("rftools");
+				acceptModsStoneOre.add("forestry");
+				acceptModsStoneOre.add("projectred-exploration");
+				acceptModsStoneOre.add("metallurgy");
+				acceptModsStoneOre.add("iceandfire");
+
+				JsonObject oreIronStone = new JsonObject();
+				oreIronStone.addProperty("registry_name", "oredic_ore_iron_stone");
+				oreIronStone.addProperty("id", "ore:oreIron");
+				oreIronStone.addProperty("weight", 11520);
+				oreIronStone.add("replace_block", stone);
+				oreIronStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreIronStone);
+
+				JsonObject oreGoldStone = new JsonObject();
+				oreGoldStone.addProperty("registry_name", "oredic_ore_gold_stone");
+				oreGoldStone.addProperty("id", "ore:oreGold");
+				oreGoldStone.addProperty("weight", 576);
+				oreGoldStone.add("replace_block", stone);
+				oreGoldStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreGoldStone);
+
+				JsonObject oreDiamondStone = new JsonObject();
+				oreDiamondStone.addProperty("registry_name", "oredic_ore_diamond_stone");
+				oreDiamondStone.addProperty("id", "ore:oreDiamond");
+				oreDiamondStone.addProperty("weight", 128);
+				oreDiamondStone.add("replace_block", stone);
+				oreDiamondStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreDiamondStone);
+
+				JsonObject oreEmeraldStone = new JsonObject();
+				oreEmeraldStone.addProperty("registry_name", "oredic_ore_emerald_stone");
+				oreEmeraldStone.addProperty("id", "ore:oreEmerald");
+				oreEmeraldStone.addProperty("weight", 112);
+				oreEmeraldStone.add("replace_block", stone);
+				oreEmeraldStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreEmeraldStone);
+
+				JsonObject oreRedstoneStone = new JsonObject();
+				oreRedstoneStone.addProperty("registry_name", "oredic_ore_redstone_stone");
+				oreRedstoneStone.addProperty("id", "ore:oreRedstone");
+				oreRedstoneStone.addProperty("weight", 1024);
+				oreRedstoneStone.add("replace_block", stone);
+				oreRedstoneStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreRedstoneStone);
+
+				JsonObject oreLapisStone = new JsonObject();
+				oreLapisStone.addProperty("registry_name", "oredic_ore_lapis_stone");
+				oreLapisStone.addProperty("id", "ore:oreLapis");
+				oreLapisStone.addProperty("weight", 224);
+				oreLapisStone.add("replace_block", stone);
+				oreLapisStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreLapisStone);
+
+				JsonObject oreCoalStone = new JsonObject();
+				oreCoalStone.addProperty("registry_name", "oredic_ore_coal_stone");
+				oreCoalStone.addProperty("id", "ore:oreCoal");
+				oreCoalStone.addProperty("weight", 43520);
+				oreCoalStone.add("replace_block", stone);
+				oreCoalStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreCoalStone);
+				
+				JsonArray acceptModsDimStoneOre = new JsonArray();
+				acceptModsDimStoneOre.add("neo_ores");
+				
+				JsonObject urystone = new JsonObject();
+				urystone.addProperty("id", "neo_ores:dim_stone");
+				urystone.addProperty("metadata", 0);
+				
+				JsonObject oreIronUryStone = new JsonObject();
+				oreIronUryStone.addProperty("registry_name", "oredic_ore_iron_urystone");
+				oreIronUryStone.addProperty("id", "neo_ores:custom_iron_ore");
+				oreIronUryStone.addProperty("metadata", 0);
+				oreIronUryStone.addProperty("weight", 40680);
+				oreIronUryStone.add("replace_block", urystone);
+				oreIronUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreIronUryStone);
+
+				JsonObject oreGoldUryStone = new JsonObject();
+				oreGoldUryStone.addProperty("registry_name", "oredic_ore_gold_urystone");
+				oreGoldUryStone.addProperty("id", "neo_ores:custom_gold_ore");
+				oreGoldUryStone.addProperty("metadata", 0);
+				oreGoldUryStone.addProperty("weight", 4608);
+				oreGoldUryStone.add("replace_block", urystone);
+				oreGoldUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreGoldUryStone);
+
+				JsonObject oreDiamondUryStone = new JsonObject();
+				oreDiamondUryStone.addProperty("registry_name", "oredic_ore_diamond_urystone");
+				oreDiamondUryStone.addProperty("id", "neo_ores:custom_diamond_ore");
+				oreDiamondUryStone.addProperty("metadata", 0);
+				oreDiamondUryStone.addProperty("weight", 2048);
+				oreDiamondUryStone.add("replace_block", urystone);
+				oreDiamondUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreDiamondUryStone);
+
+				JsonObject oreEmeraldUryStone = new JsonObject();
+				oreEmeraldUryStone.addProperty("registry_name", "oredic_ore_emerald_urystone");
+				oreEmeraldUryStone.addProperty("id", "neo_ores:custom_emerald_ore");
+				oreEmeraldUryStone.addProperty("metadata", 0);
+				oreEmeraldUryStone.addProperty("weight", 1152);
+				oreEmeraldUryStone.add("replace_block", urystone);
+				oreEmeraldUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreEmeraldUryStone);
+
+				JsonObject oreRedstoneUryStone = new JsonObject();
+				oreRedstoneUryStone.addProperty("registry_name", "oredic_ore_redstone_urystone");
+				oreRedstoneUryStone.addProperty("id", "neo_ores:custom_redstone_ore");
+				oreRedstoneUryStone.addProperty("metadata", 0);
+				oreRedstoneUryStone.addProperty("weight", 16384);
+				oreRedstoneUryStone.add("replace_block", urystone);
+				oreRedstoneUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreRedstoneUryStone);
+
+				JsonObject oreLapisUryStone = new JsonObject();
+				oreLapisUryStone.addProperty("registry_name", "oredic_ore_lapis_urystone");
+				oreLapisUryStone.addProperty("id", "neo_ores:custom_lapis_ore");
+				oreLapisUryStone.addProperty("metadata", 0);
+				oreLapisUryStone.addProperty("weight", 3584);
+				oreLapisUryStone.add("replace_block", urystone);
+				oreLapisUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreLapisUryStone);
+				
+				JsonObject oreQuartzUryStone = new JsonObject();
+				oreQuartzUryStone.addProperty("registry_name", "oredic_ore_quartz_urystone");
+				oreQuartzUryStone.addProperty("id", "neo_ores:custom_quartz_ore");
+				oreQuartzUryStone.addProperty("metadata", 0);
+				oreQuartzUryStone.addProperty("weight", 43068);
+				oreQuartzUryStone.add("replace_block", urystone);
+				oreQuartzUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreQuartzUryStone);
+				
+				JsonObject oreCoalUryStone = new JsonObject();
+				oreCoalUryStone.addProperty("registry_name", "oredic_ore_coal_urystone");
+				oreCoalUryStone.addProperty("id", "neo_ores:custom_coal_ore");
+				oreCoalUryStone.addProperty("metadata", 0);
+				oreCoalUryStone.addProperty("weight", 87040);
+				oreCoalUryStone.add("replace_block", urystone);
+				oreCoalUryStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreCoalUryStone);
+				
+				JsonObject oreGuarditeUryStone = new JsonObject();
+				oreGuarditeUryStone.addProperty("registry_name", "oredic_ore_guardite_urystone");
+				oreGuarditeUryStone.addProperty("id", "neo_ores:guardite_ore");
+				oreGuarditeUryStone.addProperty("weight", 5280);
+				oreGuarditeUryStone.add("replace_block", urystone);
+				oreGuarditeUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreGuarditeUryStone);
+				
+				JsonObject oreLanditeUryStone = new JsonObject();
+				oreLanditeUryStone.addProperty("registry_name", "oredic_ore_landite_urystone");
+				oreLanditeUryStone.addProperty("id", "neo_ores:landite_ore");
+				oreLanditeUryStone.addProperty("weight", 5280);
+				oreLanditeUryStone.add("replace_block", urystone);
+				oreLanditeUryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreLanditeUryStone);
+				
+				JsonObject gabrystone = new JsonObject();
+				gabrystone.addProperty("id", "neo_ores:dim_stone");
+				gabrystone.addProperty("metadata", 1);
+				
+				JsonObject oreIronGabryStone = new JsonObject();
+				oreIronGabryStone.addProperty("registry_name", "oredic_ore_iron_gabrystone");
+				oreIronGabryStone.addProperty("id", "neo_ores:custom_iron_ore");
+				oreIronGabryStone.addProperty("metadata", 1);
+				oreIronGabryStone.addProperty("weight", 40680);
+				oreIronGabryStone.add("replace_block", gabrystone);
+				oreIronGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreIronGabryStone);
+
+				JsonObject oreGoldGabryStone = new JsonObject();
+				oreGoldGabryStone.addProperty("registry_name", "oredic_ore_gold_gabrystone");
+				oreGoldGabryStone.addProperty("id", "neo_ores:custom_gold_ore");
+				oreGoldGabryStone.addProperty("metadata", 1);
+				oreGoldGabryStone.addProperty("weight", 4068);
+				oreGoldGabryStone.add("replace_block", gabrystone);
+				oreGoldGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreGoldGabryStone);
+
+				JsonObject oreDiamondGabryStone = new JsonObject();
+				oreDiamondGabryStone.addProperty("registry_name", "oredic_ore_diamond_gabrystone");
+				oreDiamondGabryStone.addProperty("id", "neo_ores:custom_diamond_ore");
+				oreDiamondGabryStone.addProperty("metadata", 1);
+				oreDiamondGabryStone.addProperty("weight", 2048);
+				oreDiamondGabryStone.add("replace_block", gabrystone);
+				oreDiamondGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreDiamondGabryStone);
+
+				JsonObject oreEmeraldGabryStone = new JsonObject();
+				oreEmeraldGabryStone.addProperty("registry_name", "oredic_ore_emerald_gabrystone");
+				oreEmeraldGabryStone.addProperty("id", "neo_ores:custom_emerald_ore");
+				oreEmeraldGabryStone.addProperty("metadata", 1);
+				oreEmeraldGabryStone.addProperty("weight", 1152);
+				oreEmeraldGabryStone.add("replace_block", gabrystone);
+				oreEmeraldGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreEmeraldGabryStone);
+
+				JsonObject oreRedstoneGabryStone = new JsonObject();
+				oreRedstoneGabryStone.addProperty("registry_name", "oredic_ore_redstone_gabrystone");
+				oreRedstoneGabryStone.addProperty("id", "neo_ores:custom_redstone_ore");
+				oreRedstoneGabryStone.addProperty("metadata", 1);
+				oreRedstoneGabryStone.addProperty("weight", 16384);
+				oreRedstoneGabryStone.add("replace_block", gabrystone);
+				oreRedstoneGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreRedstoneGabryStone);
+
+				JsonObject oreLapisGabryStone = new JsonObject();
+				oreLapisGabryStone.addProperty("registry_name", "oredic_ore_lapis_gabrystone");
+				oreLapisGabryStone.addProperty("id", "neo_ores:custom_lapis_ore");
+				oreLapisGabryStone.addProperty("metadata", 1);
+				oreLapisGabryStone.addProperty("weight", 3584);
+				oreLapisGabryStone.add("replace_block", gabrystone);
+				oreLapisGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreLapisGabryStone);
+				
+				JsonObject oreQuartzGabryStone = new JsonObject();
+				oreQuartzGabryStone.addProperty("registry_name", "oredic_ore_quartz_gabrystone");
+				oreQuartzGabryStone.addProperty("id", "neo_ores:custom_quartz_ore");
+				oreQuartzGabryStone.addProperty("metadata", 1);
+				oreQuartzGabryStone.addProperty("weight", 43068);
+				oreQuartzGabryStone.add("replace_block", gabrystone);
+				oreQuartzGabryStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreQuartzGabryStone);
+				
+				JsonObject oreCoalGabryStone = new JsonObject();
+				oreCoalGabryStone.addProperty("registry_name", "oredic_ore_coal_gabrystone");
+				oreCoalGabryStone.addProperty("id", "neo_ores:custom_coal_ore");
+				oreCoalGabryStone.addProperty("metadata", 1);
+				oreCoalGabryStone.addProperty("weight", 87040);
+				oreCoalGabryStone.add("replace_block", gabrystone);
+				oreCoalGabryStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreCoalGabryStone);
+				
+				JsonObject oreMarliteGabryStone = new JsonObject();
+				oreMarliteGabryStone.addProperty("registry_name", "oredic_ore_marlite_gabrystone");
+				oreMarliteGabryStone.addProperty("id", "neo_ores:marlite_ore");
+				oreMarliteGabryStone.addProperty("weight", 2400);
+				oreMarliteGabryStone.add("replace_block", gabrystone);
+				oreMarliteGabryStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreMarliteGabryStone);
+				
+				JsonObject oreSanititeGabryStone = new JsonObject();
+				oreSanititeGabryStone.addProperty("registry_name", "oredic_ore_sanitite_gabrystone");
+				oreSanititeGabryStone.addProperty("id", "neo_ores:sanitite_ore");
+				oreSanititeGabryStone.addProperty("weight", 2400);
+				oreSanititeGabryStone.add("replace_block", gabrystone);
+				oreSanititeGabryStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreSanititeGabryStone);
+				
+				JsonObject raphastone = new JsonObject();
+				raphastone.addProperty("id", "neo_ores:dim_stone");
+				raphastone.addProperty("metadata", 2);
+				
+				JsonObject oreIronRaphaStone = new JsonObject();
+				oreIronRaphaStone.addProperty("registry_name", "oredic_ore_iron_raphastone");
+				oreIronRaphaStone.addProperty("id", "neo_ores:custom_iron_ore");
+				oreIronRaphaStone.addProperty("metadata", 2);
+				oreIronRaphaStone.addProperty("weight", 40680);
+				oreIronRaphaStone.add("replace_block", raphastone);
+				oreIronRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreIronRaphaStone);
+
+				JsonObject oreGoldRaphaStone = new JsonObject();
+				oreGoldRaphaStone.addProperty("registry_name", "oredic_ore_gold_raphastone");
+				oreGoldRaphaStone.addProperty("id", "neo_ores:custom_gold_ore");
+				oreGoldRaphaStone.addProperty("metadata", 2);
+				oreGoldRaphaStone.addProperty("weight", 4608);
+				oreGoldRaphaStone.add("replace_block", raphastone);
+				oreGoldRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreGoldRaphaStone);
+
+				JsonObject oreDiamondRaphaStone = new JsonObject();
+				oreDiamondRaphaStone.addProperty("registry_name", "oredic_ore_diamond_raphastone");
+				oreDiamondRaphaStone.addProperty("id", "neo_ores:custom_diamond_ore");
+				oreDiamondRaphaStone.addProperty("metadata", 2);
+				oreDiamondRaphaStone.addProperty("weight", 2048);
+				oreDiamondRaphaStone.add("replace_block", raphastone);
+				oreDiamondRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreDiamondRaphaStone);
+
+				JsonObject oreEmeraldRaphaStone = new JsonObject();
+				oreEmeraldRaphaStone.addProperty("registry_name", "oredic_ore_emerald_raphastone");
+				oreEmeraldRaphaStone.addProperty("id", "neo_ores:custom_emerald_ore");
+				oreEmeraldRaphaStone.addProperty("metadata", 2);
+				oreEmeraldRaphaStone.addProperty("weight", 1152);
+				oreEmeraldRaphaStone.add("replace_block", raphastone);
+				oreEmeraldRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreEmeraldRaphaStone);
+
+				JsonObject oreRedstoneRaphaStone = new JsonObject();
+				oreRedstoneRaphaStone.addProperty("registry_name", "oredic_ore_redstone_raphastone");
+				oreRedstoneRaphaStone.addProperty("id", "neo_ores:custom_redstone_ore");
+				oreRedstoneRaphaStone.addProperty("metadata", 2);
+				oreRedstoneRaphaStone.addProperty("weight", 16384);
+				oreRedstoneRaphaStone.add("replace_block", raphastone);
+				oreRedstoneRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreRedstoneRaphaStone);
+
+				JsonObject oreLapisRaphaStone = new JsonObject();
+				oreLapisRaphaStone.addProperty("registry_name", "oredic_ore_lapis_raphastone");
+				oreLapisRaphaStone.addProperty("id", "neo_ores:custom_lapis_ore");
+				oreLapisRaphaStone.addProperty("metadata", 2);
+				oreLapisRaphaStone.addProperty("weight", 3584);
+				oreLapisRaphaStone.add("replace_block", raphastone);
+				oreLapisRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreLapisRaphaStone);
+				
+				JsonObject oreQuartzRaphaStone = new JsonObject();
+				oreQuartzRaphaStone.addProperty("registry_name", "oredic_ore_quartz_raphastone");
+				oreQuartzRaphaStone.addProperty("id", "neo_ores:custom_quartz_ore");
+				oreQuartzRaphaStone.addProperty("metadata", 2);
+				oreQuartzRaphaStone.addProperty("weight", 43068);
+				oreQuartzRaphaStone.add("replace_block", raphastone);
+				oreQuartzRaphaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreQuartzRaphaStone);
+				
+				JsonObject oreCoalRaphaStone = new JsonObject();
+				oreCoalRaphaStone.addProperty("registry_name", "oredic_ore_coal_raphastone");
+				oreCoalRaphaStone.addProperty("id", "neo_ores:custom_coal_ore");
+				oreCoalRaphaStone.addProperty("metadata", 2);
+				oreCoalRaphaStone.addProperty("weight", 87040);
+				oreCoalRaphaStone.add("replace_block", raphastone);
+				oreCoalRaphaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreCoalRaphaStone);
+				
+				JsonObject oreAeriteRaphaStone = new JsonObject();
+				oreAeriteRaphaStone.addProperty("registry_name", "oredic_ore_aerite_raphastone");
+				oreAeriteRaphaStone.addProperty("id", "neo_ores:aerite_ore");
+				oreAeriteRaphaStone.addProperty("weight", 1440);
+				oreAeriteRaphaStone.add("replace_block", raphastone);
+				oreAeriteRaphaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreAeriteRaphaStone);
+				
+				JsonObject oreDreniteRaphaStone = new JsonObject();
+				oreDreniteRaphaStone.addProperty("registry_name", "oredic_ore_drenite_raphastone");
+				oreDreniteRaphaStone.addProperty("id", "neo_ores:drenite_ore");
+				oreDreniteRaphaStone.addProperty("weight", 1440);
+				oreDreniteRaphaStone.add("replace_block", raphastone);
+				oreDreniteRaphaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreDreniteRaphaStone);
+				
+				JsonObject michastone = new JsonObject();
+				michastone.addProperty("id", "neo_ores:dim_stone");
+				michastone.addProperty("metadata", 3);
+				
+				JsonObject oreIronMichaStone = new JsonObject();
+				oreIronMichaStone.addProperty("registry_name", "oredic_ore_iron_michastone");
+				oreIronMichaStone.addProperty("id", "neo_ores:custom_iron_ore");
+				oreIronMichaStone.addProperty("metadata", 3);
+				oreIronMichaStone.addProperty("weight", 40680);
+				oreIronMichaStone.add("replace_block", michastone);
+				oreIronMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreIronMichaStone);
+
+				JsonObject oreGoldMichaStone = new JsonObject();
+				oreGoldMichaStone.addProperty("registry_name", "oredic_ore_gold_michastone");
+				oreGoldMichaStone.addProperty("id", "neo_ores:custom_gold_ore");
+				oreGoldMichaStone.addProperty("metadata", 3);
+				oreGoldMichaStone.addProperty("weight", 4608);
+				oreGoldMichaStone.add("replace_block", michastone);
+				oreGoldMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreGoldMichaStone);
+
+				JsonObject oreDiamondMichaStone = new JsonObject();
+				oreDiamondMichaStone.addProperty("registry_name", "oredic_ore_diamond_michastone");
+				oreDiamondMichaStone.addProperty("id", "neo_ores:custom_diamond_ore");
+				oreDiamondMichaStone.addProperty("metadata", 3);
+				oreDiamondMichaStone.addProperty("weight", 2048);
+				oreDiamondMichaStone.add("replace_block", michastone);
+				oreDiamondMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreDiamondMichaStone);
+
+				JsonObject oreEmeraldMichaStone = new JsonObject();
+				oreEmeraldMichaStone.addProperty("registry_name", "oredic_ore_emerald_michastone");
+				oreEmeraldMichaStone.addProperty("id", "neo_ores:custom_emerald_ore");
+				oreEmeraldMichaStone.addProperty("metadata", 3);
+				oreEmeraldMichaStone.addProperty("weight", 1152);
+				oreEmeraldMichaStone.add("replace_block", michastone);
+				oreEmeraldMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreEmeraldMichaStone);
+
+				JsonObject oreRedstoneMichaStone = new JsonObject();
+				oreRedstoneMichaStone.addProperty("registry_name", "oredic_ore_redstone_michastone");
+				oreRedstoneMichaStone.addProperty("id", "neo_ores:custom_redstone_ore");
+				oreRedstoneMichaStone.addProperty("metadata", 3);
+				oreRedstoneMichaStone.addProperty("weight", 16384);
+				oreRedstoneMichaStone.add("replace_block", michastone);
+				oreRedstoneMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreRedstoneMichaStone);
+
+				JsonObject oreLapisMichaStone = new JsonObject();
+				oreLapisMichaStone.addProperty("registry_name", "oredic_ore_lapis_michastone");
+				oreLapisMichaStone.addProperty("id", "neo_ores:custom_lapis_ore");
+				oreLapisMichaStone.addProperty("metadata", 3);
+				oreLapisMichaStone.addProperty("weight", 3584);
+				oreLapisMichaStone.add("replace_block", michastone);
+				oreLapisMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreLapisMichaStone);
+				
+				JsonObject oreQuartzMichaStone = new JsonObject();
+				oreQuartzMichaStone.addProperty("registry_name", "oredic_ore_quartz_michastone");
+				oreQuartzMichaStone.addProperty("id", "neo_ores:custom_quartz_ore");
+				oreQuartzMichaStone.addProperty("metadata", 3);
+				oreQuartzMichaStone.addProperty("weight", 43068);
+				oreQuartzMichaStone.add("replace_block", michastone);
+				oreQuartzMichaStone.add("acceptMods", acceptModsDimStoneOre);
+				spell_ore_gen.add(oreQuartzMichaStone);
+				
+				JsonObject oreCoalMichaStone = new JsonObject();
+				oreCoalMichaStone.addProperty("registry_name", "oredic_ore_coal_michastone");
+				oreCoalMichaStone.addProperty("id", "neo_ores:custom_coal_ore");
+				oreCoalMichaStone.addProperty("metadata", 3);
+				oreCoalMichaStone.addProperty("weight", 87040);
+				oreCoalMichaStone.add("replace_block", michastone);
+				oreCoalMichaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreCoalMichaStone);
+				
+				JsonObject oreForciteMichaStone = new JsonObject();
+				oreForciteMichaStone.addProperty("registry_name", "oredic_ore_forcite_michastone");
+				oreForciteMichaStone.addProperty("id", "neo_ores:forcite_ore");
+				oreForciteMichaStone.addProperty("weight", 960);
+				oreForciteMichaStone.add("replace_block", michastone);
+				oreForciteMichaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreForciteMichaStone);
+				
+				JsonObject oreFlamiteMichaStone = new JsonObject();
+				oreFlamiteMichaStone.addProperty("registry_name", "oredic_ore_flamite_michastone");
+				oreFlamiteMichaStone.addProperty("id", "neo_ores:flamite_ore");
+				oreFlamiteMichaStone.addProperty("weight", 960);
+				oreFlamiteMichaStone.add("replace_block", michastone);
+				oreFlamiteMichaStone.add("acceptMods", acceptModsStoneOre);
+				spell_ore_gen.add(oreFlamiteMichaStone);
+
+				configDefault.add("spell_ore_gen", spell_ore_gen);
+
+				Gson gson = new GsonBuilder().serializeNulls().create();
+				writer.setIndent("  ");
+				gson.toJson(configDefault, writer);
+				writer.close();
+			}
+			catch (Exception e)
+			{
+				FMLLog.log.error("Unable to create {} - skipping", configFile);
+			}
+		}
+		JsonParser parser = new JsonParser();
+		JsonElement config;
+		try
+		{
+			try (Reader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))
+			{
+				config = parser.parse(reader);
+			}
+
+			if (config.isJsonObject())
+			{
+				JsonObject jo = config.getAsJsonObject();
+				for (JsonElement genE : jo.get("spell_ore_gen").getAsJsonArray())
+				{
+					try
+					{
+						JsonObject gen = genE.getAsJsonObject();
+						GameRegistry.findRegistry(OreWeightRecipe.class)
+								.register(new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString())));
+					}
+					catch (Exception e)
+					{
+						FMLLog.log.error("Unable to register");
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			FMLLog.log.error("Unable to parse {} - skipping", configFile);
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void registerOreWeightRecipes(RegistryEvent.Register<OreWeightRecipe> event)
+	{
+		// event.getR
 	}
 }

@@ -92,9 +92,10 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 	
 	public static String getName(SpellItem spellitem)
 	{
-		if(spellitem.getSpellClass() instanceof Spell.SpellCorrection)
+		Spell sc = spellitem.getSpellClass();
+		if(sc instanceof Spell.SpellCorrection)
 		{
-			SpellCorrection correction = (SpellCorrection)spellitem.getSpellClass();
+			SpellCorrection correction = (SpellCorrection)sc;
 			return I18n.format("spell." + spellitem.getTranslateKey() + ".name") + I18n.format("correction." + correction.getLevel());
 		}
 		else

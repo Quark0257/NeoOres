@@ -14,11 +14,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 public abstract class Spell
 {
-	/*
-	 * Before spell executes, this runs once.
-	 */
-	public abstract void initialize();
-
 	public static abstract class SpellForm extends Spell
 	{
 		public abstract boolean needPrimaryForm();

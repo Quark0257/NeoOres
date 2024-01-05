@@ -255,10 +255,4 @@ public class SpellComposition extends SpellEffect implements HasTier
 
 	@Override
 	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) {}
-
-	@Override
-	public void initialize() {
-		this.tier = 0;
-		
-	}
 }

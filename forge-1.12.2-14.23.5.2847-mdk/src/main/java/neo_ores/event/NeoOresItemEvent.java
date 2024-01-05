@@ -50,7 +50,7 @@ public class NeoOresItemEvent
 			e.getToolTip().add("");
 			if(isShift())
 			{
-				for(SpellItem item : SpellUtils.getListInitialized(SpellUtils.getListFromItemStackNBT(stack.getTagCompound())))
+				for(SpellItem item : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
 				{
 					e.getToolTip().add(TextFormatting.BLUE + ItemRecipeSheet.getName(item) + (e.getFlags().isAdvanced() ? " (" + item.toString() + ")" : ""));
 				}

@@ -47,7 +47,8 @@ public class GuiUtils
 			int Y = mouseY - scrolledY - (height - GuiMageKnowledgeTable.insideSizeY) / 2;// -32
 			if (canGetProvisionalSpell(X, Y))
 			{
-				if (getProvisionalSpell(X, Y).getSpellClass() instanceof Spell.SpellCorrection)
+				Spell sc = getProvisionalSpell(X, Y).getSpellClass();
+				if (sc instanceof Spell.SpellCorrection)
 				{
 					int x = getProvisionalSpell(X, Y).getPositionX() * GuiMageKnowledgeTable.interval + 16;
 					int y = getProvisionalSpell(X, Y).getPositionY() * GuiMageKnowledgeTable.interval + 18;
@@ -56,7 +57,7 @@ public class GuiUtils
 						return getProvisionalSpell(X, Y);
 					}
 				}
-				else if (getProvisionalSpell(X, Y).getSpellClass() instanceof Spell.SpellEffect)
+				else if (sc instanceof Spell.SpellEffect)
 				{
 					int x = getProvisionalSpell(X, Y).getPositionX() * GuiMageKnowledgeTable.interval + 16;
 					int y = getProvisionalSpell(X, Y).getPositionY() * GuiMageKnowledgeTable.interval + 16;

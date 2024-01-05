@@ -191,17 +191,6 @@ public class SpellUtils
 		return new ArrayList<SpellItem>();
 	}
 	
-	public static List<SpellItem> getListInitialized(List<SpellItem> list)
-	{
-		List<SpellItem> init = new ArrayList<SpellItem>();
-		for(SpellItem spell : list)
-		{
-			spell.getSpellClass().initialize();
-			init.add(spell);
-		}
-		return init;
-	}
-	
 	public static NBTTagCompound getItemStackNBTFromList(List<SpellItem> spells, NBTTagCompound nbt)
 	{
 		NBTTagCompound output = nbt.copy();
@@ -241,10 +230,10 @@ public class SpellUtils
 	public static ResourceLocation textureFromSpellItem(SpellItem spellitem)
 	{
 		String path = "textures/gui/spell/spell_";
-		
-		if(spellitem.getSpellClass() instanceof Spell.SpellConditional) path += "conditional_";
-		else if(spellitem.getSpellClass() instanceof Spell.SpellCorrection) path += "correction_";
-		else if(spellitem.getSpellClass() instanceof Spell.SpellEffect) path += "effect_";
+		Spell sc = spellitem.getSpellClass();
+		if(sc instanceof Spell.SpellConditional) path += "conditional_";
+		else if(sc instanceof Spell.SpellCorrection) path += "correction_";
+		else if(sc instanceof Spell.SpellEffect) path += "effect_";
 		else path += "form_";
 		
 		if(spellitem.getType() == SpellItemType.AIR) path += "air";
@@ -261,9 +250,10 @@ public class SpellUtils
 	{
 		String path = "textures/gui/spell/spell_";
 		
-		if(spellitem.getSpellClass() instanceof Spell.SpellConditional) path += "conditional_";
-		else if(spellitem.getSpellClass() instanceof Spell.SpellCorrection) path += "correction_";
-		else if(spellitem.getSpellClass() instanceof Spell.SpellEffect) path += "effect_";
+		Spell sc = spellitem.getSpellClass();
+		if(sc instanceof Spell.SpellConditional) path += "conditional_";
+		else if(sc instanceof Spell.SpellCorrection) path += "correction_";
+		else if(sc instanceof Spell.SpellEffect) path += "effect_";
 		else path += "form_";
 		
 		path += "inactive.png";
@@ -384,17 +374,20 @@ public class SpellUtils
 	public static void run(List<SpellItem> initializedSpellList, EntityLivingBase runner, ItemStack stack, @Nullable EntityLivingBase targetEntity)
 	{
 		RayTraceResult result = null;
-		List<SpellItem> entityspells = new ArrayList<SpellItem>();
+		List<Spell> entityspells = new ArrayList<Spell>();
 		List<SpellItem> spells = new ArrayList<SpellItem>();
+		List<Spell> spellscs = new ArrayList<Spell>();
 		for(SpellItem spellitem : initializedSpellList)
 		{
-			if(spellitem.getSpellClass() instanceof Spell.SpellForm && ((Spell.SpellForm)spellitem.getSpellClass()).needPrimaryForm())
+			Spell sc = spellitem.getSpellClass();
+			if(sc instanceof Spell.SpellForm && ((Spell.SpellForm)sc).needPrimaryForm())
 			{
-				entityspells.add(spellitem);
+				entityspells.add(sc);
 			}
 			else
 			{
 				spells.add(spellitem);
+				spellscs.add(sc);
 			}
 		}
 		
@@ -405,46 +398,47 @@ public class SpellUtils
 		
 		if(!entityspells.isEmpty())
 		{
-			for(SpellItem entityspellitem : entityspells)
+			for(Spell entityspellitem : entityspells)
 			{
-				Spell entityspell = entityspellitem.getSpellClass();
-				for(SpellItem spell : spells)
+				for(Spell spell : spellscs)
 				{
-					if(spell.getSpellClass() instanceof Spell.SpellCorrection)
+					if(spell instanceof Spell.SpellCorrection)
 					{
-						((Spell.SpellCorrection)spell.getSpellClass()).onCorrection(entityspell);
+						((Spell.SpellCorrection)spell).onCorrection(entityspellitem);
 					}
 				}
-				if(entityspell instanceof Spell.SpellForm)
+				if(entityspellitem instanceof Spell.SpellForm)
 				{
-					((Spell.SpellForm)entityspell).onSpellRunning(runner.getEntityWorld(), runner,stack,result,SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));				
+					((Spell.SpellForm)entityspellitem).onSpellRunning(runner.getEntityWorld(), runner,stack,result,SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));				
 				}
 			}
 		}
 		else
 		{
-			List<SpellItem> formspells = new ArrayList<SpellItem>();
+			List<Spell> forms = new ArrayList<Spell>();
+			List<Spell> notforms = new ArrayList<Spell>();
 			List<SpellItem> notformspells = new ArrayList<SpellItem>();
 			for(SpellItem spell : spells)
 			{
-				if(spell.getSpellClass() instanceof Spell.SpellForm)
+				Spell sc = spell.getSpellClass();
+				if(sc instanceof Spell.SpellForm)
 				{
-					formspells.add(spell);
+					forms.add(sc);
 				}
 				else
 				{
 					notformspells.add(spell);
+					notforms.add(sc);
 				}
 			}
 			
-			for(SpellItem formspell : formspells)
+			for(Spell form : forms)
 			{
-				Spell form = formspell.getSpellClass();
-				for(SpellItem notformspell : notformspells)
+				for(Spell notformspell : notforms)
 				{
-					if(notformspell.getSpellClass() instanceof Spell.SpellCorrection)
+					if(notformspell instanceof Spell.SpellCorrection)
 					{
-						((Spell.SpellCorrection)notformspell.getSpellClass()).onCorrection(form);
+						((Spell.SpellCorrection)notformspell).onCorrection(form);
 					}
 				}
 				

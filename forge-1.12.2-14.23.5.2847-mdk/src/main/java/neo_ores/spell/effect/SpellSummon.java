@@ -90,12 +90,6 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 	}
 
 	@Override
-	public void initialize() 
-	{
-		applyNBT = false;
-	}
-
-	@Override
 	public void setCanApplyNBT() 
 	{
 		applyNBT = true;

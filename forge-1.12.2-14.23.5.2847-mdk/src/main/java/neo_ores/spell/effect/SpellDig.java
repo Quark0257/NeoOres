@@ -208,13 +208,4 @@ public class SpellDig  extends SpellEffect implements HasRange,HasSilk,HasLuck,H
             }
         }
 	}
-
-	@Override
-	public void initialize() {
-		range = 0;
-		fortune = 0;
-		isSilktouch = false;
-		harvestlevel = 0;
-		canGather = false;
-	}
 }

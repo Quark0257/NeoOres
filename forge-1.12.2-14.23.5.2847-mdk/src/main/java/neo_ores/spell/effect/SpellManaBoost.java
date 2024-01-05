@@ -25,10 +25,4 @@ public class SpellManaBoost extends SpellEffect
 	{
 		
 	}
-
-	@Override
-	public void initialize() 
-	{
-		
-	}
 }

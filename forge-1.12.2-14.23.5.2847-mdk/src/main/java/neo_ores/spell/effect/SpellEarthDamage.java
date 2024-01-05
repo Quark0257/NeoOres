@@ -107,11 +107,4 @@ public class SpellEarthDamage  extends SpellEffect implements HasRange,HasLuck,H
 
 	@Override
 	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack) {}
-
-	@Override
-	public void initialize() {
-		damageLevel = 0;
-		luck = 0;
-		range0 = 0;
-	}
 }

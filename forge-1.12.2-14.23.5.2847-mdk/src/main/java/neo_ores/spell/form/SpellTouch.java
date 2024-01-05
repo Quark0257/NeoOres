@@ -23,29 +23,30 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 	@Override
 	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack,RayTraceResult result, NBTTagCompound spells) 
 	{
-		List<SpellItem> corrections = new ArrayList<SpellItem>();
-		List<SpellItem> effects = new ArrayList<SpellItem>();
+		List<Spell> corrections = new ArrayList<Spell>();
+		List<Spell> effects = new ArrayList<Spell>();
 		
-		for(SpellItem spell : SpellUtils.getListInitialized(SpellUtils.getListFromItemStackNBT(spells)))
+		for(SpellItem spell : SpellUtils.getListFromItemStackNBT(spells))
 		{
-			if(spell.getSpellClass() instanceof Spell.SpellCorrection)
+			Spell sc = spell.getSpellClass();
+			if(sc instanceof Spell.SpellCorrection)
 			{
-				corrections.add(spell);
+				corrections.add(sc);
 			}
-			else if(spell.getSpellClass() instanceof Spell.SpellEffect)
+			else if(sc instanceof Spell.SpellEffect)
 			{
-				effects.add(spell);
+				effects.add(sc);
 			}
 		}
 		
 		if(result != null && result.typeOfHit == Type.ENTITY)
 		{
-			for(SpellItem effect : effects)
+			for(Spell effect : effects)
 			{
-				Spell.SpellEffect spell = (Spell.SpellEffect)effect.getSpellClass();
-				for(SpellItem correction : corrections)
+				Spell.SpellEffect spell = (Spell.SpellEffect)effect;
+				for(Spell correction : corrections)
 				{
-					((Spell.SpellCorrection)correction.getSpellClass()).onCorrection(spell);
+					((Spell.SpellCorrection)correction).onCorrection(spell);
 				}
 				spell.onEffectRunToSelfAndOther(world, runner, result,stack);
 				spell.onEffectRunToOther(world, result,stack);
@@ -61,12 +62,12 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 			
 			if(blockresult != null)
 			{
-				for(SpellItem effect : effects)
+				for(Spell effect : effects)
 				{
-					Spell.SpellEffect spell = (Spell.SpellEffect)effect.getSpellClass();
-					for(SpellItem correction : corrections)
+					Spell.SpellEffect spell = (Spell.SpellEffect)effect;
+					for(Spell correction : corrections)
 					{
-						((Spell.SpellCorrection)correction.getSpellClass()).onCorrection(spell);
+						((Spell.SpellCorrection)correction).onCorrection(spell);
 					}
 					spell.onEffectRunToSelfAndOther(world, runner, blockresult,stack);
 					spell.onEffectRunToOther(world, blockresult,stack);
@@ -85,10 +86,5 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 	public boolean needConditional() 
 	{
 		return false;
-	}
-
-	@Override
-	public void initialize() {
-		liquid = false;
 	}
 }

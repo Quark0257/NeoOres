@@ -360,10 +360,11 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval,
 						y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
 				RenderHelper.enableGUIStandardItemLighting();
-
-				if (spellitem.getSpellClass() instanceof Spell.SpellCorrection)
+				
+				Spell sc = spellitem.getSpellClass();
+				if (sc instanceof Spell.SpellCorrection)
 				{
-					SpellCorrection correction = (SpellCorrection) spellitem.getSpellClass();
+					SpellCorrection correction = (SpellCorrection) sc;
 					if (correction.getLevel() != 0)
 					{
 						this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,
@@ -558,9 +559,10 @@ public class GuiMageKnowledgeTable extends GuiScreen
 
 	private static String getName(SpellItem spellitem)
 	{
-		if (spellitem.getSpellClass() instanceof Spell.SpellCorrection)
+		Spell sc = spellitem.getSpellClass();
+		if (sc instanceof Spell.SpellCorrection)
 		{
-			SpellCorrection correction = (SpellCorrection) spellitem.getSpellClass();
+			SpellCorrection correction = (SpellCorrection) sc;
 			return I18n.format("spell." + spellitem.getTranslateKey() + ".name")
 					+ I18n.format("correction." + correction.getLevel());
 		}

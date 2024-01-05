@@ -21,8 +21,8 @@ import net.minecraft.world.World;
 
 public class SpellPullItem extends SpellEffect implements HasCollidableFilter,HasRange
 {
-	private int range;
-	private boolean collidableFilter;
+	private int range = 0;
+	private boolean collidableFilter = false;
 	
 	@Override
 	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack) {
@@ -96,14 +96,6 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter,Ha
 				if(entityitem.getItem().isEmpty()) entityitem.setDead();
 			}
 		}
-	}
-	
-
-	@Override
-	public void initialize() 
-	{
-		this.range = 0;
-		this.collidableFilter = false;
 	}
 
 	@Override

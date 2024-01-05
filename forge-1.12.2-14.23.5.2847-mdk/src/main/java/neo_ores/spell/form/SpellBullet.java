@@ -19,13 +19,13 @@ import net.minecraft.world.World;
 
 public class SpellBullet  extends SpellFormSpellEntity implements HasChanceLiquid,HasSpeed,HasContinuation,HasNoGravity,HasNoAnyResistance,HasNoInertia,HasCollidableFilter
 {
-	private boolean liquid;
-	private boolean noGravity;
-	private boolean noResistance;
-	private int continuation;
-	private int speed;
-	private boolean noInertia;
-	private boolean canCollided;
+	private boolean liquid = false;
+	private boolean noGravity = false;
+	private boolean noResistance = false;
+	private int continuation = 0;
+	private int speed = 0;
+	private boolean noInertia = false;
+	private boolean canCollided = false;
 	
 	@Override
 	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack,RayTraceResult result, NBTTagCompound spells) 
@@ -41,19 +41,7 @@ public class SpellBullet  extends SpellFormSpellEntity implements HasChanceLiqui
 	{
 		return false;
 	}
-
-	@Override
-	public void initialize() 
-	{
-		this.liquid = false;
-		this.continuation = 0;
-		this.noGravity= false;
-		this.noResistance = false;
-		this.speed = 0;
-		this.noInertia = false;
-		this.canCollided = false;
-	}
-
+	
 	@Override
 	public void setSupport() 
 	{

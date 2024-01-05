@@ -233,29 +233,31 @@ public class EntitySpellBullet extends EntityThrowable
 		if(this.isUpdatingDefault) return;
 
 		List<SpellItem> notformlist = new ArrayList<SpellItem>();
-		List<SpellItem> formlist = new ArrayList<SpellItem>();
+		List<Spell> formlistsc = new ArrayList<Spell>();
+		List<Spell> notformlistsc = new ArrayList<Spell>();
 		if(this.spells != null && !this.spells.isEmpty())
 		{
 			for(SpellItem spell : this.spells)
 			{
-				if(spell.getSpellClass() instanceof Spell.SpellForm)
+				Spell sc = spell.getSpellClass();
+				if(sc instanceof Spell.SpellForm)
 				{
-					formlist.add(spell);
+					formlistsc.add(sc);
 				}
 				else
 				{
 					notformlist.add(spell);
+					notformlistsc.add(sc);
 				}
 			}
 			
-			for(SpellItem formspell : formlist)
+			for(Spell form : formlistsc)
 			{
-				Spell form = formspell.getSpellClass();
-				for(SpellItem notformspell : notformlist)
+				for(Spell notformsc : notformlistsc)
 				{
-					if(notformspell.getSpellClass() instanceof Spell.SpellCorrection)
+					if(notformsc instanceof Spell.SpellCorrection)
 					{
-						((Spell.SpellCorrection)notformspell.getSpellClass()).onCorrection(form);
+						((Spell.SpellCorrection)notformsc).onCorrection(form);
 					}
 				}
 				

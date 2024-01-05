@@ -32,7 +32,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	
 	private static final Random random = new Random();
 	
-	private int range;
+	private int range = 0;
 
 	@Override
 	public void setRange(int value) {
@@ -105,12 +105,6 @@ public class SpellOreGen extends SpellEffect implements HasRange
 			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP)runner);
 			pmds.addMXP(10L);
 		}
-	}
-	
-	@Override
-	public void initialize() 
-	{
-		this.range = 0;
 	}
 	/*
 	public static class FakeChunkGenerator implements IChunkGenerator

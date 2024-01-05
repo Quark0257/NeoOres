@@ -108,7 +108,6 @@ public class ItemSpell extends Item
 		{
 			List<SpellItem> rawSpellList = SpellUtils.getListFromItemStackNBT(itemspell.getTagCompound().copy());
 			long manaConsume = SpellUtils.getMPConsume(rawSpellList);
-			List<SpellItem> initializedSpellList = SpellUtils.getListInitialized(rawSpellList);
 			
 			if(!player.isCreative())
 			{
@@ -134,7 +133,7 @@ public class ItemSpell extends Item
 				}
 			}
 			
-			SpellUtils.run(initializedSpellList, player, player.getHeldItem(hand), target);
+			SpellUtils.run(rawSpellList, player, player.getHeldItem(hand), target);
 		}
 
         return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));

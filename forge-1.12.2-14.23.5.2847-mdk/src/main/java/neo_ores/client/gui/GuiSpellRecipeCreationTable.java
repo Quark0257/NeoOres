@@ -231,7 +231,8 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 	private boolean canSelect(SpellItem spell)
 	{
-		boolean flag = spell.getSpellClass() instanceof SpellForm || spell.getSpellClass() instanceof SpellConditional;
+		Spell sc = spell.getSpellClass();
+		boolean flag = sc instanceof SpellForm || sc instanceof SpellConditional;
 		boolean flag1 = false;
 		boolean flag2 = false;
 		boolean flag3 = false;
@@ -242,25 +243,26 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		boolean mainForm = false;
 		for (SpellItem selected : this.selectedSpells)
 		{
-			if (selected.getSpellClass() instanceof SpellForm)
+			Spell ssc = selected.getSpellClass();
+			if (ssc instanceof SpellForm)
 			{
-				if (((SpellForm) selected.getSpellClass()).needConditional())
+				if (((SpellForm) ssc).needConditional())
 				{
 					need = true;
 				}
 
-				if (((SpellForm) selected.getSpellClass()).needPrimaryForm())
+				if (((SpellForm) ssc).needPrimaryForm())
 				{
 					entityForm = true;
 				}
 
-				if (!((SpellForm) selected.getSpellClass()).needPrimaryForm())
+				if (!((SpellForm) ssc).needPrimaryForm())
 				{
 					mainForm = true;
 				}
 			}
 
-			if (selected.getSpellClass() instanceof SpellConditional)
+			if (ssc instanceof SpellConditional)
 			{
 				conditional = true;
 			}
@@ -278,34 +280,35 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 		for (SpellItem selected : this.selectedSpells)
 		{
-			if (spell.getSpellClass() instanceof SpellEffect)
+			Spell ssc = selected.getSpellClass();
+			if (sc instanceof SpellEffect)
 			{
-				if (selected.getSpellClass() instanceof SpellForm && !need)
+				if (ssc instanceof SpellForm && !need)
 				{
 					flag = true;
 					break;
 				}
 			}
-			else if (spell.getSpellClass() instanceof SpellCorrection)
+			else if (sc instanceof SpellCorrection)
 			{
-				if (selected.getSpellClass() instanceof SpellEffect)
+				if (ssc instanceof SpellEffect)
 				{
 					flag1 = true;
 				}
 
-				if (selected.getSpellClass() instanceof SpellForm)
+				if (ssc instanceof SpellForm)
 				{
 					flag2 = true;
 				}
 
-				SpellCorrection correction = ((SpellCorrection) spell.getSpellClass());
+				SpellCorrection correction = ((SpellCorrection) sc);
 				if (correction.getLevel() <= 1)
 				{
 					flag3 = true;
 				}
-				else if (selected.getSpellClass() instanceof SpellCorrection)
+				else if (ssc instanceof SpellCorrection)
 				{
-					SpellCorrection corr = ((SpellCorrection) selected.getSpellClass());
+					SpellCorrection corr = ((SpellCorrection) ssc);
 					if (corr.getClass() == correction.getClass() && corr.getLevel() == correction.getLevel() - 1)
 					{
 						flag3 = true;
@@ -325,7 +328,8 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 	private boolean canSelected(SpellItem spell)
 	{
-		boolean flag = spell.getSpellClass() instanceof SpellForm || spell.getSpellClass() instanceof SpellConditional;
+		Spell sc = spell.getSpellClass();
+		boolean flag = sc instanceof SpellForm || sc instanceof SpellConditional;
 		boolean flag1 = false;
 		boolean flag2 = false;
 		boolean flag3 = false;
@@ -336,25 +340,26 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		boolean mainForm = false;
 		for (SpellItem selected : this.selectedSpells)
 		{
-			if (selected.getSpellClass() instanceof SpellForm)
+			Spell ssc = selected.getSpellClass();
+			if (ssc instanceof SpellForm)
 			{
-				if (((SpellForm) selected.getSpellClass()).needConditional())
+				if (((SpellForm) ssc).needConditional())
 				{
 					need = true;
 				}
 
-				if (((SpellForm) selected.getSpellClass()).needPrimaryForm())
+				if (((SpellForm) ssc).needPrimaryForm())
 				{
 					entityForm = true;
 				}
 
-				if (!((SpellForm) selected.getSpellClass()).needPrimaryForm())
+				if (!((SpellForm) ssc).needPrimaryForm())
 				{
 					mainForm = true;
 				}
 			}
 
-			if (selected.getSpellClass() instanceof SpellConditional)
+			if (ssc instanceof SpellConditional)
 			{
 				conditional = true;
 			}
@@ -372,34 +377,35 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 		for (SpellItem selected : this.selectedSpells)
 		{
-			if (spell.getSpellClass() instanceof SpellEffect)
+			Spell ssc = selected.getSpellClass();
+			if (sc instanceof SpellEffect)
 			{
-				if (selected.getSpellClass() instanceof SpellForm && !need)
+				if (ssc instanceof SpellForm && !need)
 				{
 					flag = true;
 					break;
 				}
 			}
-			else if (spell.getSpellClass() instanceof SpellCorrection)
+			else if (sc instanceof SpellCorrection)
 			{
-				if (selected.getSpellClass() instanceof SpellEffect)
+				if (ssc instanceof SpellEffect)
 				{
 					flag1 = true;
 				}
 
-				if (selected.getSpellClass() instanceof SpellForm)
+				if (ssc instanceof SpellForm)
 				{
 					flag2 = true;
 				}
 
-				SpellCorrection correction = ((SpellCorrection) spell.getSpellClass());
+				SpellCorrection correction = ((SpellCorrection) sc);
 				if (correction.getLevel() <= 1)
 				{
 					flag3 = true;
 				}
-				else if (selected.getSpellClass() instanceof SpellCorrection)
+				else if (ssc instanceof SpellCorrection)
 				{
-					SpellCorrection corr = ((SpellCorrection) selected.getSpellClass());
+					SpellCorrection corr = ((SpellCorrection) ssc);
 					if (corr.getClass() == correction.getClass() && corr.getLevel() == correction.getLevel() - 1)
 					{
 						flag3 = true;
@@ -623,10 +629,11 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		GlStateManager.enableBlend();
 		RenderHelper.enableGUIStandardItemLighting();
 		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16, 64, 64, 0.25F);
-
-		if (spell.getSpellClass() instanceof Spell.SpellCorrection)
+		
+		Spell sc = spell.getSpellClass();
+		if (sc instanceof Spell.SpellCorrection)
 		{
-			SpellCorrection correction = (SpellCorrection) spell.getSpellClass();
+			SpellCorrection correction = (SpellCorrection) sc;
 			if (correction.getLevel() != 0)
 			{
 				this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID,
@@ -699,9 +706,10 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 	private static String getName(SpellItem spellitem)
 	{
-		if (spellitem.getSpellClass() instanceof Spell.SpellCorrection)
+		Spell sc = spellitem.getSpellClass();
+		if (sc instanceof Spell.SpellCorrection)
 		{
-			SpellCorrection correction = (SpellCorrection) spellitem.getSpellClass();
+			SpellCorrection correction = (SpellCorrection) sc;
 			return I18n.format("spell." + spellitem.getTranslateKey() + ".name")
 					+ I18n.format("correction." + correction.getLevel());
 		}

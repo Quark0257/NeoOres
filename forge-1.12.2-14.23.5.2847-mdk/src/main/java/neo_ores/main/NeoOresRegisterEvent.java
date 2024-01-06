@@ -299,10 +299,6 @@ public class NeoOresRegisterEvent
 		OreDictionary.registerOre("pedestalWatered", NeoOresBlocks.pedestal_water);
 		for (int i = 0; i < 5; i++)
 			OreDictionary.registerOre("essenceAll", new ItemStack(NeoOresItems.essence, 1, i));
-		OreDictionary.registerOre("gemUndite", NeoOresItems.undite);
-		OreDictionary.registerOre("gemSylphite", NeoOresItems.sylphite);
-		OreDictionary.registerOre("ingotGnomite", NeoOresItems.gnomite_ingot);
-		OreDictionary.registerOre("gemSalamite", NeoOresItems.salamite);
 		OreDictionary.registerOre("mobBottle", NeoOresItems.mob_bottle);
 		OreDictionary.registerOre("mobBottle", NeoOresItems.mob_bottle_master);
 		for (int i = 0; i < 4; i++)
@@ -315,7 +311,20 @@ public class NeoOresRegisterEvent
 			OreDictionary.registerOre("oreLapis", new ItemStack(NeoOresBlocks.custom_lapis_ore, 1, i));
 			OreDictionary.registerOre("oreIron", new ItemStack(NeoOresBlocks.custom_iron_ore, 1, i));
 			OreDictionary.registerOre("oreGold", new ItemStack(NeoOresBlocks.custom_gold_ore, 1, i));
+			OreDictionary.registerOre("stoneDimension", new ItemStack(NeoOresBlocks.dim_stone, 1, i));
+			OreDictionary.registerOre("logWood", new ItemStack(NeoOresBlocks.dim_log, 1, i));
+			OreDictionary.registerOre("plankWood", new ItemStack(NeoOresBlocks.dim_planks, 1, i));
+			OreDictionary.registerOre("treeLeaves", new ItemStack(NeoOresBlocks.dim_leaves, 1, i));
+			OreDictionary.registerOre("treeLeaves", new ItemStack(NeoOresBlocks.corroded_dim_leaves, 1, i));
+			OreDictionary.registerOre("treeLeaves", new ItemStack(NeoOresBlocks.corroding_dim_leaves, 1, i));
 		}
+		for (Block sapling : NeoOresBlocks.color_saplings) {
+			OreDictionary.registerOre("treeSapling", new ItemStack(sapling, 1, 0));
+		}
+		OreDictionary.registerOre("urystone", new ItemStack(NeoOresBlocks.dim_stone, 1, 0));
+		OreDictionary.registerOre("gabrystone", new ItemStack(NeoOresBlocks.dim_stone, 1, 1));
+		OreDictionary.registerOre("raphastone", new ItemStack(NeoOresBlocks.dim_stone, 1, 2));
+		OreDictionary.registerOre("michastone", new ItemStack(NeoOresBlocks.dim_stone, 1, 3));
 		OreDictionary.registerOre("oreAerite", NeoOresBlocks.aerite_ore);
 		OreDictionary.registerOre("oreDrenite", NeoOresBlocks.drenite_ore);
 		OreDictionary.registerOre("oreForcite", NeoOresBlocks.forcite_ore);
@@ -332,6 +341,22 @@ public class NeoOresRegisterEvent
 		OreDictionary.registerOre("ingotLandite", NeoOresItems.landite_ingot);
 		OreDictionary.registerOre("ingotMarlite", NeoOresItems.marlite_ingot);
 		OreDictionary.registerOre("gemSanitite", NeoOresItems.sanitite);
+		OreDictionary.registerOre("gemUndite", NeoOresItems.undite);
+		OreDictionary.registerOre("gemSylphite", NeoOresItems.sylphite);
+		OreDictionary.registerOre("ingotGnomite", NeoOresItems.gnomite_ingot);
+		OreDictionary.registerOre("gemSalamite", NeoOresItems.salamite);
+		OreDictionary.registerOre("blockAerite", NeoOresBlocks.aerite_block);
+		OreDictionary.registerOre("blockDrenite", NeoOresBlocks.drenite_block);
+		OreDictionary.registerOre("blockForcite", NeoOresBlocks.forcite_block);
+		OreDictionary.registerOre("blockFlamite", NeoOresBlocks.flamite_block);
+		OreDictionary.registerOre("blockGuardite", NeoOresBlocks.guardite_block);
+		OreDictionary.registerOre("blockLandite", NeoOresBlocks.landite_block);
+		OreDictionary.registerOre("blockMarlite", NeoOresBlocks.marlite_block);
+		OreDictionary.registerOre("blockSanitite", NeoOresBlocks.sanitite_block);
+		OreDictionary.registerOre("blockUndite", NeoOresBlocks.undite_block);
+		OreDictionary.registerOre("blockSylphite", NeoOresBlocks.sylphite_block);
+		OreDictionary.registerOre("blockGnomite", NeoOresBlocks.gnomite_block);
+		OreDictionary.registerOre("blockSalamite", NeoOresBlocks.salamite_block);
 	}
 
 	@SubscribeEvent

@@ -204,6 +204,10 @@ item.creative_boots.name=クリエイティブブーツ
 enchantment.offensive=攻撃的
 enchantment.soulbound=ソウルバウンド
 
+creativeItem=クリエイティブ専用
+
+instant_alter.tooltip=このブロックを設置して右クリックすることで構造物「アルター」を展開。
+instant_alter.range=範囲 : 9x7x9
 tooltip.water=水の摂理
 tooltip.fire=火の摂理
 tooltip.earth=地の摂理
@@ -428,6 +432,8 @@ config.category.miscellaneous=その他
 config.category.miscellaneous.tooltip=その他の設定
 config.misc.mkt.back=背景のテクスチャパス
 config.misc.mkt.back.tooltip=魔術師の知識台の背景のテクスチャパスを変更する。
+config.misc.initialItems=初期アイテム
+config.misc.initialItems.tooltip=プレイヤーに初期アイテムを与えるかどうか。
 config.category.magic=魔法
 config.category.magic.tooltip=魔法の設定
 config.magic.repeatable=呪文連打

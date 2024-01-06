@@ -88,6 +88,7 @@ public class WorldGenSeeweedTree extends WorldGenAbstractTree
 				}
 			}
 		}
+		leaves1.add(logs.get(logs.size() - 1).add(0, 1, 0));
 		List<BlockPos> leaves2 = new ArrayList<BlockPos>();
 		for (BlockPos pos : leaves1)
 		{

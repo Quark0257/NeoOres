@@ -25,7 +25,7 @@ public class ItemEssenceCoreWater extends ItemEffected
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		int i = itemStack.getMetadata() + 1;
-		list.add("Tier:" + i);
+		list.add("Tier : " + i);
 	}
 
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)

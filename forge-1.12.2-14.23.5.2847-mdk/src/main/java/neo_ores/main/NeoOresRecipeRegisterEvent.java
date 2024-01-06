@@ -180,8 +180,9 @@ public class NeoOresRecipeRegisterEvent
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.sylphite_paxel), 16000, "ASP", "LTH", " T ", 'A', new ItemStack(NeoOresItems.sylphite_axe), 'H', new ItemStack(NeoOresItems.sylphite_hoe),
 				'P', new ItemStack(NeoOresItems.sylphite_pickaxe), 'L', new ItemStack(NeoOresItems.sylphite_shovel), 'S', new ItemStack(NeoOresItems.sylphite_sword), 'T', "stickWood");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.sylphite_shovel), 16000, "R", "T", "T", 'R', "gemSylphite", 'T', "stickWood");
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.creative_paxel), 256000, "ASP", "LTH", " T ", 'A', new ItemStack(NeoOresItems.creative_axe), 'H', new ItemStack(NeoOresItems.creative_hoe),
-				'P', new ItemStack(NeoOresItems.creative_pickaxe), 'L', new ItemStack(NeoOresItems.creative_shovel), 'S', new ItemStack(NeoOresItems.creative_sword), 'T', "stickWood");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.creative_paxel), 256000, "ASP", "LTH", " T ", 'A', new ItemStack(NeoOresItems.creative_axe), 'H',
+				new ItemStack(NeoOresItems.creative_hoe), 'P', new ItemStack(NeoOresItems.creative_pickaxe), 'L', new ItemStack(NeoOresItems.creative_shovel), 'S',
+				new ItemStack(NeoOresItems.creative_sword), 'T', "stickWood");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.essence, 1, 0), 5, " H ", "HXH", " H ", 'H', "gravel", 'X', "nuggetIron");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.essence, 1, 1), 5, " H ", "HXH", " H ", 'H', PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER), 'X',
 				"nuggetIron");
@@ -223,15 +224,26 @@ public class NeoOresRecipeRegisterEvent
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.mob_bottle), 1000, "A", "D", "B", 'A', "gemAerite", 'D', "dyeBlack", 'B', new ItemStack(Items.GLASS_BOTTLE));
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.mob_bottle_master), 10000, "D", "B", 'D', new ItemStack(Blocks.DRAGON_EGG), 'B', new ItemStack(NeoOresItems.mob_bottle));
 		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.mana_furnace), 256000, " F ", "AXW", " E ", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'A',
-				new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'W', new ItemStack(NeoOresItems.essence, 1, 1), 'X', new ItemStack(NeoOresBlocks.mana_block));
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.earth_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 0),'G', "ingotGnomite", 'X', "netherStar");
-		for(int i = 0;i < 10;i++) this.addManaCraftingRecipe(new ItemStack(NeoOresItems.earth_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'C', new ItemStack(NeoOresItems.earth_essence_core, 1, i), 'X', "netherStar");
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.water_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 1),'G', "gemUndite", 'X', "netherStar");
-		for(int i = 0;i < 10;i++) this.addManaCraftingRecipe(new ItemStack(NeoOresItems.water_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 1), 'C', new ItemStack(NeoOresItems.water_essence_core, 1, i), 'X', "netherStar");
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.air_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 3),'G', "gemSylphite", 'X', "netherStar");
-		for(int i = 0;i < 10;i++) this.addManaCraftingRecipe(new ItemStack(NeoOresItems.air_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 3), 'C', new ItemStack(NeoOresItems.air_essence_core, 1, i), 'X', "netherStar");
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.fire_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 2),'G', "gemSalamite", 'X', "netherStar");
-		for(int i = 0;i < 10;i++) this.addManaCraftingRecipe(new ItemStack(NeoOresItems.fire_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 2), 'C', new ItemStack(NeoOresItems.fire_essence_core, 1, i), 'X', "netherStar");
+				new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'W', new ItemStack(NeoOresItems.essence, 1, 1), 'X',
+				new ItemStack(NeoOresBlocks.mana_block));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.earth_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'G', "ingotGnomite", 'X',
+				"netherStar");
+		for (int i = 0; i < 10; i++)
+			this.addManaCraftingRecipe(new ItemStack(NeoOresItems.earth_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'C',
+					new ItemStack(NeoOresItems.earth_essence_core, 1, i), 'X', "netherStar");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.water_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 1), 'G', "gemUndite", 'X', "netherStar");
+		for (int i = 0; i < 10; i++)
+			this.addManaCraftingRecipe(new ItemStack(NeoOresItems.water_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 1), 'C',
+					new ItemStack(NeoOresItems.water_essence_core, 1, i), 'X', "netherStar");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.air_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 3), 'G', "gemSylphite", 'X', "netherStar");
+		for (int i = 0; i < 10; i++)
+			this.addManaCraftingRecipe(new ItemStack(NeoOresItems.air_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 3), 'C',
+					new ItemStack(NeoOresItems.air_essence_core, 1, i), 'X', "netherStar");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.fire_essence_core, 1, 0), 100, " E ", "GXG", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 2), 'G', "gemSalamite", 'X',
+				"netherStar");
+		for (int i = 0; i < 10; i++)
+			this.addManaCraftingRecipe(new ItemStack(NeoOresItems.fire_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 2), 'C',
+					new ItemStack(NeoOresItems.fire_essence_core, 1, i), 'X', "netherStar");
 
 		int n = 0;
 		for (ManaCraftingRecipeManager mcrm : manacraftingrecipes)
@@ -240,7 +252,6 @@ public class NeoOresRecipeRegisterEvent
 			n++;
 		}
 	}
-
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
@@ -252,9 +263,8 @@ public class NeoOresRecipeRegisterEvent
 								Ingredient.fromItems(Items.NETHER_STAR), Ingredient.fromItems(Items.NETHER_STAR), Ingredient.fromItems(Items.NETHER_STAR)),
 						NeoOres.addName(NeoOres.addEnchantment(NeoOres.addRegacy(new ItemStack(Items.STICK)), Enchantments.KNOCKBACK, 100), "homerunbat")).setRegistryName(Reference.MOD_ID,
 								"homerunbat"));
-		event.getRegistry().register(
-				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.essence, 1, 1), "HHH", "HXH", "HHH", 'H', PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER), 'X', "ingotIron")
-						.setRegistryName(Reference.MOD_ID, "water_essence"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.essence, 1, 1), "HHH", "HXH", "HHH", 'H',
+				PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), PotionTypes.WATER), 'X', "ingotIron").setRegistryName(Reference.MOD_ID, "water_essence"));
 		event.getRegistry()
 				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.essence, 1, 2), "HHH", "HXH", "HHH", 'H', Blocks.MAGMA, 'X', "ingotIron")
 						.setRegistryName(Reference.MOD_ID, "fire_essence"));
@@ -308,96 +318,85 @@ public class NeoOresRecipeRegisterEvent
 				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.essence, 4, 1), "X", 'X', new ItemStack(NeoOresBlocks.water_essence_block))
 						.setRegistryName(Reference.MOD_ID, "water_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 0), "X", 'X', new ItemStack(NeoOresBlocks.dim_log,1,0))
-				.setRegistryName(Reference.MOD_ID, "earth_planks"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 0), "X", 'X', new ItemStack(NeoOresBlocks.dim_log, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "earth_planks"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 1), "X", 'X', new ItemStack(NeoOresBlocks.dim_log,1,1))
-				.setRegistryName(Reference.MOD_ID, "water_planks"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 1), "X", 'X', new ItemStack(NeoOresBlocks.dim_log, 1, 1))
+						.setRegistryName(Reference.MOD_ID, "water_planks"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 2), "X", 'X', new ItemStack(NeoOresBlocks.dim_log,1,2))
-				.setRegistryName(Reference.MOD_ID, "air_planks"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 2), "X", 'X', new ItemStack(NeoOresBlocks.dim_log, 1, 2))
+						.setRegistryName(Reference.MOD_ID, "air_planks"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 3), "X", 'X', new ItemStack(NeoOresBlocks.dim_log,1,3))
-				.setRegistryName(Reference.MOD_ID, "fire_planks"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.dim_planks, 4, 3), "X", 'X', new ItemStack(NeoOresBlocks.dim_log, 1, 3))
+						.setRegistryName(Reference.MOD_ID, "fire_planks"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.sylphite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.sylphite, 1, 0)).setRegistryName(Reference.MOD_ID, "sylphite_comp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.undite_block, 1), "XXX", "XXX", "XXX", 'X', new ItemStack(NeoOresItems.undite, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "undite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.gnomite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.gnomite_ingot, 1, 0)).setRegistryName(Reference.MOD_ID, "gnomite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.salamite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.salamite, 1, 0)).setRegistryName(Reference.MOD_ID, "salamite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.sanitite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.sanitite, 1, 0)).setRegistryName(Reference.MOD_ID, "sanitite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.marlite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.marlite_ingot, 1, 0)).setRegistryName(Reference.MOD_ID, "marlite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.landite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.landite_ingot, 1, 0)).setRegistryName(Reference.MOD_ID, "landite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.guardite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.guardite_ingot, 1, 0)).setRegistryName(Reference.MOD_ID, "guardite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.forcite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.forcite, 1, 0)).setRegistryName(Reference.MOD_ID, "forcite_comp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.aerite_block, 1), "XXX", "XXX", "XXX", 'X', new ItemStack(NeoOresItems.aerite, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "aerite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.flamite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.flamite, 1, 0)).setRegistryName(Reference.MOD_ID, "flamite_comp"));
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.drenite_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.drenite, 1, 0)).setRegistryName(Reference.MOD_ID, "drenite_comp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.sylphite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.sylphite,1,0))
-				.setRegistryName(Reference.MOD_ID, "sylphite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.sylphite, 9), "X", 'X', new ItemStack(NeoOresBlocks.sylphite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "sylphite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.undite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.undite,1,0))
-				.setRegistryName(Reference.MOD_ID, "undite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.undite, 9), "X", 'X', new ItemStack(NeoOresBlocks.undite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "undite_decomp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.gnomite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.gnomite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "gnomite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.gnomite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.gnomite_ingot,1,0))
-				.setRegistryName(Reference.MOD_ID, "gnomite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.salamite, 9), "X", 'X', new ItemStack(NeoOresBlocks.salamite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "salamite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.salamite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.salamite,1,0))
-				.setRegistryName(Reference.MOD_ID, "salamite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.sanitite, 9), "X", 'X', new ItemStack(NeoOresBlocks.sanitite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "sanitite_decomp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.marlite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.marlite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "marlite_decomp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.landite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.landite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "landite_decomp"));
+		event.getRegistry().register(
+				new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.guardite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.guardite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "guardite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.sanitite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.sanitite,1,0))
-				.setRegistryName(Reference.MOD_ID, "sanitite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.forcite, 9), "X", 'X', new ItemStack(NeoOresBlocks.forcite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "forcite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.marlite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.marlite_ingot,1,0))
-				.setRegistryName(Reference.MOD_ID, "marlite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.aerite, 9), "X", 'X', new ItemStack(NeoOresBlocks.aerite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "aerite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.landite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.landite_ingot,1,0))
-				.setRegistryName(Reference.MOD_ID, "landite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.flamite, 9), "X", 'X', new ItemStack(NeoOresBlocks.flamite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "flamite_decomp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.guardite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.guardite_ingot,1,0))
-				.setRegistryName(Reference.MOD_ID, "guardite_comp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.drenite, 9), "X", 'X', new ItemStack(NeoOresBlocks.drenite_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "drenite_decomp"));
+
+		event.getRegistry().register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.mana_block, 1), "XXX", "XXX", "XXX", 'X',
+				new ItemStack(NeoOresItems.mana_ingot, 1, 0)).setRegistryName(Reference.MOD_ID, "mana_comp"));
 		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.forcite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.forcite,1,0))
-				.setRegistryName(Reference.MOD_ID, "forcite_comp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.aerite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.aerite,1,0))
-				.setRegistryName(Reference.MOD_ID, "aerite_comp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.flamite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.flamite,1,0))
-				.setRegistryName(Reference.MOD_ID, "flamite_comp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.drenite_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.drenite,1,0))
-				.setRegistryName(Reference.MOD_ID, "drenite_comp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.sylphite, 9), "X", 'X', new ItemStack(NeoOresBlocks.sylphite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "sylphite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.undite, 9), "X", 'X', new ItemStack(NeoOresBlocks.undite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "undite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.gnomite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.gnomite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "gnomite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.salamite, 9), "X", 'X', new ItemStack(NeoOresBlocks.salamite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "salamite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.sanitite, 9), "X", 'X', new ItemStack(NeoOresBlocks.sanitite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "sanitite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.marlite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.marlite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "marlite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.landite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.landite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "landite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.guardite_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.guardite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "guardite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.forcite, 9), "X", 'X', new ItemStack(NeoOresBlocks.forcite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "forcite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.aerite, 9), "X", 'X', new ItemStack(NeoOresBlocks.aerite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "aerite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.flamite, 9), "X", 'X', new ItemStack(NeoOresBlocks.flamite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "flamite_decomp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.drenite, 9), "X", 'X', new ItemStack(NeoOresBlocks.drenite_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "drenite_decomp"));
-		
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresBlocks.mana_block, 1), "XXX","XXX","XXX", 'X', new ItemStack(NeoOresItems.mana_ingot,1,0))
-				.setRegistryName(Reference.MOD_ID, "mana_comp"));
-		event.getRegistry()
-		.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.mana_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.mana_block,1,0))
-				.setRegistryName(Reference.MOD_ID, "mana_decomp"));
+				.register(new ShapedOreRecipe(new ResourceLocation(Reference.MOD_ID, "recipes"), new ItemStack(NeoOresItems.mana_ingot, 9), "X", 'X', new ItemStack(NeoOresBlocks.mana_block, 1, 0))
+						.setRegistryName(Reference.MOD_ID, "mana_decomp"));
 
 		/*
 		 * GameRegistry.addSmelting(new ItemStack(NeoOres.guardite_ore), new
@@ -430,7 +429,7 @@ public class NeoOresRecipeRegisterEvent
 				PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), NeoOres.long_mana_regen));
 		BrewingRecipeRegistry.addRecipe(PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), NeoOres.mana_regen), "dustGlowstone",
 				PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), NeoOres.strong_mana_regen));
-		
+
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -442,12 +441,13 @@ public class NeoOresRecipeRegisterEvent
 		this.addManaCompositionRecipe(6, new ItemStack(NeoOresItems.undite, 1), Arrays.asList(new RecipeOreStack("ingotMarlite", 8), new RecipeOreStack("gemSanitite", 8)));
 		this.addManaCompositionRecipe(8, new ItemStack(NeoOresItems.sylphite, 1), Arrays.asList(new RecipeOreStack("gemDrenite", 8), new RecipeOreStack("gemAerite", 8)));
 		this.addManaCompositionRecipe(10, new ItemStack(NeoOresItems.salamite, 1), Arrays.asList(new RecipeOreStack("gemFlamite", 8), new RecipeOreStack("gemForcite", 8)));
-		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1,0), Arrays.asList(new RecipeOreStack("urystone", 4)));
-		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1,1), Arrays.asList(new RecipeOreStack("gabrystone", 4)));
-		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1,2), Arrays.asList(new RecipeOreStack("raphastone", 4)));
-		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1,3), Arrays.asList(new RecipeOreStack("michastone", 4)));
-		this.addManaCompositionRecipe(11, new ItemStack(NeoOresItems.mana_ingot, 64), Arrays.asList(new RecipeOreStack("netherStar", 1),new RecipeOreStack(new ItemStack(NeoOresItems.essence,1,0), 1),
-				new RecipeOreStack(new ItemStack(NeoOresItems.essence,1,1), 1),new RecipeOreStack(new ItemStack(NeoOresItems.essence,1,2), 1),new RecipeOreStack(new ItemStack(NeoOresItems.essence,1,3), 1)));
+		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1, 0), Arrays.asList(new RecipeOreStack("urystone", 4)));
+		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1, 1), Arrays.asList(new RecipeOreStack("gabrystone", 4)));
+		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1, 2), Arrays.asList(new RecipeOreStack("raphastone", 4)));
+		this.addManaCompositionRecipe(0, new ItemStack(NeoOresBlocks.dim_brick, 1, 3), Arrays.asList(new RecipeOreStack("michastone", 4)));
+		this.addManaCompositionRecipe(11, new ItemStack(NeoOresItems.mana_ingot, 64),
+				Arrays.asList(new RecipeOreStack("netherStar", 1), new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 0), 1), new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 1), 1),
+						new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 2), 1), new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 3), 1)));
 
 		int n = 0;
 		for (ManaCompositionRecipeManager mcrm : manacompositionrecipes)
@@ -541,7 +541,6 @@ public class NeoOresRecipeRegisterEvent
 			GameRegistry.addSmelting(stack, result, exp);
 		}
 	}
-	
 
 	public static void registerFromJson(FMLPreInitializationEvent event)
 	{
@@ -634,14 +633,14 @@ public class NeoOresRecipeRegisterEvent
 				oreCoalStone.add("replace_block", stone);
 				oreCoalStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreCoalStone);
-				
+
 				JsonArray acceptModsDimStoneOre = new JsonArray();
 				acceptModsDimStoneOre.add("neo_ores");
-				
+
 				JsonObject urystone = new JsonObject();
 				urystone.addProperty("id", "neo_ores:dim_stone");
 				urystone.addProperty("metadata", 0);
-				
+
 				JsonObject oreIronUryStone = new JsonObject();
 				oreIronUryStone.addProperty("registry_name", "oredic_ore_iron_urystone");
 				oreIronUryStone.addProperty("id", "neo_ores:custom_iron_ore");
@@ -695,7 +694,7 @@ public class NeoOresRecipeRegisterEvent
 				oreLapisUryStone.add("replace_block", urystone);
 				oreLapisUryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreLapisUryStone);
-				
+
 				JsonObject oreQuartzUryStone = new JsonObject();
 				oreQuartzUryStone.addProperty("registry_name", "oredic_ore_quartz_urystone");
 				oreQuartzUryStone.addProperty("id", "neo_ores:custom_quartz_ore");
@@ -704,7 +703,7 @@ public class NeoOresRecipeRegisterEvent
 				oreQuartzUryStone.add("replace_block", urystone);
 				oreQuartzUryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreQuartzUryStone);
-				
+
 				JsonObject oreCoalUryStone = new JsonObject();
 				oreCoalUryStone.addProperty("registry_name", "oredic_ore_coal_urystone");
 				oreCoalUryStone.addProperty("id", "neo_ores:custom_coal_ore");
@@ -713,7 +712,7 @@ public class NeoOresRecipeRegisterEvent
 				oreCoalUryStone.add("replace_block", urystone);
 				oreCoalUryStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreCoalUryStone);
-				
+
 				JsonObject oreGuarditeUryStone = new JsonObject();
 				oreGuarditeUryStone.addProperty("registry_name", "oredic_ore_guardite_urystone");
 				oreGuarditeUryStone.addProperty("id", "neo_ores:guardite_ore");
@@ -721,7 +720,7 @@ public class NeoOresRecipeRegisterEvent
 				oreGuarditeUryStone.add("replace_block", urystone);
 				oreGuarditeUryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreGuarditeUryStone);
-				
+
 				JsonObject oreLanditeUryStone = new JsonObject();
 				oreLanditeUryStone.addProperty("registry_name", "oredic_ore_landite_urystone");
 				oreLanditeUryStone.addProperty("id", "neo_ores:landite_ore");
@@ -729,11 +728,11 @@ public class NeoOresRecipeRegisterEvent
 				oreLanditeUryStone.add("replace_block", urystone);
 				oreLanditeUryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreLanditeUryStone);
-				
+
 				JsonObject gabrystone = new JsonObject();
 				gabrystone.addProperty("id", "neo_ores:dim_stone");
 				gabrystone.addProperty("metadata", 1);
-				
+
 				JsonObject oreIronGabryStone = new JsonObject();
 				oreIronGabryStone.addProperty("registry_name", "oredic_ore_iron_gabrystone");
 				oreIronGabryStone.addProperty("id", "neo_ores:custom_iron_ore");
@@ -787,7 +786,7 @@ public class NeoOresRecipeRegisterEvent
 				oreLapisGabryStone.add("replace_block", gabrystone);
 				oreLapisGabryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreLapisGabryStone);
-				
+
 				JsonObject oreQuartzGabryStone = new JsonObject();
 				oreQuartzGabryStone.addProperty("registry_name", "oredic_ore_quartz_gabrystone");
 				oreQuartzGabryStone.addProperty("id", "neo_ores:custom_quartz_ore");
@@ -796,7 +795,7 @@ public class NeoOresRecipeRegisterEvent
 				oreQuartzGabryStone.add("replace_block", gabrystone);
 				oreQuartzGabryStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreQuartzGabryStone);
-				
+
 				JsonObject oreCoalGabryStone = new JsonObject();
 				oreCoalGabryStone.addProperty("registry_name", "oredic_ore_coal_gabrystone");
 				oreCoalGabryStone.addProperty("id", "neo_ores:custom_coal_ore");
@@ -805,7 +804,7 @@ public class NeoOresRecipeRegisterEvent
 				oreCoalGabryStone.add("replace_block", gabrystone);
 				oreCoalGabryStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreCoalGabryStone);
-				
+
 				JsonObject oreMarliteGabryStone = new JsonObject();
 				oreMarliteGabryStone.addProperty("registry_name", "oredic_ore_marlite_gabrystone");
 				oreMarliteGabryStone.addProperty("id", "neo_ores:marlite_ore");
@@ -813,7 +812,7 @@ public class NeoOresRecipeRegisterEvent
 				oreMarliteGabryStone.add("replace_block", gabrystone);
 				oreMarliteGabryStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreMarliteGabryStone);
-				
+
 				JsonObject oreSanititeGabryStone = new JsonObject();
 				oreSanititeGabryStone.addProperty("registry_name", "oredic_ore_sanitite_gabrystone");
 				oreSanititeGabryStone.addProperty("id", "neo_ores:sanitite_ore");
@@ -821,11 +820,11 @@ public class NeoOresRecipeRegisterEvent
 				oreSanititeGabryStone.add("replace_block", gabrystone);
 				oreSanititeGabryStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreSanititeGabryStone);
-				
+
 				JsonObject raphastone = new JsonObject();
 				raphastone.addProperty("id", "neo_ores:dim_stone");
 				raphastone.addProperty("metadata", 2);
-				
+
 				JsonObject oreIronRaphaStone = new JsonObject();
 				oreIronRaphaStone.addProperty("registry_name", "oredic_ore_iron_raphastone");
 				oreIronRaphaStone.addProperty("id", "neo_ores:custom_iron_ore");
@@ -879,7 +878,7 @@ public class NeoOresRecipeRegisterEvent
 				oreLapisRaphaStone.add("replace_block", raphastone);
 				oreLapisRaphaStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreLapisRaphaStone);
-				
+
 				JsonObject oreQuartzRaphaStone = new JsonObject();
 				oreQuartzRaphaStone.addProperty("registry_name", "oredic_ore_quartz_raphastone");
 				oreQuartzRaphaStone.addProperty("id", "neo_ores:custom_quartz_ore");
@@ -888,7 +887,7 @@ public class NeoOresRecipeRegisterEvent
 				oreQuartzRaphaStone.add("replace_block", raphastone);
 				oreQuartzRaphaStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreQuartzRaphaStone);
-				
+
 				JsonObject oreCoalRaphaStone = new JsonObject();
 				oreCoalRaphaStone.addProperty("registry_name", "oredic_ore_coal_raphastone");
 				oreCoalRaphaStone.addProperty("id", "neo_ores:custom_coal_ore");
@@ -897,7 +896,7 @@ public class NeoOresRecipeRegisterEvent
 				oreCoalRaphaStone.add("replace_block", raphastone);
 				oreCoalRaphaStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreCoalRaphaStone);
-				
+
 				JsonObject oreAeriteRaphaStone = new JsonObject();
 				oreAeriteRaphaStone.addProperty("registry_name", "oredic_ore_aerite_raphastone");
 				oreAeriteRaphaStone.addProperty("id", "neo_ores:aerite_ore");
@@ -905,7 +904,7 @@ public class NeoOresRecipeRegisterEvent
 				oreAeriteRaphaStone.add("replace_block", raphastone);
 				oreAeriteRaphaStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreAeriteRaphaStone);
-				
+
 				JsonObject oreDreniteRaphaStone = new JsonObject();
 				oreDreniteRaphaStone.addProperty("registry_name", "oredic_ore_drenite_raphastone");
 				oreDreniteRaphaStone.addProperty("id", "neo_ores:drenite_ore");
@@ -913,11 +912,11 @@ public class NeoOresRecipeRegisterEvent
 				oreDreniteRaphaStone.add("replace_block", raphastone);
 				oreDreniteRaphaStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreDreniteRaphaStone);
-				
+
 				JsonObject michastone = new JsonObject();
 				michastone.addProperty("id", "neo_ores:dim_stone");
 				michastone.addProperty("metadata", 3);
-				
+
 				JsonObject oreIronMichaStone = new JsonObject();
 				oreIronMichaStone.addProperty("registry_name", "oredic_ore_iron_michastone");
 				oreIronMichaStone.addProperty("id", "neo_ores:custom_iron_ore");
@@ -971,7 +970,7 @@ public class NeoOresRecipeRegisterEvent
 				oreLapisMichaStone.add("replace_block", michastone);
 				oreLapisMichaStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreLapisMichaStone);
-				
+
 				JsonObject oreQuartzMichaStone = new JsonObject();
 				oreQuartzMichaStone.addProperty("registry_name", "oredic_ore_quartz_michastone");
 				oreQuartzMichaStone.addProperty("id", "neo_ores:custom_quartz_ore");
@@ -980,7 +979,7 @@ public class NeoOresRecipeRegisterEvent
 				oreQuartzMichaStone.add("replace_block", michastone);
 				oreQuartzMichaStone.add("acceptMods", acceptModsDimStoneOre);
 				spell_ore_gen.add(oreQuartzMichaStone);
-				
+
 				JsonObject oreCoalMichaStone = new JsonObject();
 				oreCoalMichaStone.addProperty("registry_name", "oredic_ore_coal_michastone");
 				oreCoalMichaStone.addProperty("id", "neo_ores:custom_coal_ore");
@@ -989,7 +988,7 @@ public class NeoOresRecipeRegisterEvent
 				oreCoalMichaStone.add("replace_block", michastone);
 				oreCoalMichaStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreCoalMichaStone);
-				
+
 				JsonObject oreForciteMichaStone = new JsonObject();
 				oreForciteMichaStone.addProperty("registry_name", "oredic_ore_forcite_michastone");
 				oreForciteMichaStone.addProperty("id", "neo_ores:forcite_ore");
@@ -997,7 +996,7 @@ public class NeoOresRecipeRegisterEvent
 				oreForciteMichaStone.add("replace_block", michastone);
 				oreForciteMichaStone.add("acceptMods", acceptModsStoneOre);
 				spell_ore_gen.add(oreForciteMichaStone);
-				
+
 				JsonObject oreFlamiteMichaStone = new JsonObject();
 				oreFlamiteMichaStone.addProperty("registry_name", "oredic_ore_flamite_michastone");
 				oreFlamiteMichaStone.addProperty("id", "neo_ores:flamite_ore");

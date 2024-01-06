@@ -557,5 +557,9 @@ public class NeoOresConfig
 		@LangKey("config.misc.mkt.back")
 		@RequiresWorldRestart
 		public String mkt_back = "neo_ores:textures/blocks/michastone.png";
+		
+		@LangKey("config.misc.initialItems")
+		@RequiresMcRestart
+		public boolean allowInitialItems = true;
 	}
 }

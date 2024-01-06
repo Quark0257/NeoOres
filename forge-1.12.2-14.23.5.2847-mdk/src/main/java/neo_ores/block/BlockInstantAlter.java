@@ -3,11 +3,14 @@ package neo_ores.block;
 import java.util.Random;
 
 import neo_ores.api.Structure;
+import neo_ores.item.ItemBlockInstantAlter;
 import neo_ores.main.Reference;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -34,5 +37,10 @@ public class BlockInstantAlter extends NeoOresBlock
 		Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/alter")).setPosition(pos.add(-4, 0, -4));
 		str.addComponentParts(worldIn, new Random(), str.getBoundingBox());
 		return true;
+	}
+	
+	public Item getItemBlock(Block block)
+	{
+		return new ItemBlockInstantAlter((BlockInstantAlter)block).setRegistryName(block.getRegistryName());
 	}
 }

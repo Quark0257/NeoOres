@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import neo_ores.api.InventoryUtils;
 import neo_ores.block.BlockDimension;
 import neo_ores.block.BlockEnhancedPedestal;
 import neo_ores.block.BlockPedestal;
@@ -62,6 +63,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -175,6 +177,22 @@ public class NeoOresEntityEvent
 					((PotionNeoOres.IFakeAttributeModified) effect.getPotion()).applyAttributesModifiersToEntity(playermp, effect.getAmplifier());
 				}
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onPlayerLoggin(PlayerLoggedInEvent event)
+	{
+		if (event.player instanceof EntityPlayerMP && NeoOresConfig.miscellaneous.allowInitialItems)
+		{
+			if (!event.player.getEntityData().hasKey("neo_ores"))
+			{
+				event.player.getEntityData().setTag("neo_ores", new NBTTagCompound());
+			}
+			if (event.player.getEntityData().getCompoundTag("neo_ores").hasKey("hasInitialItems") && event.player.getEntityData().getCompoundTag("neo_ores").getBoolean("hasInitialItems"))
+				return;
+			InventoryUtils.addStackToPlayer(event.player, new ItemStack(NeoOresBlocks.instant_alter));
+			event.player.getEntityData().getCompoundTag("neo_ores").setBoolean("hasInitialItems", true);
 		}
 	}
 

@@ -26,6 +26,16 @@ public class BlockDimensionSaplingWater extends BlockDimensionSapling
 	{
 		return new BlockStateContainer(this, new IProperty[] { STAGE, BlockLiquid.LEVEL });
 	}
+	
+	public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return false;
+    }
+	
+	public boolean isTopSolid(IBlockState state)
+    {
+        return state.getMaterial().isOpaque() && state.isFullCube();
+    }
 
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state)
 	{

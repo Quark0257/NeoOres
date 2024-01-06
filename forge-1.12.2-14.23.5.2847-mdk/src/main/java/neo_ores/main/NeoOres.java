@@ -180,7 +180,7 @@ public class NeoOres
 			utils = new TierUtils(sword);
 			utils.setTier(11, 11, 11, 11);
 			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_sword"), new ExtremeShapedRecipe(sword,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,9),'W',new ItemStack(NeoOresItems.water_essence_core,1,9),'X',Item.getByNameOrId("avaritia:infinity_sword"))));
+					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_sword"))));
 			
 		}
 	}

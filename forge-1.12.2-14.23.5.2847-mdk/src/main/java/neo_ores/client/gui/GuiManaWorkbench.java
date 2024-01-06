@@ -71,7 +71,7 @@ public class GuiManaWorkbench extends GuiContainer implements IContainerListener
 			if (flag)
 			{
 				int j = -16777216 | (i & 16579836) >> 2 | i & -16777216;
-				int k = this.xSize - 34 - this.fontRenderer.getStringWidth(s);
+				int k = this.xSize - 50 - this.fontRenderer.getStringWidth(s) / 2;
 				int l = 64;
 
 				if (this.fontRenderer.getUnicodeFlag())

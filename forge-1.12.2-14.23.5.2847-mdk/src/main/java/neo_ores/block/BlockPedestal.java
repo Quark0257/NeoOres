@@ -3,6 +3,7 @@ package neo_ores.block;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresItems;
 import neo_ores.tileentity.TileEntityPedestal;
 import net.minecraft.block.ITileEntityProvider;
@@ -15,10 +16,8 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -28,7 +27,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -186,13 +184,13 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 				if (stack.getCount() > stack.getMaxStackSize())
 				{
 					stack.setCount(stack.getMaxStackSize());
-					this.addStackToPlayer(player, stack.copy());
+					InventoryUtils.addStackToPlayer(player, stack.copy());
 					teep.decrStackSize(0, stack.getMaxStackSize());
 				}
 				else
 				{
 					stack.setCount(stack.getCount());
-					this.addStackToPlayer(player, stack.copy());
+					InventoryUtils.addStackToPlayer(player, stack.copy());
 					teep.removeStackFromSlot(0);
 				}
 			}
@@ -201,43 +199,14 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 				if (stack.getCount() > 1)
 				{
 					stack.setCount(1);
-					this.addStackToPlayer(player, stack.copy());
+					InventoryUtils.addStackToPlayer(player, stack.copy());
 					teep.decrStackSize(0, 1);
 				}
 				else
 				{
 					stack.setCount(1);
-					this.addStackToPlayer(player, stack.copy());
+					InventoryUtils.addStackToPlayer(player, stack.copy());
 					teep.removeStackFromSlot(0);
-				}
-			}
-		}
-	}
-
-	private void addStackToPlayer(EntityPlayer entityplayer, ItemStack itemstack)
-	{
-		if (!itemstack.isEmpty() && entityplayer.isServerWorld())
-		{
-			boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
-
-			if (flag)
-			{
-				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
-						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-				entityplayer.inventoryContainer.detectAndSendChanges();
-			}
-
-			if (flag && itemstack.isEmpty())
-			{
-			}
-			else
-			{
-				EntityItem entityitem = entityplayer.dropItem(itemstack, false);
-
-				if (entityitem != null)
-				{
-					entityitem.setNoPickupDelay();
-					entityitem.setOwner(entityplayer.getName());
 				}
 			}
 		}

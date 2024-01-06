@@ -1,8 +1,12 @@
 package neo_ores.api;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 
 public class InventoryUtils
 {
@@ -170,5 +174,34 @@ public class InventoryUtils
 				return stack;
 		}
 		return stack;
+	}
+
+	public static void addStackToPlayer(EntityPlayer entityplayer, ItemStack itemstack)
+	{
+		if (!itemstack.isEmpty() && entityplayer.isServerWorld())
+		{
+			boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
+
+			if (flag)
+			{
+				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
+						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+				entityplayer.inventoryContainer.detectAndSendChanges();
+			}
+
+			if (flag && itemstack.isEmpty())
+			{
+			}
+			else
+			{
+				EntityItem entityitem = entityplayer.dropItem(itemstack, false);
+
+				if (entityitem != null)
+				{
+					entityitem.setNoPickupDelay();
+					entityitem.setOwner(entityplayer.getName());
+				}
+			}
+		}
 	}
 }

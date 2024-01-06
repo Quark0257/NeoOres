@@ -1,8 +1,11 @@
 package neo_ores.block;
 
+import neo_ores.item.ItemBlockDimensionWood;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -26,5 +29,10 @@ public class BlockDimensionPlanks extends BlockDimensionSingleModel
 		if (world.getBlockState(pos).getValue(DIM) == DimensionName.FIRE || world.getBlockState(pos).getValue(DIM) == DimensionName.WATER)
 			return 0;
 		return 20;
+	}
+	
+	public Item getItemBlock(Block block)
+	{
+		return new ItemBlockDimensionWood((NeoOresBlock) block).setRegistryName(block.getRegistryName());
 	}
 }

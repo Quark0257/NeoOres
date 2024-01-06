@@ -2,7 +2,7 @@ package neo_ores.block;
 
 import java.util.Random;
 
-import neo_ores.item.ItemBlockDimension;
+import neo_ores.item.ItemBlockNeoSapling;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.Reference;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
@@ -247,7 +247,7 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 
 	public Item getItemBlock(Block block)
 	{
-		return new ItemBlockDimension((BlockDimensionSapling) block).setRegistryName(block.getRegistryName());
+		return new ItemBlockNeoSapling((BlockDimensionSapling) block).setRegistryName(block.getRegistryName());
 	}
 
 	public Item getItemDropped(IBlockState state, Random rand, int fortune)

@@ -1,9 +1,12 @@
 package neo_ores.block;
 
+import neo_ores.item.ItemBlockDimensionWood;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -58,5 +61,10 @@ public class BlockDimensionLog extends BlockDimensionPillarSingleModel
 				}
 			}
 		}
+	}
+	
+	public Item getItemBlock(Block block)
+	{
+		return new ItemBlockDimensionWood((NeoOresBlock) block).setRegistryName(block.getRegistryName());
 	}
 }

@@ -124,6 +124,8 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 				int k = pos.getX();
 				int l = pos.getY();
 				int i1 = pos.getZ();
+				int i = 7;
+				int j = 9;
 
 				if (this.surroundings == null)
 				{
@@ -133,16 +135,16 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 				if (!worldIn.isAreaLoaded(pos, 1))
 					return; // Forge: prevent decaying leaves from updating neighbors and loading unloaded
 							// chunks
-				if (worldIn.isAreaLoaded(pos, 6)) // Forge: extend range from 5 to 6 to account for neighbor checks in
+				if (worldIn.isAreaLoaded(pos, j)) // Forge: extend range from 5 to 6 to account for neighbor checks in
 													// world.markAndNotifyBlock -> world.updateObservingBlocksAt
 				{
 					BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 
-					for (int i2 = -4; i2 <= 4; ++i2)
+					for (int i2 = -i; i2 <= i; ++i2)
 					{
-						for (int j2 = -4; j2 <= 4; ++j2)
+						for (int j2 = -i; j2 <= i; ++j2)
 						{
-							for (int k2 = -4; k2 <= 4; ++k2)
+							for (int k2 = -i; k2 <= i; ++k2)
 							{
 								IBlockState iblockstate = worldIn.getBlockState(blockpos$mutableblockpos.setPos(k + i2, l + j2, i1 + k2));
 								Block block = iblockstate.getBlock();
@@ -166,13 +168,13 @@ public class BlockDimensionLeaves extends Block implements INeoOresBlock, IShear
 						}
 					}
 
-					for (int i3 = 1; i3 <= 4; ++i3)
+					for (int i3 = 1; i3 <= i; ++i3)
 					{
-						for (int j3 = -4; j3 <= 4; ++j3)
+						for (int j3 = -i; j3 <= i; ++j3)
 						{
-							for (int k3 = -4; k3 <= 4; ++k3)
+							for (int k3 = -i; k3 <= i; ++k3)
 							{
-								for (int l3 = -4; l3 <= 4; ++l3)
+								for (int l3 = -i; l3 <= i; ++l3)
 								{
 									if (this.surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16] == i3 - 1)
 									{

@@ -14,6 +14,8 @@ import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
 public class WorldGenMegaTree2 extends WorldGenHugeTrees
 {
+	private static final float[] cos = {1.0F,0.866F,0.5F,0.0F,-0.5F,-0.866F,-1.0F,-0.866F,-0.5F,0.0F,0.5F,0.866F};
+	private static final float[] sin = {0.0F,0.5F,0.866F,1.0F,0.866F,0.5F,0.0F,-0.5F,-0.866F,-1.0F,-0.866F,-0.5F};
 
 	public WorldGenMegaTree2(boolean notify, int baseHeightIn, int extraRandomHeightIn, IBlockState woodMetadataIn, IBlockState leavesMetadataIn)
 	{
@@ -41,17 +43,19 @@ public class WorldGenMegaTree2 extends WorldGenHugeTrees
 
 			for (int j = position.getY() + i - 2 - rand.nextInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextInt(4))
 			{
-				float f = rand.nextFloat() * ((float) Math.PI * 2F);
-				int k = position.getX() + (int) (0.5F + MathHelper.cos(f) * 4.0F);
-				int l = position.getZ() + (int) (0.5F + MathHelper.sin(f) * 4.0F);
+				int f = rand.nextInt(12);
+				float cos = WorldGenMegaTree2.cos[f];
+				float sin = WorldGenMegaTree2.sin[f];
+				int k = position.getX() + (int) (0.5F + cos * 4.0F);
+				int l = position.getZ() + (int) (0.5F + sin * 4.0F);
 
-				for (int i1 = 0; i1 < 5; ++i1)
+				for (int i1 = 0; i1 < 3; ++i1)
 				{
-					k = position.getX() + (int) (1.5F + MathHelper.cos(f) * (float) i1);
-					l = position.getZ() + (int) (1.5F + MathHelper.sin(f) * (float) i1);
+					k = position.getX() + (int) (1.5F + cos * (float) i1);
+					l = position.getZ() + (int) (1.5F + sin * (float) i1);
 					this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), this.woodMetadata);
 				}
-
+				
 				int j2 = 1 + rand.nextInt(2);
 				int j1 = j;
 

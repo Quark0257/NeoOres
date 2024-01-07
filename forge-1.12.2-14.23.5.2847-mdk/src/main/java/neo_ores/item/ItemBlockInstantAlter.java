@@ -9,6 +9,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemBlockInstantAlter extends ItemBlockNeoOres
 {
@@ -17,6 +19,7 @@ public class ItemBlockInstantAlter extends ItemBlockNeoOres
 		super(block);
 	}
 	
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag)
 	{
 		super.addInformation(stack, world, list, flag);

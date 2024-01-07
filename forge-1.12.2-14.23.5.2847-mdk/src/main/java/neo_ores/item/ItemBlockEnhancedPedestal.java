@@ -6,6 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemBlockEnhancedPedestal extends ItemBlock
 {
@@ -26,6 +28,7 @@ public class ItemBlockEnhancedPedestal extends ItemBlock
 		return ((BlockEnhancedPedestal) this.getBlock()).getUnlocalizedName(stack);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public String getItemStackDisplayName(ItemStack stack)
 	{
 		int meta = PedestalTiers.getFromMeta(stack.getItemDamage()).getMeta();

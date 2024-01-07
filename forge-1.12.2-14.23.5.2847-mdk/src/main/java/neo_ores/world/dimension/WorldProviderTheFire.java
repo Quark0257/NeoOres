@@ -2,6 +2,7 @@ package neo_ores.world.dimension;
 
 import neo_ores.client.sky.RenderSkyDimensions;
 import neo_ores.main.NeoOres;
+import neo_ores.proxy.ClientProxy;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -22,14 +23,14 @@ public class WorldProviderTheFire extends WorldProvider
 	{
 		this.biomeProvider = new BiomeProviderSingle(NeoOres.fire);
 		this.hasSkyLight = true;
-		this.setSkyRenderer(new RenderSkyDimensions(true));
+		if(this.world.isRemote) this.setSkyRenderer(new RenderSkyDimensions(true));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public MusicTicker.MusicType getMusicType()
 	{
-		return NeoOres.salamandra;
+		return ClientProxy.salamandra;
 	}
 
 	public IChunkGenerator createChunkGenerator()

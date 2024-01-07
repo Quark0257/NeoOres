@@ -111,7 +111,7 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
 								int l2 = l1 + k1 * 4;
 								int i3 = j2 + j1 * 8;
 
-								if (d15 > 0.0D && l2 >= 1)
+								if (d15 > 0.0D && l2 >= 8)
 								{
 									iblockstate = MAINBLOCK;
 								}

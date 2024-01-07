@@ -1,6 +1,7 @@
 package neo_ores.main;
 
 import neo_ores.api.TierUtils;
+import neo_ores.api.recipe.OreWeightRecipe;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.client.gui.GuiHandler;
 import neo_ores.command.CommandNeoOres;
@@ -41,7 +42,6 @@ import neo_ores.world.gen.structures.fire.FireStructurePieces;
 import neo_ores.world.gen.structures.fire.FireStructureStart;
 import neo_ores.world.gen.structures.water.WaterStructurePieces;
 import neo_ores.world.gen.structures.water.WaterStructureStart;
-import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
@@ -56,7 +56,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
-import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -76,6 +75,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import morph.avaritia.recipe.AvaritiaRecipeManager;
@@ -129,6 +130,7 @@ public class NeoOres
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		NeoOresRegisterEvent.registerEntity(this);
+		NeoOres.proxy.init();
 	}
 	
 	@EventHandler
@@ -272,13 +274,11 @@ public class NeoOres
 	public static final SoundEvent MUSIC_EARTH = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.gnome")).setRegistryName(Reference.MOD_ID, "music.gnome");
 	public static final SoundEvent MUSIC_FIRE = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.salamandra")).setRegistryName(Reference.MOD_ID, "music.salamandra");
 	public static final SoundEvent MUSIC_WATER = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.undine")).setRegistryName(Reference.MOD_ID, "music.undine");
-	public static final MusicTicker.MusicType sylphied = EnumHelperClient.addMusicType("Sylphied", MUSIC_AIR, 3600, 12000);
-	public static final MusicTicker.MusicType gnome = EnumHelperClient.addMusicType("Gnome", MUSIC_EARTH, 3600, 12000);
-	public static final MusicTicker.MusicType salamandra = EnumHelperClient.addMusicType("Salamandra", MUSIC_FIRE, 3600, 12000);
-	public static final MusicTicker.MusicType undine = EnumHelperClient.addMusicType("Undine", MUSIC_WATER, 3600, 12000);
 	
 	public static final Biome air = new BiomeTheAir((new Biome.BiomeProperties("Raphael's Forest")).setTemperature(0.7F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "air");
 	public static final Biome earth = new BiomeTheEarth((new Biome.BiomeProperties("Uriel's Forest")).setTemperature(0.95F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "earth");
 	public static final Biome fire = new BiomeTheFire((new Biome.BiomeProperties("Michael's Forest")).setTemperature(2.0F)).setRegistryName(Reference.MOD_ID, "fire");
 	public static final Biome water = new BiomeTheWater((new Biome.BiomeProperties("Gabriel's Forest")).setTemperature(0.5F)).setRegistryName(Reference.MOD_ID, "water");
+	
+	public static final List<OreWeightRecipe> ore_gen_recipes = new ArrayList<OreWeightRecipe>();
 }

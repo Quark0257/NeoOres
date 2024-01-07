@@ -26,6 +26,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemSpell extends Item
 {
@@ -41,7 +43,8 @@ public class ItemSpell extends Item
 	{
 		return true;
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag)
 	{
 		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
@@ -69,7 +72,7 @@ public class ItemSpell extends Item
 					}
 					else
 					{
-						format.add(desc.getStringTagAt(j));
+						format.add(I18n.format(desc.getStringTagAt(j)));
 					}
 				}
 				TextComponentTranslation tct = new TextComponentTranslation(main, format.toArray());

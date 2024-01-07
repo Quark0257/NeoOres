@@ -1,6 +1,7 @@
 package neo_ores.world.dimension;
 
 import neo_ores.main.NeoOres;
+import neo_ores.proxy.ClientProxy;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -27,7 +28,7 @@ public class WorldProviderTheWater extends WorldProvider
 	@SideOnly(Side.CLIENT)
 	public MusicTicker.MusicType getMusicType()
 	{
-		return NeoOres.undine;
+		return ClientProxy.undine;
 	}
 
 	protected void generateLightBrightnessTable()

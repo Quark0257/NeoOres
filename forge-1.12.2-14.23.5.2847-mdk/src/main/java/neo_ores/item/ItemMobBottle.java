@@ -3,7 +3,6 @@ package neo_ores.item;
 import neo_ores.api.NBTUtils;
 import neo_ores.main.Reference;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -66,7 +65,7 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 			return nbt;
 		EntityLivingBase entityliving = (EntityLivingBase) entity;
 		NBTTagList list = new NBTTagList();
-		list.appendTag(new NBTTagString(I18n.format("spell.required.health") + Integer.toString(((int) entityliving.getMaxHealth()))));
+		list.appendTag(new NBTTagString("Require Health : " + Integer.toString(((int) entityliving.getMaxHealth()))));
 		nbt.appendTag(list);
 		return nbt;
 	}

@@ -33,6 +33,11 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem, IItemNeoToo
 			this.setMaxDamage(Integer.MAX_VALUE);
 		}
 	}
+	
+	public EntityEquipmentSlot getES()
+    {
+        return this.armorType;
+    }
 
 	public void onArmorTick(World world, EntityPlayer player, ItemStack stack)
 	{
@@ -45,7 +50,7 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem, IItemNeoToo
 				stack.damageItem(-1, player);
 			}
 
-			if (this.getEquipmentSlot() == EntityEquipmentSlot.HEAD)
+			if (this.getES() == EntityEquipmentSlot.HEAD)
 			{
 				if (this.getArmorMaterial() == NeoOresItems.armorSylphite)
 				{

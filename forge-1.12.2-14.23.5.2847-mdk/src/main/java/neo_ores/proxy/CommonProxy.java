@@ -13,4 +13,6 @@ public class CommonProxy
 	public void setCustomStateModel(Block block)
 	{
 	}
+	
+	public void init() {}
 }

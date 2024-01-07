@@ -258,8 +258,10 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 					if (this.phase < SpellUtils.getRecipeFromList(this.getRecipeIn()).size())
 					{
 						if (!SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().isEmpty())
-							this.getEP().setDisplay(SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether()
-									.get((this.tickCount / 20) % SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().size()));
+						{
+							List<ItemStack> list = SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether();
+							this.getEP().setDisplay(list.get((this.tickCount / 20) % list.size()));
+						}
 						loop0: for (int index = 0; index < this.getEP().getSizeInventory(); index++)
 						{
 							for (ItemStack stack : this.getEP().getItems().get(index).asList(64))

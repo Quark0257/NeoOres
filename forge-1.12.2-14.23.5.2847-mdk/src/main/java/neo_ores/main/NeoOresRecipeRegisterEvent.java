@@ -56,7 +56,8 @@ public class NeoOresRecipeRegisterEvent
 {
 	private List<ManaCraftingRecipeManager> manacraftingrecipes = new ArrayList<ManaCraftingRecipeManager>();
 	private List<ManaCompositionRecipeManager> manacompositionrecipes = new ArrayList<ManaCompositionRecipeManager>();
-
+	private static File configFile;
+	
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void registerSpellItems(final RegistryEvent.Register<SpellItem> event)
 	{
@@ -99,7 +100,7 @@ public class NeoOresRecipeRegisterEvent
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck8, new RecipeOreStack("gemLapis", 1024), new RecipeOreStack("gemDiamond", 8)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck9, new RecipeOreStack("gemLapis", 2048), new RecipeOreStack("gemDiamond", 9)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck10, new RecipeOreStack("gemLapis", 4096), new RecipeOreStack("gemDiamond", 10)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 10), new RecipeOreStack("wool", 1), new RecipeOreStack("feather", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 10), new RecipeOreStack("woolWhite", 1), new RecipeOreStack("feather", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier1, new RecipeOreStack("blockEarthEssence", 1), new RecipeOreStack("blockWaterEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier2, new RecipeOreStack("blockFireEssence", 1), new RecipeOreStack("blockAirEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier3, new RecipeOreStack("gemDiamond", 1), new RecipeOreStack("gemEmerald", 1)));
@@ -544,7 +545,7 @@ public class NeoOresRecipeRegisterEvent
 
 	public static void registerFromJson(FMLPreInitializationEvent event)
 	{
-		File configFile = new File(event.getModConfigurationDirectory(), "neo_ores.json");
+		configFile = new File(event.getModConfigurationDirectory(), "neo_ores.json");
 		if (!configFile.exists())
 		{
 			try
@@ -1025,6 +1026,10 @@ public class NeoOresRecipeRegisterEvent
 			{
 				config = parser.parse(reader);
 			}
+			catch(Exception e) {
+				FMLLog.log.error("Unable to load {}", configFile);
+				config = new JsonObject();
+			}
 
 			if (config.isJsonObject())
 			{
@@ -1034,8 +1039,8 @@ public class NeoOresRecipeRegisterEvent
 					try
 					{
 						JsonObject gen = genE.getAsJsonObject();
-						GameRegistry.findRegistry(OreWeightRecipe.class)
-								.register(new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString())));
+						OreWeightRecipe recipe = new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString()));
+						NeoOres.ore_gen_recipes.add(recipe);
 					}
 					catch (Exception e)
 					{
@@ -1053,6 +1058,6 @@ public class NeoOresRecipeRegisterEvent
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void registerOreWeightRecipes(RegistryEvent.Register<OreWeightRecipe> event)
 	{
-		// event.getR
+		FMLLog.log.info("[Neo Ores II] {} SpellOreGen recipes loaded", NeoOres.ore_gen_recipes.size());
 	}
 }

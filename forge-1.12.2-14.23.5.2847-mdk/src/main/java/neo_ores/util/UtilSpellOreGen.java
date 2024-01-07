@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import neo_ores.api.recipe.OreWeightRecipe;
+import neo_ores.main.NeoOres;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,10 +27,18 @@ public class UtilSpellOreGen
 
 	public static List<JsonObject> getObjects()
 	{
+		/*
 		List<JsonObject> ores = new ArrayList<JsonObject>();
 		for (Entry<ResourceLocation, OreWeightRecipe> recipe : oreWeightRecipes)
 		{
 			ores.add(recipe.getValue().getObject());
+		}
+		return ores;
+		*/
+		List<JsonObject> ores = new ArrayList<JsonObject>();
+		for (OreWeightRecipe recipe : NeoOres.ore_gen_recipes)
+		{
+			ores.add(recipe.getObject());
 		}
 		return ores;
 	}

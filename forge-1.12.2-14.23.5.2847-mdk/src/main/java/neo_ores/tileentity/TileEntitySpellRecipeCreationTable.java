@@ -116,13 +116,13 @@ public class TileEntitySpellRecipeCreationTable extends TileEntityLockable imple
 
 	public void update()
 	{
-		boolean flag1 = false;
-
-		if (flag1)
-		{
-			this.markDirty();
+		if(this.hasWorld() && !this.getWorld().isRemote) {
+			this.updateSelectedSpells();
 		}
-
+	}
+	
+	public void updateSelectedSpells() 
+	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setInteger("x", this.getPos().getX());
 		nbt.setInteger("y", this.getPos().getY());
@@ -131,6 +131,7 @@ public class TileEntitySpellRecipeCreationTable extends TileEntityLockable imple
 
 		PacketSRCTToClient psrcts = new PacketSRCTToClient(nbt);
 		NeoOres.PACKET.sendToAll(psrcts);
+		this.markDirty();
 	}
 
 	public boolean isUsableByPlayer(EntityPlayer player)

@@ -117,9 +117,6 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 				}
 			}
 		}
-		i = 0;
-		j = 0;
-		flag = false;
 
 		label:
 		{
@@ -150,8 +147,12 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 				}
 			}
 		}
-		i = 0;
-		j = 0;
+		
+		if(!flag) 
+		{
+			i = 0;
+			j = 0;
+		}
 
 		if (!flag && this == NeoOresBlocks.earth_sapling)
 		{

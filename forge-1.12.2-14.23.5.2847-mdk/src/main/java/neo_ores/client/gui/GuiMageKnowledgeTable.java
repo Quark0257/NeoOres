@@ -336,6 +336,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	@SuppressWarnings("static-access")
 	public void draw(int x, int y)
 	{
+		GlStateManager.enableDepth();
 		for (SpellItem spellitem : SpellUtils.registry)
 		{
 			if (spellitem.getTab() == this.tab)
@@ -344,7 +345,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableBlend();
 				this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
-				RenderHelper.enableGUIStandardItemLighting();
+				
 
 				Spell sc = spellitem.getSpellClass();
 				if (sc instanceof Spell.SpellCorrection)
@@ -357,7 +358,6 @@ public class GuiMageKnowledgeTable extends GuiScreen
 						GlStateManager.enableBlend();
 						this.drawTexturedWithTextureSizeModalRect(x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
 								y + spellitem.getPositionY() * interval + SpellUtils.offsetY(spellitem), 0, 0, 16, 16, 16, 16);
-						RenderHelper.enableGUIStandardItemLighting();
 					}
 				}
 
@@ -367,7 +367,6 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				GlStateManager.enableBlend();
 				this.drawTexturedWithTextureSizeModalRect(x + spellitem.getPositionX() * interval + SpellUtils.offsetX(spellitem),
 						y + spellitem.getPositionY() * interval + SpellUtils.offsetY(spellitem), 0, 0, 16, 16, 16, 16);
-				RenderHelper.enableGUIStandardItemLighting();
 
 				if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player) && this.canGetSpellItemByTree(spellitem, this.mc.player))
 				{
@@ -375,7 +374,6 @@ public class GuiMageKnowledgeTable extends GuiScreen
 					GlStateManager.color(1.0F, 1.0F, 1.0F, (float) Math.sin(this.mc.getSystemTime() / 100.0D) / 2.5F + 0.6F);
 					GlStateManager.enableBlend();
 					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
-					RenderHelper.enableGUIStandardItemLighting();
 				}
 				else if (!this.simc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 				{
@@ -383,10 +381,10 @@ public class GuiMageKnowledgeTable extends GuiScreen
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 					GlStateManager.enableBlend();
 					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
-					RenderHelper.enableGUIStandardItemLighting();
 				}
 			}
 		}
+		GlStateManager.disableDepth();
 	}
 
 	public void renderWindow(int x, int y)

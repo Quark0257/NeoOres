@@ -155,7 +155,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
 	{
 		this.drawDefaultBackground();
-
+		
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
 
@@ -574,6 +574,8 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 	public void draw(int x, int y)
 	{
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.enableDepth();
 		for (int j = 0; j < 7; j++)
 		{
 			for (int i = 0; i < 6; i++)
@@ -601,6 +603,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 
 			}
 		}
+		GlStateManager.disableDepth();
 	}
 
 	private void drawSpell(int x, int y, SpellItem spell, boolean inactive)
@@ -608,7 +611,6 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItem(spell));
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
-		RenderHelper.enableGUIStandardItemLighting();
 		this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16, 64, 64, 0.25F);
 
 		Spell sc = spell.getSpellClass();
@@ -620,7 +622,6 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 				this.mc.getTextureManager().bindTexture(new ResourceLocation(Reference.MOD_ID, "textures/gui/spell/" + "correction." + correction.getLevel() + ".png"));
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableBlend();
-				RenderHelper.enableGUIStandardItemLighting();
 				this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
 			}
 		}
@@ -628,7 +629,6 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		this.mc.getTextureManager().bindTexture(new ResourceLocation(spell.getTexturePath().getResourceDomain(), "textures/gui/spellitems/" + spell.getTexturePath().getResourcePath() + ".png"));
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
-		RenderHelper.enableGUIStandardItemLighting();
 		this.drawTexturedWithTextureSizeAndScaleModalRect(x + SpellUtils.offsetX(spell) / 2, y + SpellUtils.offsetY(spell) / 2, 0, 0, 8, 8, 16, 16, 0.5F);
 
 		if (inactive)
@@ -636,7 +636,6 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItemInactive(spell));
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			GlStateManager.enableBlend();
-			RenderHelper.enableGUIStandardItemLighting();
 			this.drawTexturedWithTextureSizeAndScaleModalRect(x, y, 0, 0, 16, 16, 64, 64, 0.25F);
 		}
 	}

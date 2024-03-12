@@ -5,6 +5,7 @@ import java.util.List;
 
 import neo_ores.api.spell.SpellItem;
 import neo_ores.inventory.ContainerSpellRecipeCreationTable;
+import neo_ores.item.ISpellRecipeWritable;
 import neo_ores.main.NeoOres;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.util.SpellUtils;
@@ -159,7 +160,7 @@ public class TileEntitySpellRecipeCreationTable extends TileEntityLockable imple
 	{
 		if (index == 0)
 		{
-
+			return stack.getItem() instanceof ISpellRecipeWritable;
 		}
 		return false;
 	}

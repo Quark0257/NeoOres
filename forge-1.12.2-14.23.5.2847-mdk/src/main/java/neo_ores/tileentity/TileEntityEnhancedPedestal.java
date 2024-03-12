@@ -205,7 +205,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 			}
 		}
 
-		ItemStack stack3 = stack2;
+		ItemStack stack3 = stack2.copy();
 
 		for (int i = 0; i < n; i++)
 		{
@@ -320,13 +320,13 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 				{
 					for (int j = i + 1; j < this.getSizeInventory(); j++)
 					{
-						if (!this.item_list.get(i).isEmpty())
+						if (!this.item_list.get(j).isEmpty())
 						{
 							if (this.item_list.get(i).compareWith(this.item_list.get(j).getStack()))
 							{
 								if (this.getInventoryStackLimit() < this.item_list.get(i).getSize() + this.item_list.get(j).getSize())
 								{
-									this.item_list.get(j).setSize(this.getInventoryStackLimit() - (this.item_list.get(i).getSize() + this.item_list.get(j).getSize()));
+									this.item_list.get(j).setSize((this.item_list.get(i).getSize() + this.item_list.get(j).getSize()) - this.getInventoryStackLimit());
 									this.item_list.get(i).setSize(this.getInventoryStackLimit());
 								}
 								else

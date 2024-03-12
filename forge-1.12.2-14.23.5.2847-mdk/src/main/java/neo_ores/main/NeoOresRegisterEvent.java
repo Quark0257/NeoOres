@@ -11,10 +11,12 @@ import neo_ores.block.INeoOresBlock;
 import neo_ores.client.color.BlockColorNeoOres;
 import neo_ores.client.color.ItemColorNeoOres;
 import neo_ores.client.render.ModelLoaderItemSpell;
+import neo_ores.client.render.RendererMechanicalMagician;
 import neo_ores.client.render.RendererNeoPortal;
 import neo_ores.client.render.RendererMageKnowledgeTable;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import neo_ores.tileentity.TileEntityManaFurnace;
+import neo_ores.tileentity.TileEntityMechanicalMagician;
 import neo_ores.tileentity.TileEntityNeoPortal;
 import neo_ores.tileentity.TileEntityPedestal;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
@@ -266,6 +268,7 @@ public class NeoOresRegisterEvent
 		GameRegistry.registerTileEntity(TileEntityEnhancedPedestal.class, new ResourceLocation(Reference.MOD_ID, "enhanced_pedestal"));
 		GameRegistry.registerTileEntity(TileEntityPedestal.class, new ResourceLocation(Reference.MOD_ID, "pedestal"));
 		GameRegistry.registerTileEntity(TileEntitySpellRecipeCreationTable.class, new ResourceLocation(Reference.MOD_ID, "spell_recipe_creation_table"));
+		GameRegistry.registerTileEntity(TileEntityMechanicalMagician.class, new ResourceLocation(Reference.MOD_ID, "mechanical_magician"));
 	}
 
 	@SubscribeEvent
@@ -399,6 +402,7 @@ public class NeoOresRegisterEvent
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMageKnowledgeTable.class, new RendererMageKnowledgeTable());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnhancedPedestal.class, new RendererPedestal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMechanicalMagician.class, new RendererMechanicalMagician());
 	}
 
 	@SideOnly(Side.CLIENT)

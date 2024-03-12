@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import neo_ores.api.IMagicExperienceContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -15,10 +16,12 @@ public class PlayerDataStorage
 {
 	private final EntityPlayerMP player;
 	private static final String extension = "";
+	private final boolean isFake;
 
 	public PlayerDataStorage(EntityPlayerMP playermp)
 	{
 		this.player = playermp;
+		this.isFake = player instanceof IMagicExperienceContainer;
 	}
 
 	@SuppressWarnings("static-access")
@@ -101,6 +104,7 @@ public class PlayerDataStorage
 		 * 
 		 * this.writeToFile(map);
 		 */
+		if(this.isFake) return;
 		if (!this.player.getEntityData().hasKey("neo_ores", 10))
 		{
 			this.player.getEntityData().setTag("neo_ores", new NBTTagCompound());
@@ -114,7 +118,7 @@ public class PlayerDataStorage
 		 * Map<String,Float> map = this.writeToMap(); if(map.containsKey(key) &&
 		 * map.get(key) != null) { return map.get(key); } else { return 0; }
 		 */
-
+		if(this.isFake) return 0.0F;
 		if (!this.player.getEntityData().hasKey("neo_ores", 10))
 		{
 			this.player.getEntityData().setTag("neo_ores", new NBTTagCompound());
@@ -124,6 +128,7 @@ public class PlayerDataStorage
 
 	public void setBoolean(String key, boolean bool)
 	{
+		if(this.isFake) return;
 		if (bool)
 		{
 			this.setValue(key, 1);
@@ -136,6 +141,7 @@ public class PlayerDataStorage
 
 	public boolean getBoolean(String key)
 	{
+		if(this.isFake) return false;
 		if (this.getValue(key) >= 1)
 		{
 			return true;

@@ -115,6 +115,7 @@ tile.earth_dim_planks.name=Urywood Planks
 tile.fire_dim_planks.name=Michawood Planks
 tile.air_dim_planks.name=Raphawood Planks
 tile.instant_alter.name=Instant Alter
+tile.mechanical_magician.name=Mechanical Magician
 
 size.= (Size:
 hoppered.0=
@@ -347,12 +348,13 @@ spell.type=Type
 spell.cost=Mana Cost
 spell.required=Required
 spell.magic_point=Knowledge Point
-spell.required.health=Required Health : 
+spell.required.health=§7Required Health : %s
 spell.canClick=CLICK to add to the recipe
 spell.canClickDelete=CLICK to delete from the recipe
+spell.recipe=Recipe : 
 
-chat.noRecipe=§4No recipe
-chat.noMultiblock=§4Multiblock defective
+chat.noRecipe=§cNo recipe
+chat.noMultiblock=§cMultiblock defective
 chat.displayRecipe=Below : Spell Recipe
 chat.displayStack=
 chat.displayOreDic= (Forge Ore Dictionary)

@@ -11,24 +11,32 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.client.particle.ParticleMagic1;
+import neo_ores.api.MathUtils;
+import neo_ores.api.MathUtils.Surface;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
+import neo_ores.main.NeoOres;
 import neo_ores.main.Reference;
+import neo_ores.packet.PacketParticleToClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -38,6 +46,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -388,9 +397,9 @@ public class SpellUtils
 		return (long) (manasum * manapro);
 	}
 
-	public static void run(List<SpellItem> initializedSpellList, EntityLivingBase runner, ItemStack stack, @Nullable EntityLivingBase targetEntity)
+	public static void run(List<SpellItem> initializedSpellList, World world, EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult target)
 	{
-		RayTraceResult result = null;
+		RayTraceResult result = target;
 		List<Spell> entityspells = new ArrayList<Spell>();
 		List<SpellItem> spells = new ArrayList<SpellItem>();
 		List<Spell> spellscs = new ArrayList<Spell>();
@@ -407,11 +416,13 @@ public class SpellUtils
 				spellscs.add(sc);
 			}
 		}
-
-		if (targetEntity != null)
+		
+		/*
+		if (result != null)
 		{
 			result = new RayTraceResult(targetEntity);
 		}
+		*/
 
 		if (!entityspells.isEmpty())
 		{
@@ -426,7 +437,7 @@ public class SpellUtils
 				}
 				if (entityspellitem instanceof Spell.SpellForm)
 				{
-					((Spell.SpellForm) entityspellitem).onSpellRunning(runner.getEntityWorld(), runner, stack, result, SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));
+					((Spell.SpellForm) entityspellitem).onSpellRunning(world, runner, stack, result, SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));
 				}
 			}
 		}
@@ -461,29 +472,116 @@ public class SpellUtils
 
 				if (form instanceof Spell.SpellForm)
 				{
-					((Spell.SpellForm) form).onSpellRunning(runner.getEntityWorld(), runner, stack, result, SpellUtils.getItemStackNBTFromList(notformspells, new NBTTagCompound()));
+					((Spell.SpellForm) form).onSpellRunning(world, runner, stack, result, SpellUtils.getItemStackNBTFromList(notformspells, new NBTTagCompound()));
 				}
 			}
 		}
 	}
 
-	public static RayTraceResult rayTrace(World worldIn, EntityPlayer playerIn, boolean useLiquids)
+	public static RayTraceResult rayTrace(World worldIn, Entity playerIn,double reach, boolean useLiquids, boolean collidedFilter)
 	{
+		RayTraceResult result = null;
 		float f = playerIn.rotationPitch;
 		float f1 = playerIn.rotationYaw;
-		double d0 = playerIn.posX;
-		double d1 = playerIn.posY + (double) playerIn.getEyeHeight();
-		double d2 = playerIn.posZ;
-		Vec3d vec3d = new Vec3d(d0, d1, d2);
-		float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
-		float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
-		float f4 = -MathHelper.cos(-f * 0.017453292F);
-		float f5 = MathHelper.sin(-f * 0.017453292F);
-		float f6 = f3 * f4;
-		float f7 = f2 * f4;
-		double d3 = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
-		Vec3d vec3d1 = vec3d.addVector((double) f6 * d3, (double) f5 * d3, (double) f7 * d3);
-		return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
+		double x = playerIn.posX;
+		double y = playerIn.posY + (double) playerIn.getEyeHeight();
+		double z = playerIn.posZ;
+		Vec3d pos = new Vec3d(x, y, z);
+		float cosf1 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
+		float sinf1 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
+		float cosf = -MathHelper.cos(-f * 0.017453292F);
+		float lookY = MathHelper.sin(-f * 0.017453292F);
+		float lookX = sinf1 * cosf;
+		float lookZ = cosf1 * cosf;
+		Vec3d look = new Vec3d(lookX, lookY, lookZ);
+		Vec3d start = pos;
+		if (playerIn instanceof FakePlayer)
+		{
+			double startDistance = Double.MAX_VALUE;// Math.sqrt(3.0) / 2.0;
+			for (Surface s : MathUtils.BASIC_CUBE)
+			{
+				if (s.getDistance(look) > 0)
+				{
+					startDistance = Math.min(startDistance, s.getDistance(look));
+				}
+			}
+			if (reach > startDistance)
+			{
+				start = pos.addVector(startDistance * lookX, startDistance * lookY, startDistance * lookZ);
+			}
+		}
+		Vec3d end = pos.addVector((double) lookX * reach, (double) lookY * reach, (double) lookZ * reach);
+		result = worldIn.rayTraceBlocks(start, end, useLiquids, !useLiquids, false);
+		double d1 = reach;
+		double distanceToObj = reach;
+		if (result != null)
+		{
+			distanceToObj = result.hitVec.distanceTo(pos);
+			d1 = result.hitVec.distanceTo(pos);
+		}
+
+		Entity pointedEntity = null;
+		Vec3d vec3d3 = null;
+		List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getEntityBoundingBox().expand(look.x * reach, look.y * reach, look.z * reach).grow(1.0D, 1.0D, 1.0D),
+				Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+				{
+					public boolean apply(@Nullable Entity entity)
+					{
+						return entity != null && (collidedFilter ? entity.canBeCollidedWith() : true);
+					}
+				}));
+
+		for (int j = 0; j < list.size(); ++j)
+		{
+			Entity entity1 = list.get(j);
+			AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) entity1.getCollisionBorderSize());
+			RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(pos, end);
+
+			if (axisalignedbb.contains(pos))
+			{
+				if (distanceToObj >= 0.0D)
+				{
+					pointedEntity = entity1;
+					vec3d3 = raytraceresult == null ? pos : raytraceresult.hitVec;
+					distanceToObj = 0.0D;
+				}
+			}
+			else if (raytraceresult != null)
+			{
+				double d3 = pos.distanceTo(raytraceresult.hitVec);
+
+				if (d3 < distanceToObj || distanceToObj == 0.0D)
+				{
+					if (entity1.getLowestRidingEntity() == playerIn.getLowestRidingEntity() && !entity1.canRiderInteract())
+					{
+						if (distanceToObj == 0.0D)
+						{
+							pointedEntity = entity1;
+							vec3d3 = raytraceresult.hitVec;
+						}
+					}
+					else
+					{
+						pointedEntity = entity1;
+						vec3d3 = raytraceresult.hitVec;
+						distanceToObj = d3;
+					}
+				}
+			}
+		}
+
+		/*
+		 * if (pointedEntity != null && flag && vec3d.distanceTo(vec3d3) > 3.0D) {
+		 * pointedEntity = null; this.mc.objectMouseOver = new
+		 * RayTraceResult(RayTraceResult.Type.MISS, vec3d3, (EnumFacing)null, new
+		 * BlockPos(vec3d3)); }
+		 */
+
+		if (pointedEntity != null && (distanceToObj < d1 || result == null))
+		{
+			result = new RayTraceResult(pointedEntity, vec3d3);
+		}
+		return result;
 	}
 
 	public static int[] getSpellTypeValues(List<SpellItem> spells)
@@ -668,8 +766,29 @@ public class SpellUtils
 		return list;
 	}
 
+	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	{
+		if (world.isRemote)
+		{
+			SpellUtils.displayParticleTypeA(world, target, size, texture, color, particleVolume);
+		}
+		else if (isSendPacket)
+		{
+			PacketParticleToClient ppc = new PacketParticleToClient(target, size, texture, color, particleVolume);
+			NeoOres.PACKET.sendToAll(ppc); 
+		}
+	}
+
+	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	{
+		AxisAlignedBB aabb = targetEntity.getRenderBoundingBox();
+		Vec3d target = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
+		Vec3d size = new Vec3d(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ);
+		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, isSendPacket);
+	}
+
 	@SideOnly(Side.CLIENT)
-	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
+	public static void displayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
 	{
 		for (Pair<Vec3d, Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(target, size, size))
 		{
@@ -684,15 +803,6 @@ public class SpellUtils
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume)
-	{
-		AxisAlignedBB aabb = targetEntity.getRenderBoundingBox();
-		Vec3d target = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
-		Vec3d size = new Vec3d(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ);
-		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume);
-	}
-
 	public static int getColor(ItemStack stack)
 	{
 		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("color"))
@@ -700,5 +810,29 @@ public class SpellUtils
 			return stack.getTagCompound().getInteger("color");
 		}
 		return 0xFFFFFF;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static List<String> getRecipe(SpellItem spell)
+	{
+		List<String> list = new ArrayList<String>();
+		for (SpellRecipe sr : recipes)
+		{
+			if (sr.getSpell().equals(spell))
+			{
+				for (RecipeOreStack recipe : sr.getRecipe())
+				{
+					if (recipe.isItemStack())
+					{
+						list.add(recipe.getStack().getDisplayName() + " (" + recipe.getStack().getItem().getRegistryName().getResourceDomain() + ")" + " : x" + recipe.getSize());
+					}
+					else if (recipe.isOreDic())
+					{
+						list.add(recipe.getOreDic() + I18n.format("chat.displayOreDic") + " : x" + recipe.getSize());
+					}
+				}
+			}
+		}
+		return list;
 	}
 }

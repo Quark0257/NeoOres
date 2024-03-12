@@ -11,7 +11,6 @@ import neo_ores.packet.PacketManaDataToClient;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class PlayerManaDataServer
@@ -21,10 +20,12 @@ public class PlayerManaDataServer
 	private final Random random = new Random();
 	private final EntityPlayerMP playermp;
 	private boolean runMXP;
+	private final boolean isFake;
 
 	public PlayerManaDataServer(EntityPlayerMP player)
 	{
 		this.playermp = player;
+		this.isFake = player instanceof IMagicExperienceContainer;
 		this.eds = new PlayerDataStorage(player);
 		runMXP = false;
 	}
@@ -231,12 +232,9 @@ public class PlayerManaDataServer
 
 	public void addMXP(long value)
 	{
-		if (this.playermp instanceof FakePlayer)
+		if (this.isFake)
 		{
-			if (this.playermp instanceof IMagicExperienceContainer)
-			{
-				((IMagicExperienceContainer) this.playermp).addMagicXp(value);
-			}
+			((IMagicExperienceContainer) this.playermp).addMagicXp(value);
 			return;
 		}
 		if (value > Long.MAX_VALUE - this.getMXP())
@@ -269,6 +267,7 @@ public class PlayerManaDataServer
 
 	public void sendToClient()
 	{
+		if(this.isFake) return;
 		StudyItemManagerServer sim = new StudyItemManagerServer(playermp);
 
 		NBTTagCompound packetNBT = new NBTTagCompound();

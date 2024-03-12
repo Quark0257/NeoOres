@@ -27,6 +27,7 @@ import neo_ores.block.BlockMana;
 import neo_ores.block.BlockManaFurnace;
 import neo_ores.block.BlockManaWorkbench;
 import neo_ores.block.BlockMarlite;
+import neo_ores.block.BlockMechanicalMagician;
 import neo_ores.block.BlockNeoOre;
 import neo_ores.block.BlockNeoOreOriginal;
 import neo_ores.block.BlockNeoOresPortal;
@@ -168,6 +169,10 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID,"instant_alter")
 			.setUnlocalizedName("instant_alter")
 			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block mechanical_magician = new BlockMechanicalMagician()
+			.setRegistryName(Reference.MOD_ID,"mechanical_magician")
+			.setUnlocalizedName("mechanical_magician")
+			.setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block custom_lit_redstone_ore = new BlockNeoOre("custom_lit_redstone_ore",2,null, 0.625F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(null);
 	public static final Block custom_redstone_ore = new BlockNeoOre("custom_redstone_ore",2,null, 0.0F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block custom_coal_ore = new BlockNeoOre("custom_coal_ore",0,null, 0.0F, false, Items.COAL,0, 1, 1, 0, 2).setCreativeTab(NeoOres.neo_ores_tab);
@@ -229,6 +234,7 @@ public class NeoOresBlocks
 			instant_alter,
 			lit_mana_furnace,
 			spell_recipe_creation_table,
+			mechanical_magician,
 			mana_block,
 			pedestal,
 			pedestal_water,

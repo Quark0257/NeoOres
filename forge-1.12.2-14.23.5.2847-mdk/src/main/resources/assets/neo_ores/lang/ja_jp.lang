@@ -115,6 +115,7 @@ tile.earth_dim_planks.name=ユリーウッドの木材
 tile.fire_dim_planks.name=マイカウッドの木材
 tile.air_dim_planks.name=ラファウッドの木材
 tile.instant_alter.name=インスタントアルター
+tile.mechanical_magician.name=自動詠唱器
 
 size.= (サイズ:
 hoppered.0=
@@ -347,12 +348,13 @@ spell.type=タイプ
 spell.cost=マナコスト
 spell.required=不足
 spell.magic_point=知識ポイント
-spell.required.health=要求体力 :
+spell.required.health=§7要求体力 : %s
 spell.canClick=クリックしてレシピに追加
 spell.canClickDelete=クリックしてレシピから削除
+spell.recipe=レシピ : 
 
-chat.noRecipe=§4レシピがありません
-chat.noMultiblock=§4マルチブロックに欠陥があります
+chat.noRecipe=§cレシピがありません
+chat.noMultiblock=§cマルチブロックに欠陥があります
 chat.displayRecipe=以下 : 呪文のレシピ
 chat.displayStack=
 chat.displayOreDic= (Forge鉱石辞書)

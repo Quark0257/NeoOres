@@ -1,9 +1,17 @@
 package neo_ores.api;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.storage.IThreadedFileIO;
+import net.minecraft.world.storage.ThreadedFileIOBase;
 
 public class NBTUtils
 {
@@ -218,5 +226,65 @@ public class NBTUtils
 			this.stack.setTagCompound(new NBTTagCompound());
 			return true;
 		}
+	}
+
+	public static NBTTagCompound readFromFile(File file)
+	{
+		if (!file.exists() || !file.isFile())
+			return null;
+		try (InputStream is = new FileInputStream(file))
+		{
+			return CompressedStreamTools.readCompressed(is);
+		}
+		catch (Exception e)
+		{
+			try
+			{
+				return CompressedStreamTools.read(file);
+			}
+			catch (Exception e1)
+			{
+				return null;
+			}
+		}
+	}
+
+	public static void writeToFile(File file, NBTTagCompound data)
+	{
+		if (!file.exists())
+		{
+			try
+			{
+				File parent = file.getParentFile();
+				if (!parent.exists())
+					parent.mkdirs();
+				file.createNewFile();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		try (FileOutputStream os = new FileOutputStream(file))
+		{
+			CompressedStreamTools.writeCompressed(data, os);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void writeToFileSafe(File file, NBTTagCompound data)
+	{
+		ThreadedFileIOBase.getThreadedIOInstance().queueIO(new IThreadedFileIO()
+		{
+			@Override
+			public boolean writeNextIO()
+			{
+				NBTUtils.writeToFile(file, data);
+				return false;
+			}
+		});
 	}
 }

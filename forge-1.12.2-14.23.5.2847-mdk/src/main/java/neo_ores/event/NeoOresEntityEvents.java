@@ -20,6 +20,7 @@ import neo_ores.main.Reference;
 import neo_ores.potion.PotionNeoOres;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.SpellUtils;
 import neo_ores.world.dimension.FromAirTeleporter;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
 import net.minecraft.block.state.IBlockState;
@@ -41,6 +42,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Teleporter;
@@ -68,7 +70,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresEntityEvent
+public class NeoOresEntityEvents
 {
 	public static final String nbtsoulboundtag = "soulboundslot";
 
@@ -220,6 +222,7 @@ public class NeoOresEntityEvent
 		if (event.getEntity() != null)
 		{
 			World worldIn = event.getEntity().getEntityWorld();
+			
 			// MP updater
 			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP)
 			{

@@ -9,11 +9,14 @@ import neo_ores.config.NeoOresConfig;
 import neo_ores.creativetab.NeoOresTab;
 import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
-import neo_ores.event.NeoOresItemEvent;
-import neo_ores.event.NeoOresEntityEvent;
+import neo_ores.event.NeoOresItemEvents;
+import neo_ores.event.NeoOresWorldEvents;
+import neo_ores.event.NeoOresEntityEvents;
+import neo_ores.packet.PacketDestinationToClient;
 import neo_ores.packet.PacketItemsToClient;
 import neo_ores.packet.PacketManaDataToClient;
 import neo_ores.packet.PacketManaDataToServer;
+import neo_ores.packet.PacketParticleToClient;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
 import neo_ores.potion.PotionAntiKnockback;
@@ -25,6 +28,8 @@ import neo_ores.potion.PotionManaWeakness;
 import neo_ores.potion.PotionShield;
 import neo_ores.potion.PotionUndying;
 import neo_ores.proxy.CommonProxy;
+import neo_ores.util.NeoOresChunkManager;
+import neo_ores.util.NeoOresServer;
 import neo_ores.world.dimension.WorldProviderTheFire;
 import neo_ores.world.dimension.WorldProviderTheEarth;
 import neo_ores.world.biome.BiomeTheAir;
@@ -57,6 +62,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
@@ -69,7 +75,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -92,8 +101,10 @@ public class NeoOres
 		NeoOresInfoCore.registerInfo(meta);
 		MinecraftForge.EVENT_BUS.register(new NeoOresRegisterEvent());
 		MinecraftForge.EVENT_BUS.register(new NeoOresRecipeRegisterEvent());
-		MinecraftForge.EVENT_BUS.register(new NeoOresEntityEvent());
-		MinecraftForge.EVENT_BUS.register(new NeoOresItemEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresEntityEvents());
+		MinecraftForge.EVENT_BUS.register(new NeoOresItemEvents());
+		MinecraftForge.EVENT_BUS.register(new NeoOresWorldEvents());
+		ForgeChunkManager.setForcedChunkLoadingCallback(NeoOres.instance, NeoOresChunkManager.INSTANCE);
 		DimensionManager.registerDimension(THE_WATER.getId(), THE_WATER);
 		DimensionManager.registerDimension(THE_EARTH.getId(), THE_EARTH);
 		DimensionManager.registerDimension(THE_FIRE.getId(), THE_FIRE);
@@ -107,6 +118,8 @@ public class NeoOres
 		PACKET.registerMessage(PacketItemsToClient.Handler.class, PacketItemsToClient.class, 2, Side.CLIENT);
 		PACKET.registerMessage(PacketSRCTToServer.Handler.class, PacketSRCTToServer.class, 3, Side.SERVER);
 		PACKET.registerMessage(PacketSRCTToClient.Handler.class, PacketSRCTToClient.class, 4, Side.CLIENT);
+		PACKET.registerMessage(PacketParticleToClient.Handler.class, PacketParticleToClient.class, 5, Side.CLIENT);
+		PACKET.registerMessage(PacketDestinationToClient.Handler.class, PacketDestinationToClient.class, 6, Side.CLIENT);
 		
 		if(event.getSide().isClient())
 		{
@@ -193,6 +206,24 @@ public class NeoOres
 		event.registerServerCommand(new CommandNeoOres());
 	}
 	
+	@EventHandler
+	public static void onServerToStart(FMLServerAboutToStartEvent event)
+	{
+		NeoOresServer.onServerToStart(event);
+	}
+
+	@EventHandler
+	public static void onServerStarted(FMLServerStartedEvent event)
+	{
+		NeoOresServer.onServerStarted(event);
+	}
+
+	@EventHandler
+	public static void onServerStopping(FMLServerStoppingEvent event)
+	{
+		NeoOresServer.onServerStopping(event);
+	}
+	
 	@SidedProxy(clientSide = "neo_ores.proxy.ClientProxy", serverSide = "neo_ores.proxy.CommonProxy")
 	public static CommonProxy proxy;
 	
@@ -235,6 +266,7 @@ public class NeoOres
 	public static final int guiIDManaFurnace = 1;
 	public static final int guiIDStudyTable = 2;
 	public static final int guiIDSRCT = 3;
+	public static final int guiIDMM = 4;
 	
 	public static final SimpleNetworkWrapper PACKET = NetworkRegistry.INSTANCE.newSimpleChannel("neo_ores".toLowerCase());
 	

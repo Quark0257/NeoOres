@@ -425,6 +425,12 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.type") + " : " + SpellUtils.colorFromSpellItem(spellitem) + I18n.format(SpellUtils.typeFromSpellItem(spellitem)));
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : +" + spellitem.getCostsum());
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : x" + spellitem.getCostproduct());
+			tooltip.add(TextFormatting.GRAY + I18n.format("spell.recipe"));
+			for(String formatted : SpellUtils.getRecipe(spellitem)) 
+			{
+				tooltip.add(TextFormatting.GRAY + formatted);
+			}
+			
 			if (this.canSelect(spellitem))
 			{
 				tooltip.add("");

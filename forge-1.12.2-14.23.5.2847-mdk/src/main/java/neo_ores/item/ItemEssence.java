@@ -19,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
 public class ItemEssence extends INeoOresItem.Impl
 {
@@ -70,7 +71,7 @@ public class ItemEssence extends INeoOresItem.Impl
 			EntityPlayerMP playermp = (EntityPlayerMP) player;
 			PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
 
-			if (pmd.getLevel() > 0)
+			if (pmd.getLevel() > 0 || player instanceof FakePlayer)
 			{
 				return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
 			}

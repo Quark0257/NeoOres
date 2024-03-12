@@ -65,7 +65,8 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 			return nbt;
 		EntityLivingBase entityliving = (EntityLivingBase) entity;
 		NBTTagList list = new NBTTagList();
-		list.appendTag(new NBTTagString("Require Health : " + Integer.toString(((int) entityliving.getMaxHealth()))));
+		list.appendTag(new NBTTagString("spell.required.health"));
+		list.appendTag(new NBTTagString(Integer.toString((int) entityliving.getMaxHealth())));
 		nbt.appendTag(list);
 		return nbt;
 	}

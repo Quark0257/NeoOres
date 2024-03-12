@@ -12,7 +12,7 @@ import net.minecraft.world.gen.structure.StructureStart;
 
 public class MapGenAirStructure extends MapGenStructure
 {
-	private final int spacing = 20;
+	private final int spacing = 30;
 	private final int separation = 11;
 	private final ChunkGeneratorTheAir cg;
 

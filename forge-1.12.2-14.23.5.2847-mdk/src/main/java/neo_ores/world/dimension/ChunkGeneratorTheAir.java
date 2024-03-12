@@ -371,7 +371,7 @@ public class ChunkGeneratorTheAir implements IChunkGenerator
 
 		if (this.mapFeaturesEnabled)
 		{
-			this.airStr.generateStructure(this.world, this.rand, new ChunkPos(x, z));
+			this.airStr.generateStructure(this.world, this.rand, chunkpos);
 		}
 
 		ForgeEventFactory.onChunkPopulate(false, this, this.world, this.rand, x, z, false);

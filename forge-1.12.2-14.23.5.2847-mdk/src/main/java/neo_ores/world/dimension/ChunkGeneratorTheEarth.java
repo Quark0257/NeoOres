@@ -377,7 +377,7 @@ public class ChunkGeneratorTheEarth implements IChunkGenerator
 
 	public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos)
 	{
-		return false;
+		return "UrySanctuary".equals(structureName) && this.genStrcuture != null ? this.genStrcuture.isInsideStructure(pos) : false;
 	}
 
 	public void recreateStructures(Chunk chunkIn, int x, int z)

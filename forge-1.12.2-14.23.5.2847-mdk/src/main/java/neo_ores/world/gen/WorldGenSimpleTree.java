@@ -56,31 +56,46 @@ public class WorldGenSimpleTree extends WorldGenAbstractTree
 		{
 			for (int z = 0; z < 3; z++)
 			{
-				if (!this.isReplaceable(worldIn, position.add(x - 1, base + 2, z - 1)))
+				if (2 <= (x - 1) * (x - 1) + (z - 1) * (z - 1))
+					continue;
+				if (!this.isReplaceable(worldIn, position.add(x - 1, base + 0, z - 1)))
 					return false;
-				leaves1.add(position.add(x - 1, base + 1, z - 1));
+				leaves1.add(position.add(x - 1, base + 0, z - 1));
+			}
+		}
+		for (int x = 0; x < 3; x++)
+		{
+			for (int z = 0; z < 3; z++)
+			{
+				if (!this.isReplaceable(worldIn, position.add(x - 1, base - 1, z - 1)))
+					return false;
+				leaves1.add(position.add(x - 1, base - 1, z - 1));
 			}
 		}
 		for (int x = 0; x < 5; x++)
 		{
 			for (int z = 0; z < 5; z++)
 			{
-				if (!this.isReplaceable(worldIn, position.add(x - 2, base + 1, z - 2)))
-					return false;
-				leaves1.add(position.add(x - 2, base, z - 2));
-			}
-		}
-		for (int x = 0; x < 7; x++)
-		{
-			for (int z = 0; z < 7; z++)
-			{
-				if (18 <= (x - 3) * (x - 3) + (z - 3) * (z - 3))
+				if (8 <= (x - 2) * (x - 2) + (z - 2) * (z - 2))
 					continue;
-				if (!this.isReplaceable(worldIn, position.add(x - 3, base + 1, z - 3)))
+				if (!this.isReplaceable(worldIn, position.add(x - 2, base - 2, z - 2)))
 					return false;
-				leaves1.add(position.add(x - 3, base - 1, z - 3));
+				leaves1.add(position.add(x - 2, base - 2, z - 2));
 			}
 		}
+		
+		for (int x = 0; x < 5; x++)
+		{
+			for (int z = 0; z < 5; z++)
+			{
+				if (8 <= (x - 2) * (x - 2) + (z - 2) * (z - 2))
+					continue;
+				if (!this.isReplaceable(worldIn, position.add(x - 2, base - 3, z - 2)))
+					return false;
+				leaves1.add(position.add(x - 2, base - 3, z - 2));
+			}
+		}
+		
 		for (BlockPos pos : leaves1)
 			this.setBlockAndNotifyAdequately(worldIn, pos, this.leaf);
 		for (BlockPos pos : logs)

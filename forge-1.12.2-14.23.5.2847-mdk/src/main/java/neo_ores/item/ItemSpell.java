@@ -72,7 +72,7 @@ public class ItemSpell extends Item
 					}
 					else
 					{
-						format.add(I18n.format(desc.getStringTagAt(j)));
+						format.add(desc.getStringTagAt(j));
 					}
 				}
 				TextComponentTranslation tct = new TextComponentTranslation(main, format.toArray());
@@ -133,7 +133,7 @@ public class ItemSpell extends Item
 				}
 			}
 
-			SpellUtils.run(rawSpellList, player, player.getHeldItem(hand), target);
+			SpellUtils.run(rawSpellList, world ,player, player.getHeldItem(hand), null);
 		}
 
 		return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
@@ -144,12 +144,14 @@ public class ItemSpell extends Item
 		return this.onRightClick(world, player, hand, null);
 	}
 
+	/*
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand)
 	{
 		player.swingArm(hand);
 		this.onRightClick(player.getEntityWorld(), player, hand, target);
 		return true;
 	}
+	*/
 
 	public int getMaxItemUseDuration(ItemStack stack)
 	{

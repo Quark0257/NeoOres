@@ -4,9 +4,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.main.NeoOresRegisterEvent;
+import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import neo_ores.util.UtilSpellOreGen;
 import net.minecraft.block.Block;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
 public class SpellOreGen extends SpellEffect implements HasRange
 {
@@ -43,15 +45,11 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	@Override
 	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -64,9 +62,9 @@ public class SpellOreGen extends SpellEffect implements HasRange
 					(float) (result.hitVec.z - runner.posZ));
 			for (BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				if (world.isRemote)
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack), 8);
-				else
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8,
+						runner instanceof FakePlayer);
+				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);
 					this.transform(state, world, pos, runner, item);
@@ -108,60 +106,8 @@ public class SpellOreGen extends SpellEffect implements HasRange
 		world.setBlockState(pos, out);
 		if (!output.isEmpty())
 		{
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 			pmds.addMXP(10L);
 		}
 	}
-	/*
-	 * public static class FakeChunkGenerator implements IChunkGenerator { private
-	 * final World world; private final IBlockState state; public
-	 * FakeChunkGenerator(World worldIn,IBlockState target) { world = worldIn;
-	 * this.state = target; }
-	 * 
-	 * @Override public Chunk generateChunk(int x, int z) { ChunkPrimer chunkprimer
-	 * = new ChunkPrimer();
-	 * 
-	 * for(int i = 0;i < 256;i++) { for(int j = 0;j < 16;j++) { for(int k = 0;k <
-	 * 16;k++) { chunkprimer.setBlockState(j, i, k, state); } } }
-	 * 
-	 * return new Chunk(this.world, chunkprimer,x, z); }
-	 * 
-	 * @Override public void populate(int x, int z) {
-	 * 
-	 * }
-	 * 
-	 * @Override public boolean generateStructures(Chunk chunkIn, int x, int z) {
-	 * return false; }
-	 * 
-	 * @Override public List<SpawnListEntry> getPossibleCreatures(EnumCreatureType
-	 * creatureType, BlockPos pos) { return new ArrayList<SpawnListEntry>(); }
-	 * 
-	 * @Override public BlockPos getNearestStructurePos(World worldIn, String
-	 * structureName, BlockPos position,boolean findUnexplored) { return null; }
-	 * 
-	 * @Override public void recreateStructures(Chunk chunkIn, int x, int z) { }
-	 * 
-	 * @Override public boolean isInsideStructure(World worldIn, String
-	 * structureName, BlockPos pos) { return false; }
-	 * 
-	 * }
-	 * 
-	 * public static class FakeChunkProvider implements IChunkProvider { private
-	 * final IChunkGenerator gen;
-	 * 
-	 * public FakeChunkProvider(World worldIn,IChunkGenerator generator) { gen =
-	 * generator; }
-	 * 
-	 * @Override public Chunk getLoadedChunk(int x, int z) { return
-	 * gen.generateChunk(x, z); }
-	 * 
-	 * @Override public Chunk provideChunk(int x, int z) { return
-	 * gen.generateChunk(x, z); }
-	 * 
-	 * @Override public boolean tick() { return false; }
-	 * 
-	 * @Override public String makeString() { return "ore"; }
-	 * 
-	 * @Override public boolean isChunkGeneratedAt(int x, int z) { return false; } }
-	 */
 }

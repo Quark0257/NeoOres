@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,13 +16,13 @@ import net.minecraft.item.ItemStack;
 public class FakeAttributeMaxMana
 {
 	private final EntityPlayerMP player;
-	private final PlayerManaDataServer pmd;
+	private final PlayerMagicData pmd;
 	public static final IAttribute MAX_MANA = new FakeAttributeMaxMana.AttributeMaxMana();
 
 	public FakeAttributeMaxMana(EntityPlayerMP target)
 	{
 		player = target;
-		pmd = new PlayerManaDataServer(target);
+		this.pmd = NeoOresData.instance.getPMD(target);
 	}
 
 	public FakeAttributeMaxMana initialize()
@@ -108,8 +109,7 @@ public class FakeAttributeMaxMana
 			{
 				this.pmd.setMana(this.pmd.getMaxMana());
 			}
-
-			this.pmd.sendToClient();
+			this.pmd.markSending();
 		}
 	}
 

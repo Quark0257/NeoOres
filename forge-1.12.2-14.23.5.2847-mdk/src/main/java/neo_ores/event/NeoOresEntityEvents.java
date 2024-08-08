@@ -15,11 +15,12 @@ import neo_ores.entity.fakeattribute.FakeAttributeMaxMana;
 import neo_ores.item.ItemPaxel;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.potion.PotionNeoOres;
 import neo_ores.util.EntityDamageSourceWithItem;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import neo_ores.world.dimension.FromAirTeleporter;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
@@ -227,7 +228,7 @@ public class NeoOresEntityEvents
 			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP)
 			{
 				EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
-				PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+				PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 				if (playermp.ticksExisted % 20 == 0)
 				{
 					// pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() *
@@ -443,12 +444,14 @@ public class NeoOresEntityEvents
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerClone(PlayerEvent.Clone evt)
 	{
+		/*
 		if (evt.getEntityPlayer() instanceof EntityPlayerMP && evt.getOriginal().getEntityData().hasKey("neo_ores"))
 		{
 			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
 			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) evt.getEntityPlayer());
 			pmds.sendToClient();
 		}
+		*/
 
 		if ((!evt.isWasDeath()) || (evt.isCanceled()))
 		{

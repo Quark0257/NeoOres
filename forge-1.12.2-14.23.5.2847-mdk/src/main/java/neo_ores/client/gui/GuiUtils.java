@@ -4,10 +4,12 @@ import javax.annotation.Nullable;
 
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
-import neo_ores.util.StudyItemManagerClient;
 import neo_ores.api.spell.KnowledgeTab;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,13 +32,13 @@ public class GuiUtils
 
 		public static boolean canPlayerGetSpell(SpellItem spellitem, EntityPlayerSP player)
 		{
-			StudyItemManagerClient simc = new StudyItemManagerClient(player);
+			PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(player.getGameProfile()));
 			if (spellitem.getParent() == null)
 			{
-				return simc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
+				return pmdc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
 			}
 
-			return simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId());
+			return pmdc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId());
 		}
 
 		@Nullable

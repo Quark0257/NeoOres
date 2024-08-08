@@ -58,8 +58,7 @@ public class PacketSRCTToServer implements IMessage
 						tesrct.srctSearch = message.nbt.getString("search");
 						tesrct.setSpellItems(SpellUtils.getListFromNBT(message.nbt.getCompoundTag("recipeSpells")));
 						ItemStack sentStack = new ItemStack(message.nbt.getCompoundTag("recipeItem"));
-						if (tesrct.getStackInSlot(0).getItem() == sentStack.getItem() && tesrct.getStackInSlot(0).getMetadata() == sentStack.getMetadata())
-							tesrct.setInventorySlotContents(0, sentStack);
+						tesrct.setInventorySlotContents(0, sentStack);	
 					}
 				}
 			});

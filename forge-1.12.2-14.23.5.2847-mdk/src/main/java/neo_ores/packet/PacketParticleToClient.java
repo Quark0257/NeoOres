@@ -1,8 +1,8 @@
 package neo_ores.packet;
 
 import io.netty.buffer.ByteBuf;
+import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
-import neo_ores.main.NeoOresRegisterEvent;
 import neo_ores.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,7 +42,7 @@ public class PacketParticleToClient implements IMessage
 		this.nbt.setTag("size", sizeTag);
 		this.nbt.setInteger("particleVolume", particleVolume);
 		this.nbt.setInteger("color", color);
-		if (texture == NeoOresRegisterEvent.particle0)
+		if (texture == NeoOresRegisterEvents.particle0)
 			this.nbt.setString("type", "a_0");
 		else
 			this.nbt.setString("type", "-1");
@@ -81,7 +81,7 @@ public class PacketParticleToClient implements IMessage
 						Vec3d target = new Vec3d(targetTag.getDouble("x"), targetTag.getDouble("y"), targetTag.getDouble("z"));
 						NBTTagCompound sizeTag = message.nbt.getCompoundTag("size");
 						Vec3d size = new Vec3d(sizeTag.getDouble("x"), sizeTag.getDouble("y"), sizeTag.getDouble("z"));
-						SpellUtils.displayParticleTypeA(world, target, size, NeoOresRegisterEvent.particle0, message.nbt.getInteger("color"), message.nbt.getInteger("particleVolume"));
+						SpellUtils.displayParticleTypeA(world, target, size, NeoOresRegisterEvents.particle0, message.nbt.getInteger("color"), message.nbt.getInteger("particleVolume"));
 					}
 				}
 			});

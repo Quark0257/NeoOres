@@ -5,8 +5,9 @@ import java.util.List;
 
 import neo_ores.api.recipe.ManaCraftingRecipes;
 import neo_ores.main.NeoOresBlocks;
-import neo_ores.util.PlayerManaDataClient;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
+import neo_ores.util.PlayerMagicDataClient;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -91,13 +92,13 @@ public class ContainerManaWorkbench extends Container
 				if (!player.world.isRemote)
 				{
 					EntityPlayerMP playermp = (EntityPlayerMP) playerIn;
-					PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+					PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 					return (playerIn.capabilities.isCreativeMode || pmd.getMana() >= ContainerManaWorkbench.this.cost) && ContainerManaWorkbench.this.cost > 0 && this.getHasStack();
 				}
 				else
 				{
 					EntityPlayerSP playersp = (EntityPlayerSP) playerIn;
-					PlayerManaDataClient pmdc = new PlayerManaDataClient(playersp);
+					PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(playersp.getGameProfile()));
 					return (playerIn.capabilities.isCreativeMode || pmdc.getMana() >= ContainerManaWorkbench.this.cost) && ContainerManaWorkbench.this.cost > 0 && this.getHasStack();
 				}
 			}
@@ -109,14 +110,14 @@ public class ContainerManaWorkbench extends Container
 					if (!thePlayer.world.isRemote)
 					{
 						EntityPlayerMP playermp = (EntityPlayerMP) thePlayer;
-						PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+						PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 						pmd.addMana(-ContainerManaWorkbench.this.cost);
 					}
 					else
 					{
 						EntityPlayerSP playersp = (EntityPlayerSP) thePlayer;
-						PlayerManaDataClient pmdc = new PlayerManaDataClient(playersp);
-						pmdc.setNBT(pmdc.addMana(-ContainerManaWorkbench.this.cost), null);
+						PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(playersp.getGameProfile()));
+						pmdc.addMana(-ContainerManaWorkbench.this.cost);
 					}
 				}
 
@@ -197,13 +198,13 @@ public class ContainerManaWorkbench extends Container
 		if (!player.world.isRemote)
 		{
 			EntityPlayerMP playermp = (EntityPlayerMP) playerIn;
-			PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+			PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 			return pmd.getMana();
 		}
 		else
 		{
 			EntityPlayerSP playersp = (EntityPlayerSP) playerIn;
-			PlayerManaDataClient pmdc = new PlayerManaDataClient(playersp);
+			PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(playersp.getGameProfile()));
 			return pmdc.getMana();
 		}
 	}

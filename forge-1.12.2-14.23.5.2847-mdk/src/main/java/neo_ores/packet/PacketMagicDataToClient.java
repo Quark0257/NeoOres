@@ -1,12 +1,12 @@
 package neo_ores.packet;
 
+import java.util.UUID;
+
 import io.netty.buffer.ByteBuf;
 import neo_ores.main.NeoOres;
-import neo_ores.main.Reference;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicDataClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -14,15 +14,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketManaDataToClient implements IMessage
+public class PacketMagicDataToClient implements IMessage
 {
 	private NBTTagCompound nbt;
 
-	public PacketManaDataToClient()
+	public PacketMagicDataToClient()
 	{
 	}
 
-	public PacketManaDataToClient(NBTTagCompound nbt)
+	public PacketMagicDataToClient(NBTTagCompound nbt)
 	{
 		this.nbt = nbt;
 	}
@@ -39,10 +39,10 @@ public class PacketManaDataToClient implements IMessage
 		ByteBufUtils.writeTag(buf, nbt);
 	}
 
-	public static class Handler implements IMessageHandler<PacketManaDataToClient, IMessage>
+	public static class Handler implements IMessageHandler<PacketMagicDataToClient, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final PacketManaDataToClient message, MessageContext ctx)
+		public IMessage onMessage(final PacketMagicDataToClient message, MessageContext ctx)
 		{
 			Minecraft.getMinecraft().addScheduledTask(new Runnable()
 			{
@@ -51,16 +51,15 @@ public class PacketManaDataToClient implements IMessage
 					World world = NeoOres.proxy.getClientWorld();
 					if (world == null)
 						return;
-					int playerid = message.nbt.getInteger("playerID");
-					Entity player = world.getEntityByID(playerid);
-					if (player != null && player instanceof EntityPlayerSP)
+					UUID uuid = UUID.fromString(message.nbt.getString("uuid"));
+					PlayerMagicDataClient pmdc = NeoOresData.getPMDC(uuid);
+					if (pmdc.isChanged() && message.nbt.hasKey("isClientChanged") && message.nbt.getBoolean("isClientChanged"))
 					{
-						NBTTagCompound nbt = player.getEntityData();
-
-						if (!message.nbt.hasKey(Reference.MOD_ID, 10))
-							return;
-						nbt.setTag(Reference.MOD_ID, (NBTBase) message.nbt.getCompoundTag(Reference.MOD_ID).copy());
+						pmdc.readFromNBT(message.nbt);
+						pmdc.sync();
 					}
+					else if (!pmdc.isChanged())
+						pmdc.readFromNBT(message.nbt);
 				}
 			});
 			return null;

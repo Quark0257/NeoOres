@@ -6,13 +6,14 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleMagic1;
-import neo_ores.main.NeoOresRegisterEvent;
+import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasSilk;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -68,9 +70,9 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 					(float) (result.hitVec.z - runner.posZ));
 			for (BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				if (world.isRemote)
-					this.onDisplay(world, pos, runner);
-				else
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8,
+						runner instanceof FakePlayer);
+				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);
 					this.breakBlock(state, world, pos, runner, xpvalue, item);
@@ -119,7 +121,7 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 						world.destroyBlock(pos, false);
 						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
 						}
 					}
@@ -152,7 +154,7 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 
 					if (runner instanceof EntityPlayerMP)
 					{
-						PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+						PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 						pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
 					}
 				}
@@ -210,9 +212,7 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 			for (int j = 0; j < 8; j++)
 			{
 				int d = (int) (10.0D / (Math.random() + 0.5D));
-				ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d, 0.0005F, NeoOresRegisterEvent.particle0);
-				// ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y,
-				// start.z,300);
+				ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d, 0.0005F, NeoOresRegisterEvents.particle0);
 				Minecraft.getMinecraft().effectRenderer.addEffect(png);
 			}
 		}

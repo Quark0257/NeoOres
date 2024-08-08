@@ -10,12 +10,15 @@ import neo_ores.creativetab.NeoOresTab;
 import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
 import neo_ores.event.NeoOresItemEvents;
+import neo_ores.event.NeoOresRecipeRegisterEvents;
+import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.event.NeoOresWorldEvents;
+import neo_ores.event.NeoOresBlockEvents;
 import neo_ores.event.NeoOresEntityEvents;
 import neo_ores.packet.PacketDestinationToClient;
 import neo_ores.packet.PacketItemsToClient;
-import neo_ores.packet.PacketManaDataToClient;
-import neo_ores.packet.PacketManaDataToServer;
+import neo_ores.packet.PacketMagicDataToClient;
+import neo_ores.packet.PacketMagicDataToServer;
 import neo_ores.packet.PacketParticleToClient;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
@@ -29,7 +32,6 @@ import neo_ores.potion.PotionShield;
 import neo_ores.potion.PotionUndying;
 import neo_ores.proxy.CommonProxy;
 import neo_ores.util.NeoOresChunkManager;
-import neo_ores.util.NeoOresServer;
 import neo_ores.world.dimension.WorldProviderTheFire;
 import neo_ores.world.dimension.WorldProviderTheEarth;
 import neo_ores.world.biome.BiomeTheAir;
@@ -65,6 +67,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -95,14 +98,20 @@ import morph.avaritia.recipe.extreme.ExtremeShapedRecipe;
 dependencies="required-after:baubles@[1.5.2,);after:avaritia@[3.3.0,);after:jei;")
 public class NeoOres 
 {
+	static 
+	{
+		FluidRegistry.enableUniversalBucket();
+	}
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{
 		NeoOresInfoCore.registerInfo(meta);
-		MinecraftForge.EVENT_BUS.register(new NeoOresRegisterEvent());
-		MinecraftForge.EVENT_BUS.register(new NeoOresRecipeRegisterEvent());
+		MinecraftForge.EVENT_BUS.register(new NeoOresRegisterEvents());
+		MinecraftForge.EVENT_BUS.register(new NeoOresRecipeRegisterEvents());
 		MinecraftForge.EVENT_BUS.register(new NeoOresEntityEvents());
 		MinecraftForge.EVENT_BUS.register(new NeoOresItemEvents());
+		MinecraftForge.EVENT_BUS.register(new NeoOresBlockEvents());
 		MinecraftForge.EVENT_BUS.register(new NeoOresWorldEvents());
 		ForgeChunkManager.setForcedChunkLoadingCallback(NeoOres.instance, NeoOresChunkManager.INSTANCE);
 		DimensionManager.registerDimension(THE_WATER.getId(), THE_WATER);
@@ -110,11 +119,11 @@ public class NeoOres
 		DimensionManager.registerDimension(THE_FIRE.getId(), THE_FIRE);
 		DimensionManager.registerDimension(THE_AIR.getId(), THE_AIR);
 		GameRegistry.registerWorldGenerator(new NeoOresOreGen(), 0);
-		NeoOresRecipeRegisterEvent.registerFromJson(event);
+		NeoOresRecipeRegisterEvents.registerFromJson(event);
 		NeoOres.registerStructures();
 		
-		PACKET.registerMessage(PacketManaDataToClient.Handler.class, PacketManaDataToClient.class, 0, Side.CLIENT);
-		PACKET.registerMessage(PacketManaDataToServer.Handler.class, PacketManaDataToServer.class, 1, Side.SERVER);
+		PACKET.registerMessage(PacketMagicDataToClient.Handler.class, PacketMagicDataToClient.class, 0, Side.CLIENT);
+		PACKET.registerMessage(PacketMagicDataToServer.Handler.class, PacketMagicDataToServer.class, 1, Side.SERVER);
 		PACKET.registerMessage(PacketItemsToClient.Handler.class, PacketItemsToClient.class, 2, Side.CLIENT);
 		PACKET.registerMessage(PacketSRCTToServer.Handler.class, PacketSRCTToServer.class, 3, Side.SERVER);
 		PACKET.registerMessage(PacketSRCTToClient.Handler.class, PacketSRCTToClient.class, 4, Side.CLIENT);
@@ -123,11 +132,12 @@ public class NeoOres
 		
 		if(event.getSide().isClient())
 		{
-			NeoOresRegisterEvent.registerRendering();
+			NeoOresRegisterEvents.registerRendering();
 		}
 	}
 	
-	public static void registerStructures() {
+	public static void registerStructures() 
+	{
 		MapGenStructureIO.registerStructure(EarthStructureStart.class, "UrySanctuary");
 		MapGenStructureIO.registerStructure(WaterStructureStart.class, "GabrySanctuary");
 		MapGenStructureIO.registerStructure(AirStructureStart.class, "RaphaSanctuary");
@@ -142,7 +152,7 @@ public class NeoOres
 	public void init(FMLInitializationEvent event) 
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		NeoOresRegisterEvent.registerEntity(this);
+		NeoOresRegisterEvents.registerEntity(this);
 		NeoOres.proxy.init();
 	}
 	
@@ -209,19 +219,19 @@ public class NeoOres
 	@EventHandler
 	public static void onServerToStart(FMLServerAboutToStartEvent event)
 	{
-		NeoOresServer.onServerToStart(event);
+		NeoOresData.onServerToStart(event);
 	}
 
 	@EventHandler
 	public static void onServerStarted(FMLServerStartedEvent event)
 	{
-		NeoOresServer.onServerStarted(event);
+		NeoOresData.onServerStarted(event);
 	}
 
 	@EventHandler
 	public static void onServerStopping(FMLServerStoppingEvent event)
 	{
-		NeoOresServer.onServerStopping(event);
+		NeoOresData.onServerStopping(event);
 	}
 	
 	@SidedProxy(clientSide = "neo_ores.proxy.ClientProxy", serverSide = "neo_ores.proxy.CommonProxy")

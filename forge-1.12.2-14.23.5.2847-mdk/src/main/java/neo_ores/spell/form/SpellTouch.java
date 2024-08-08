@@ -38,8 +38,8 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 				effects.add(sc);
 			}
 		}
-
-		if (result != null && result.typeOfHit == Type.ENTITY)
+		
+		if (result != null && result.typeOfHit != Type.MISS)
 		{
 			for (Spell effect : effects)
 			{
@@ -54,13 +54,17 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 		}
 		else
 		{
-			RayTraceResult blockresult = result;
-			if (blockresult == null && runner instanceof EntityPlayer)
+			RayTraceResult traceresult = result;
+			if (traceresult == null)
 			{
-				blockresult = SpellUtils.rayTrace(world, (EntityPlayer) runner, this.liquid);
+				double reach = 3.0;
+				if(runner instanceof EntityPlayer) {
+					reach = ((EntityPlayer)runner).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+				}
+				traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, true);
 			}
 
-			if (blockresult != null)
+			if (traceresult != null && traceresult.typeOfHit != Type.MISS)
 			{
 				for (Spell effect : effects)
 				{
@@ -69,8 +73,8 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 					{
 						((Spell.SpellCorrection) correction).onCorrection(spell);
 					}
-					spell.onEffectRunToSelfAndOther(world, runner, blockresult, stack);
-					spell.onEffectRunToOther(world, blockresult, stack);
+					spell.onEffectRunToSelfAndOther(world, runner, traceresult, stack);
+					spell.onEffectRunToOther(world, traceresult, stack);
 				}
 			}
 		}

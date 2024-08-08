@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import neo_ores.api.IMagicExperienceContainer;
+import neo_ores.api.IMagicContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,7 +21,7 @@ public class PlayerDataStorage
 	public PlayerDataStorage(EntityPlayerMP playermp)
 	{
 		this.player = playermp;
-		this.isFake = player instanceof IMagicExperienceContainer;
+		this.isFake = player instanceof IMagicContainer;
 	}
 
 	@SuppressWarnings("static-access")

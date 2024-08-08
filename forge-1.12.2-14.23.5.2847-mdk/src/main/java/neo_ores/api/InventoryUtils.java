@@ -7,6 +7,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.common.util.FakePlayer;
 
 public class InventoryUtils
 {
@@ -180,7 +181,7 @@ public class InventoryUtils
 	{
 		if (!itemstack.isEmpty() && entityplayer.isServerWorld())
 		{
-			boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
+			boolean flag = (entityplayer instanceof FakePlayer) ? false : entityplayer.inventory.addItemStackToInventory(itemstack);
 
 			if (flag)
 			{
@@ -203,5 +204,12 @@ public class InventoryUtils
 				}
 			}
 		}
+	}
+
+	public static IInventory getPlayerInventory(EntityPlayer player)
+	{
+		if (player instanceof FakePlayer && player instanceof HasInventory)
+			return ((HasInventory) player).getInventory();
+		return player.inventory;
 	}
 }

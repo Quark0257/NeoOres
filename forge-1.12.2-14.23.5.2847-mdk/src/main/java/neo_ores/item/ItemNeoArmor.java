@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import neo_ores.api.TierUtils;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.NeoOresItems;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.world.dimension.DimensionHelper.ToolType;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -33,17 +34,17 @@ public class ItemNeoArmor extends ItemArmor implements INeoOresItem, IItemNeoToo
 			this.setMaxDamage(Integer.MAX_VALUE);
 		}
 	}
-	
+
 	public EntityEquipmentSlot getES()
-    {
-        return this.armorType;
-    }
+	{
+		return this.armorType;
+	}
 
 	public void onArmorTick(World world, EntityPlayer player, ItemStack stack)
 	{
 		if (!world.isRemote && player.ticksExisted % 200 == 0)
 		{
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) player);
+			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) player);
 			if (pmds.getMana() > 0)
 			{
 				pmds.addMana(-1L);

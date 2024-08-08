@@ -3,12 +3,13 @@ package neo_ores.spell.effect;
 import neo_ores.api.recipe.MCPRUtils;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.client.particle.ParticleNoGravity;
+import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.NeoOresItems;
-import neo_ores.main.NeoOresRegisterEvent;
 import neo_ores.spell.SpellItemInterfaces.HasTier;
 import neo_ores.tileentity.TileEntityPedestal;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,7 +52,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 					if (runner instanceof EntityPlayerMP)
 					{
 						EntityPlayer entityplayer = (EntityPlayer) runner;
-						boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
+						boolean flag = (runner instanceof FakePlayer) ? false : entityplayer.inventory.addItemStackToInventory(itemstack);
 
 						if (flag)
 						{
@@ -73,7 +75,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 							}
 						}
 
-						PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+						PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 						pmds.addMXP(1L + (long) Math.pow(4, tier));
 					}
 				}
@@ -101,7 +103,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						world.setBlockState(result.getBlockPos(), NeoOresBlocks.air_portal.getDefaultState());
 						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(Integer.MAX_VALUE / 4);
 						}
 					}
@@ -112,7 +114,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						world.setBlockState(result.getBlockPos(), NeoOresBlocks.earth_portal.getDefaultState());
 						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(Integer.MAX_VALUE / 16384);
 						}
 					}
@@ -123,7 +125,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						world.setBlockState(result.getBlockPos(), NeoOresBlocks.fire_portal.getDefaultState());
 						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(Integer.MAX_VALUE);
 						}
 					}
@@ -134,7 +136,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						world.setBlockState(result.getBlockPos(), NeoOresBlocks.water_portal.getDefaultState());
 						if (runner instanceof EntityPlayerMP)
 						{
-							PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(Integer.MAX_VALUE / 64);
 						}
 					}
@@ -242,12 +244,12 @@ public class SpellComposition extends SpellEffect implements HasTier
 	private TextureAtlasSprite getTexture(int meta)
 	{
 		if (meta == 0)
-			return NeoOresRegisterEvent.air0;
+			return NeoOresRegisterEvents.air0;
 		else if (meta == 1)
-			return NeoOresRegisterEvent.earth0;
+			return NeoOresRegisterEvents.earth0;
 		else if (meta == 2)
-			return NeoOresRegisterEvent.fire0;
-		return NeoOresRegisterEvent.water0;
+			return NeoOresRegisterEvents.fire0;
+		return NeoOresRegisterEvents.water0;
 	}
 
 	@Override

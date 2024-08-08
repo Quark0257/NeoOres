@@ -1,7 +1,8 @@
 package neo_ores.client.gui;
 
 import neo_ores.api.LongUtils;
-import neo_ores.util.PlayerManaDataClient;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicDataClient;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -20,7 +21,7 @@ public class GuiNeoGameOverlay extends Gui
 	public static final ResourceLocation MPIcon = new ResourceLocation("neo_ores:textures/gui/mana_bar.png");
 	protected final Minecraft mc;
 	protected final GuiNewChat persistantChatGUI;
-	private final PlayerManaDataClient pmdc;
+	private final PlayerMagicDataClient pmdc;
 	private final long level;
 	private final long mxp;
 	private final long mana;
@@ -31,7 +32,7 @@ public class GuiNeoGameOverlay extends Gui
 	{
 		this.mc = minecraft;
 		this.persistantChatGUI = new GuiNewChat(minecraft);
-		this.pmdc = new PlayerManaDataClient(mc.player);
+		this.pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(this.mc.player.getGameProfile()));
 		this.level = pmdc.getLevel();
 		this.mxp = pmdc.getMXP();
 		this.mana = pmdc.getMana();

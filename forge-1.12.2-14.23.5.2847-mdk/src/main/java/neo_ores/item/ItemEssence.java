@@ -2,10 +2,10 @@ package neo_ores.item;
 
 import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
-import neo_ores.util.PlayerManaDataClient;
-import neo_ores.util.PlayerManaDataServer;
-import net.minecraft.client.entity.EntityPlayerSP;
+import neo_ores.util.PlayerMagicData;
+import neo_ores.util.PlayerMagicDataClient;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,7 +56,7 @@ public class ItemEssence extends INeoOresItem.Impl
 	{
 		if (player.world.isRemote)
 		{
-			PlayerManaDataClient pmdc = new PlayerManaDataClient((EntityPlayerSP) player);
+			PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(player.getGameProfile()));
 			if (pmdc.getLevel() > 0)
 			{
 				return new ActionResult<ItemStack>(EnumActionResult.PASS, player.getHeldItem(hand));
@@ -69,7 +69,7 @@ public class ItemEssence extends INeoOresItem.Impl
 		else
 		{
 			EntityPlayerMP playermp = (EntityPlayerMP) player;
-			PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+			PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 
 			if (pmd.getLevel() > 0 || player instanceof FakePlayer)
 			{

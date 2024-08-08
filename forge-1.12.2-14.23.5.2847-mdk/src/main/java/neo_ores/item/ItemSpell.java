@@ -9,10 +9,10 @@ import neo_ores.api.LongUtils;
 import neo_ores.api.NBTUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.config.NeoOresConfig;
-import neo_ores.util.PlayerManaDataClient;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
+import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
@@ -43,20 +43,14 @@ public class ItemSpell extends Item
 	{
 		return true;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World world, List<String> list, ITooltipFlag flag)
 	{
 		if (stack.getTagCompound() != null && stack.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
 		{
-			long manasum = 0L;
-			float manapro = 1.0F;
-			for (SpellItem spellitem : SpellUtils.getListFromItemStackNBT(stack.getTagCompound().copy()))
-			{
-				manasum += spellitem.getCostsum();
-				manapro *= spellitem.getCostproduct();
-			}
-			list.add(I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString((long) (manasum * manapro)));
+			List<SpellItem> spells = SpellUtils.getListFromItemStackNBT(stack.getTagCompound().copy());
+			list.add(I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString(SpellUtils.getMPConsume(spells)));
 			NBTUtils.ForItemStack util = new NBTUtils.ForItemStack(stack);
 			NBTTagList desclist = util.getListAsList("desc");
 			for (int i = 0; i < desclist.tagCount(); i++)
@@ -113,7 +107,7 @@ public class ItemSpell extends Item
 			{
 				if (!player.world.isRemote)
 				{
-					PlayerManaDataServer pmd = new PlayerManaDataServer((EntityPlayerMP) player);
+					PlayerMagicData pmd = NeoOresData.instance.getPMD((EntityPlayerMP) player);
 					if (manaConsume > pmd.getMana())
 					{
 						return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
@@ -125,7 +119,7 @@ public class ItemSpell extends Item
 				}
 				else
 				{
-					PlayerManaDataClient pmdc = new PlayerManaDataClient((EntityPlayerSP) player);
+					PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(player.getGameProfile()));
 					if (manaConsume > pmdc.getMana())
 					{
 						return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
@@ -133,7 +127,7 @@ public class ItemSpell extends Item
 				}
 			}
 
-			SpellUtils.run(rawSpellList, world ,player, player.getHeldItem(hand), null);
+			SpellUtils.run(rawSpellList, world, player, player.getHeldItem(hand), null);
 		}
 
 		return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
@@ -145,13 +139,11 @@ public class ItemSpell extends Item
 	}
 
 	/*
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand)
-	{
-		player.swingArm(hand);
-		this.onRightClick(player.getEntityWorld(), player, hand, target);
-		return true;
-	}
-	*/
+	 * public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player,
+	 * EntityLivingBase target, EnumHand hand) { player.swingArm(hand);
+	 * this.onRightClick(player.getEntityWorld(), player, hand, target); return
+	 * true; }
+	 */
 
 	public int getMaxItemUseDuration(ItemStack stack)
 	{

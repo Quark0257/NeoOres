@@ -42,7 +42,7 @@ public class BlockDimensionPillar extends BlockDimension implements INeoOresBloc
 
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)) % 4);
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state) % 4);
 	}
 
 	protected ItemStack getSilkTouchDrop(IBlockState state)

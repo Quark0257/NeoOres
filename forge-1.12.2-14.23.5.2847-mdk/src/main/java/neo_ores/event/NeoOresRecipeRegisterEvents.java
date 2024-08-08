@@ -1,4 +1,4 @@
-package neo_ores.main;
+package neo_ores.event;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +25,11 @@ import neo_ores.api.recipe.ManaCraftingRecipe;
 import neo_ores.api.recipe.OreWeightRecipe;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresItems;
+import neo_ores.main.NeoOresSpells;
+import neo_ores.main.Reference;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -52,12 +57,12 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresRecipeRegisterEvent
+public class NeoOresRecipeRegisterEvents
 {
 	private List<ManaCraftingRecipeManager> manacraftingrecipes = new ArrayList<ManaCraftingRecipeManager>();
 	private List<ManaCompositionRecipeManager> manacompositionrecipes = new ArrayList<ManaCompositionRecipeManager>();
 	private static File configFile;
-	
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void registerSpellItems(final RegistryEvent.Register<SpellItem> event)
 	{
@@ -100,7 +105,7 @@ public class NeoOresRecipeRegisterEvent
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck8, new RecipeOreStack("gemLapis", 1024), new RecipeOreStack("gemDiamond", 8)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck9, new RecipeOreStack("gemLapis", 2048), new RecipeOreStack("gemDiamond", 9)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck10, new RecipeOreStack("gemLapis", 4096), new RecipeOreStack("gemDiamond", 10)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 10), new RecipeOreStack("woolWhite", 1), new RecipeOreStack("feather", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 10), new RecipeOreStack("wool", 1), new RecipeOreStack("feather", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier1, new RecipeOreStack("blockEarthEssence", 1), new RecipeOreStack("blockWaterEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier2, new RecipeOreStack("blockFireEssence", 1), new RecipeOreStack("blockAirEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier3, new RecipeOreStack("gemDiamond", 1), new RecipeOreStack("gemEmerald", 1)));
@@ -245,6 +250,8 @@ public class NeoOresRecipeRegisterEvent
 		for (int i = 0; i < 10; i++)
 			this.addManaCraftingRecipe(new ItemStack(NeoOresItems.fire_essence_core, 1, i + 1), 100, " E ", "CXC", " E ", 'E', new ItemStack(NeoOresItems.essence, 1, 2), 'C',
 					new ItemStack(NeoOresItems.fire_essence_core, 1, i), 'X', "netherStar");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.chunk_loader), 100, "FIW", "AIE", "III", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'W', new ItemStack(NeoOresItems.essence, 1, 1),
+				'A', new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'I', "ingotIron");
 
 		int n = 0;
 		for (ManaCraftingRecipeManager mcrm : manacraftingrecipes)
@@ -539,7 +546,7 @@ public class NeoOresRecipeRegisterEvent
 	{
 		for (ItemStack stack : OreDictionary.getOres(oredict))
 		{
-			GameRegistry.addSmelting(stack, result, exp);
+			GameRegistry.addSmelting(stack.copy(), result, exp);
 		}
 	}
 
@@ -1026,7 +1033,8 @@ public class NeoOresRecipeRegisterEvent
 			{
 				config = parser.parse(reader);
 			}
-			catch(Exception e) {
+			catch (Exception e)
+			{
 				FMLLog.log.error("Unable to load {}", configFile);
 				config = new JsonObject();
 			}

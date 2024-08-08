@@ -18,6 +18,7 @@ import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.client.particle.ParticleMagic1;
+import neo_ores.api.ILifeContainer;
 import neo_ores.api.MathUtils;
 import neo_ores.api.MathUtils.Surface;
 import neo_ores.api.RecipeOreStack;
@@ -416,13 +417,10 @@ public class SpellUtils
 				spellscs.add(sc);
 			}
 		}
-		
+
 		/*
-		if (result != null)
-		{
-			result = new RayTraceResult(targetEntity);
-		}
-		*/
+		 * if (result != null) { result = new RayTraceResult(targetEntity); }
+		 */
 
 		if (!entityspells.isEmpty())
 		{
@@ -478,7 +476,7 @@ public class SpellUtils
 		}
 	}
 
-	public static RayTraceResult rayTrace(World worldIn, Entity playerIn,double reach, boolean useLiquids, boolean collidedFilter)
+	public static RayTraceResult rayTrace(World worldIn, Entity playerIn, double reach, boolean useLiquids, boolean collidedFilter)
 	{
 		RayTraceResult result = null;
 		float f = playerIn.rotationPitch;
@@ -530,10 +528,10 @@ public class SpellUtils
 						return entity != null && (collidedFilter ? entity.canBeCollidedWith() : true);
 					}
 				}));
-
 		for (int j = 0; j < list.size(); ++j)
 		{
 			Entity entity1 = list.get(j);
+			// System.out.println(entity1.getName());
 			AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) entity1.getCollisionBorderSize());
 			RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(pos, end);
 
@@ -775,7 +773,7 @@ public class SpellUtils
 		else if (isSendPacket)
 		{
 			PacketParticleToClient ppc = new PacketParticleToClient(target, size, texture, color, particleVolume);
-			NeoOres.PACKET.sendToAll(ppc); 
+			NeoOres.PACKET.sendToAll(ppc);
 		}
 	}
 
@@ -834,5 +832,22 @@ public class SpellUtils
 			}
 		}
 		return list;
+	}
+
+	public static boolean spellPay(EntityLivingBase runner, float amount)
+	{
+		if (runner instanceof FakePlayer && runner instanceof ILifeContainer)
+		{
+			return ((ILifeContainer) runner).damageWith(NeoOres.PAYMENT, amount);
+		}
+		else
+		{
+			runner.attackEntityFrom(NeoOres.PAYMENT, amount);
+			if (runner.isEntityAlive())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

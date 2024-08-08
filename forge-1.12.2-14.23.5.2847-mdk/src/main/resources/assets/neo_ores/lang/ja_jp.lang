@@ -115,7 +115,9 @@ tile.earth_dim_planks.name=ユリーウッドの木材
 tile.fire_dim_planks.name=マイカウッドの木材
 tile.air_dim_planks.name=ラファウッドの木材
 tile.instant_alter.name=インスタントアルター
-tile.mechanical_magician.name=自動詠唱器
+tile.mechanical_magician.name=詠唱機
+tile.chunk_loader.name=チャンクローダー
+tile.liquid_mana.name=液体マナ
 
 size.= (サイズ:
 hoppered.0=
@@ -201,6 +203,15 @@ item.creative_helmet.name=クリエイティブヘルメット
 item.creative_chestplate.name=クリエイティブチェストプレート
 item.creative_leggings.name=クリエイティブレギンス
 item.creative_boots.name=クリエイティブブーツ
+item.totem_basic.name=ベーシックトーテム
+item.totem_independent.name=インディペンデントトーテム
+item.totem_creative.name=クリエイティブトーテム
+item.upgrade_fluid.name=液体マナアップグレード
+item.upgrade_xp.name=経験値アップグレード
+item.upgrade_void.name=経験値除去アップグレード
+item.upgrade_consume.name=低消費帯カットアップグレード
+
+fluid.neo_ores.mana=液体マナ
 
 enchantment.offensive=攻撃的
 enchantment.soulbound=ソウルバウンド
@@ -269,6 +280,7 @@ container.mana_workbench=マナ作業台
 container.mana_workbench.cost=マナ
 container.mana_furnace=マナ融合炉
 container.spell_recipe_creation_table=呪文レシピ作成台
+container.mechanical_magician=詠唱機
 
 spell.dig.name=採掘
 spell.dig.desc=対象を採掘するスペルアイテム。
@@ -450,6 +462,8 @@ config.magic.init_mxp=初期魔術経験値
 config.magic.init_mxp.tooltip=魔術経験値の初期値の設定
 config.magic.init_level=初期レベル
 config.magic.init_level.tooltip=レベルの初期値の設定
+config.magic.convert_rate=液体マナ変換率
+config.magic.convert_rate.tooltip=液体マナの変換率 (1 mB 液体マナ = [設定値] マナ)
 
 neo_ores.pressLShiftDesc=L-Shiftで詳細表示
 

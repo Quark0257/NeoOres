@@ -6,6 +6,7 @@ import java.util.List;
 import neo_ores.api.ListUtils;
 import neo_ores.block.BlockAerite;
 import neo_ores.block.BlockAirEssence;
+import neo_ores.block.BlockChunkLoader;
 import neo_ores.block.BlockDimension;
 import neo_ores.block.BlockDimensionLeaves;
 import neo_ores.block.BlockDimensionLog;
@@ -22,6 +23,7 @@ import neo_ores.block.BlockGnomite;
 import neo_ores.block.BlockGuardite;
 import neo_ores.block.BlockInstantAlter;
 import neo_ores.block.BlockLandite;
+import neo_ores.block.BlockLiquidMana;
 import neo_ores.block.BlockMageKnowledgeTable;
 import neo_ores.block.BlockMana;
 import neo_ores.block.BlockManaFurnace;
@@ -38,6 +40,7 @@ import neo_ores.block.BlockSpellRecipeCreationTable;
 import neo_ores.block.BlockSylphite;
 import neo_ores.block.BlockUndite;
 import neo_ores.block.BlockWaterEssence;
+import neo_ores.fluid.FluidMana;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -45,6 +48,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 
 public class NeoOresBlocks 
 {
@@ -59,7 +64,11 @@ public class NeoOresBlocks
 	public static final Block mage_knowledge_table = new BlockMageKnowledgeTable()
 			.setRegistryName(Reference.MOD_ID,"mage_knowledge_table")
 			.setUnlocalizedName("mage_knowledge_table")
-			.setCreativeTab(NeoOres.neo_ores_tab);	
+			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block chunk_loader = new BlockChunkLoader()
+			.setRegistryName(Reference.MOD_ID,"chunk_loader")
+			.setUnlocalizedName("chunk_loader")
+			.setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block lit_mana_furnace = new BlockManaFurnace(true)
 			.setRegistryName(Reference.MOD_ID,"lit_mana_furnace")
 			.setUnlocalizedName("mana_furnace")
@@ -173,6 +182,7 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID,"mechanical_magician")
 			.setUnlocalizedName("mechanical_magician")
 			.setCreativeTab(NeoOres.neo_ores_tab);
+			
 	public static final Block custom_lit_redstone_ore = new BlockNeoOre("custom_lit_redstone_ore",2,null, 0.625F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(null);
 	public static final Block custom_redstone_ore = new BlockNeoOre("custom_redstone_ore",2,null, 0.0F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block custom_coal_ore = new BlockNeoOre("custom_coal_ore",0,null, 0.0F, false, Items.COAL,0, 1, 1, 0, 2).setCreativeTab(NeoOres.neo_ores_tab);
@@ -211,6 +221,12 @@ public class NeoOresBlocks
 	public static final Block corroding_fire_sapling = new BlockDimensionSapling("corroding_fire_sapling", Material.PLANTS, Blocks.PACKED_ICE, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block corroding_air_sapling = new BlockDimensionSapling("corroding_air_sapling", Material.PLANTS, null, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
 	public static final Block corroding_water_sapling = new BlockDimensionSaplingWater("corroding_water_sapling", Blocks.SAND, 0.0F, 0.0F, 0.0F, SoundType.PLANT).setCreativeTab(NeoOres.neo_ores_tab);
+	
+	public static final Fluid fluid_mana = new FluidMana("neo_ores.mana", new ResourceLocation(Reference.MOD_ID, "blocks/liquid_mana_still"), new ResourceLocation(Reference.MOD_ID, "blocks/liquid_mana_flow"));
+	public static final Block liquid_mana = new BlockLiquidMana(NeoOresBlocks.fluid_mana)
+			.setRegistryName(Reference.MOD_ID, "liquid_mana")
+			.setUnlocalizedName("liquid_mana")
+			.setCreativeTab(NeoOres.neo_ores_tab);	
 	
 	public static final List<Block> color_saplings = Arrays.asList(
 			corroded_air_sapling,
@@ -282,6 +298,8 @@ public class NeoOresBlocks
 			dim_planks,
 			dim_leaves,
 			corroded_dim_leaves,
-			corroding_dim_leaves
+			corroding_dim_leaves,
+			chunk_loader,
+			liquid_mana
 			),color_saplings);	
 }

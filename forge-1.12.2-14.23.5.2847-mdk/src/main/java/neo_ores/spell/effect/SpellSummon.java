@@ -2,9 +2,10 @@ package neo_ores.spell.effect;
 
 import neo_ores.api.NBTUtils;
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasCanApplyNBT;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,11 +41,14 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 		if (stack.getTagCompound().hasKey("additionalData", 10) && stack.getTagCompound().getCompoundTag("additionalData").hasKey("storedEntity", 10))
 		{
 			NBTUtils nbtutils = new NBTUtils(stack.getTagCompound().getCompoundTag("additionalData"));
-			NBTTagCompound entityTag = nbtutils.getCompound("storedEntity");
+			NBTTagCompound entityTag = nbtutils.getCompound("storedEntity").copy();
 			Entity rawentity = EntityList.createEntityByIDFromName(new ResourceLocation(entityTag.getString("id")), world);
 			if (rawentity == null || !(rawentity instanceof EntityLivingBase))
 				return;
 			EntityLivingBase entity = (EntityLivingBase) rawentity;
+			float pay = entity.getMaxHealth();
+			if (!SpellUtils.spellPay(runner, pay))
+				return;
 			if (this.applyNBT && entityTag.getCompoundTag("tag") != null)
 			{
 				if (entityTag.getCompoundTag("tag").hasUniqueId("UUID"))
@@ -84,12 +88,10 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 			}
 			entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 			world.spawnEntity(entity);
-			runner.attackEntityFrom(NeoOres.PAYMENT, entity.getMaxHealth());
 
 			if (runner instanceof EntityPlayerMP)
 			{
-				EntityPlayerMP player = (EntityPlayerMP) runner;
-				PlayerManaDataServer pmds = new PlayerManaDataServer(player);
+				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 				pmds.addMXP(10);
 			}
 		}

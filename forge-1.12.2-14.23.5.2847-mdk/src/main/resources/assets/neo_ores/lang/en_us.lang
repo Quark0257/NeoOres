@@ -116,6 +116,8 @@ tile.fire_dim_planks.name=Michawood Planks
 tile.air_dim_planks.name=Raphawood Planks
 tile.instant_alter.name=Instant Alter
 tile.mechanical_magician.name=Mechanical Magician
+tile.chunk_loader.name=Chunk Loader
+tile.liquid_mana.name=Fluid Mana
 
 size.= (Size:
 hoppered.0=
@@ -201,6 +203,15 @@ item.creative_helmet.name=Creative Helmet
 item.creative_chestplate.name=Creative Chestplate
 item.creative_leggings.name=Creative Leggings
 item.creative_boots.name=Creative Boots
+item.totem_basic.name=Basic Totem
+item.totem_independent.name=Independent Totem
+item.totem_creative.name=Creative Totem
+item.upgrade_fluid.name=Fluid Mana Upgrade
+item.upgrade_xp.name=Magic Xp Upgrade
+item.upgrade_void.name=Xp Void Upgrade
+item.upgrade_consume.name=Ignore Low Consume Upgrade
+
+fluid.neo_ores.mana=Fluid Mana
 
 enchantment.offensive=Offensive
 enchantment.soulbound=Soul Bound
@@ -269,6 +280,7 @@ container.mana_workbench=Mana Crafting Table
 container.mana_workbench.cost=Mana
 container.mana_furnace=Mana Fusion Furnace
 container.spell_recipe_creation_table=Spell Recipe Creation Table
+container.mechanical_magician=Mechanical Magician
 
 spell.dig.name=Dig
 spell.dig.desc=The Spell Item of mining the target.
@@ -452,6 +464,8 @@ config.magic.init_mxp=Initial Magic Experience
 config.magic.init_mxp.tooltip=Set initial value of magic exp.
 config.magic.init_level=Initial Level
 config.magic.init_level.tooltip=Set initial value of level.
+config.magic.convert_rate=Liquid Mana Rate
+config.magic.convert_rate.tooltip=Set liquid mana conversion rate. (1 mB Liquid Mana = [value] Mana)
 
 neo_ores.pressLShiftDesc=Press L-Shift for details
 

@@ -2,9 +2,11 @@ package neo_ores.client.gui;
 
 import neo_ores.inventory.ContainerManaFurnace;
 import neo_ores.inventory.ContainerManaWorkbench;
+import neo_ores.inventory.ContainerMechanicalMagician;
 import neo_ores.inventory.ContainerSpellRecipeCreationTable;
 import neo_ores.main.NeoOres;
 import neo_ores.tileentity.TileEntityManaFurnace;
+import neo_ores.tileentity.TileEntityMechanicalMagician;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +26,8 @@ public class GuiHandler implements IGuiHandler
 			return new ContainerManaFurnace(player.inventory, ((TileEntityManaFurnace) world.getTileEntity(new BlockPos(x, y, z))));
 		if (ID == NeoOres.guiIDSRCT)
 			return new ContainerSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
+		if (ID == NeoOres.guiIDMM)
+			return new ContainerMechanicalMagician(player.inventory, ((TileEntityMechanicalMagician) world.getTileEntity(new BlockPos(x, y, z))));
 		return null;
 	}
 
@@ -39,6 +43,8 @@ public class GuiHandler implements IGuiHandler
 			return new GuiMageKnowledgeTable();
 		if (ID == NeoOres.guiIDSRCT)
 			return new GuiSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
+		if (ID == NeoOres.guiIDMM)
+			return new GuiMechanicalMagician(player.inventory, ((TileEntityMechanicalMagician) world.getTileEntity(new BlockPos(x, y, z))));
 		return null;
 	}
 }

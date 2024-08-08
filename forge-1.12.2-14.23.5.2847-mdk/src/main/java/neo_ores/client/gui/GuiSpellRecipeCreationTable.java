@@ -14,12 +14,14 @@ import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.api.spell.Spell.SpellForm;
 import neo_ores.inventory.ContainerSpellRecipeCreationTable;
 import neo_ores.item.ISpellRecipeWritable;
+import neo_ores.item.ISpellWritable;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketSRCTToServer;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
+import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
-import neo_ores.util.StudyItemManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -30,7 +32,9 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -47,7 +51,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	private boolean lastleftbuttondowning = false;
 	private List<SpellItem> selectedSpells = new ArrayList<SpellItem>();
 	private List<SpellItem> matchedSpells = new ArrayList<SpellItem>();
-	private StudyItemManagerClient simc;
+	private PlayerMagicDataClient pmdc;
 	private int page = 0;
 	private int maxPage = 0;
 	private GuiTextField nameField;
@@ -65,7 +69,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	{
 		super.initGui();
 		this.page = 0;
-		this.simc = new StudyItemManagerClient(this.mc.player);
+		this.pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(this.mc.player.getGameProfile()));
 		this.search = this.tileSRCT.srctSearch;
 		this.selectedSpells = this.tileSRCT.getSpellItems();
 		this.changed();
@@ -126,6 +130,16 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 					if (tileSRCT.getStackInSlot(0).getItem() instanceof ISpellRecipeWritable)
 					{
 						((ISpellRecipeWritable) tileSRCT.getStackInSlot(0).getItem()).writeRecipeSpells(selectedSpells, tileSRCT.getStackInSlot(0));
+						changed();
+					}
+					
+					if (mc.player.capabilities.isCreativeMode && tileSRCT.getStackInSlot(0).getItem() instanceof ISpellWritable) 
+					{
+						ItemStack stack = tileSRCT.getStackInSlot(0).copy();
+						ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(selectedSpells, stack);
+						//stack1.getTagCompound().setTag("additionalData", this.additionalData);
+						//stack1.getTagCompound().setTag("desc", this.desc);
+						tileSRCT.setInventorySlotContents(0, stack1);
 						changed();
 					}
 				}
@@ -538,7 +552,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			if (ss.length == 2)
 			{
 				SpellItem spellitem = SpellUtils.getFromID(ss[0], ss[1]);
-				if (spellitem != null && this.simc.didGet(ss[0], ss[1]))
+				if (spellitem != null && this.pmdc.didGet(ss[0], ss[1]))
 				{
 					sortedSpells.add(spellitem);
 				}

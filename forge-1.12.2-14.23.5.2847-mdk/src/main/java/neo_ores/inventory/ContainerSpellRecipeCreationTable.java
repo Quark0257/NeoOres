@@ -4,6 +4,7 @@ import java.util.List;
 
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ISpellRecipeWritable;
+import neo_ores.item.ISpellWritable;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -25,7 +26,7 @@ public class ContainerSpellRecipeCreationTable extends Container
 		{
 			public boolean isItemValid(ItemStack stack)
 			{
-				return stack.getItem() instanceof ISpellRecipeWritable;
+				return stack.getItem() instanceof ISpellRecipeWritable || stack.getItem() instanceof ISpellWritable;
 			}
 
 			public int getSlotStackLimit()

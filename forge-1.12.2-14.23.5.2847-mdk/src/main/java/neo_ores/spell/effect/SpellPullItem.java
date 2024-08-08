@@ -57,7 +57,7 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter, H
 					for (int i = 0; i < size; i++)
 					{
 						// TODO set Filter
-						if (!inventory.getStackInSlot(i).isEmpty() && InventoryUtils.addInventoryfromInventorySlot(i, inventory, player.inventory))
+						if (!inventory.getStackInSlot(i).isEmpty() && InventoryUtils.addInventoryfromInventorySlot(i, inventory, InventoryUtils.getPlayerInventory(player)))
 						{
 							break;
 						}
@@ -97,7 +97,7 @@ public class SpellPullItem extends SpellEffect implements HasCollidableFilter, H
 			EntityItem entityitem = (EntityItem) entity;
 			ItemStack target = entityitem.getItem();
 			// TODO set Filter
-			ItemStack result = InventoryUtils.addInventoryfromStack(target, player.inventory);
+			ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory(player));
 			if (!target.isEmpty() && result.getCount() != target.getCount())
 			{
 				entityitem.setItem(result);

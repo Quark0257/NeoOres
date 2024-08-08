@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
-import neo_ores.util.StudyItemManagerServer;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -21,8 +21,9 @@ import net.minecraft.util.math.BlockPos;
 
 public class CommandNeoOres extends CommandBase
 {
-	private final List<String> length2 = Lists.newArrayList("magic_xp", "reset_all");
+	private final List<String> length2 = Lists.newArrayList("magic_xp", "study", "reset_all");
 	private final List<String> length3 = Lists.newArrayList("add");
+	private final List<String> length3_s = Lists.newArrayList("all");
 
 	public String getName()
 	{
@@ -50,8 +51,8 @@ public class CommandNeoOres extends CommandBase
 		else
 		{
 			EntityPlayerMP entityplayer = getPlayer(server, sender, args[0]);
-			PlayerManaDataServer pmd = new PlayerManaDataServer(entityplayer);
-			StudyItemManagerServer sims = new StudyItemManagerServer(entityplayer);
+			PlayerMagicData pmd = NeoOresData.instance.getPMD(entityplayer);
+			//StudyItemManagerServer sims = new StudyItemManagerServer(entityplayer);
 			if (args[1].equals("reset_all"))
 			{
 				pmd.setLevel(0);
@@ -65,13 +66,23 @@ public class CommandNeoOres extends CommandBase
 				{
 					for (String id : data.getValue())
 					{
-						sims.remove(data.getKey(), id);
+						pmd.remove(data.getKey(), id);
 					}
 				}
 			}
 			else if (args[1].equals("magic_xp") && args[2].equals("add"))
 			{
 				pmd.addMXP(Long.parseLong(args[3]));
+			}
+			else if (args[1].equals("study") && args[2].equals("all"))
+			{
+				for (Map.Entry<String, List<String>> data : SpellUtils.getAll().entrySet())
+				{
+					for (String id : data.getValue())
+					{
+						pmd.set(data.getKey(), id);
+					}
+				}
 			}
 			else
 			{
@@ -93,6 +104,10 @@ public class CommandNeoOres extends CommandBase
 		else if (args.length == 3 && args[1].equals("magic_xp"))
 		{
 			return getListOfStringsMatchingLastWord(args, this.length3);
+		}
+		else if (args.length == 3 && args[1].equals("study"))
+		{
+			return getListOfStringsMatchingLastWord(args, this.length3_s);
 		}
 		else
 		{

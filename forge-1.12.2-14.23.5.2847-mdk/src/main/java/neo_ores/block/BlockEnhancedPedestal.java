@@ -220,27 +220,29 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	{
 		return Item.getItemFromBlock(this);
 	}
-
+	
+	/*
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
 
 	protected ItemStack getSilkTouchDrop(IBlockState state)
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
+	*/
 
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		return this.getSilkTouchDrop(state).getMetadata();
+		return this.getMetaFromState(state);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return state.getValue(TIER).getMeta();
+		return ((PedestalTiers)state.getValue(TIER)).getMeta();
 	}
 
 	@Override
@@ -252,7 +254,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
 
 	@Override

@@ -13,10 +13,10 @@ import neo_ores.api.spell.Spell.SpellCorrection;
 import neo_ores.client.gui.GuiUtils.StudyTableUtils;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
-import neo_ores.util.PlayerManaDataClient;
+import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
-import neo_ores.util.StudyItemManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiButton;
@@ -27,8 +27,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -58,8 +58,8 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	static final int insideSizeX = 379;
 	static final int insideSizeY = 188;
 	static final int interval = 48;
-	private StudyItemManagerClient simc;
-	private PlayerManaDataClient pmdc;
+	//private StudyItemManagerClient simc;
+	private PlayerMagicDataClient pmdc;
 	private boolean leftbuttondowning = false;
 	private boolean lastleftbuttondowning = false;
 	private List<KnowledgeTab> tabs;
@@ -92,8 +92,8 @@ public class GuiMageKnowledgeTable extends GuiScreen
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
 	{
-		this.simc = new StudyItemManagerClient(this.mc.player);
-		this.pmdc = new PlayerManaDataClient(this.mc.player);
+		//this.simc = new StudyItemManagerClient(this.mc.player);
+		this.pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(this.mc.player.getGameProfile()));
 
 		int i = (this.width - windowSizeX) / 2;
 		int j = (this.height - (windowSizeY + 14)) / 2;
@@ -201,7 +201,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 					{
 						this.drawLine(startX, endX, startY, endY, 0x0000FF);
 					}
-					else if (this.simc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
+					else if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 					{
 						this.drawLine(startX, endX, startY, endY, 0x00FF00);
 					}
@@ -247,7 +247,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			}
 			tooltip.add("");
 
-			if (this.simc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
+			if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 			{
 				tooltip.add(TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.available")));
 			}
@@ -381,7 +381,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 					GlStateManager.enableBlend();
 					this.drawTexturedWithTextureSizeAndScaleModalRect(x + spellitem.getPositionX() * interval, y + spellitem.getPositionY() * interval, 0, 0, 32, 32, 64, 64, 0.5F);
 				}
-				else if (!this.simc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
+				else if (!this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 				{
 					this.mc.getTextureManager().bindTexture(SpellUtils.textureFromSpellItemInactive(spellitem));
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -419,9 +419,9 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			SpellItem spellitem = stUtils.getSpell(mouseX, mouseY, this.scrollX, this.scrollY, this.width, this.height);
 			if (this.canGetSpellItemByMagicPoint(spellitem, this.mc.player) && this.canGetSpellItemByTree(spellitem, this.mc.player))
 			{
-				NBTTagCompound magic = this.pmdc.addMagicPoint((long) -spellitem.getTier());
-				NBTTagCompound study = this.simc.set(spellitem.getModId(), spellitem.getRegisteringId());
-				this.pmdc.sendToServer(magic, study);
+				this.pmdc.addMagicPoint((long) -spellitem.getTier());
+				this.pmdc.set(spellitem.getModId(), spellitem.getRegisteringId());
+				this.pmdc.sendToOtherSide(null);
 				this.mc.world.playSound(this.mc.player, this.mc.player.getPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1.0F, 2.0F);
 			}
 		}
@@ -482,14 +482,14 @@ public class GuiMageKnowledgeTable extends GuiScreen
 
 	private boolean canGetSpellItemByTree(SpellItem spellitem, EntityPlayerSP player)
 	{
-		StudyItemManagerClient simc = new StudyItemManagerClient(player);
-		return (spellitem.getParent() != null) ? simc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId())
-				: simc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
+		//StudyItemManagerClient simc = new StudyItemManagerClient(player);
+		return (spellitem.getParent() != null) ? this.pmdc.canGet(spellitem.getParent().getModId(), spellitem.getParent().getRegisteringId(), spellitem.getModId(), spellitem.getRegisteringId())
+				: this.pmdc.canGetRoot(spellitem.getModId(), spellitem.getRegisteringId());
 	}
 
 	private boolean canGetSpellItemByMagicPoint(SpellItem spellitem, EntityPlayerSP player)
 	{
-		PlayerManaDataClient pmdc = new PlayerManaDataClient(player);
+		PlayerMagicDataClient pmdc = NeoOresData.getPMDC(EntityPlayer.getUUID(player.getGameProfile()));
 		if (spellitem == null)
 			return false;
 		return pmdc.getMagicPoint() >= (long) spellitem.getTier();

@@ -1,6 +1,7 @@
 package neo_ores.potion;
 
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 
@@ -16,7 +17,7 @@ public class PotionManaRegeneration extends PotionNeoOres
 		if (entityLivingBaseIn instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP playermp = (EntityPlayerMP) entityLivingBaseIn;
-			PlayerManaDataServer pmd = new PlayerManaDataServer(playermp);
+			PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 			pmd.addMana((long) (1.0D / 50.0D * (double) pmd.getTrueMaxMana()));
 		}
 	}

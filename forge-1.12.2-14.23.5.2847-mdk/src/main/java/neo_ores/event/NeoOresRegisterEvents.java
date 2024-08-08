@@ -1,19 +1,26 @@
-package neo_ores.main;
+package neo_ores.event;
 
 import neo_ores.client.render.RendererPedestal;
 import neo_ores.client.render.entity.RenderSpellBullet;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.item.INeoOresItem;
 import neo_ores.item.ItemSpell;
+import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresItems;
+import neo_ores.main.Reference;
 import neo_ores.api.ColorUtils;
 import neo_ores.block.BlockDimension;
+import neo_ores.block.BlockFluidNeoOres;
 import neo_ores.block.INeoOresBlock;
 import neo_ores.client.color.BlockColorNeoOres;
 import neo_ores.client.color.ItemColorNeoOres;
 import neo_ores.client.render.ModelLoaderItemSpell;
+import neo_ores.client.render.RendererChunkLoader;
 import neo_ores.client.render.RendererMechanicalMagician;
 import neo_ores.client.render.RendererNeoPortal;
 import neo_ores.client.render.RendererMageKnowledgeTable;
+import neo_ores.tileentity.TileEntityChunkLoader;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import neo_ores.tileentity.TileEntityManaFurnace;
 import neo_ores.tileentity.TileEntityMechanicalMagician;
@@ -45,6 +52,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -56,7 +64,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 @EventBusSubscriber(modid = Reference.MOD_ID)
-public class NeoOresRegisterEvent
+public class NeoOresRegisterEvents
 {
 	public static TextureAtlasSprite earth0;
 	public static TextureAtlasSprite water0;
@@ -252,7 +260,7 @@ public class NeoOresRegisterEvent
 
 	@SubscribeEvent
 	public void registerBlocks(RegistryEvent.Register<Block> event)
-	{
+	{	
 		for (Block block : NeoOresBlocks.registry)
 		{
 			event.getRegistry().register(block);
@@ -269,6 +277,7 @@ public class NeoOresRegisterEvent
 		GameRegistry.registerTileEntity(TileEntityPedestal.class, new ResourceLocation(Reference.MOD_ID, "pedestal"));
 		GameRegistry.registerTileEntity(TileEntitySpellRecipeCreationTable.class, new ResourceLocation(Reference.MOD_ID, "spell_recipe_creation_table"));
 		GameRegistry.registerTileEntity(TileEntityMechanicalMagician.class, new ResourceLocation(Reference.MOD_ID, "mechanical_magician"));
+		GameRegistry.registerTileEntity(TileEntityChunkLoader.class, new ResourceLocation(Reference.MOD_ID, "chunk_loader"));
 	}
 
 	@SubscribeEvent
@@ -379,6 +388,10 @@ public class NeoOresRegisterEvent
 					ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block1), metadata, block.getModel(metadata));
 				}
 			}
+			else if(block1 instanceof BlockFluidNeoOres) 
+			{
+				NeoOres.proxy.setCustomStateModel(((BlockFluidNeoOres)block1).getFluid());
+			}
 		}
 
 		for (Item item : NeoOresItems.registry)
@@ -403,6 +416,7 @@ public class NeoOresRegisterEvent
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnhancedPedestal.class, new RendererPedestal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMechanicalMagician.class, new RendererMechanicalMagician());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChunkLoader.class, new RendererChunkLoader());
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -455,4 +469,10 @@ public class NeoOresRegisterEvent
 		event.getRegistry().register(NeoOres.fire);
 		event.getRegistry().register(NeoOres.water);
 	}
+
+	public static void registerFluids() 
+	{
+		System.out.println(FluidRegistry.addBucketForFluid(NeoOresBlocks.fluid_mana));
+	}
+	
 }

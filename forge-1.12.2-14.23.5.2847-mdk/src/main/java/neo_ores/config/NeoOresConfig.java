@@ -547,6 +547,10 @@ public class NeoOresConfig
 		@LangKey("config.magic.init_level")
 		@RequiresMcRestart
 		public int init_level = 1;
+		
+		@LangKey("config.magic.convert_rate")
+		@RequiresMcRestart
+		public double liquid_mana_convert_rate = 100000.0D;
 	}
 
 	@LangKey("config.category.miscellaneous")

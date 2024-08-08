@@ -7,6 +7,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -42,5 +43,17 @@ public class BlockSpellRecipeCreationTable extends NeoOresBlock implements ITile
 			playerIn.openGui(NeoOres.instance, NeoOres.guiIDSRCT, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			return true;
 		}
+	}
+	
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+	{
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		if (tileentity instanceof TileEntitySpellRecipeCreationTable)
+		{
+			InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntitySpellRecipeCreationTable) tileentity);
+		}
+
+		super.breakBlock(worldIn, pos, state);
 	}
 }

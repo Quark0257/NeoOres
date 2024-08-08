@@ -175,4 +175,17 @@ public class LongUtils
 
 		return copied;
 	}
+	
+	public static int[] convertInt(long value) 
+	{
+		int a = (int)(value / (long)(Math.pow(2, 62)));
+		int b = (int)((value % (long)(Math.pow(2, 62))) / (long)(Math.pow(2, 31)));
+		int c = (int)((value % (long)(Math.pow(2, 62))) % (long)(Math.pow(2, 31)));
+		return new int[] {a, b, c};
+	}
+	
+	public static long convertLong(int[] value) 
+	{
+		return (long)(value[0] * (long)Math.pow(2, 62) + value[1] * (long)Math.pow(2, 31) + (long)value[2]);
+	}
 }

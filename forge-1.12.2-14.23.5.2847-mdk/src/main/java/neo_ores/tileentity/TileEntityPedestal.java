@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import neo_ores.api.RecipeOreStack;
 import neo_ores.api.StackUtils;
 import neo_ores.api.Structure;
 import neo_ores.api.StructureUtils;
@@ -249,24 +250,26 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			boolean flag2 = true;
 			if (this.isMultiblock && this.isCreating)
 			{
-				if (this.getRecipeIn().isEmpty())
+				List<SpellItem> recipeIn = this.getRecipeIn();
+				if (recipeIn.isEmpty())
 					flag = true;
 				if (this.getEP() == null)
 					flag = true;
 				if (!flag)
 				{
-					if (this.phase < SpellUtils.getRecipeFromList(this.getRecipeIn()).size())
+					List<RecipeOreStack> recipeFromList = SpellUtils.getRecipeFromList(recipeIn);
+					if (this.phase < recipeFromList.size())
 					{
-						if (!SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether().isEmpty())
+						if (!recipeFromList.get(this.phase).getListTogether().isEmpty())
 						{
-							List<ItemStack> list = SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getListTogether();
+							List<ItemStack> list = recipeFromList.get(this.phase).getListTogether();
 							this.getEP().setDisplay(list.get((this.tickCount / 20) % list.size()));
 						}
 						loop0: for (int index = 0; index < this.getEP().getSizeInventory(); index++)
 						{
 							for (ItemStack stack : this.getEP().getItems().get(index).asList(64))
 							{
-								if (SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).compareWith(stack))
+								if (recipeFromList.get(this.phase).compareWith(stack))
 								{
 									this.getEP().decrStackSize(index, 1);
 									this.requiredSize++;
@@ -279,7 +282,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 								}
 							}
 						}
-						if (requiredSize >= SpellUtils.getRecipeFromList(this.getRecipeIn()).get(this.phase).getSize())
+						if (requiredSize >= recipeFromList.get(this.phase).getSize())
 						{
 							this.phase++;
 							this.requiredSize = 0;
@@ -287,7 +290,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 									SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, this.getWorld().rand.nextFloat() * 0.1F + 0.9F);
 						}
 					}
-					else if (this.phase == SpellUtils.getRecipeFromList(this.getRecipeIn()).size())
+					else if (this.phase == recipeFromList.size())
 					{
 						this.getEP().setDisplay(new ItemStack(NeoOresItems.spell_sheet));
 						for (int index = 0; index < this.getEP().getSizeInventory(); index++)
@@ -295,7 +298,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 							if (this.getEP().getItems().get(index).getStack().getItem() instanceof ISpellWritable)
 							{
 								ItemStack stack = this.getEP().getItems().get(index).getStack().copy();
-								ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(getRecipeIn(), stack);
+								ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(recipeIn, stack);
 								stack1.getTagCompound().setTag("additionalData", this.additionalData);
 								stack1.getTagCompound().setTag("desc", this.desc);
 								InventoryHelper.spawnItemStack(this.getWorld(), this.getPos().getX(), this.getPos().getY() - 1, this.getPos().getZ(), stack1);

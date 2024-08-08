@@ -14,6 +14,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 {
@@ -61,7 +62,7 @@ public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 		}
 		catch (Exception e)
 		{
-			System.out.println("Unknown error occured!");
+			FMLLog.log.error("Unknown error occured!");
 		}
 	}
 

@@ -122,9 +122,9 @@ public class BlockNeoOre extends NeoOresBlock
 	{
 		if ((new ItemStack(this)).getItem() == Item.getItemFromBlock(NeoOresBlocks.custom_lit_redstone_ore))
 		{
-			return new ItemStack(NeoOresBlocks.custom_redstone_ore, 1, this.getMetaFromState(worldIn.getBlockState(pos)));
+			return new ItemStack(NeoOresBlocks.custom_redstone_ore, 1, this.getMetaFromState(state));
 		}
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(worldIn.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
 
 	protected ItemStack getSilkTouchDrop(IBlockState state)
@@ -171,7 +171,7 @@ public class BlockNeoOre extends NeoOresBlock
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
 	{
 		if (state.getBlock() == NeoOresBlocks.custom_lit_redstone_ore)
-			worldIn.setBlockState(pos, NeoOresBlocks.custom_redstone_ore.getDefaultState().withProperty(DIM, worldIn.getBlockState(pos).getValue(DIM)));
+			worldIn.setBlockState(pos, NeoOresBlocks.custom_redstone_ore.getDefaultState().withProperty(DIM, state.getValue(DIM)));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -259,7 +259,7 @@ public class BlockNeoOre extends NeoOresBlock
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
 	}
 
 	@Override

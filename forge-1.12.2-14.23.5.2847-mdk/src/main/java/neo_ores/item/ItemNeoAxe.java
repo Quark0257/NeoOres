@@ -3,7 +3,8 @@ package neo_ores.item;
 import java.util.List;
 
 import neo_ores.api.TierUtils;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.main.NeoOresData;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.world.dimension.DimensionHelper.ToolType;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -48,7 +49,7 @@ public class ItemNeoAxe extends ItemAxe implements IItemNeoTool, INeoOresItem
 	{
 		if (entityIn.ticksExisted % 200 == 0 && entityIn instanceof EntityPlayer && !worldIn.isRemote && 0 <= itemSlot && itemSlot < 9)
 		{
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) entityIn);
+			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) entityIn);
 			if (pmds.getMana() > 0L)
 			{
 				stack.damageItem(-1, (EntityPlayer) entityIn);

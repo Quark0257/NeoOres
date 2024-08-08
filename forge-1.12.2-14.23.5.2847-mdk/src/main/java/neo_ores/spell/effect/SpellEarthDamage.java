@@ -3,13 +3,14 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.spell.Spell.SpellEffect;
+import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
-import neo_ores.main.NeoOresRegisterEvent;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.EntityDamageSourceWithItem;
-import neo_ores.util.PlayerManaDataServer;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -22,6 +23,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
 public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, HasDamageLevel
 {
@@ -91,11 +93,10 @@ public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, 
 		if (elb.canBeCollidedWith())
 		{
 			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), (int) (3.5 * Math.pow(1.5, this.damageLevel)) + 3);
-			if (world.isRemote)
-				SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvent.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16, runner instanceof FakePlayer);
 			if (runner instanceof EntityPlayerMP)
 			{
-				PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) runner);
+				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 				pmds.addMXP(10L + (long) Math.pow(3, luck));
 			}
 		}

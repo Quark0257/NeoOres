@@ -58,7 +58,20 @@ public class RecipeOreStack
 		{
 			list.addAll(OreDictionary.getOres((String) this.object));
 		}
-		return list;
+
+		List<ItemStack> list2 = new ArrayList<ItemStack>();
+		for (ItemStack stack : list)
+		{
+			if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE)
+			{
+				list2.add(new ItemStack(stack.getItem(), stack.getCount(), 0));
+			}
+			else
+			{
+				list2.add(stack.copy());
+			}
+		}
+		return list2;
 	}
 
 	public List<ItemStack> getListTogether()

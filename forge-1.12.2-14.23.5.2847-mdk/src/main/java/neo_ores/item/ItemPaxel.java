@@ -15,6 +15,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -25,8 +26,6 @@ import net.minecraft.world.World;
 
 public class ItemPaxel extends ItemTool implements IItemNeoTool, INeoOresItem
 {
-	private boolean shielding;
-	private boolean shielded;
 	private ToolType name;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -59,8 +58,8 @@ public class ItemPaxel extends ItemTool implements IItemNeoTool, INeoOresItem
 
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
-		this.setShielding(true);
-		this.setShielded(true);
+		this.setShielding(playerIn.getHeldItem(handIn), true);
+		this.setShielded(playerIn.getHeldItem(handIn), true);
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(handIn));
 	}
 
@@ -125,30 +124,60 @@ public class ItemPaxel extends ItemTool implements IItemNeoTool, INeoOresItem
 		return enchantment.type == EnumEnchantmentType.WEAPON ? true : super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 
-	public void setShielding(boolean bool)
+	public void setShielding(ItemStack stack, boolean bool)
 	{
-		this.shielding = bool;
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		if (!stack.getTagCompound().hasKey("neo_ores_paxel")) {
+			stack.getTagCompound().setTag("neo_ores_paxel", new NBTTagCompound());
+		}
+		stack.getTagCompound().getCompoundTag("neo_ores_paxel").setBoolean("shielding", bool);
 	}
 
-	public boolean isShielding()
+	public boolean isShielding(ItemStack stack)
 	{
-		return this.shielding;
+		if (!stack.hasTagCompound()) {
+			return false;
+		}
+		if (!stack.getTagCompound().hasKey("neo_ores_paxel")) {
+			return false;
+		}
+		if (!stack.getTagCompound().getCompoundTag("neo_ores_paxel").hasKey("shielding")) {
+			return false;
+		}
+		return stack.getTagCompound().getCompoundTag("neo_ores_paxel").getBoolean("shielding");
 	}
 
-	public void setShielded(boolean bool)
+	public void setShielded(ItemStack stack, boolean bool)
 	{
-		this.shielded = bool;
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		if (!stack.getTagCompound().hasKey("neo_ores_paxel")) {
+			stack.getTagCompound().setTag("neo_ores_paxel", new NBTTagCompound());
+		}
+		stack.getTagCompound().getCompoundTag("neo_ores_paxel").setBoolean("shielded", bool);
 	}
 
-	public boolean wasShielding()
+	public boolean wasShielding(ItemStack stack)
 	{
-		return this.shielded;
+		if (!stack.hasTagCompound()) {
+			return false;
+		}
+		if (!stack.getTagCompound().hasKey("neo_ores_paxel")) {
+			return false;
+		}
+		if (!stack.getTagCompound().getCompoundTag("neo_ores_paxel").hasKey("shielded")) {
+			return false;
+		}
+		return stack.getTagCompound().getCompoundTag("neo_ores_paxel").getBoolean("shielded");
 	}
 
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
-		this.setShielding(false);
-		this.setShielded(false);
+		this.setShielding(stack, false);
+		this.setShielded(stack, false);
 	}
 
 	@Override

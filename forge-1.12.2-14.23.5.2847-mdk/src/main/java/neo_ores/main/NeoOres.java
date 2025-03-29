@@ -16,6 +16,7 @@ import neo_ores.event.NeoOresWorldEvents;
 import neo_ores.event.NeoOresBlockEvents;
 import neo_ores.event.NeoOresEntityEvents;
 import neo_ores.packet.PacketDestinationToClient;
+import neo_ores.packet.PacketEntityToClient;
 import neo_ores.packet.PacketItemsToClient;
 import neo_ores.packet.PacketMagicDataToClient;
 import neo_ores.packet.PacketMagicDataToServer;
@@ -129,6 +130,7 @@ public class NeoOres
 		PACKET.registerMessage(PacketSRCTToClient.Handler.class, PacketSRCTToClient.class, 4, Side.CLIENT);
 		PACKET.registerMessage(PacketParticleToClient.Handler.class, PacketParticleToClient.class, 5, Side.CLIENT);
 		PACKET.registerMessage(PacketDestinationToClient.Handler.class, PacketDestinationToClient.class, 6, Side.CLIENT);
+		PACKET.registerMessage(PacketEntityToClient.Handler.class, PacketEntityToClient.class, 7, Side.CLIENT);
 		
 		if(event.getSide().isClient())
 		{

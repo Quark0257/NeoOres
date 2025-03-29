@@ -13,7 +13,6 @@ import neo_ores.util.UtilSpellOreGen;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -22,7 +21,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 
 public class SpellOreGen extends SpellEffect implements HasRange
 {
@@ -55,15 +53,13 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	@Override
 	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		if (result != null && result.typeOfHit == Type.BLOCK && runner instanceof EntityPlayer)
+		if (result != null && result.typeOfHit == Type.BLOCK)
 		{
 			ItemStack item = stack.copy();
-			EnumFacing face = EnumFacing.getFacingFromVector((float) (result.hitVec.x - runner.posX), (float) (result.hitVec.y - runner.posY - runner.getEyeHeight()),
-					(float) (result.hitVec.z - runner.posZ));
-			for (BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
+			EnumFacing face = result.sideHit;
+			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8,
-						runner instanceof FakePlayer);
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);
@@ -104,7 +100,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 		@SuppressWarnings("deprecation")
 		IBlockState out = Block.getBlockFromItem(output.getItem()).getStateFromMeta(output.getMetadata());
 		world.setBlockState(pos, out);
-		if (!output.isEmpty())
+		if (!output.isEmpty() && runner instanceof EntityPlayerMP)
 		{
 			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 			pmds.addMXP(10L);

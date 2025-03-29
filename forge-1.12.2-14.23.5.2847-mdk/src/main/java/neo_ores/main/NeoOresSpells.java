@@ -8,7 +8,7 @@ import neo_ores.api.spell.MageKnowledgeTableData;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.spell.correction.SpellCanApplyNBT;
-import neo_ores.spell.correction.SpellCollidableFilter;
+import neo_ores.spell.correction.SpellUncollidable;
 import neo_ores.spell.correction.SpellContinuation;
 import neo_ores.spell.correction.SpellDamageLevel;
 import neo_ores.spell.correction.SpellGather;
@@ -383,11 +383,11 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_composition, 3, 2,
 					new ResourceLocation(Reference.MOD_ID, "pull_item"), NeoOres.neo_ores),
 			SpellPullItem.class);
-	public static final SpellItem spell_collidable_filter = new SpellItem(
-			new BasicData(Reference.MOD_ID, "collidable_filter", 1, SpellItemType.FIRE, 1, 1), "collidable_filter",
+	public static final SpellItem spell_uncollidable = new SpellItem(
+			new BasicData(Reference.MOD_ID, "uncollidable", 1, SpellItemType.FIRE, 1, 1), "uncollidable",
 			new MageKnowledgeTableData(NeoOresSpells.spell_earth_damage, -2, 1,
-					new ResourceLocation(Reference.MOD_ID, "collidable_filter"), NeoOres.neo_ores),
-			SpellCollidableFilter.class);
+					new ResourceLocation(Reference.MOD_ID, "uncollidable"), NeoOres.neo_ores),
+			SpellUncollidable.class);
 
 	public static final List<SpellItem> registry = Arrays.asList(spell_touch, spell_dig, spell_support_liquid,
 			spell_composition, spell_earth_damage, spell_harvestLv1, spell_harvestLv2, spell_harvestLv3,
@@ -400,5 +400,5 @@ public class NeoOresSpells
 			spell_gather, spell_range1, spell_range2, spell_range3, spell_range4, spell_damageLv1, spell_damageLv2,
 			spell_damageLv3, spell_damageLv4, spell_damageLv5, spell_damageLv6, spell_damageLv7, spell_damageLv8,
 			spell_damageLv9, spell_damageLv10, spell_damageLv11, spell_summon, spell_nbt_applying, spell_ore_gen,
-			spell_no_inertia, spell_pull_item, spell_collidable_filter);
+			spell_no_inertia, spell_pull_item, spell_uncollidable);
 }

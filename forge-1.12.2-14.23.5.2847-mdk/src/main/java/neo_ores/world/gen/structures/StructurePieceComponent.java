@@ -2,8 +2,6 @@ package neo_ores.world.gen.structures;
 
 import neo_ores.api.MathUtils;
 import neo_ores.main.Reference;
-import neo_ores.world.gen.structures.StructureNatural;
-import neo_ores.world.gen.structures.StructurePieceAndOption;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;

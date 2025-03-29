@@ -7,6 +7,7 @@ import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellFormNotEntity;
 import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
+import neo_ores.spell.SpellItemInterfaces.HasUncollidable;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,12 +17,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
+public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, HasUncollidable
 {
 	private boolean liquid = false;
+	private boolean uncollidable = false;
 
 	@Override
-	public void onSpellRunning(World world, EntityLivingBase runner, ItemStack stack, RayTraceResult result, NBTTagCompound spells)
+	public void onSpellRunningServer(World world, EntityLivingBase runner, ItemStack stack, RayTraceResult result, NBTTagCompound spells)
 	{
 		List<Spell> corrections = new ArrayList<Spell>();
 		List<Spell> effects = new ArrayList<Spell>();
@@ -61,7 +63,7 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 				if(runner instanceof EntityPlayer) {
 					reach = ((EntityPlayer)runner).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
 				}
-				traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, true);
+				traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, !this.uncollidable);
 			}
 
 			if (traceresult != null && traceresult.typeOfHit != Type.MISS)
@@ -90,5 +92,11 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid
 	public boolean needConditional()
 	{
 		return false;
+	}
+
+	@Override
+	public void setUncollidable()
+	{
+		this.uncollidable = true;
 	}
 }

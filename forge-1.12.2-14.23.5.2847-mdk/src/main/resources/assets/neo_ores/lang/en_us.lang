@@ -232,6 +232,9 @@ armortip.air=Air Blessing
 armortip.space=Universe Blessing
 tooltip.mana=Mana Consumed
 
+totem.bound_to=Bound to
+totem.not_bind=RIGHT-CLICK to bind player
+
 attribute.name.neo_ores.maxMana=Max Mana
 
 neo_ores.effect.mana_boost=Mana Boost
@@ -332,10 +335,10 @@ spell.ore_gen.name=Ore Generation
 spell.ore_gen.desc=The Spell Item of transforming stone materials to ores.
 spell.no_inertia.name=Anti-Inertia
 spell.no_inertia.desc=The Spell Item of ignore effect of inertia of a spell flying.
-spell.collidable_filter.name=Collidable Filter
-spell.collidable_filter.desc=The Spell Item of applying spell to only collidable entity.
+spell.uncollidable.name=Uncollidable
+spell.uncollidable.desc=The Spell Item of applying spell to non-collidable entity such as a dropped item.
 spell.pull_item.name=Pulling
-spell.pull_item.desc=The Spell Item of pulling item to self.
+spell.pull_item.desc=The Spell Item of pulling item to self. 
 
 correction.0=
 correction.1= I
@@ -468,5 +471,7 @@ config.magic.convert_rate=Liquid Mana Rate
 config.magic.convert_rate.tooltip=Set liquid mana conversion rate. (1 mB Liquid Mana = [value] Mana)
 
 neo_ores.pressLShiftDesc=Press L-Shift for details
+
+death.attack.neo_ores.payment=%1$s's lives weren't enough
 
 homerunbat=§b§oHome Run Bat

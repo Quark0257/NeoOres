@@ -14,6 +14,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemNeoPaxel extends ItemPaxel
 {
@@ -22,6 +24,7 @@ public class ItemNeoPaxel extends ItemPaxel
 		super(material);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		super.addInformation(itemStack, world, list, flag);

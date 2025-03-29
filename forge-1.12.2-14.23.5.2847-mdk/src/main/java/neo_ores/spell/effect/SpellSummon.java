@@ -66,25 +66,9 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 			{
 				entitySpawn = entitySpawn.add(0, -entity.height, 0);
 			}
-			else if (result.sideHit == EnumFacing.EAST)
-			{
-				entitySpawn = entitySpawn.add(1, 0, 0);
-			}
-			else if (result.sideHit == EnumFacing.WEST)
-			{
-				entitySpawn = entitySpawn.add(-1, 0, 0);
-			}
-			else if (result.sideHit == EnumFacing.NORTH)
-			{
-				entitySpawn = entitySpawn.add(0, 0, -1);
-			}
-			else if (result.sideHit == EnumFacing.SOUTH)
-			{
-				entitySpawn = entitySpawn.add(0, 0, 1);
-			}
 			else
 			{
-				entitySpawn = entitySpawn.add(0, 1, 0);
+				entitySpawn = entitySpawn.add(result.sideHit.getDirectionVec());
 			}
 			entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 			world.spawnEntity(entity);

@@ -9,9 +9,12 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.client.particle.ParticleMagic1;
+import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +43,9 @@ public class EntitySpellBullet extends EntityThrowable
 	private boolean throughWater;
 	private boolean isUpdatingDefault;
 	private boolean supportLiquid;
-	private boolean collided = false;
+	private boolean notCollided;
+	private boolean vanished;
+	private String shooterName = "";
 
 	private static final Predicate<Entity> PROJECTILE_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE);
 
@@ -55,7 +60,7 @@ public class EntitySpellBullet extends EntityThrowable
 	}
 
 	public EntitySpellBullet(World worldIn, EntityLivingBase shooter, boolean nogravity, boolean noResistance, int life, NBTTagCompound spells, boolean supportLiquid, ItemStack handItem,
-			boolean applyCollidedFilter)
+			boolean applyNotCollidedFilter, boolean vanish)
 	{
 		super(worldIn, shooter);
 		this.spells = SpellUtils.getListFromItemStackNBT(spells);
@@ -67,7 +72,13 @@ public class EntitySpellBullet extends EntityThrowable
 		this.throughWater = noResistance;
 		this.setNoGravity(nogravity);
 		this.stack = handItem.copy();
-		this.collided = applyCollidedFilter;
+		this.shooterName = getShooterName(shooter);
+		this.notCollided = applyNotCollidedFilter;
+		this.vanished = vanish;
+	}
+	
+	private static String getShooterName(Entity entityShooter) {
+		return entityShooter.getUniqueID().toString();
 	}
 
 	public void shoot(EntityLivingBase entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, boolean canApplyInertia)
@@ -122,6 +133,30 @@ public class EntitySpellBullet extends EntityThrowable
 		this.isUpdatingDefault = true;
 		super.onUpdate();
 		this.isUpdatingDefault = false;
+		
+		if (this.world.isRemote && !this.stack.isEmpty()) {
+			for (int k = 0; k < 4; ++k)
+	        {
+				double x = this.posX - this.motionX * ((double)k + 0.7) / 4.0D;
+				double y = this.posY - this.motionY * ((double)k + 0.7) / 4.0D;
+				double z = this.posZ - this.motionZ * ((double)k + 0.7) / 4.0D;
+				double dx = 0.0;
+				double dy = 0.0;
+				double dz = 0.0;
+				final double m = 0.3;
+				float ds = 0.0F;
+				for (int i = 0; i < 4; i++) {
+					dx = m * this.world.rand.nextDouble() - 0.5 * m;
+					dy = m * this.world.rand.nextDouble() - 0.5 * m;
+					dz = m * this.world.rand.nextDouble() - 0.5 * m;
+					ds = 0.005F * this.world.rand.nextFloat();
+					
+					ParticleMagic1 png = new ParticleMagic1(this.world, x + dx, y + dy, z + dz, 0.0, 0.0, 0.0, 
+							SpellUtils.getColor(this.stack), Math.min(6 + this.world.rand.nextInt(4), Math.max(0, this.life - 1)), 0.001F + ds, NeoOresRegisterEvents.particle0);
+					Minecraft.getMinecraft().effectRenderer.addEffect(png);
+				}
+	        }
+		}
 
 		this.motionX = lastMotionX;
 		this.motionY = lastMotionY;
@@ -161,7 +196,7 @@ public class EntitySpellBullet extends EntityThrowable
 			{
 				this.setPortal(raytraceresult.getBlockPos());
 			}
-			else if (!ForgeEventFactory.onProjectileImpact(this, raytraceresult) && (!this.collided || entity.canBeCollidedWith()))
+			else if (!ForgeEventFactory.onProjectileImpact(this, raytraceresult) && (this.notCollided || entity == null || entity.canBeCollidedWith()))
 			{
 				this.onImpact(raytraceresult);
 			}
@@ -186,8 +221,11 @@ public class EntitySpellBullet extends EntityThrowable
 		this.motionZ *= (double) f1;
 
 		--this.life;
-		if (life <= 0)
+		if (this.life <= 0)
 		{
+			if (this.vanished) {
+				this.onImpact(RayTraceUtils.getSimpleResult(this.posX, this.posY, this.posZ));
+			}
 			this.setDead();
 		}
 
@@ -235,43 +273,17 @@ public class EntitySpellBullet extends EntityThrowable
 	{
 		if (this.isUpdatingDefault)
 			return;
-
-		List<SpellItem> notformlist = new ArrayList<SpellItem>();
-		List<Spell> formlistsc = new ArrayList<Spell>();
-		List<Spell> notformlistsc = new ArrayList<Spell>();
+		if (result != null && result.entityHit != null) {
+			String name = getShooterName(result.entityHit);
+			if (name.equals(this.shooterName))
+				return;
+		}
+		
 		if (this.spells != null && !this.spells.isEmpty())
 		{
-			for (SpellItem spell : this.spells)
-			{
-				Spell sc = spell.getSpellClass();
-				if (sc instanceof Spell.SpellForm)
-				{
-					formlistsc.add(sc);
-				}
-				else
-				{
-					notformlist.add(spell);
-					notformlistsc.add(sc);
-				}
-			}
-
-			for (Spell form : formlistsc)
-			{
-				for (Spell notformsc : notformlistsc)
-				{
-					if (notformsc instanceof Spell.SpellCorrection)
-					{
-						((Spell.SpellCorrection) notformsc).onCorrection(form);
-					}
-				}
-
-				if (form instanceof Spell.SpellForm)
-				{
-					((Spell.SpellForm) form).onSpellRunning(this.world, this.getThrower(), this.getStack(), result, SpellUtils.getItemStackNBTFromList(notformlist, new NBTTagCompound()));
-				}
-			}
+			SpellUtils.run(this.spells, this.world, this.getThrower(), this.getStack(), result);
 		}
-
+		
 		this.world.setEntityState(this, (byte) 3);
 		this.setDead();
 	}
@@ -288,22 +300,26 @@ public class EntitySpellBullet extends EntityThrowable
 		this.life = compound.getInteger("life");
 		this.throughWater = compound.getBoolean("throughWater");
 		this.supportLiquid = compound.getBoolean("supportLiquid");
+		this.notCollided = compound.getBoolean("notCollided");
+		this.vanished = compound.getBoolean("vanished");
 		this.spells = SpellUtils.getListFromItemStackNBT(compound);
-
+		this.shooterName = compound.getString("shooterName");
 		this.stack = new ItemStack(compound.getCompoundTag("stack"));
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound)
 	{
-		super.writeEntityToNBT(compound);
 		compound.setInteger("life", this.life);
 		compound.setBoolean("throughWater", this.throughWater);
 		compound.setBoolean("supportLiquid", this.supportLiquid);
-		compound = SpellUtils.getItemStackNBTFromList(spells, compound);
+		compound = SpellUtils.getItemStackNBTFromList(this.spells, compound, false);
 		NBTTagCompound stack = this.stack.writeToNBT(new NBTTagCompound());
-
 		compound.setTag("stack", stack);
+		compound.setString("shooterName", this.shooterName);
+		compound.setBoolean("notCollided", this.notCollided);
+		compound.setBoolean("vanished", this.vanished);
+		super.writeEntityToNBT(compound);
 	}
 
 	@Nullable

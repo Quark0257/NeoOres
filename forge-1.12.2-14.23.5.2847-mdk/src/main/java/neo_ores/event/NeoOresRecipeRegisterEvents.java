@@ -151,7 +151,7 @@ public class NeoOresRecipeRegisterEvents
 						new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_ingot), 16), new RecipeOreStack(new ItemStack(NeoOresItems.salamite), 16),
 						new RecipeOreStack(new ItemStack(NeoOresItems.undite), 16)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_no_inertia, new RecipeOreStack(new ItemStack(Items.ENDER_EYE), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_collidable_filter, new RecipeOreStack("enderpearl", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_uncollidable, new RecipeOreStack("enderpearl", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pull_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
 	}
 

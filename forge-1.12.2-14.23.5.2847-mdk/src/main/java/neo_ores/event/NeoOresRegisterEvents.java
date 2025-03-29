@@ -4,6 +4,7 @@ import neo_ores.client.render.RendererPedestal;
 import neo_ores.client.render.entity.RenderSpellBullet;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.item.INeoOresItem;
+import neo_ores.item.ItemEssence;
 import neo_ores.item.ItemSpell;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
@@ -408,7 +409,7 @@ public class NeoOresRegisterEvents
 
 		for (int i = 0; i < 4; i++)
 			(new ModelLoaderItemSpell(new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "spell." + i), "inventory"),
-					new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "spell" + i + ".obj"), "inventory"),
+					ItemEssence.getModelStatic(null, convert(i)),
 					new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "spelltype" + i), "inventory"))).registerModel(NeoOresItems.spell, i);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNeoPortal.class, new RendererNeoPortal());
@@ -417,6 +418,29 @@ public class NeoOresRegisterEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMechanicalMagician.class, new RendererMechanicalMagician());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChunkLoader.class, new RendererChunkLoader());
+	}
+	
+	/**
+	 * 0 -> 3
+	 * 1 -> 0
+	 * 2 -> 2
+	 * 3 -> 1
+	 * @param i
+	 * @return
+	 */
+	private int convert(int i) {
+		switch (i) {
+			case 0:
+				return 3;
+			case 1:
+				return 0;
+			case 2:
+				return 2;
+			case 3:
+				return 1;
+			default:
+				return 4;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

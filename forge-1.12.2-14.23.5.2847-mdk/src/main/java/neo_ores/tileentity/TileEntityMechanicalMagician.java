@@ -400,16 +400,6 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 				if (flag)
 				{
 					SpellUtils.run(rawSpellList, this.getWorld(), this.player, this.getStackInSlot(0), null);
-					if (this.voidExp)
-					{
-						NeoOresData.instance.getPMD(this.player).setMXP(0L);
-					}
-
-					if (pmd != null && this.makeExp)
-					{
-						pmd.addMXP(NeoOresData.instance.getPMD(this.player).getMXP()); // TODO
-						NeoOresData.instance.getPMD(this.player).setMXP(0L);
-					}
 				}
 			}
 			this.activated = true;
@@ -427,6 +417,35 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			int addition = (int) Math.min(NeoOresData.instance.getPMD(this.player).getMXP(), Integer.MAX_VALUE - this.mxp);
 			this.mxp += addition;
 			NeoOresData.instance.getPMD(this.player).addMXP(-addition);
+		}
+
+		ItemStack totem = this.getStackInSlot(1);
+		if (!totem.isEmpty()) {
+			IItemTotem itemtotem = (IItemTotem) totem.getItem();
+			if (itemtotem.needsPlayer(totem))
+			{
+				if (itemtotem.hasPlayerUUID(totem))
+				{
+					UUID uuid = UUID.fromString(itemtotem.getPlayerUUID(totem));
+					EntityPlayer player = this.world.getPlayerEntityByUUID(uuid);
+					if (player != null && !(player instanceof FakePlayer) && player instanceof EntityPlayerMP)
+					{
+						if (this.player != null && !this.useLiquidMana && !player.isCreative() && this.makeExp)
+						{
+							PlayerMagicData pmd = NeoOresData.instance.getPMD((EntityPlayerMP) player);
+							pmd.addMXP(this.mxp);
+							this.mxp = 0;
+						}
+					}
+				}
+			} else if (itemtotem.isCreative(totem)) {
+				this.mxp = 0;
+			}
+		}
+		
+		if (this.player != null && this.voidExp)
+		{
+			this.mxp = 0;
 		}
 
 		if (!this.getWorld().isRemote)

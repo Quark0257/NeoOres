@@ -34,7 +34,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -66,12 +65,10 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 				item.addEnchantment(Enchantments.FORTUNE, this.fortune);
 			}
 
-			EnumFacing face = EnumFacing.getFacingFromVector((float) (result.hitVec.x - runner.posX), (float) (result.hitVec.y - runner.posY - runner.getEyeHeight()),
-					(float) (result.hitVec.z - runner.posZ));
-			for (BlockPos pos : SpellUtils.rangedPos(result.getBlockPos(), face, this.range))
+			EnumFacing face = result.sideHit;
+			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8,
-						runner instanceof FakePlayer);
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);

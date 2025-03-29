@@ -103,14 +103,13 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicCo
 	public boolean damageWith(DamageSource source, float amount)
 	{
 		ItemStack totem = this.tileentity.getStackInSlot(1);
-		if (totem.getItem().getMaxDamage(totem) == 0)
+		if (totem.isEmpty()) 
+			return false;
+		if (!totem.isItemStackDamageable())
 			return true;
+		boolean flag = amount <= totem.getItem().getMaxDamage(totem) - totem.getItemDamage();
 		totem.damageItem((int) Math.min(amount, Integer.MAX_VALUE), this);
-		if (amount <= totem.getItem().getMaxDamage(totem) - totem.getItemDamage())
-		{
-			return true;
-		}
-		return false;
+		return flag;
 	}
 
 	public float getFakeMaxHealth()

@@ -16,6 +16,8 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemNeoSpade extends ItemSpade implements IItemNeoTool, INeoOresItem
 {
@@ -24,6 +26,7 @@ public class ItemNeoSpade extends ItemSpade implements IItemNeoTool, INeoOresIte
 		super(material);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		super.addInformation(itemStack, world, list, flag);

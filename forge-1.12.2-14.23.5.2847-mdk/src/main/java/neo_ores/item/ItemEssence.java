@@ -90,6 +90,10 @@ public class ItemEssence extends INeoOresItem.Impl
 
 	public ModelResourceLocation getModel(Item item, int meta)
 	{
+		return getModelStatic(item, meta);
+	}
+	
+	public static ModelResourceLocation getModelStatic(Item item, int meta) {
 		String path = "mana_essence.obj";
 		if (meta == 0)
 		{

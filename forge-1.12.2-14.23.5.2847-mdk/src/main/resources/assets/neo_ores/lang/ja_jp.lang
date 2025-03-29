@@ -232,6 +232,9 @@ armortip.air=気の加護
 armortip.space=宙の加護
 tooltip.mana=マナ消費
 
+totem.bound_to=バインド先 :
+totem.not_bind=右クリックでバインド
+
 attribute.name.neo_ores.maxMana=最大マナ
 
 neo_ores.effect.mana_boost=マナ増強
@@ -332,8 +335,8 @@ spell.ore_gen.name=鉱石生成
 spell.ore_gen.desc=石材を鉱石に変えるスペルアイテム。
 spell.no_inertia.name=反慣性力
 spell.no_inertia.desc=飛翔スペルの慣性の影響を無視するスペルアイテム。
-spell.collidable_filter.name=衝突可能フィルタ
-spell.collidable_filter.desc=衝突可能なエンティティのみにスペルを適用するスペルアイテム。
+spell.uncollidable.name=非衝突
+spell.uncollidable.desc=衝突不可能なエンティティにもスペルを適用するスペルアイテム。
 spell.pull_item.name=引き寄せ
 spell.pull_item.desc=自身にアイテムを引き寄せるスペルアイテム。
 
@@ -466,5 +469,7 @@ config.magic.convert_rate=液体マナ変換率
 config.magic.convert_rate.tooltip=液体マナの変換率 (1 mB 液体マナ = [設定値] マナ)
 
 neo_ores.pressLShiftDesc=L-Shiftで詳細表示
+
+death.attack.neo_ores.payment=%1$sのライフは十分でなかった
 
 homerunbat=§b§oホームランバット

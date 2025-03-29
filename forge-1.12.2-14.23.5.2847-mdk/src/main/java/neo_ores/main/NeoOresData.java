@@ -14,9 +14,12 @@ import neo_ores.util.NeoOresChunkManager;
 import neo_ores.util.NeoOresChunkManager.ChunkPosLoading;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.PlayerMagicDataClient;
+import neo_ores.util.Tuple3;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -42,7 +45,9 @@ public class NeoOresData
 	private boolean needSaving;
 	private Map<BlockPos, ChunkPosLoading> mapChunk = new HashMap<BlockPos, ChunkPosLoading>();
 	private Map<UUID, PlayerMagicData> mapPlayers = new HashMap<UUID, PlayerMagicData>();
-	private static final Map<UUID, PlayerMagicDataClient> mapPlayersClient = new HashMap<UUID, PlayerMagicDataClient>();
+	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> mapPassiveSpellList = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
+	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> bufferPassiveSpells = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
+ 	private static final Map<UUID, PlayerMagicDataClient> mapPlayersClient = new HashMap<UUID, PlayerMagicDataClient>();
 
 	public NeoOresData(MinecraftServer server)
 	{
@@ -55,6 +60,28 @@ public class NeoOresData
 	public static boolean isLoaded()
 	{
 		return instance != null;
+	}
+	
+	public Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>> getPassiveSpells(UUID uuid) {
+		synchronized (this.mapPassiveSpellList) {
+			if (this.mapPassiveSpellList.containsKey(uuid)) {
+				return new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>(this.mapPassiveSpellList.get(uuid));
+			}
+			return new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>();
+		}
+	}
+	
+	public void addPassiveSpell(EntityLivingBase runner, int slot, ItemStack stack, NBTTagCompound spellNbt, long mana) {
+		synchronized (this.bufferPassiveSpells) {
+			if (runner instanceof FakePlayer) 
+				return;
+			UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP)runner).getGameProfile())
+					: runner.getUniqueID();
+			if (!this.bufferPassiveSpells.containsKey(uuid)) {
+				this.bufferPassiveSpells.put(uuid, new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>());
+			}
+			this.bufferPassiveSpells.get(uuid).put(slot, new Tuple3<ItemStack, NBTTagCompound, Long>(stack, spellNbt, mana));
+		}
 	}
 
 	public static boolean isLoadable(World world, BlockPos pos)
@@ -132,6 +159,16 @@ public class NeoOresData
 
 	public void update()
 	{
+		synchronized (this.mapPassiveSpellList) {
+			synchronized (this.bufferPassiveSpells) {
+				this.mapPassiveSpellList.clear();
+				for (UUID uuid : this.bufferPassiveSpells.keySet()) {
+					this.mapPassiveSpellList.put(uuid, this.bufferPassiveSpells.get(uuid));
+				}
+				this.bufferPassiveSpells.clear();
+			}
+		}
+		
 		List<BlockPos> removeList = new ArrayList<BlockPos>();
 		for (Map.Entry<BlockPos, ChunkPosLoading> entry : this.mapChunk.entrySet())
 		{

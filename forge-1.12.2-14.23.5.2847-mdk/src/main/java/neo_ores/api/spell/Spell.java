@@ -11,17 +11,33 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class Spell
 {
 	public static abstract class SpellForm extends Spell
 	{
+		/**
+		 * If this is true, it's means this spell need primary form such as Touch or Self
+		 * 
+		 * @return
+		 */
 		public abstract boolean needPrimaryForm();
-
+		
+		/**
+		 * If this is true, it's means this spell is passive. 
+		 * 
+		 * @return
+		 */
 		public abstract boolean needConditional();
 
-		public abstract void onSpellRunning(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells);
-
+		public abstract void onSpellRunningServer(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells);
+		
+		public void onSpellRunning(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells) {
+			if (!world.isRemote) {
+				this.onSpellRunningServer(world, runner, stack, result, spells);
+			}
+		}
 	}
 
 	public static abstract class SpellCorrection extends Spell
@@ -101,7 +117,7 @@ public abstract class Spell
 
 	public static abstract class SpellConditional extends Spell
 	{
-		public abstract boolean isSpellRunnable(World world, @Nullable EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult result, NBTTagCompound spells);
+		public abstract boolean checkRunnableAndRun(Event event, World world, @Nullable EntityLivingBase runner, ItemStack stack, NBTTagCompound spells, long mana);
 
 		public void initialize()
 		{

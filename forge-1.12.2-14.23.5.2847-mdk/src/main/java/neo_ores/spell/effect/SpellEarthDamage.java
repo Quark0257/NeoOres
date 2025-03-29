@@ -9,6 +9,7 @@ import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.spell.SpellItemInterfaces.HasUncollidable;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
@@ -19,17 +20,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 
-public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, HasDamageLevel
+public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, HasDamageLevel, HasUncollidable
 {
 	private int damageLevel = 0;
 	private int luck = 0;
 	private int range0 = 0;
+	private boolean uncollidable = false;
 
 	@Override
 	public void setLuck(int value)
@@ -55,21 +55,10 @@ public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, 
 			}
 
 			Entity entity = (Entity) result.entityHit;
-
-			if (range0 > 0)
+			for (Entity elb : HasRange.getRangedEntities(world, this.range0, entity, runner, true, this.uncollidable))
 			{
-				int range = range0 * 2;
-				for (Entity elb : world.getEntitiesWithinAABB(Entity.class,
-						new AxisAlignedBB(entity.posX - range, entity.posY - range, entity.posZ - range, entity.posX + range, entity.posY + range, entity.posZ + range)))
-				{
-					if (elb != entity && elb != runner)
-					{
-						this.onDamage(world, elb, runner, item);
-					}
-				}
+				this.onDamage(world, elb, runner, item);
 			}
-
-			this.onDamage(world, entity, runner, item);
 
 			Map<Enchantment, Integer> enchs = EnchantmentHelper.getEnchantments(item);
 			if (enchs.containsKey(Enchantments.LOOTING))
@@ -93,7 +82,7 @@ public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, 
 		if (elb.canBeCollidedWith())
 		{
 			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), (int) (3.5 * Math.pow(1.5, this.damageLevel)) + 3);
-			SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16, runner instanceof FakePlayer);
+			SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
 			if (runner instanceof EntityPlayerMP)
 			{
 				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -117,5 +106,11 @@ public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, 
 	@Override
 	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
 	{
+	}
+
+	@Override
+	public void setUncollidable()
+	{
+		this.uncollidable = true;
 	}
 }

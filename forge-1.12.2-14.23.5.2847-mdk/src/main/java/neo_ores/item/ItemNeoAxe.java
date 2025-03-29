@@ -16,6 +16,8 @@ import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemNeoAxe extends ItemAxe implements IItemNeoTool, INeoOresItem
 {
@@ -24,6 +26,7 @@ public class ItemNeoAxe extends ItemAxe implements IItemNeoTool, INeoOresItem
 		super(material, material.getAttackDamage() + 5.0F, -4 + (float) ((int) ((float) material.getHarvestLevel() + 8.0F)) / 10.0F);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
 	{
 		super.addInformation(itemStack, world, list, flag);

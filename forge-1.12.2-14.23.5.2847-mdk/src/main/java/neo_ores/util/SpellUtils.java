@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -25,6 +26,7 @@ import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
 import net.minecraft.client.Minecraft;
@@ -32,22 +34,23 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -205,7 +208,12 @@ public class SpellUtils
 
 	public static NBTTagCompound getItemStackNBTFromList(List<SpellItem> spells, NBTTagCompound nbt)
 	{
-		NBTTagCompound output = nbt.copy();
+		return getItemStackNBTFromList(spells, nbt, true);
+	}
+	
+	public static NBTTagCompound getItemStackNBTFromList(List<SpellItem> spells, NBTTagCompound nbt, boolean copy)
+	{
+		NBTTagCompound output = copy ? nbt.copy() : nbt;
 		output.setTag(NBTTagUtils.SPELL, (NBTBase) getNBTFromList(spells));
 		return output;
 	}
@@ -397,9 +405,43 @@ public class SpellUtils
 
 		return (long) (manasum * manapro);
 	}
+	
+	public static void run(World world, EntityLivingBase runner, Event event) {
+		if (world.isRemote) 
+			return;
+		UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP)runner).getGameProfile()) : runner.getUniqueID();
+		Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>> copiedMap = NeoOresData.instance.getPassiveSpells(uuid);
+		for (int slot : copiedMap.keySet()) {
+			Tuple3<ItemStack, NBTTagCompound, Long> tuple = copiedMap.get(slot);
+			List<SpellItem> rawSpellList = SpellUtils.getListFromItemStackNBT(tuple.getSecond().copy());
+			List<Spell> conditionalSpells = new ArrayList<Spell>();
+			List<SpellItem> spells = new ArrayList<SpellItem>();
+			List<Spell> spellsCorrection = new ArrayList<Spell>();
+			for (SpellItem raw : rawSpellList) {
+				Spell sc = raw.getSpellClass();
+				if (sc instanceof Spell.SpellConditional) {
+					conditionalSpells.add(sc);
+				} else if (sc instanceof Spell.SpellCorrection) {
+					spellsCorrection.add(sc);
+					spells.add(raw);
+				} else if (!(sc instanceof Spell.SpellForm && ((Spell.SpellForm) sc).needPrimaryForm())) {
+					spells.add(raw);
+				}
+			}
+			
+			for (Spell spell : conditionalSpells) {
+				for (Spell correction : spellsCorrection) {
+					((Spell.SpellCorrection)correction).onCorrection(spell);
+				}
+				((Spell.SpellConditional)spell).checkRunnableAndRun(event, world, runner, tuple.getFirst(), SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()), tuple.getThird());
+			}
+		}
+	}
 
 	public static void run(List<SpellItem> initializedSpellList, World world, EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult target)
 	{
+		if (world.isRemote) 
+			return;
 		RayTraceResult result = target;
 		List<Spell> entityspells = new ArrayList<Spell>();
 		List<SpellItem> spells = new ArrayList<SpellItem>();
@@ -692,51 +734,6 @@ public class SpellUtils
 		}
 	}
 
-	public static List<BlockPos> rangedPos(BlockPos target, EnumFacing face, int range)
-	{
-		List<BlockPos> list = new ArrayList<BlockPos>();
-		if (face == EnumFacing.DOWN || face == EnumFacing.UP)
-		{
-			int x = target.getX() - range;
-			int z = target.getZ() - range;
-			for (int i = 0; i < range * 2 + 1; i++)
-			{
-				for (int j = 0; j < range * 2 + 1; j++)
-				{
-					BlockPos pos = new BlockPos(x + i, target.getY(), z + j);
-					list.add(pos);
-				}
-			}
-		}
-		else if (face == EnumFacing.WEST || face == EnumFacing.EAST)
-		{
-			int y = target.getY() - range;
-			int z = target.getZ() - range;
-			for (int i = 0; i < range * 2 + 1; i++)
-			{
-				for (int j = 0; j < range * 2 + 1; j++)
-				{
-					BlockPos pos = new BlockPos(target.getX(), y + i, z + j);
-					list.add(pos);
-				}
-			}
-		}
-		else
-		{
-			int x = target.getX() - range;
-			int y = target.getY() - range;
-			for (int i = 0; i < range * 2 + 1; i++)
-			{
-				for (int j = 0; j < range * 2 + 1; j++)
-				{
-					BlockPos pos = new BlockPos(x + i, y + j, target.getZ());
-					list.add(pos);
-				}
-			}
-		}
-		return list;
-	}
-
 	public static List<Pair<Vec3d, Vec3d>> getPosVelOnParallelepiped(Vec3d target, Vec3d size, Vec3d velocity)
 	{
 		List<Pair<Vec3d, Vec3d>> list = new ArrayList<Pair<Vec3d, Vec3d>>();
@@ -764,7 +761,7 @@ public class SpellUtils
 		return list;
 	}
 
-	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	private static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
 	{
 		if (world.isRemote)
 		{
@@ -776,13 +773,21 @@ public class SpellUtils
 			NeoOres.PACKET.sendToAll(ppc);
 		}
 	}
+	
+	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume) {
+		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, true);
+	}
 
-	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	private static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
 	{
 		AxisAlignedBB aabb = targetEntity.getRenderBoundingBox();
 		Vec3d target = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
 		Vec3d size = new Vec3d(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ);
 		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, isSendPacket);
+	}
+	
+	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume) {
+		SpellUtils.onDisplayParticleTypeAEntity(world, targetEntity, texture, color, particleVolume, true);
 	}
 
 	@SideOnly(Side.CLIENT)

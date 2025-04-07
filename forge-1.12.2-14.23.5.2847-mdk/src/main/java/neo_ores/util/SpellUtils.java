@@ -18,10 +18,11 @@ import com.google.common.base.Predicates;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
-import neo_ores.client.particle.ParticleMagic1;
+import neo_ores.client.particle.ParticleMagic;
 import neo_ores.api.ILifeContainer;
 import neo_ores.api.MathUtils;
 import neo_ores.api.MathUtils.Surface;
+import neo_ores.api.NBTUtils;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.KnowledgeTab;
@@ -29,6 +30,7 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
+import neo_ores.spell.form.IPassiveSpell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -36,11 +38,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -49,7 +54,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -210,7 +220,7 @@ public class SpellUtils
 	{
 		return getItemStackNBTFromList(spells, nbt, true);
 	}
-	
+
 	public static NBTTagCompound getItemStackNBTFromList(List<SpellItem> spells, NBTTagCompound nbt, boolean copy)
 	{
 		NBTTagCompound output = copy ? nbt.copy() : nbt;
@@ -230,16 +240,6 @@ public class SpellUtils
 		return null;
 	}
 
-	/*
-	 * public static NBTTagCompound putStudyIntArrayToNBT(String modid,int
-	 * value,NBTTagCompound neo_ores) { if(neo_ores.hasKey(NBTTagUtils.STUDY, 10)) {
-	 * NBTTagCompound study = neo_ores.getCompoundTag(NBTTagUtils.STUDY).copy();
-	 * if(study.hasKey(modid, 11)) { int[] array = study.getIntArray(modid);
-	 * study.setIntArray(modid, SpellUtils.addValueToIntArray(value, array));
-	 * neo_ores.setTag(NBTTagUtils.STUDY, study); } }
-	 * 
-	 * return neo_ores; }
-	 */
 	public static ResourceLocation textureFromSpellItem(SpellItem spellitem)
 	{
 		String path = "textures/gui/spell/spell_";
@@ -326,6 +326,8 @@ public class SpellUtils
 		public static final String MAGIC = "magicData";
 		public static final String STUDY = "studyData";
 		public static final String SPELL = "activeSpells";
+		public static final String ADDITIONAL = "additionalData";
+		public static final String SPELL_DESC = "desc";
 		public static final String MANA = "mana";
 		public static final String MAX_MANA = "maxMana";
 		public static final String MXP = "mxp";
@@ -405,42 +407,52 @@ public class SpellUtils
 
 		return (long) (manasum * manapro);
 	}
-	
-	public static void run(World world, EntityLivingBase runner, Event event) {
-		if (world.isRemote) 
+
+	public static void run(World world, EntityLivingBase runner, Event event)
+	{
+		if (world.isRemote)
 			return;
-		UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP)runner).getGameProfile()) : runner.getUniqueID();
+		UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile()) : runner.getUniqueID();
 		Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>> copiedMap = NeoOresData.instance.getPassiveSpells(uuid);
-		for (int slot : copiedMap.keySet()) {
+		for (int slot : copiedMap.keySet())
+		{
 			Tuple3<ItemStack, NBTTagCompound, Long> tuple = copiedMap.get(slot);
 			List<SpellItem> rawSpellList = SpellUtils.getListFromItemStackNBT(tuple.getSecond().copy());
 			List<Spell> conditionalSpells = new ArrayList<Spell>();
 			List<SpellItem> spells = new ArrayList<SpellItem>();
 			List<Spell> spellsCorrection = new ArrayList<Spell>();
-			for (SpellItem raw : rawSpellList) {
+			for (SpellItem raw : rawSpellList)
+			{
 				Spell sc = raw.getSpellClass();
-				if (sc instanceof Spell.SpellConditional) {
+				if (sc instanceof Spell.SpellConditional)
+				{
 					conditionalSpells.add(sc);
-				} else if (sc instanceof Spell.SpellCorrection) {
+				}
+				else if (sc instanceof Spell.SpellCorrection)
+				{
 					spellsCorrection.add(sc);
 					spells.add(raw);
-				} else if (!(sc instanceof Spell.SpellForm && ((Spell.SpellForm) sc).needPrimaryForm())) {
+				}
+				else if (!(sc instanceof Spell.SpellForm && ((Spell.SpellForm) sc).needPrimaryForm()))
+				{
 					spells.add(raw);
 				}
 			}
-			
-			for (Spell spell : conditionalSpells) {
-				for (Spell correction : spellsCorrection) {
-					((Spell.SpellCorrection)correction).onCorrection(spell);
+
+			for (Spell spell : conditionalSpells)
+			{
+				for (Spell correction : spellsCorrection)
+				{
+					((Spell.SpellCorrection) correction).onCorrection(spell);
 				}
-				((Spell.SpellConditional)spell).checkRunnableAndRun(event, world, runner, tuple.getFirst(), SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()), tuple.getThird());
+				((Spell.SpellConditional) spell).checkRunnableAndRun(event, world, runner, tuple.getFirst(), SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()), tuple.getThird());
 			}
 		}
 	}
 
 	public static void run(List<SpellItem> initializedSpellList, World world, EntityLivingBase runner, ItemStack stack, @Nullable RayTraceResult target)
 	{
-		if (world.isRemote) 
+		if (world.isRemote)
 			return;
 		RayTraceResult result = target;
 		List<Spell> entityspells = new ArrayList<Spell>();
@@ -459,10 +471,6 @@ public class SpellUtils
 				spellscs.add(sc);
 			}
 		}
-
-		/*
-		 * if (result != null) { result = new RayTraceResult(targetEntity); }
-		 */
 
 		if (!entityspells.isEmpty())
 		{
@@ -518,7 +526,7 @@ public class SpellUtils
 		}
 	}
 
-	public static RayTraceResult rayTrace(World worldIn, Entity playerIn, double reach, boolean useLiquids, boolean collidedFilter)
+	public static RayTraceResult rayTrace(World worldIn, Entity playerIn, double reach, boolean useLiquids, boolean collidedFilter, boolean alive)
 	{
 		RayTraceResult result = null;
 		float f = playerIn.rotationPitch;
@@ -562,18 +570,18 @@ public class SpellUtils
 
 		Entity pointedEntity = null;
 		Vec3d vec3d3 = null;
+		Predicate<Entity> predicate = new Predicate<Entity>()
+		{
+			public boolean apply(@Nullable Entity entity)
+			{
+				return entity != null && (collidedFilter ? entity.canBeCollidedWith() : true);
+			}
+		};
 		List<Entity> list = worldIn.getEntitiesInAABBexcluding(playerIn, playerIn.getEntityBoundingBox().expand(look.x * reach, look.y * reach, look.z * reach).grow(1.0D, 1.0D, 1.0D),
-				Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-				{
-					public boolean apply(@Nullable Entity entity)
-					{
-						return entity != null && (collidedFilter ? entity.canBeCollidedWith() : true);
-					}
-				}));
+				alive ? Predicates.and(Predicates.and(EntitySelectors.NOT_SPECTATING, predicate), EntitySelectors.IS_ALIVE) : Predicates.and(EntitySelectors.NOT_SPECTATING, predicate));
 		for (int j = 0; j < list.size(); ++j)
 		{
 			Entity entity1 = list.get(j);
-			// System.out.println(entity1.getName());
 			AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) entity1.getCollisionBorderSize());
 			RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(pos, end);
 
@@ -609,13 +617,6 @@ public class SpellUtils
 				}
 			}
 		}
-
-		/*
-		 * if (pointedEntity != null && flag && vec3d.distanceTo(vec3d3) > 3.0D) {
-		 * pointedEntity = null; this.mc.objectMouseOver = new
-		 * RayTraceResult(RayTraceResult.Type.MISS, vec3d3, (EnumFacing)null, new
-		 * BlockPos(vec3d3)); }
-		 */
 
 		if (pointedEntity != null && (distanceToObj < d1 || result == null))
 		{
@@ -769,24 +770,26 @@ public class SpellUtils
 		}
 		else if (isSendPacket)
 		{
-			PacketParticleToClient ppc = new PacketParticleToClient(target, size, texture, color, particleVolume);
+			PacketParticleToClient ppc = new PacketParticleToClient(target, size, texture, color, particleVolume, world.provider.getDimension());
 			NeoOres.PACKET.sendToAll(ppc);
 		}
 	}
-	
-	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume) {
+
+	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
+	{
 		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, true);
 	}
 
 	private static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
 	{
-		AxisAlignedBB aabb = targetEntity.getRenderBoundingBox();
+		AxisAlignedBB aabb = targetEntity.getEntityBoundingBox();
 		Vec3d target = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
 		Vec3d size = new Vec3d(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ);
 		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, isSendPacket);
 	}
-	
-	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume) {
+
+	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume)
+	{
 		SpellUtils.onDisplayParticleTypeAEntity(world, targetEntity, texture, color, particleVolume, true);
 	}
 
@@ -800,7 +803,7 @@ public class SpellUtils
 			for (int j = 0; j < particleVolume; j++)
 			{
 				int d = (int) (10.0D / (Math.random() + 0.5D));
-				ParticleMagic1 png = new ParticleMagic1(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d, 0.0005F, texture);
+				ParticleMagic png = new ParticleMagic(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d, 0.0005F, texture);
 				Minecraft.getMinecraft().effectRenderer.addEffect(png);
 			}
 		}
@@ -833,6 +836,10 @@ public class SpellUtils
 					{
 						list.add(recipe.getOreDic() + I18n.format("chat.displayOreDic") + " : x" + recipe.getSize());
 					}
+					else
+					{
+						list.add(recipe.getRaw() + " : x" + recipe.getSize());
+					}
 				}
 			}
 		}
@@ -854,5 +861,159 @@ public class SpellUtils
 			}
 		}
 		return false;
+	}
+
+	public static boolean spellHeal(EntityLivingBase runner, float amount)
+	{
+		if (runner instanceof FakePlayer && runner instanceof ILifeContainer)
+		{
+			return ((ILifeContainer) runner).healContainer(amount);
+		}
+		else
+		{
+			float d = runner.getMaxHealth() - runner.getHealth();
+			runner.heal(Math.min(d, amount));
+			return d > 0.0f;
+		}
+	}
+
+	public static boolean isMatch(ItemStack target, ItemStack filterItem)
+	{
+		// item
+		boolean flag1 = target.getItem() == filterItem.getItem();
+		// tag
+		boolean flag2 = filterItem.hasTagCompound() ? ItemStack.areItemStackShareTagsEqual(target, filterItem) : true;
+		// ignore metadata
+		boolean flag3 = !filterItem.getHasSubtypes() && filterItem.isItemStackDamageable() && !filterItem.isItemDamaged();
+		// metadata
+		boolean flag4 = flag3 ? true : filterItem.isItemEqual(target);
+		return flag1 && flag2 && flag4;
+	}
+
+	public static boolean isMatch(Fluid target, ItemStack filterItem)
+	{
+		if (filterItem.getItem() == ForgeModContainer.getInstance().universalBucket)
+		{
+			FluidStack fluid = FluidUtil.getFluidContained(filterItem);
+			if (fluid != null && fluid.getFluid() != null)
+			{
+				return fluid.getFluid() == target;
+			}
+		}
+		if (filterItem.getItem() == Items.WATER_BUCKET)
+		{
+			return target == FluidRegistry.WATER;
+		}
+		if (filterItem.getItem() == Items.LAVA_BUCKET)
+		{
+			return target == FluidRegistry.LAVA;
+		}
+		return false;
+	}
+	
+	public static boolean isFluidContainer(ItemStack stack) 
+	{
+		return stack.getItem() == ForgeModContainer.getInstance().universalBucket || stack.getItem() == Items.WATER_BUCKET || stack.getItem() == Items.LAVA_BUCKET;
+	}
+
+	public static List<ItemStack> getFilteredItems(ItemStack stack, boolean isBlackList)
+	{
+		List<ItemStack> result = new ArrayList<ItemStack>();
+		if (!stack.hasTagCompound())
+		{
+			return result;
+		}
+		if (!stack.getTagCompound().hasKey("additionalData"))
+		{
+			return result;
+		}
+		String key = getFilterKey(isBlackList);
+		NBTUtils nbt = new NBTUtils(stack.getTagCompound().getCompoundTag("additionalData"));
+		NBTTagList tagList = nbt.getListAsCompound(key);
+		for (int i = 0; i < tagList.tagCount(); i++)
+		{
+			NBTTagCompound itemTag = tagList.getCompoundTagAt(i);
+			result.add(new ItemStack(itemTag));
+		}
+		return result;
+	}
+
+	public static boolean containsSpell(ItemStack stack)
+	{
+		if (!stack.hasTagCompound())
+		{
+			return false;
+		}
+		return stack.getTagCompound().hasKey(NBTTagUtils.SPELL, 10);
+	}
+
+	public static void setFilteredItems(ItemStack stack, List<ItemStack> list, boolean isBlackList)
+	{
+		if (!stack.hasTagCompound())
+		{
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		if (!stack.getTagCompound().hasKey("additionalData"))
+		{
+			stack.getTagCompound().setTag("additionalData", new NBTTagCompound());;
+		}
+		String key = getFilterKey(isBlackList);
+		NBTUtils nbt = new NBTUtils(stack.getTagCompound().getCompoundTag("additionalData"));
+		NBTTagList tagList = new NBTTagList();
+		for (ItemStack item : list)
+		{
+			NBTTagCompound serial = item.serializeNBT();
+			tagList.appendTag(serial);
+		}
+		nbt.setTagList(key, tagList);
+	}
+
+	public static String getFilterKey(boolean isBlackList)
+	{
+		return isBlackList ? "targetItemBlackList" : "targetItemWhiteList";
+	}
+
+	public static boolean canRunPassiveSpell(DamageSource source)
+	{
+		if (source instanceof EntityDamageSource && ((EntityDamageSource) source).getIsThornsDamage())
+		{
+			return false;
+		}
+		if (source instanceof EntityDamageSourceWithItem)
+		{
+			ItemStack stack = ((EntityDamageSourceWithItem) source).getStack();
+			if (stack.hasTagCompound())
+			{
+				for (SpellItem spell : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
+				{
+					Spell sc = spell.getSpellClass();
+					if (sc instanceof IPassiveSpell)
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return source instanceof EntityDamageSource;
+	}
+
+	public static boolean canRunPassiveSpell2(DamageSource source, EntityLivingBase runner)
+	{
+		if (source instanceof EntityDamageSourceWithItem && ((EntityDamageSourceWithItem) source).getTrueSource() == runner)
+		{
+			ItemStack stack = ((EntityDamageSourceWithItem) source).getStack();
+			if (stack.hasTagCompound())
+			{
+				for (SpellItem spell : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
+				{
+					Spell sc = spell.getSpellClass();
+					if (sc instanceof IPassiveSpell)
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

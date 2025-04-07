@@ -6,10 +6,11 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
+import neo_ores.api.LongUtils;
+import neo_ores.api.NBTUtils;
 import neo_ores.api.TierUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ItemRecipeSheet;
-import neo_ores.item.ItemSpell;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.util.SpellUtils;
@@ -21,11 +22,14 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,24 +44,72 @@ public class NeoOresItemEvents
 		return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	@SideOnly(Side.CLIENT)
 	public void onTooltip(ItemTooltipEvent e)
 	{
 		ItemStack stack = e.getItemStack();
-		if (stack.getItem() instanceof ItemSpell)
+		if (SpellUtils.containsSpell(stack))
 		{
-			e.getToolTip().add("");
+			List<String> list = e.getToolTip();
+			List<SpellItem> spells = SpellUtils.getListFromItemStackNBT(stack.getTagCompound().copy());
+			list.add(I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString(SpellUtils.getMPConsume(spells)));
+			NBTUtils.ForItemStack util = new NBTUtils.ForItemStack(stack);
+			NBTTagList desclist = util.getListAsList(SpellUtils.NBTTagUtils.SPELL_DESC);
+			for (int i = 0; i < desclist.tagCount(); i++)
+			{
+				NBTTagList desc = (NBTTagList) desclist.get(i);
+				String main = "";
+				List<Object> format = new ArrayList<Object>();
+				for (int j = 0; j < desc.tagCount(); j++)
+				{
+					if (j == 0)
+					{
+						main = desc.getStringTagAt(j);
+					}
+					else
+					{
+						format.add(desc.getStringTagAt(j));
+					}
+				}
+				TextComponentTranslation tct = new TextComponentTranslation(main, format.toArray());
+				list.add(tct.getFormattedText());
+			}
+			list.add("");
+			List<ItemStack> blacklist = SpellUtils.getFilteredItems(stack, true);
+			List<String> blacklistName = new ArrayList<String>();
+			for (ItemStack temp : blacklist)
+			{
+				blacklistName.add(temp.getDisplayName());
+			}
+			if (!blacklistName.isEmpty())
+			{
+				list.add(TextFormatting.BLUE + I18n.format("neo_ores.blacklist") + " : " + blacklistName);
+			}
+			List<ItemStack> whitelist = SpellUtils.getFilteredItems(stack, false);
+			List<String> whitelistName = new ArrayList<String>();
+			for (ItemStack temp : whitelist)
+			{
+				whitelistName.add(temp.getDisplayName());
+			}
+			if (!whitelistName.isEmpty())
+			{
+				list.add(TextFormatting.BLUE + I18n.format("neo_ores.whitelist") + " : " + whitelistName);
+			}
+			if (!blacklistName.isEmpty() || !whitelistName.isEmpty())
+			{
+				list.add("");
+			}
 			if (isShift())
 			{
 				for (SpellItem item : SpellUtils.getListFromItemStackNBT(stack.getTagCompound()))
 				{
-					e.getToolTip().add(TextFormatting.BLUE + ItemRecipeSheet.getName(item) + (e.getFlags().isAdvanced() ? " (" + item.toString() + ")" : ""));
+					list.add(TextFormatting.BLUE + ItemRecipeSheet.getName(item) + (e.getFlags().isAdvanced() ? " (" + item.toString() + ")" : ""));
 				}
 			}
 			else
 			{
-				e.getToolTip().add(TextFormatting.BLUE + I18n.format("neo_ores.pressLShiftDesc"));
+				list.add(TextFormatting.BLUE + I18n.format("neo_ores.pressLShiftDesc"));
 			}
 		}
 	}

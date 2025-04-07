@@ -1,15 +1,12 @@
 package neo_ores.packet;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.netty.buffer.ByteBuf;
-import neo_ores.entity.EntitySpellBullet;
 import neo_ores.main.NeoOres;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -20,12 +17,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketEntityToClient implements IMessage
 {
 	private NBTTagCompound nbt;
-	@SuppressWarnings("serial")
-	public static final Map<String, Class<? extends Entity>> MAP_ENTITY_CLASS = new HashMap<String, Class<? extends Entity>>() {
-		{
-			put("EntitySpellBullet", EntitySpellBullet.class);
-		}
-	};
 
 	public PacketEntityToClient()
 	{
@@ -36,11 +27,12 @@ public class PacketEntityToClient implements IMessage
 		this.nbt = nbt;
 	}
 
-	public PacketEntityToClient(Entity entity, String name)
+	public PacketEntityToClient(Entity entity)
 	{
 		this.nbt = new NBTTagCompound();
 		this.nbt.setTag("entityData", entity.serializeNBT());
-		this.nbt.setString("name", name);
+		this.nbt.setString("id", EntityList.getKey(entity).toString());
+		this.nbt.setInteger("dim", entity.world.provider.getDimension());
 	}
 
 	@Override
@@ -68,19 +60,19 @@ public class PacketEntityToClient implements IMessage
 					if (world == null)
 						return;
 					NBTTagCompound nbt = message.nbt;
-					if (nbt.hasKey("entityData") && nbt.hasKey("name")) {
-						String name = nbt.getString("name");
-						if (!MAP_ENTITY_CLASS.containsKey(name)) {
-							return;
-						}
+					int dim = nbt.getInteger("dim");
+					if (dim != world.provider.getDimension()) {
+						return;
+					}
+					if (nbt.hasKey("entityData") && nbt.hasKey("id")) {
 						try
 						{
-							Entity entity = MAP_ENTITY_CLASS.get(name).getConstructor(World.class).newInstance(world);
 							NBTTagCompound compound = nbt.getCompoundTag("entityData");
-							MAP_ENTITY_CLASS.get(name).cast(entity).deserializeNBT(compound);
+							Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(nbt.getString("id")), world);
+							entity.deserializeNBT(compound);
 							world.spawnEntity(entity);
 						}
-						catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e)
+						catch (IllegalArgumentException | SecurityException e)
 						{
 							FMLLog.log.warn("Couldn't spawn entity on client side");
 						}

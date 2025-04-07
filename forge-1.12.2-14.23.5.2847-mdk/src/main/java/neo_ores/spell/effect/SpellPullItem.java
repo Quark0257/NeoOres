@@ -1,10 +1,9 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
-import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,27 +18,15 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class SpellPullItem extends SpellEffect implements HasRange, HasChanceLiquid
+public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 {
-	private int range = 0;
-	private boolean liquidMode = false;
-
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
-	{
-
-	}
-
-	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
-	{
-	}
-
-	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
+	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
 		if (result == null)
 			return;
@@ -59,9 +46,9 @@ public class SpellPullItem extends SpellEffect implements HasRange, HasChanceLiq
 					int size = inventory.getSizeInventory();
 					for (int i = 0; i < size; i++)
 					{
-						if (!inventory.getStackInSlot(i).isEmpty() && this.match(stack))
+						if (!inventory.getStackInSlot(i).isEmpty() && this.match(inventory.getStackInSlot(i), stack))
 						{
-							if (InventoryUtils.addInventoryfromInventorySlot(i, inventory, InventoryUtils.getPlayerInventory(player), face, null))
+							if (InventoryUtils.addInventoryfromInventorySlot(i, inventory, InventoryUtils.getPlayerInventory(player), face, EnumFacing.UP))
 							{
 								break;
 							}
@@ -69,8 +56,29 @@ public class SpellPullItem extends SpellEffect implements HasRange, HasChanceLiq
 					}
 				}
 				IFluidHandler handler = FluidUtil.getFluidHandler(world, pos, face);
-				if (handler != null && this.liquidMode) {
-					InventoryUtils.addFluidToInventoryFromTank(handler, InventoryUtils.getPlayerInventory(player), null);
+				if (handler != null && this.liquidMode)
+				{
+					FluidStack fluid = null;
+					for (IFluidTankProperties tp : handler.getTankProperties())
+					{
+						if (tp.getContents() == null || tp.getContents().getFluid() == null)
+						{
+							continue;
+						}
+						if (this.match(tp.getContents().getFluid(), stack))
+						{
+							fluid = tp.getContents().copy();
+						}
+					}
+					if (fluid == null)
+					{
+						continue;
+					}
+					fluid.amount = 1000;
+					if (InventoryUtils.addFluidToInventoryFromTank(handler, InventoryUtils.getPlayerInventory(player), EnumFacing.UP, fluid))
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -92,12 +100,12 @@ public class SpellPullItem extends SpellEffect implements HasRange, HasChanceLiq
 		{
 			EntityItem entityitem = (EntityItem) entity;
 			ItemStack target = entityitem.getItem();
-			if (!this.match(target))
+			if (!this.match(target, stack))
 			{
 				return;
 			}
 			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
-			ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory(player), null);
+			ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory(player), EnumFacing.UP);
 			if (!target.isEmpty() && result.getCount() != target.getCount())
 			{
 				entityitem.setItem(result);
@@ -107,21 +115,9 @@ public class SpellPullItem extends SpellEffect implements HasRange, HasChanceLiq
 		}
 	}
 
-	private boolean match(ItemStack stack)
-	{
-		// TODO set Filter
-		return true;
-	}
-
 	@Override
-	public void setRange(int value)
+	public RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
-		this.range = value;
-	}
-
-	@Override
-	public void setSupport()
-	{
-		this.liquidMode = true;
+		return RayTraceUtils.getSimpleResult(runner);
 	}
 }

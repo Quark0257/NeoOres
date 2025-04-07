@@ -1,116 +1,31 @@
 package neo_ores.spell.effect;
 
-import java.util.Map;
-
-import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
-import neo_ores.spell.SpellItemInterfaces.HasDamageLevel;
-import neo_ores.spell.SpellItemInterfaces.HasLuck;
-import neo_ores.spell.SpellItemInterfaces.HasRange;
-import neo_ores.spell.SpellItemInterfaces.HasUncollidable;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerMagicData;
+import neo_ores.util.ServerUtils;
 import neo_ores.util.SpellUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellEarthDamage extends SpellEffect implements HasRange, HasLuck, HasDamageLevel, HasUncollidable
+public class SpellEarthDamage extends SpellDamageBase
 {
-	private int damageLevel = 0;
-	private int luck = 0;
-	private int range0 = 0;
-	private boolean uncollidable = false;
-
 	@Override
-	public void setLuck(int value)
+	protected void onDamage(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
-		luck = value;
-	}
-
-	@Override
-	public void setRange(int value)
-	{
-		this.range0 = value;
-	}
-
-	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
-	{
-		if (result != null && result.typeOfHit == Type.ENTITY)
+		float amount = (float) (3.5 * Math.pow(1.5, this.damageLevel)) + 3.0f;
+		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), 0.6f * amount);
+		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(EntityDamageSourceWithItem.getPhysicalDamage(runner), runner, stack), 0.4f * amount);
+		SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+		if (runner instanceof EntityPlayerMP)
 		{
-			ItemStack item = stack.copy();
-			if (this.luck > 0)
-			{
-				item.addEnchantment(Enchantments.LOOTING, this.luck);
-			}
-
-			Entity entity = (Entity) result.entityHit;
-			for (Entity elb : HasRange.getRangedEntities(world, this.range0, entity, runner, true, this.uncollidable))
-			{
-				this.onDamage(world, elb, runner, item);
-			}
-
-			Map<Enchantment, Integer> enchs = EnchantmentHelper.getEnchantments(item);
-			if (enchs.containsKey(Enchantments.LOOTING))
-			{
-				enchs.remove(Enchantments.LOOTING);
-			}
-			if (item.hasTagCompound())
-				item.getTagCompound().removeTag("ench");
-			;
-
-			for (Map.Entry<Enchantment, Integer> entry : enchs.entrySet())
-			{
-				item.addEnchantment(entry.getKey(), entry.getValue());
-			}
+			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+			pmds.addMXP(10L + (long) Math.pow(3, luck));
 		}
-
-	}
-
-	private void onDamage(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
-	{
-		if (elb.canBeCollidedWith())
-		{
-			elb.attackEntityFrom(EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), (int) (3.5 * Math.pow(1.5, this.damageLevel)) + 3);
-			SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
-			if (runner instanceof EntityPlayerMP)
-			{
-				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-				pmds.addMXP(10L + (long) Math.pow(3, luck));
-			}
-		}
-	}
-
-	@Override
-	public void setDamageLevel(int value)
-	{
-		this.damageLevel = value;
-
-	}
-
-	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
-	{
-	}
-
-	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
-	{
-	}
-
-	@Override
-	public void setUncollidable()
-	{
-		this.uncollidable = true;
 	}
 }

@@ -14,6 +14,7 @@ import neo_ores.util.NeoOresChunkManager;
 import neo_ores.util.NeoOresChunkManager.ChunkPosLoading;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.PlayerMagicDataClient;
+import neo_ores.util.PlayerStatusData;
 import neo_ores.util.Tuple3;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,9 +46,10 @@ public class NeoOresData
 	private boolean needSaving;
 	private Map<BlockPos, ChunkPosLoading> mapChunk = new HashMap<BlockPos, ChunkPosLoading>();
 	private Map<UUID, PlayerMagicData> mapPlayers = new HashMap<UUID, PlayerMagicData>();
+	private Map<UUID, PlayerStatusData> mapPlayerStatus = new HashMap<UUID, PlayerStatusData>();
 	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> mapPassiveSpellList = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
 	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> bufferPassiveSpells = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
- 	private static final Map<UUID, PlayerMagicDataClient> mapPlayersClient = new HashMap<UUID, PlayerMagicDataClient>();
+	private static final Map<UUID, PlayerMagicDataClient> mapPlayersClient = new HashMap<UUID, PlayerMagicDataClient>();
 
 	public NeoOresData(MinecraftServer server)
 	{
@@ -61,23 +63,28 @@ public class NeoOresData
 	{
 		return instance != null;
 	}
-	
-	public Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>> getPassiveSpells(UUID uuid) {
-		synchronized (this.mapPassiveSpellList) {
-			if (this.mapPassiveSpellList.containsKey(uuid)) {
+
+	public Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>> getPassiveSpells(UUID uuid)
+	{
+		synchronized (this.mapPassiveSpellList)
+		{
+			if (this.mapPassiveSpellList.containsKey(uuid))
+			{
 				return new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>(this.mapPassiveSpellList.get(uuid));
 			}
 			return new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>();
 		}
 	}
-	
-	public void addPassiveSpell(EntityLivingBase runner, int slot, ItemStack stack, NBTTagCompound spellNbt, long mana) {
-		synchronized (this.bufferPassiveSpells) {
-			if (runner instanceof FakePlayer) 
+
+	public void addPassiveSpell(EntityLivingBase runner, int slot, ItemStack stack, NBTTagCompound spellNbt, long mana)
+	{
+		synchronized (this.bufferPassiveSpells)
+		{
+			if (runner instanceof FakePlayer)
 				return;
-			UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP)runner).getGameProfile())
-					: runner.getUniqueID();
-			if (!this.bufferPassiveSpells.containsKey(uuid)) {
+			UUID uuid = runner instanceof EntityPlayerMP ? EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile()) : runner.getUniqueID();
+			if (!this.bufferPassiveSpells.containsKey(uuid))
+			{
 				this.bufferPassiveSpells.put(uuid, new HashMap<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>());
 			}
 			this.bufferPassiveSpells.get(uuid).put(slot, new Tuple3<ItemStack, NBTTagCompound, Long>(stack, spellNbt, mana));
@@ -139,36 +146,55 @@ public class NeoOresData
 		}
 		return this.mapPlayers.get(uuid);
 	}
-	
-	@SideOnly(Side.CLIENT)
-	public static PlayerMagicDataClient getPMDC(UUID uuid) 
+
+	public PlayerStatusData getPSD(EntityPlayerMP player)
 	{
-		if(!NeoOresData.mapPlayersClient.containsKey(uuid))
+		if (player instanceof FakePlayer)
+		{
+			return new PlayerStatusData();
+		}
+
+		UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
+		if (!this.mapPlayerStatus.containsKey(uuid))
+		{
+			this.mapPlayerStatus.put(uuid, new PlayerStatusData());
+			this.mapPlayerStatus.get(uuid).markDirty();
+		}
+		return this.mapPlayerStatus.get(uuid);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static PlayerMagicDataClient getPMDC(UUID uuid)
+	{
+		if (!NeoOresData.mapPlayersClient.containsKey(uuid))
 		{
 			NeoOresData.putPMDC(uuid, new PlayerMagicDataClient());
 			NeoOresData.mapPlayersClient.get(uuid).sendPacketRequest();
 		}
 		return NeoOresData.mapPlayersClient.get(uuid);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-	private static void putPMDC(UUID uuid, PlayerMagicDataClient pmdc) 
+	private static void putPMDC(UUID uuid, PlayerMagicDataClient pmdc)
 	{
 		NeoOresData.mapPlayersClient.put(uuid, pmdc);
 	}
 
 	public void update()
 	{
-		synchronized (this.mapPassiveSpellList) {
-			synchronized (this.bufferPassiveSpells) {
+		synchronized (this.mapPassiveSpellList)
+		{
+			synchronized (this.bufferPassiveSpells)
+			{
 				this.mapPassiveSpellList.clear();
-				for (UUID uuid : this.bufferPassiveSpells.keySet()) {
+				for (UUID uuid : this.bufferPassiveSpells.keySet())
+				{
 					this.mapPassiveSpellList.put(uuid, this.bufferPassiveSpells.get(uuid));
 				}
 				this.bufferPassiveSpells.clear();
 			}
 		}
-		
+
 		List<BlockPos> removeList = new ArrayList<BlockPos>();
 		for (Map.Entry<BlockPos, ChunkPosLoading> entry : this.mapChunk.entrySet())
 		{
@@ -195,7 +221,7 @@ public class NeoOresData
 				NeoOresChunkManager.INSTANCE.forceChunk(this.server, entry.getValue());
 			}
 		}
-		
+
 		for (Map.Entry<UUID, PlayerMagicData> entry : this.mapPlayers.entrySet())
 		{
 			entry.getValue().sendToOtherSide(entry.getKey());
@@ -219,6 +245,10 @@ public class NeoOresData
 	{
 		if (isLoaded())
 		{
+			for (Map.Entry<UUID, PlayerStatusData> entry : instance.mapPlayerStatus.entrySet())
+			{
+				entry.getValue().setLoggedIn(false);
+			}
 			instance.save();
 			instance = null;
 		}
@@ -272,6 +302,9 @@ public class NeoOresData
 				PlayerMagicData player = new PlayerMagicData(false);
 				player.readFromNBT(playerData);
 				this.mapPlayers.put(uuid, player);
+				PlayerStatusData status = new PlayerStatusData();
+				status.readFromNBT(playerData);
+				this.mapPlayerStatus.put(uuid, status);
 			}
 		}
 	}
@@ -302,7 +335,9 @@ public class NeoOresData
 		for (Map.Entry<UUID, PlayerMagicData> entry : this.mapPlayers.entrySet())
 		{
 			NBTTagCompound playerData = entry.getValue().writeToNBT(new NBTTagCompound());
-			if (entry.getValue().isDirty())
+			PlayerStatusData psd = this.mapPlayerStatus.getOrDefault(entry.getKey(), new PlayerStatusData());
+			psd.writeToNBT(playerData);
+			if (entry.getValue().isDirty() || psd.isDirty())
 			{
 				NBTUtils.writeToFileSafe(new File(instance.server.getWorld(0).getSaveHandler().getWorldDirectory(), "data/neo_ores/players/" + entry.getKey().toString() + ".dat"), playerData);
 			}

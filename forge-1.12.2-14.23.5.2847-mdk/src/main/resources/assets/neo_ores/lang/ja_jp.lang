@@ -118,6 +118,7 @@ tile.instant_alter.name=インスタントアルター
 tile.mechanical_magician.name=詠唱機
 tile.chunk_loader.name=チャンクローダー
 tile.liquid_mana.name=液体マナ
+tile.light.name=マナの光
 
 size.= (サイズ:
 hoppered.0=
@@ -210,6 +211,7 @@ item.upgrade_fluid.name=液体マナアップグレード
 item.upgrade_xp.name=経験値アップグレード
 item.upgrade_void.name=経験値除去アップグレード
 item.upgrade_consume.name=低消費帯カットアップグレード
+item.position_sheet.name=ポジションシート
 
 fluid.neo_ores.mana=液体マナ
 
@@ -232,8 +234,12 @@ armortip.air=気の加護
 armortip.space=宙の加護
 tooltip.mana=マナ消費
 
-totem.bound_to=バインド先 :
-totem.not_bind=右クリックでバインド
+totem.bound_to=§f%sにバインド済み
+totem.not_bind=§f右クリックでバインド
+totem.disable_dim=§fディメンションを超えた使用は不可
+
+tooltip.stored_position=§f座標[x=%s, y=%s, z=%s, side=%s, dim=%s]を保持
+tooltip.not_stored_position=§f右クリックで座標を保存
 
 attribute.name.neo_ores.maxMana=最大マナ
 
@@ -469,6 +475,8 @@ config.magic.convert_rate=液体マナ変換率
 config.magic.convert_rate.tooltip=液体マナの変換率 (1 mB 液体マナ = [設定値] マナ)
 
 neo_ores.pressLShiftDesc=L-Shiftで詳細表示
+neo_ores.blacklist=ブラックリスト
+neo_ores.whitelist=ホワイトリスト
 
 death.attack.neo_ores.payment=%1$sのライフは十分でなかった
 

@@ -20,6 +20,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 
 import neo_ores.api.RecipeOreStack;
+import neo_ores.api.RecipeOreStackWildCard;
 import neo_ores.api.recipe.ManaCompositionRecipe;
 import neo_ores.api.recipe.ManaCraftingRecipe;
 import neo_ores.api.recipe.OreWeightRecipe;
@@ -152,7 +153,11 @@ public class NeoOresRecipeRegisterEvents
 						new RecipeOreStack(new ItemStack(NeoOresItems.undite), 16)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_no_inertia, new RecipeOreStack(new ItemStack(Items.ENDER_EYE), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_uncollidable, new RecipeOreStack("enderpearl", 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pull_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pull_item, new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_push_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pipe_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_worn_tick, RecipeOreStackWildCard.ANY_ITEM));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_translocate, new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

@@ -1,13 +1,13 @@
 package neo_ores.tileentity;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import neo_ores.api.FakePlayerMechanicalMagician;
 import neo_ores.api.MathUtils;
+import neo_ores.api.Vec2d;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.inventory.ContainerMechanicalMagician;
@@ -34,7 +34,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
@@ -49,7 +48,6 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	private boolean redstone = false;
 	private boolean activated = false;
 	private BlockPos destination = BlockPos.ORIGIN;
-	private static final Random rand = new Random();
 	private double reach = 4.0;
 	private String mmCustomName;
 	private int mxp = 0;
@@ -105,6 +103,12 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			this.playerNBT = compound.getCompoundTag("player");
 		}
 	}
+	
+	@Nullable
+	public FakePlayerMechanicalMagician getPlayer() 
+	{
+		return this.player;
+	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
@@ -139,11 +143,11 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	public void setDestination(BlockPos destination)
 	{
 		this.destination = destination;
-		Vec2f direction = MathUtils.getYawPitch(destination.getX() - this.getPos().getX(), destination.getY() - this.getPos().getY(), destination.getZ() - this.getPos().getZ());
+		Vec2d direction = MathUtils.getYawPitch(destination.getX() - this.getPos().getX(), destination.getY() - this.getPos().getY(), destination.getZ() - this.getPos().getZ());
 		if (this.player != null)
 		{
-			this.player.rotationPitch = direction.y;
-			this.player.rotationYaw = direction.x;
+			this.player.rotationPitch = direction.getYAsFloat();
+			this.player.rotationYaw = direction.getXAsFloat();
 		}
 
 		this.markDirty();
@@ -332,11 +336,11 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			}
 		}
 
-		Vec2f direction = this.getDirection();
+		Vec2d direction = this.getDirection();
 		if (this.player != null)
 		{
-			this.player.rotationPitch = direction.y;
-			this.player.rotationYaw = direction.x;
+			this.player.rotationPitch = direction.getYAsFloat();
+			this.player.rotationYaw = direction.getXAsFloat();
 			PlayerMagicData pmd = NeoOresData.instance.getPMD(this.player);
 			if(pmd.getMana() == pmd.getMaxMana() && this.tank.fill(new FluidStack(NeoOresBlocks.fluid_mana, 1), false) == 1) 
 			{
@@ -351,7 +355,7 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			if (itemspell.getTagCompound() != null && itemspell.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
 			{
 				PlayerMagicData pmd = null;
-				int value = rand.nextInt(Integer.MAX_VALUE);
+				int value = world.rand.nextInt(Integer.MAX_VALUE);
 				List<SpellItem> rawSpellList = SpellUtils.getListFromItemStackNBT(itemspell.getTagCompound().copy());
 				ItemStack totem = this.getStackInSlot(1);
 				boolean flag = totem.getItem() instanceof IItemTotem && (this.mxp <= value);
@@ -476,7 +480,7 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 		}
 	}
 
-	public Vec2f getDirection()
+	public Vec2d getDirection()
 	{
 		return MathUtils.getYawPitch(this.destination.getX() - this.getPos().getX(), this.destination.getY() - this.getPos().getY(), this.destination.getZ() - this.getPos().getZ());
 	}
@@ -512,5 +516,13 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	public ManaTank getTank()
 	{
 		return this.useLiquidMana ? this.tank : new ManaTank(0);
+	}
+	
+	public void removeTileEntity() 
+	{
+		if (this.player != null) 
+		{
+			this.player.setDead();
+		}
 	}
 }

@@ -2,10 +2,7 @@ package neo_ores.spell.effect;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.client.particle.ParticleMagic1;
+import neo_ores.api.InventoryUtils;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
@@ -14,9 +11,9 @@ import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasSilk;
 import neo_ores.util.PlayerMagicData;
+import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -34,20 +31,18 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.event.ForgeEventFactory;
 
-public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck, HasHarvestLevel, HasGather
+public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather
 {
-	private int range = 0;
 	private int fortune = 0;
 	private boolean isSilktouch = false;
 	private int harvestlevel = 0;
 	private boolean canGather = false;
 
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
+	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
-		if (result != null && result.typeOfHit == Type.BLOCK && runner instanceof EntityPlayer)
+		if (result != null && result.typeOfHit == Type.BLOCK)
 		{
 			ItemStack item = stack.copy();
 			int xpvalue = 0;
@@ -72,7 +67,20 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);
-					this.breakBlock(state, world, pos, runner, xpvalue, item);
+					@SuppressWarnings("deprecation")
+					ItemStack itemS = state.getBlock().getItem(world, pos, state);
+					if (!this.match(itemS, stack))
+					{
+						continue;
+					}
+					if (runner instanceof EntityPlayer)
+					{
+						this.breakBlock(state, world, pos, runner, xpvalue, item);
+					}
+					else 
+					{
+						this.breakBlockByMob(state, world, pos, runner);
+					}
 				}
 			}
 
@@ -106,12 +114,7 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 				if (this.harvestlevel == 11)
 				{
 					ItemStack itemS = state.getBlock().getItem(world, pos, state);
-					EntityItem eitem = new EntityItem(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, itemS);
-					if (this.canGather)
-					{
-						eitem.setPosition(runner.posX, runner.posY, runner.posZ);
-						eitem.setNoPickupDelay();
-					}
+					EntityItem eitem = new EntityItem(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, itemS.copy());
 					world.spawnEntity(eitem);
 					if (!world.isRemote)
 					{
@@ -120,6 +123,17 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 						{
 							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 							pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
+						}
+					}
+					if (this.canGather)
+					{
+						ItemStack target = eitem.getItem();
+						ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
+						if (!target.isEmpty() && result.getCount() != target.getCount())
+						{
+							eitem.setItem(result);
+							if (eitem.getItem().isEmpty())
+								eitem.setDead();
 						}
 					}
 				}
@@ -144,8 +158,14 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 					{
 						for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)))
 						{
-							entity.setPosition(runner.posX, runner.posY, runner.posZ);
-							entity.setNoPickupDelay();
+							ItemStack target = entity.getItem();
+							ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
+							if (!target.isEmpty() && result.getCount() != target.getCount())
+							{
+								entity.setItem(result);
+								if (entity.getItem().isEmpty())
+									entity.setDead();
+							}
 						}
 					}
 
@@ -159,11 +179,16 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 		}
 	}
 
-	public void setRange(int value)
+	
+	private void breakBlockByMob(IBlockState state, World world, BlockPos pos, EntityLivingBase runner) 
 	{
-		range = value;
+		if (state.getBlock().canEntityDestroy(state, world, pos, runner) && ForgeEventFactory.onEntityDestroyBlock(runner, pos, state)) 
+		{
+			world.destroyBlock(pos, true);
+		}
 	}
-
+	
+	
 	public void setSilkTouch()
 	{
 		this.isSilktouch = true;
@@ -187,31 +212,9 @@ public class SpellDig extends SpellEffect implements HasRange, HasSilk, HasLuck,
 	}
 
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
+	public RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
-	}
-
-	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
-	{
-	}
-
-	@SideOnly(Side.CLIENT)
-	private void onDisplay(World worldIn, BlockPos pos, EntityLivingBase runner)
-	{
-		double d1 = (double) ((float) pos.getX());
-		double d2 = (double) ((float) pos.getY());
-		double d3 = (double) ((float) pos.getZ());
-		for (Pair<Vec3d, Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(new Vec3d(d1, d2, d3), new Vec3d(1.0, 1.0, 1.0), new Vec3d(1.0, 1.0, 1.0)))
-		{
-			Vec3d start = entry.getKey();
-			Vec3d velocity = entry.getValue();
-			for (int j = 0; j < 8; j++)
-			{
-				int d = (int) (10.0D / (Math.random() + 0.5D));
-				ParticleMagic1 png = new ParticleMagic1(worldIn, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, 0x80FFCE, d, 0.0005F, NeoOresRegisterEvents.particle0);
-				Minecraft.getMinecraft().effectRenderer.addEffect(png);
-			}
-		}
+		BlockPos pos = new BlockPos(runner.posX, runner.posY, runner.posZ);
+		return RayTraceUtils.getSimpleResult(pos, null);
 	}
 }

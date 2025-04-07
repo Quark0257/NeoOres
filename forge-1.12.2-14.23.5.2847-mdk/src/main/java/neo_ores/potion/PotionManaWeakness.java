@@ -14,7 +14,7 @@ public class PotionManaWeakness extends PotionNeoOres implements PotionNeoOres.I
 	public PotionManaWeakness(String name)
 	{
 		super(false, 0xCEA1FF, name);
-		uid = new UUID((long) ((this.random.nextDouble() * 2.0D - 1.0D) * Long.MAX_VALUE), (long) ((this.random.nextDouble() * 2.0D - 1.0D) * Long.MAX_VALUE));
+		this.uid = UUID.randomUUID();
 	}
 
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap attributeMapIn, int amplifier)
@@ -22,15 +22,15 @@ public class PotionManaWeakness extends PotionNeoOres implements PotionNeoOres.I
 		if (entityLivingBaseIn != null && entityLivingBaseIn instanceof EntityPlayerMP)
 		{
 			FakeAttributeMaxMana famm = new FakeAttributeMaxMana((EntityPlayerMP) entityLivingBaseIn);
-			if (famm.getModifierByUUID(uid) != null)
-				famm.removeModifierByUUID(uid);
+			if (famm.getModifierByUUID(this.uid) != null)
+				famm.removeModifierByUUID(this.uid);
 			;
 		}
 	}
 
 	public static float getAdditionFromMagnification(int amplifier)
 	{
-		return -amplifier;
+		return -(amplifier + 1) * 0.2f;
 	}
 
 	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap attributeMapIn, int amplifier)
@@ -38,13 +38,13 @@ public class PotionManaWeakness extends PotionNeoOres implements PotionNeoOres.I
 		if (entityLivingBaseIn != null && entityLivingBaseIn instanceof EntityPlayerMP)
 		{
 			FakeAttributeMaxMana famm = new FakeAttributeMaxMana((EntityPlayerMP) entityLivingBaseIn);
-			famm.modifierToPlayerWithUUID(uid, getAdditionFromMagnification(amplifier), 1);
+			famm.modifierToPlayerWithUUID(this.uid, getAdditionFromMagnification(amplifier), 1);
 		}
 	}
 
 	public UUID getID()
 	{
-		return uid;
+		return this.uid;
 	}
 
 	@Override

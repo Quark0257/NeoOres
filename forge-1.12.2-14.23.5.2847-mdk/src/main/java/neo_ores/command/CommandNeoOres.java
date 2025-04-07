@@ -16,6 +16,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -52,23 +53,12 @@ public class CommandNeoOres extends CommandBase
 		{
 			EntityPlayerMP entityplayer = getPlayer(server, sender, args[0]);
 			PlayerMagicData pmd = NeoOresData.instance.getPMD(entityplayer);
-			//StudyItemManagerServer sims = new StudyItemManagerServer(entityplayer);
 			if (args[1].equals("reset_all"))
 			{
-				pmd.setLevel(0);
-				pmd.setMana(0);
-				pmd.setTrueMaxMana(0);
-				pmd.setMaxManaAdd(0);
-				pmd.setMaxManaMag(0);
-				pmd.setMXP(0);
-				pmd.setMagicPoint(0);
-				for (Map.Entry<String, List<String>> data : SpellUtils.getAll().entrySet())
-				{
-					for (String id : data.getValue())
-					{
-						pmd.remove(data.getKey(), id);
-					}
-				}
+				PlayerMagicData newPmd = new PlayerMagicData(false);
+				pmd.readFromNBT(newPmd.writeToNBT(new NBTTagCompound()));
+				pmd.markDirty();
+				pmd.markSending();
 			}
 			else if (args[1].equals("magic_xp") && args[2].equals("add"))
 			{

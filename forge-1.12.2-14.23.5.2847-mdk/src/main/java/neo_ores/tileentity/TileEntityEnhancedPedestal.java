@@ -138,7 +138,6 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 
 	public ItemStack getStackInSlot(int index)
 	{
-		// System.out.println(index);
 		return this.item_list.get(index).getMediate();
 	}
 
@@ -311,7 +310,6 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public void update()
 	{
-		// System.out.println(this.display);
 		if (!this.getWorld().isRemote)
 		{
 			for (int i = 0; i < this.getSizeInventory(); i++)
@@ -368,6 +366,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 			NBTTagCompound nbttagcompound = new NBTTagCompound();
 			nbttagcompound = stack.writeToNBT(nbttagcompound);
 			packet.setTag("display", nbttagcompound);
+			packet.setInteger("dim", this.world.provider.getDimension());
 			PacketItemsToClient pic = new PacketItemsToClient(packet);
 			NeoOres.PACKET.sendToAll(pic);
 		}

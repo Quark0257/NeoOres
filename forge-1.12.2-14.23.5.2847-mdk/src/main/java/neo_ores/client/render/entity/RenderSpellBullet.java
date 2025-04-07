@@ -1,6 +1,9 @@
 package neo_ores.client.render.entity;
 
+import neo_ores.client.particle.ParticleMagic;
 import neo_ores.entity.EntitySpellBullet;
+import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
@@ -48,6 +51,34 @@ public class RenderSpellBullet extends Render<EntitySpellBullet>
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.popMatrix();
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		
+		if (entity.getStack().isEmpty())
+		{
+			return;
+		}
+		
+		for (int k = 0; k < 4; ++k)
+		{
+			double px = entity.posX - entity.motionX * ((double) k + 0.7) / 4.0D;
+			double py = entity.posY - entity.motionY * ((double) k + 0.7) / 4.0D;
+			double pz = entity.posZ - entity.motionZ * ((double) k + 0.7) / 4.0D;
+			double dx = 0.0;
+			double dy = 0.0;
+			double dz = 0.0;
+			final double m = 0.3;
+			float ds = 0.0F;
+			for (int i = 0; i < 4; i++)
+			{
+				dx = m * entity.world.rand.nextDouble() - 0.5 * m;
+				dy = m * entity.world.rand.nextDouble() - 0.5 * m;
+				dz = m * entity.world.rand.nextDouble() - 0.5 * m;
+				ds = 0.005F * entity.world.rand.nextFloat();
+
+				ParticleMagic png = new ParticleMagic(entity.world, px + dx, py + dy, pz + dz, 0.0, 0.0, 0.0, SpellUtils.getColor(entity.getStack()),
+						Math.min(6 + entity.world.rand.nextInt(4), Math.max(0, entity.life - 1)), 0.001F + ds, NeoOresRegisterEvents.particle0);
+				Minecraft.getMinecraft().effectRenderer.addEffect(png);
+			}
+		}
 	}
 
 	protected ResourceLocation getEntityTexture(EntitySpellBullet entity)

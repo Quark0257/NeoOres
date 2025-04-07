@@ -568,7 +568,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		}
 		this.tileSRCT.srctSearch = this.search;
 		this.tileSRCT.setSpellItems(this.selectedSpells);
-		this.maxPage = this.matchedSpells.size() / 42;
+		this.maxPage = (this.matchedSpells.size() - 1) / 42;
 		if (this.maxPage < page)
 		{
 			page = this.maxPage;
@@ -587,7 +587,9 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		nbt.setTag("recipeSpells", SpellUtils.getNBTFromList(selectedSpells));
 		NBTTagCompound item = tileSRCT.getStackInSlot(0).writeToNBT(new NBTTagCompound());
 		nbt.setTag("recipeItem", item);
-
+		
+		nbt.setInteger("dim", tileSRCT.getWorld().provider.getDimension());
+		
 		PacketSRCTToServer psrcts = new PacketSRCTToServer(nbt);
 		NeoOres.PACKET.sendToServer(psrcts);
 	}

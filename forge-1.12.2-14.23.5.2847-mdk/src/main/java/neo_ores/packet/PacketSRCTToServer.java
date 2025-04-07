@@ -51,6 +51,11 @@ public class PacketSRCTToServer implements IMessage
 					int x = message.nbt.getInteger("x");
 					int y = message.nbt.getInteger("y");
 					int z = message.nbt.getInteger("z");
+					int dim = message.nbt.getInteger("dim");
+					if (dim != worldServer.provider.getDimension())
+					{
+						return;
+					}
 					TileEntity te = worldServer.getTileEntity(new BlockPos(x, y, z));
 					if (te instanceof TileEntitySpellRecipeCreationTable)
 					{
@@ -58,7 +63,7 @@ public class PacketSRCTToServer implements IMessage
 						tesrct.srctSearch = message.nbt.getString("search");
 						tesrct.setSpellItems(SpellUtils.getListFromNBT(message.nbt.getCompoundTag("recipeSpells")));
 						ItemStack sentStack = new ItemStack(message.nbt.getCompoundTag("recipeItem"));
-						tesrct.setInventorySlotContents(0, sentStack);	
+						tesrct.setInventorySlotContents(0, sentStack);
 					}
 				}
 			});

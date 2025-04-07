@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import neo_ores.api.RecipeOreStack;
+import neo_ores.api.RecipeOreStackWildCard;
 import neo_ores.api.StackUtils;
 import neo_ores.api.Structure;
 import neo_ores.api.StructureUtils;
@@ -49,6 +50,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	private int requiredSize;
 	private NBTTagCompound additionalData = new NBTTagCompound();
 	private NBTTagList desc = new NBTTagList();
+	private ItemStack writingItem = ItemStack.EMPTY;
 
 	public void readFromNBT(NBTTagCompound compound)
 	{
@@ -64,8 +66,9 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		this.phase = compound.getInteger("phase");
 		this.requiredSize = compound.getInteger("required");
 		this.isCreating = compound.getBoolean("isCreating");
-		this.additionalData = compound.getCompoundTag("additionalData");
-		this.desc = compound.getTagList("desc", 10);
+		this.additionalData = compound.getCompoundTag(SpellUtils.NBTTagUtils.ADDITIONAL);
+		this.desc = compound.getTagList(SpellUtils.NBTTagUtils.SPELL_DESC, 10);
+		this.writingItem = new ItemStack(compound.getCompoundTag("writingItem"));
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -80,8 +83,9 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		compound.setInteger("phase", this.phase);
 		compound.setInteger("required", this.requiredSize);
 		compound.setBoolean("isCreating", this.isCreating);
-		compound.setTag("additionalData", this.additionalData);
-		compound.setTag("desc", this.desc);
+		compound.setTag(SpellUtils.NBTTagUtils.ADDITIONAL, this.additionalData);
+		compound.setTag(SpellUtils.NBTTagUtils.SPELL_DESC, this.desc);
+		compound.setTag("writingItem", this.writingItem.writeToNBT(new NBTTagCompound()));
 		super.writeToNBT(compound);
 		return compound;
 	}
@@ -237,6 +241,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			NBTTagCompound nbttagcompound = new NBTTagCompound();
 			nbttagcompound = stack.writeToNBT(nbttagcompound);
 			packet.setTag("display", nbttagcompound);
+			packet.setInteger("dim", this.world.provider.getDimension());
 			PacketItemsToClient pic = new PacketItemsToClient(packet);
 			NeoOres.PACKET.sendToAll(pic);
 		}
@@ -271,13 +276,25 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 							{
 								if (recipeFromList.get(this.phase).compareWith(stack))
 								{
-									this.getEP().decrStackSize(index, 1);
-									this.requiredSize++;
-									if (stack.getItem() instanceof IPostscriptDataIntoSpell)
+									if (recipeFromList.get(this.phase) instanceof RecipeOreStackWildCard)
+									{
+										if (stack.getItem() != NeoOresItems.spell_sheet) {
+											this.writingItem = stack.copy();
+											this.writingItem.setCount(1);
+										}
+										else 
+										{
+											this.writingItem = new ItemStack(NeoOresItems.spell);
+										}
+									}
+									else if (stack.getItem() instanceof IPostscriptDataIntoSpell)
 									{
 										this.additionalData = ((IPostscriptDataIntoSpell) stack.getItem()).postscript(stack, this.world, this.additionalData);
 										this.desc = ((IPostscriptDataIntoSpell) stack.getItem()).addFormattedDesc(stack, this.world, this.desc);
 									}
+
+									this.getEP().decrStackSize(index, 1);
+									this.requiredSize++;
 									break loop0;
 								}
 							}
@@ -292,24 +309,39 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 					}
 					else if (this.phase == recipeFromList.size())
 					{
-						this.getEP().setDisplay(new ItemStack(NeoOresItems.spell_sheet));
-						for (int index = 0; index < this.getEP().getSizeInventory(); index++)
+						if (this.writingItem.isEmpty())
 						{
-							if (this.getEP().getItems().get(index).getStack().getItem() instanceof ISpellWritable)
+							this.getEP().setDisplay(new ItemStack(NeoOresItems.spell_sheet));
+							for (int index = 0; index < this.getEP().getSizeInventory(); index++)
 							{
-								ItemStack stack = this.getEP().getItems().get(index).getStack().copy();
-								ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(recipeIn, stack);
-								stack1.getTagCompound().setTag("additionalData", this.additionalData);
-								stack1.getTagCompound().setTag("desc", this.desc);
-								InventoryHelper.spawnItemStack(this.getWorld(), this.getPos().getX(), this.getPos().getY() - 1, this.getPos().getZ(), stack1);
-								this.getEP().decrStackSize(index, 1);
-								this.additionalData = new NBTTagCompound();
-								this.desc = new NBTTagList();
-								flag = true;
-								this.getWorld().playSound(null, (double) this.getPos().getX() + 0.5, (double) this.getPos().getY() - 3.5, (double) this.getPos().getZ() + 0.5,
-										SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.BLOCKS, 1.0F, 0.5F);
-								break;
+								if (this.getEP().getItems().get(index).getStack().getItem() instanceof ISpellWritable)
+								{
+									ItemStack stack = this.getEP().getItems().get(index).getStack().copy();
+									ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(recipeIn, stack);
+									stack1.getTagCompound().setTag("additionalData", this.additionalData);
+									stack1.getTagCompound().setTag("desc", this.desc);
+									InventoryHelper.spawnItemStack(this.getWorld(), this.getPos().getX(), this.getPos().getY() - 1, this.getPos().getZ(), stack1);
+									this.getEP().decrStackSize(index, 1);
+									this.additionalData = new NBTTagCompound();
+									this.desc = new NBTTagList();
+									flag = true;
+									this.getWorld().playSound(null, (double) this.getPos().getX() + 0.5, (double) this.getPos().getY() - 3.5, (double) this.getPos().getZ() + 0.5,
+											SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.BLOCKS, 1.0F, 0.5F);
+									break;
+								}
 							}
+						}
+						else
+						{
+							ISpellWritable.writeNBT(recipeIn, this.writingItem);
+							this.writingItem.getTagCompound().setTag(SpellUtils.NBTTagUtils.ADDITIONAL, this.additionalData);
+							this.writingItem.getTagCompound().setTag(SpellUtils.NBTTagUtils.SPELL_DESC, this.desc);
+							InventoryHelper.spawnItemStack(this.getWorld(), this.getPos().getX(), this.getPos().getY() - 1, this.getPos().getZ(), this.writingItem);
+							this.additionalData = new NBTTagCompound();
+							this.desc = new NBTTagList();
+							flag = true;
+							this.getWorld().playSound(null, (double) this.getPos().getX() + 0.5, (double) this.getPos().getY() - 3.5, (double) this.getPos().getZ() + 0.5,
+									SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.BLOCKS, 1.0F, 0.5F);
 						}
 					}
 					else
@@ -447,11 +479,12 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 				ITextComponent itextcomponent = new TextComponentTranslation("chat.noRecipe");
 				playerIn.sendStatusMessage(itextcomponent, true);
 			}
-			else
+			else if (!this.isCreating)
 			{
 				this.phase = 0;
 				this.isCreating = true;
 				this.requiredSize = 0;
+				this.writingItem = ItemStack.EMPTY;
 			}
 		}
 	}

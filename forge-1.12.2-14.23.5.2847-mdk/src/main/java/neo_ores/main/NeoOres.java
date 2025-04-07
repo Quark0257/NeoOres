@@ -15,9 +15,11 @@ import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.event.NeoOresWorldEvents;
 import neo_ores.event.NeoOresBlockEvents;
 import neo_ores.event.NeoOresEntityEvents;
+import neo_ores.packet.PacketAreaParticleToClient;
 import neo_ores.packet.PacketDestinationToClient;
 import neo_ores.packet.PacketEntityToClient;
 import neo_ores.packet.PacketItemsToClient;
+import neo_ores.packet.PacketLineParticleToClient;
 import neo_ores.packet.PacketMagicDataToClient;
 import neo_ores.packet.PacketMagicDataToServer;
 import neo_ores.packet.PacketParticleToClient;
@@ -131,6 +133,8 @@ public class NeoOres
 		PACKET.registerMessage(PacketParticleToClient.Handler.class, PacketParticleToClient.class, 5, Side.CLIENT);
 		PACKET.registerMessage(PacketDestinationToClient.Handler.class, PacketDestinationToClient.class, 6, Side.CLIENT);
 		PACKET.registerMessage(PacketEntityToClient.Handler.class, PacketEntityToClient.class, 7, Side.CLIENT);
+		PACKET.registerMessage(PacketLineParticleToClient.Handler.class, PacketLineParticleToClient.class, 8, Side.CLIENT);
+		PACKET.registerMessage(PacketAreaParticleToClient.Handler.class, PacketAreaParticleToClient.class, 9, Side.CLIENT);
 		
 		if(event.getSide().isClient())
 		{
@@ -286,10 +290,10 @@ public class NeoOres
 
 	public static final CreativeTabs neo_ores_tab = new NeoOresTab("neo_ores_tab");
 
-	public static final DamageSource WATER = new DamageSource("neo_ores.water").setDamageBypassesArmor().setDamageIsAbsolute();
-	public static final DamageSource FIRE = new DamageSource("neo_ores.fire").setDamageBypassesArmor().setDamageIsAbsolute();
-	public static final DamageSource EARTH = new DamageSource("neo_ores.earth").setDamageBypassesArmor().setDamageIsAbsolute();
-	public static final DamageSource AIR = new DamageSource("neo_ores.air").setDamageBypassesArmor().setDamageIsAbsolute();
+	public static final DamageSource WATER = new DamageSource("neo_ores.water").setDamageBypassesArmor();
+	public static final DamageSource FIRE = new DamageSource("neo_ores.fire").setDamageBypassesArmor();
+	public static final DamageSource EARTH = new DamageSource("neo_ores.earth").setDamageBypassesArmor();
+	public static final DamageSource AIR = new DamageSource("neo_ores.air").setDamageBypassesArmor();
 	public static final DamageSource PAYMENT = new DamageSource("neo_ores.payment").setDamageBypassesArmor().setDamageIsAbsolute();
 	public static final DamageSource CERATIVE = new DamageSource("neo_ores.creative").setDamageIsAbsolute().setDamageBypassesArmor().setDamageAllowedInCreativeMode();
 	

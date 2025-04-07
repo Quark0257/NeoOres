@@ -21,8 +21,8 @@ public class RendererMechanicalMagician extends TileEntitySpecialRenderer<TileEn
 		this.bindTexture(TEXTURE);
 
 		GlStateManager.enableCull();
-		float angleY = (te.getDirection().y - 90) * (float) Math.PI / 180.0F;
-		float angleX = (-te.getDirection().x) * (float) Math.PI / 180.0F;
+		float angleY = (te.getDirection().getYAsFloat() - 90) * (float) Math.PI / 180.0F;
+		float angleX = (-te.getDirection().getXAsFloat()) * (float) Math.PI / 180.0F;
 		this.mmm.render(0.0F, 0.0F, 0.0F, angleY, angleX, 0.0F, 0.0725F);
 		GlStateManager.popMatrix();
 	}

@@ -124,7 +124,6 @@ public class PlayerMagicData
 			this.mana = value;
 		if (!this.runMXP)
 		{
-			// System.out.println("markSending");
 			this.markDirty();
 			this.markSending();
 		}

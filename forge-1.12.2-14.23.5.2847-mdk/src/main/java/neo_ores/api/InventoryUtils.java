@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -17,7 +18,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -258,24 +258,32 @@ public class InventoryUtils
 	public static FluidStack addFluidToInventory(FluidStack stack, IInventory inventory, @Nullable EnumFacing facing)
 	{
 		Map<Integer, ItemStack> map = getInventoryStackList(inventory, false, facing);
-		for (int key : map.keySet()) {
+		for (int key : map.keySet())
+		{
 			ItemStack itemStack = map.get(key);
-			if (itemStack.getItem() == Items.BUCKET) {
-				if (itemStack.getCount() == 1) {
+			if (itemStack.getItem() == Items.BUCKET)
+			{
+				if (itemStack.getCount() == 1)
+				{
 					itemStack.shrink(1);
-					if (stack.amount >= 1000) {
+					if (stack.amount >= 1000)
+					{
 						FluidStack newFluidStack = stack.copy();
 						newFluidStack.amount = 1000;
 						stack.amount -= 1000;
 						ItemStack newStack = FluidUtil.getFilledBucket(newFluidStack);
 						addInventoryfromStack(newStack, inventory, null);
 					}
-				} else {
-					if (stack.amount >= 1000) {
+				}
+				else
+				{
+					if (stack.amount >= 1000)
+					{
 						FluidStack newFluidStack = stack.copy();
 						newFluidStack.amount = 1000;
 						ItemStack newStack = FluidUtil.getFilledBucket(newFluidStack);
-						if (addInventoryfromStack(newStack, inventory, null).isEmpty()) {
+						if (addInventoryfromStack(newStack, inventory, null).isEmpty())
+						{
 							itemStack.shrink(1);
 							stack.amount -= 1000;
 						}
@@ -285,12 +293,13 @@ public class InventoryUtils
 		}
 		return stack;
 	}
-	
+
 	public static Map<Integer, FluidStack> getFluidFromInventory(IInventory inventory, boolean exceptHoldItem, @Nullable EnumFacing facing)
 	{
 		Map<Integer, FluidStack> map = new HashMap<Integer, FluidStack>();
 		int size = inventory.getSizeInventory();
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++)
+		{
 			if (inventory instanceof InventoryPlayer)
 			{
 				if (((InventoryPlayer) inventory).mainInventory.size() <= i || (exceptHoldItem && ((InventoryPlayer) inventory).currentItem == i))
@@ -303,26 +312,30 @@ public class InventoryUtils
 					continue;
 				}
 			}
-			
+
 			ItemStack stack = inventory.getStackInSlot(i).copy();
-			if (stack.getItem() == ForgeModContainer.getInstance().universalBucket) {
+			if (SpellUtils.isFluidContainer(stack))
+			{
 				FluidStack fluid = FluidUtil.getFluidContained(stack);
-				if (fluid != null && fluid.getFluid() != null) {
+				if (fluid != null && fluid.getFluid() != null)
+				{
 					map.put(i, fluid);
 				}
 			}
 		}
-		
+
 		return map;
 	}
-	
-	public static boolean addFluidToInventoryFromTank(IFluidHandler handler, IInventory inventory, @Nullable EnumFacing facing) {
-		FluidStack stack = handler.drain(1000, false).copy();
-		if (stack.amount >= 0) {
+
+	public static boolean addFluidToInventoryFromTank(IFluidHandler handler, IInventory inventory, @Nullable EnumFacing facing, FluidStack target)
+	{
+
+		FluidStack stack = handler.drain(target, false).copy();
+		if (stack != null && stack.amount == target.amount)
+		{
 			stack = addFluidToInventory(stack, inventory, facing);
-			int d = handler.drain(1000, false).amount - stack.amount;
-			handler.drain(d, true);
-			return d > 0;
+			handler.drain(target, true);
+			return true;
 		}
 		return false;
 	}

@@ -11,13 +11,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class ParticleMagic1 extends Particle
+public class ParticleMagic extends Particle
 {
 	private float textureSize = 4.0F;
 	private final TextureAtlasSprite[] textures;
 	private int index;
 
-	public ParticleMagic1(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int color, int time, float size,
+	public ParticleMagic(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int color, int time, float size,
 			TextureAtlasSprite... texture)
 	{
 		super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);

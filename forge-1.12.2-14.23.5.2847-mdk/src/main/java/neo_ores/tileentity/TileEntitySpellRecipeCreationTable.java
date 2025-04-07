@@ -129,7 +129,9 @@ public class TileEntitySpellRecipeCreationTable extends TileEntityLockable imple
 		nbt.setInteger("y", this.getPos().getY());
 		nbt.setInteger("z", this.getPos().getZ());
 		nbt.setTag("recipeSpells", SpellUtils.getNBTFromList(selectedSpells));
-
+		
+		nbt.setInteger("dim", this.world.provider.getDimension());
+		
 		PacketSRCTToClient psrcts = new PacketSRCTToClient(nbt);
 		NeoOres.PACKET.sendToAll(psrcts);
 		this.markDirty();

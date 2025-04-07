@@ -162,4 +162,17 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 	{
 		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, "mob_bottle"), "inventory");
 	}
+
+	@Override
+	public void invertPostscript(ItemStack item, World world, NBTTagCompound additionalData)
+	{
+		if (additionalData.hasKey("storedEntity")) 
+		{
+			if (!item.hasTagCompound())
+			{
+				item.setTagCompound(new NBTTagCompound());
+			}
+			item.getTagCompound().setTag("storedEntity", additionalData.getCompoundTag("storedEntity"));
+		}
+	}
 }

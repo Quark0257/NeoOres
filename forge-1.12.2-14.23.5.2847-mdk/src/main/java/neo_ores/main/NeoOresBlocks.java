@@ -23,6 +23,7 @@ import neo_ores.block.BlockGnomite;
 import neo_ores.block.BlockGuardite;
 import neo_ores.block.BlockInstantAlter;
 import neo_ores.block.BlockLandite;
+import neo_ores.block.BlockLight;
 import neo_ores.block.BlockLiquidMana;
 import neo_ores.block.BlockMageKnowledgeTable;
 import neo_ores.block.BlockMana;
@@ -182,6 +183,10 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID,"mechanical_magician")
 			.setUnlocalizedName("mechanical_magician")
 			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block light = new BlockLight()
+			.setRegistryName(Reference.MOD_ID,"light")
+			.setUnlocalizedName("light")
+			.setCreativeTab(NeoOres.neo_ores_tab);
 			
 	public static final Block custom_lit_redstone_ore = new BlockNeoOre("custom_lit_redstone_ore",2,null, 0.625F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(null);
 	public static final Block custom_redstone_ore = new BlockNeoOre("custom_redstone_ore",2,null, 0.0F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(NeoOres.neo_ores_tab);
@@ -300,6 +305,7 @@ public class NeoOresBlocks
 			corroded_dim_leaves,
 			corroding_dim_leaves,
 			chunk_loader,
-			liquid_mana
+			liquid_mana,
+			light
 			),color_saplings);	
 }

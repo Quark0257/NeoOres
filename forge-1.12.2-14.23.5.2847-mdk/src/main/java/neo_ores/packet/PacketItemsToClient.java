@@ -52,6 +52,11 @@ public class PacketItemsToClient implements IMessage
 					World world = NeoOres.proxy.getClientWorld();
 					if (world == null)
 						return;
+					int dim = message.nbt.getInteger("dim");
+					if (dim != world.provider.getDimension())
+					{
+						return;
+					}
 					TileEntity te = world.getTileEntity(new BlockPos(message.nbt.getInteger("x"), message.nbt.getInteger("y"), message.nbt.getInteger("z")));
 					if (te instanceof AbstractTileEntityPedestal)
 					{

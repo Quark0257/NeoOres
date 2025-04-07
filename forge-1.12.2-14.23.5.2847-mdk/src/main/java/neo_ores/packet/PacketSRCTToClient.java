@@ -49,9 +49,15 @@ public class PacketSRCTToClient implements IMessage
 				public void run()
 				{
 					World world = NeoOres.proxy.getClientWorld();
+					if (world == null)
+						return;
 					int x = message.nbt.getInteger("x");
 					int y = message.nbt.getInteger("y");
 					int z = message.nbt.getInteger("z");
+					int dim = message.nbt.getInteger("dim");
+					if (dim != world.provider.getDimension()) {
+						return;
+					}
 					TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 					if (te instanceof TileEntitySpellRecipeCreationTable)
 					{

@@ -1,6 +1,8 @@
 package neo_ores.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -28,6 +30,8 @@ public class EntityDamageSourceWithItem extends EntityDamageSource
 			eds.setDamageIsAbsolute();
 		if (source.isUnblockable())
 			eds.setDamageBypassesArmor();
+		if (source.canHarmInCreative())
+			eds.setDamageAllowedInCreativeMode();
 		return eds;
 	}
 
@@ -38,6 +42,13 @@ public class EntityDamageSourceWithItem extends EntityDamageSource
 			eds.setDamageIsAbsolute();
 		if (source.isUnblockable())
 			eds.setDamageBypassesArmor();
+		if (source.canHarmInCreative())
+			eds.setDamageAllowedInCreativeMode();
 		return eds;
+	}
+	
+	public static DamageSource getPhysicalDamage(EntityLivingBase entity) {
+		boolean flag = entity instanceof EntityPlayer;
+		return flag ? DamageSource.causePlayerDamage((EntityPlayer)entity) : DamageSource.causeMobDamage(entity);
 	}
 }

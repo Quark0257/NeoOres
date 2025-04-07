@@ -2,8 +2,6 @@ package neo_ores.spell.form;
 
 import neo_ores.api.spell.Spell.SpellFormSpellEntity;
 import neo_ores.entity.EntitySpellBullet;
-import neo_ores.main.NeoOres;
-import neo_ores.packet.PacketEntityToClient;
 import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
 import neo_ores.spell.SpellItemInterfaces.HasContinuation;
 import neo_ores.spell.SpellItemInterfaces.HasContinuationDown;
@@ -42,8 +40,6 @@ public class SpellBullet extends SpellFormSpellEntity implements HasChanceLiquid
 		EntitySpellBullet entity = new EntitySpellBullet(world, runner, this.noGravity, this.noResistance, maxLife, spells, this.liquid, stack, this.uncollidable, this.vanished);
 		entity.shoot(runner, runner.rotationPitch, runner.rotationYaw, 0.0F, 0.5F * (this.speed + 2), !this.noInertia);
 		ServerUtils.sendSoundToClient(world, runner.posX, runner.posY, runner.posZ, SoundEvents.ENTITY_BLAZE_SHOOT, runner instanceof EntityPlayer ? SoundCategory.PLAYERS : SoundCategory.HOSTILE, 1.0F, 1.0F);
-		PacketEntityToClient ppc = new PacketEntityToClient(entity, "EntitySpellBullet");
-		NeoOres.PACKET.sendToAll(ppc);
 		world.spawnEntity(entity);
 	}
 

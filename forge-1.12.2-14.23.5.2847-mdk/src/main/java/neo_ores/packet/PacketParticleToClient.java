@@ -27,7 +27,7 @@ public class PacketParticleToClient implements IMessage
 		this.nbt = nbt;
 	}
 
-	public PacketParticleToClient(Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
+	public PacketParticleToClient(Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, int dimension)
 	{
 		this.nbt = new NBTTagCompound();
 		NBTTagCompound targetTag = new NBTTagCompound();
@@ -42,6 +42,7 @@ public class PacketParticleToClient implements IMessage
 		this.nbt.setTag("size", sizeTag);
 		this.nbt.setInteger("particleVolume", particleVolume);
 		this.nbt.setInteger("color", color);
+		this.nbt.setInteger("dim", dimension);
 		if (texture == NeoOresRegisterEvents.particle0)
 			this.nbt.setString("type", "a_0");
 		else
@@ -72,6 +73,11 @@ public class PacketParticleToClient implements IMessage
 					World world = NeoOres.proxy.getClientWorld();
 					if (world == null)
 						return;
+					int dim = message.nbt.getInteger("dim");
+					if (dim != world.provider.getDimension())
+					{
+						return;
+					}
 					String type = message.nbt.getString("type");
 					if (type.equals("-1"))
 						return;

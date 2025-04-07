@@ -62,6 +62,11 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 				ITextComponent itextcomponent0 = new TextComponentString(recipe.getOreDic() + I18n.format("chat.displayOreDic") + " : x" + recipe.getSize());
 				playerIn.sendStatusMessage(itextcomponent0, false);
 			}
+			else
+			{
+				ITextComponent itextcomponent0 = new TextComponentString(recipe.getRaw() + " : x" + recipe.getSize());
+				playerIn.sendStatusMessage(itextcomponent0, false);
+			}
 
 		}
 

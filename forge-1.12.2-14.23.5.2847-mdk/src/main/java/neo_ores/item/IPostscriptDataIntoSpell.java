@@ -16,4 +16,6 @@ public interface IPostscriptDataIntoSpell
 	 * <code> "transtalekey1=This is a description of %s" </code>
 	 */
 	public NBTTagList addFormattedDesc(ItemStack stack, World world, NBTTagList nbt);
+	
+	public void invertPostscript(ItemStack item, World world, NBTTagCompound additionalData);
 }

@@ -16,6 +16,10 @@ public class RecipeOreStack
 		this.object = object;
 		this.size = size;
 	}
+	
+	public String getRaw() {
+		return this.object.toString();
+	}
 
 	public boolean isItemStack()
 	{

@@ -9,20 +9,22 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import io.netty.buffer.ByteBuf;
+import neo_ores.api.FakePlayerMechanicalMagician;
 import neo_ores.api.spell.SpellItem;
-import neo_ores.client.particle.ParticleMagic1;
-import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -30,12 +32,15 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
-public class EntitySpellBullet extends EntityThrowable
+public class EntitySpellBullet extends EntityThrowable implements IEntityAdditionalSpawnData
 {
 	protected List<SpellItem> spells = new ArrayList<SpellItem>();
-	private int life;
+	public int life;
 	private int ticksInGround;
 	private int ticksInAir;
 	private String throwerName;
@@ -76,8 +81,9 @@ public class EntitySpellBullet extends EntityThrowable
 		this.notCollided = applyNotCollidedFilter;
 		this.vanished = vanish;
 	}
-	
-	private static String getShooterName(Entity entityShooter) {
+
+	private static String getShooterName(Entity entityShooter)
+	{
 		return entityShooter.getUniqueID().toString();
 	}
 
@@ -130,33 +136,40 @@ public class EntitySpellBullet extends EntityThrowable
 		double lastMotionY = this.motionY;
 		double lastMotionZ = this.motionZ;
 
+		if (!this.world.isRemote)
+		{
+			boolean fakePlayer = this.getThrower() == null && this.shooterName.equals(FakePlayerMechanicalMagician.UUID_STR);
+			boolean normalEntity = this.getThrower() != null && !(this.getThrower() instanceof EntityPlayerMP) && !this.getThrower().isEntityAlive();
+			boolean playerEntity = this.getThrower() != null && this.getThrower() instanceof EntityPlayerMP;
+			if (fakePlayer || normalEntity)
+			{
+				this.setDead();
+			}
+			
+			if (playerEntity) 
+			{
+				EntityPlayerMP player = (EntityPlayerMP)this.getThrower();
+				if (player instanceof FakePlayerMechanicalMagician) 
+				{
+					FakePlayerMechanicalMagician fake = (FakePlayerMechanicalMagician)player;
+					if (!fake.isEntityAlive()) 
+					{
+						this.setDead();
+					}
+				} 
+				else if (!(player instanceof FakePlayer)) 
+				{
+					if (!player.isEntityAlive() && NeoOresData.instance.getPSD(player).isLoggedIn()) 
+					{
+						this.setDead();
+					}
+				}
+			}
+		}
+
 		this.isUpdatingDefault = true;
 		super.onUpdate();
 		this.isUpdatingDefault = false;
-		
-		if (this.world.isRemote && !this.stack.isEmpty()) {
-			for (int k = 0; k < 4; ++k)
-	        {
-				double x = this.posX - this.motionX * ((double)k + 0.7) / 4.0D;
-				double y = this.posY - this.motionY * ((double)k + 0.7) / 4.0D;
-				double z = this.posZ - this.motionZ * ((double)k + 0.7) / 4.0D;
-				double dx = 0.0;
-				double dy = 0.0;
-				double dz = 0.0;
-				final double m = 0.3;
-				float ds = 0.0F;
-				for (int i = 0; i < 4; i++) {
-					dx = m * this.world.rand.nextDouble() - 0.5 * m;
-					dy = m * this.world.rand.nextDouble() - 0.5 * m;
-					dz = m * this.world.rand.nextDouble() - 0.5 * m;
-					ds = 0.005F * this.world.rand.nextFloat();
-					
-					ParticleMagic1 png = new ParticleMagic1(this.world, x + dx, y + dy, z + dz, 0.0, 0.0, 0.0, 
-							SpellUtils.getColor(this.stack), Math.min(6 + this.world.rand.nextInt(4), Math.max(0, this.life - 1)), 0.001F + ds, NeoOresRegisterEvents.particle0);
-					Minecraft.getMinecraft().effectRenderer.addEffect(png);
-				}
-	        }
-		}
 
 		this.motionX = lastMotionX;
 		this.motionY = lastMotionY;
@@ -202,7 +215,7 @@ public class EntitySpellBullet extends EntityThrowable
 			}
 		}
 
-		float f1 = (throughWater) ? 1.0F : 0.99F;
+		float f1 = this.throughWater ? 1.0F : 0.99F;
 		float f2 = this.getGravityVelocity();
 
 		if (!this.throughWater && this.isInWater())
@@ -223,8 +236,10 @@ public class EntitySpellBullet extends EntityThrowable
 		--this.life;
 		if (this.life <= 0)
 		{
-			if (this.vanished) {
-				this.onImpact(RayTraceUtils.getSimpleResult(this.posX, this.posY, this.posZ));
+			if (this.vanished)
+			{
+				EnumFacing vanishedFace = EnumFacing.getFacingFromVector((float) this.motionX, (float) this.motionY, (float) this.motionZ).getOpposite();
+				this.onImpact(RayTraceUtils.getSimpleResult(this.posX, this.posY, this.posZ, vanishedFace));
 			}
 			this.setDead();
 		}
@@ -239,7 +254,14 @@ public class EntitySpellBullet extends EntityThrowable
 	protected Entity findEntityOnPath(Vec3d start, Vec3d end)
 	{
 		Entity entity = null;
-		List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(this.motionX, this.motionY, this.motionZ).grow(1.0D), PROJECTILE_TARGETS);
+		List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().expand(this.motionX, this.motionY, this.motionZ).grow(1.0D),
+				Predicates.and(PROJECTILE_TARGETS, new Predicate<Entity>()
+				{
+					public boolean apply(@Nullable Entity entity)
+					{
+						return entity != null && (notCollided ? true : entity.canBeCollidedWith());
+					}
+				}));
 		double d0 = 0.0D;
 
 		for (int i = 0; i < list.size(); ++i)
@@ -271,19 +293,27 @@ public class EntitySpellBullet extends EntityThrowable
 
 	protected void onImpact(RayTraceResult result)
 	{
-		if (this.isUpdatingDefault)
+		if (this.isUpdatingDefault || this.isDead)
 			return;
-		if (result != null && result.entityHit != null) {
+		if (result != null && result.entityHit != null)
+		{
 			String name = getShooterName(result.entityHit);
 			if (name.equals(this.shooterName))
 				return;
 		}
-		
-		if (this.spells != null && !this.spells.isEmpty())
+
+		if (this.getThrower() == null)
+		{
+			this.world.setEntityState(this, (byte) 3);
+			this.setDead();
+			return;
+		}
+
+		if (this.spells != null && !this.spells.isEmpty() && !this.world.isRemote)
 		{
 			SpellUtils.run(this.spells, this.world, this.getThrower(), this.getStack(), result);
 		}
-		
+
 		this.world.setEntityState(this, (byte) 3);
 		this.setDead();
 	}
@@ -347,6 +377,31 @@ public class EntitySpellBullet extends EntityThrowable
 			}
 		}
 
+		if (this.thrower == null)
+		{
+			if (this.shooterName != null && !this.shooterName.isEmpty())
+			{
+				for (EntityPlayer player : this.world.playerEntities)
+				{
+					if (player instanceof EntityPlayerMP && EntityPlayer.getUUID(((EntityPlayerMP) player).getGameProfile()).equals(UUID.fromString(this.shooterName)))
+					{
+						this.thrower = player;
+						break;
+					}
+				}
+				
+				if (this.thrower == null && this.world instanceof WorldServer)
+				{
+					Entity entity = ((WorldServer) this.world).getEntityFromUuid(UUID.fromString(this.shooterName));
+
+					if (entity != null && entity instanceof EntityLivingBase)
+					{
+						this.thrower = (EntityLivingBase) entity;
+					}
+				}
+			}
+		}
+
 		return this.thrower;
 	}
 
@@ -358,5 +413,19 @@ public class EntitySpellBullet extends EntityThrowable
 	public int getTicksInGround()
 	{
 		return this.ticksInGround;
+	}
+
+	@Override
+	public void writeSpawnData(ByteBuf buffer)
+	{
+		NBTTagCompound nbt = this.serializeNBT();
+		ByteBufUtils.writeTag(buffer, nbt);
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData)
+	{
+		NBTTagCompound nbt = ByteBufUtils.readTag(additionalData);
+		this.deserializeNBT(nbt);
 	}
 }

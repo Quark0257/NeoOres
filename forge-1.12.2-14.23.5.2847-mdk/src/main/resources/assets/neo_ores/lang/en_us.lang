@@ -118,6 +118,7 @@ tile.instant_alter.name=Instant Alter
 tile.mechanical_magician.name=Mechanical Magician
 tile.chunk_loader.name=Chunk Loader
 tile.liquid_mana.name=Fluid Mana
+tile.light.name=Light of Mana
 
 size.= (Size:
 hoppered.0=
@@ -210,6 +211,7 @@ item.upgrade_fluid.name=Fluid Mana Upgrade
 item.upgrade_xp.name=Magic Xp Upgrade
 item.upgrade_void.name=Xp Void Upgrade
 item.upgrade_consume.name=Ignore Low Consume Upgrade
+item.position_sheet.name=Position Sheet
 
 fluid.neo_ores.mana=Fluid Mana
 
@@ -232,8 +234,12 @@ armortip.air=Air Blessing
 armortip.space=Universe Blessing
 tooltip.mana=Mana Consumed
 
-totem.bound_to=Bound to
-totem.not_bind=RIGHT-CLICK to bind player
+totem.bound_to=§fBound to %s
+totem.not_bind=§fRIGHT-CLICK to bind player
+totem.disable_dim=§fCannot be used across dimensions
+
+tooltip.stored_position=§fStored Position : [x=%s, y=%s, z=%s, side=%s, dim=%s]
+tooltip.not_stored_position=§fRIGHT-CLICK to store the position
 
 attribute.name.neo_ores.maxMana=Max Mana
 
@@ -471,6 +477,8 @@ config.magic.convert_rate=Liquid Mana Rate
 config.magic.convert_rate.tooltip=Set liquid mana conversion rate. (1 mB Liquid Mana = [value] Mana)
 
 neo_ores.pressLShiftDesc=Press L-Shift for details
+neo_ores.blacklist=Black List
+neo_ores.whitelist=White List
 
 death.attack.neo_ores.payment=%1$s's lives weren't enough
 

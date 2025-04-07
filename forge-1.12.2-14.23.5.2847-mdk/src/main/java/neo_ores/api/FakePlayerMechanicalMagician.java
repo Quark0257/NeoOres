@@ -9,18 +9,19 @@ import neo_ores.util.PlayerMagicData;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 
 public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicContainer, ILifeContainer, HasInventory
 {
-	public static final GameProfile neo_ores_profile = new GameProfile(UUID.fromString("43b3f040-0d77-4416-8c8c-f7cff76a88dd"), "[Neo Ores]");
+	public static final String UUID_STR = "96ef9b70-03e2-458d-aad4-a1116d12186b";
+	public static final GameProfile neo_ores_profile = new GameProfile(UUID.fromString(UUID_STR), "[Neo Ores]");
 
 	private PlayerMagicData pmd;
 	private TileEntityMechanicalMagician tileentity;
@@ -34,9 +35,9 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicCo
 		this.lastTickPosX = pos.getX() + 0.5F;
 		this.lastTickPosY = pos.getY() + 0.5F;
 		this.lastTickPosZ = pos.getZ() + 0.5F;
-		Vec2f direction = MathUtils.getYawPitch(distination.getX() - pos.getX(), distination.getY() - pos.getY(), distination.getZ() - pos.getZ());
-		this.rotationPitch = direction.y;
-		this.rotationYaw = direction.x;
+		Vec2d direction = MathUtils.getYawPitch(distination.getX() - pos.getX(), distination.getY() - pos.getY(), distination.getZ() - pos.getZ());
+		this.rotationPitch = direction.getYAsFloat();
+		this.rotationYaw = direction.getXAsFloat();
 		this.tileentity = tileentity;
 	}
 
@@ -111,6 +112,20 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicCo
 		totem.damageItem((int) Math.min(amount, Integer.MAX_VALUE), this);
 		return flag;
 	}
+	
+	@Override
+	public boolean healContainer(float amount)
+	{
+		ItemStack totem = this.tileentity.getStackInSlot(1);
+		if (totem.isEmpty()) 
+			return false;
+		if (!totem.isItemStackDamageable())
+			return false;
+		boolean flag = totem.getItemDamage() != 0;
+		int heal = Math.min((int)amount, totem.getItemDamage());
+		totem.damageItem(-heal, this);
+		return flag;
+	}
 
 	public float getFakeMaxHealth()
 	{
@@ -120,6 +135,11 @@ public class FakePlayerMechanicalMagician extends FakePlayer implements IMagicCo
 
 	@Override
 	public IInventory getInventory()
+	{
+		return this.tileentity;
+	}
+	
+	public TileEntity getTileEntity()
 	{
 		return this.tileentity;
 	}

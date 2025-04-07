@@ -8,6 +8,7 @@ import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
+import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import neo_ores.util.UtilSpellOreGen;
 import net.minecraft.block.Block;
@@ -46,12 +47,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	}
 
 	@Override
-	public void onEffectRunToOther(World world, RayTraceResult result, ItemStack stack)
-	{
-	}
-
-	@Override
-	public void onEffectRunToSelfAndOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
+	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
 		if (result != null && result.typeOfHit == Type.BLOCK)
 		{
@@ -105,5 +101,12 @@ public class SpellOreGen extends SpellEffect implements HasRange
 			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
 			pmds.addMXP(10L);
 		}
+	}
+
+	@Override
+	public RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack)
+	{
+		BlockPos pos = new BlockPos(runner.posX, runner.posY, runner.posZ);
+		return RayTraceUtils.getSimpleResult(pos, null);
 	}
 }

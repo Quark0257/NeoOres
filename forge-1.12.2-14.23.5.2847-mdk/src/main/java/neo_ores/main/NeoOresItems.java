@@ -22,6 +22,7 @@ import neo_ores.item.ItemNeoPickaxe;
 import neo_ores.item.ItemNeoSpade;
 import neo_ores.item.ItemNeoSword;
 import neo_ores.item.ItemRecipeSheet;
+import neo_ores.item.ItemSheetPosition;
 import neo_ores.item.ItemSpell;
 import neo_ores.item.ItemSpellSheet;
 import neo_ores.item.ItemTotem;
@@ -198,7 +199,8 @@ public class NeoOresItems
 			.setRegistryName(Reference.MOD_ID, "creative_boots").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("creative_boots");
 
 	public static final Item totem = new ItemTotem(64).setRegistryName(Reference.MOD_ID, "totem_basic").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("totem_basic");
-	public static final Item totem_independent = new ItemTotem(256) {
+	public static final Item totem_independent = new ItemTotem(256)
+	{
 		public boolean needsPlayer(ItemStack stack)
 		{
 			return false;
@@ -210,16 +212,16 @@ public class NeoOresItems
 		{
 			return false;
 		}
-		
+
 		public boolean isCreative(ItemStack stack)
 		{
 			return true;
 		}
-		
+
 		@SideOnly(Side.CLIENT)
 		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 		{
-			if(stack.getTagCompound() == null || !stack.getTagCompound().getBoolean("Unbreakable"))
+			if (stack.getTagCompound() == null || !stack.getTagCompound().getBoolean("Unbreakable"))
 			{
 				tooltip.add(TextFormatting.BLUE + I18n.format("item.unbreakable"));
 			}
@@ -253,6 +255,7 @@ public class NeoOresItems
 			temm.noConsumeMana = 10L;
 		}
 	}.setRegistryName(Reference.MOD_ID, "upgrade_consume").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("upgrade_consume");
+	public static final Item position_sheet = new ItemSheetPosition().setRegistryName(Reference.MOD_ID, "position_sheet").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("position_sheet");
 
 	public static final List<Item> registry = Arrays.asList(undite, gnomite_ingot, salamite, sylphite, mana_ingot, essence, air_essence_core, earth_essence_core, fire_essence_core, water_essence_core,
 			aerite, drenite, flamite, forcite, guardite_ingot, landite_ingot, marlite_ingot, sanitite, spell, mana_wrench, recipe_sheet, spell_sheet, mob_bottle, mob_bottle_master, undite_axe,
@@ -260,5 +263,6 @@ public class NeoOresItems
 			gnomite_pickaxe, gnomite_shovel, gnomite_sword, gnomite_helmet, gnomite_chestplate, gnomite_leggings, gnomite_boots, salamite_axe, salamite_hoe, salamite_paxel, salamite_pickaxe,
 			salamite_shovel, salamite_sword, salamite_helmet, salamite_chestplate, salamite_leggings, salamite_boots, sylphite_axe, sylphite_hoe, sylphite_paxel, sylphite_pickaxe, sylphite_shovel,
 			sylphite_sword, sylphite_helmet, sylphite_chestplate, sylphite_leggings, sylphite_boots, creative_axe, creative_hoe, creative_paxel, creative_pickaxe, creative_shovel, creative_sword,
-			creative_helmet, creative_chestplate, creative_leggings, creative_boots, totem, totem_independent, totem_creative, upgrade_void, upgrade_xp, upgrade_fluid, upgrade_consume);
+			creative_helmet, creative_chestplate, creative_leggings, creative_boots, totem, totem_independent, totem_creative, upgrade_void, upgrade_xp, upgrade_fluid, upgrade_consume,
+			position_sheet);
 }

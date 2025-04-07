@@ -1,6 +1,5 @@
 package neo_ores.potion;
 
-import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
@@ -15,27 +14,11 @@ public class PotionNeoOres extends Potion
 	private static final ResourceLocation TEXTURE = new ResourceLocation("neo_ores:textures/gui/potion_icons.png");
 	private int posX;
 	private int posY;
-	protected final Random random;
 
 	public PotionNeoOres(boolean isBadEffectIn, int liquidColorIn, String name)
 	{
 		super(isBadEffectIn, liquidColorIn);
 		this.setPotionName(name);
-		long seed = 0L;
-		try
-		{
-			long j = Long.parseLong(name);
-
-			if (j != 0L)
-			{
-				seed = j;
-			}
-		}
-		catch (NumberFormatException var7)
-		{
-			seed = (long) name.hashCode();
-		}
-		random = new Random(seed);
 	}
 
 	public Potion setIconIndex(int x, int y)

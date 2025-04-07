@@ -34,7 +34,7 @@ public class SpellItemInterfaces
 					target.posZ + rangeAdjust);
 			for (Entity entity : world.getEntitiesWithinAABB(Entity.class, aabb))
 			{
-				if (entity != runner)
+				if (entity != runner && entity.isEntityAlive())
 				{
 					if (collided && entity.canBeCollidedWith())
 					{
@@ -45,6 +45,9 @@ public class SpellItemInterfaces
 						temp.add(entity);
 					}
 				}
+			}
+			if (temp.isEmpty()) {
+				temp.add(target);
 			}
 			List<Entity> sorted = temp.stream().sorted(new Comparator<Entity>()
 			{
@@ -57,6 +60,46 @@ public class SpellItemInterfaces
 			}).collect(Collectors.toList());
 
 			for (int count = 0; count < Math.min(sorted.size(), maxEntity); count++)
+			{
+				results.add(sorted.get(count));
+			}
+			return results;
+		}
+		
+		public static List<Entity> getRangedEntities(World world, double rangeAdjust, @Nonnull Entity target, EntityLivingBase runner, boolean collided, boolean nonCollided)
+		{
+			List<Entity> temp = new ArrayList<Entity>();
+			List<Entity> results = new ArrayList<Entity>();
+			AxisAlignedBB aabb = new AxisAlignedBB(target.posX - rangeAdjust, target.posY - rangeAdjust, target.posZ - rangeAdjust, target.posX + rangeAdjust, target.posY + rangeAdjust,
+					target.posZ + rangeAdjust);
+			for (Entity entity : world.getEntitiesWithinAABB(Entity.class, aabb))
+			{
+				if (entity != runner && entity.isEntityAlive())
+				{
+					if (collided && entity.canBeCollidedWith())
+					{
+						temp.add(entity);
+					}
+					if (nonCollided && !entity.canBeCollidedWith())
+					{
+						temp.add(entity);
+					}
+				}
+			}
+			if (temp.isEmpty()) {
+				temp.add(target);
+			}
+			List<Entity> sorted = temp.stream().sorted(new Comparator<Entity>()
+			{
+				@Override
+				public int compare(Entity o1, Entity o2)
+				{
+					boolean flag = target.getPositionVector().subtract(o1.getPositionVector()).lengthSquared() < target.getPositionVector().subtract(o2.getPositionVector()).lengthSquared();
+					return flag ? -1 : 1;
+				}
+			}).collect(Collectors.toList());
+
+			for (int count = 0; count < sorted.size(); count++)
 			{
 				results.add(sorted.get(count));
 			}
@@ -192,5 +235,40 @@ public class SpellItemInterfaces
 	public static interface HasVanished extends ICorrectingBase
 	{
 		public void setVanished();
+	}
+	
+	public static interface HasReach extends ICorrectingBase
+	{
+		public void setReach(int value);
+	}
+	
+	public static interface HasPlantable extends ICorrectingBase
+	{
+		public void setPlantable();
+	}
+	
+	public static interface HasOffsetDown extends ICorrectingBase
+	{
+		public void setOffsetDown();
+	}
+	
+	public static interface HasOffsetUp extends ICorrectingBase
+	{
+		public void setOffsetUp();
+	}
+	
+	public static interface HasDimensionOver extends ICorrectingBase
+	{
+		public void setDimensionOver();
+	}
+	
+	public static interface HasAmplify extends ICorrectingBase
+	{
+		public void setAmplify(int level);
+	}
+	
+	public static interface HasDuration extends ICorrectingBase
+	{
+		public void setDuration(int level);
 	}
 }

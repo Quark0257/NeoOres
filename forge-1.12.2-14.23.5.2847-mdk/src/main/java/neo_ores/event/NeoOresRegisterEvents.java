@@ -2,7 +2,9 @@ package neo_ores.event;
 
 import neo_ores.client.render.RendererPedestal;
 import neo_ores.client.render.entity.RenderSpellBullet;
+import neo_ores.client.render.entity.RenderSpellPlaceable;
 import neo_ores.entity.EntitySpellBullet;
+import neo_ores.entity.EntitySpellPlaceable;
 import neo_ores.item.INeoOresItem;
 import neo_ores.item.ItemEssence;
 import neo_ores.item.ItemSpell;
@@ -75,7 +77,6 @@ public class NeoOresRegisterEvents
 	public static TextureAtlasSprite particle2;
 	public static TextureAtlasSprite particle3;
 	public static TextureAtlasSprite particle4;
-	public static TextureAtlasSprite particle1_animated;
 	public static TextureAtlasSprite[] particle0;
 
 	@SubscribeEvent
@@ -447,11 +448,13 @@ public class NeoOresRegisterEvents
 	public static void registerRendering()
 	{
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellBullet.class, new RenderSpellBullet.RenderSpellBulletFactory());
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpellPlaceable.class, new RenderSpellPlaceable.RenderSpellPlaceableFactory());
 	}
 
 	public static void registerEntity(Object mod)
 	{
-		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_bullet"), EntitySpellBullet.class, "Spell Bullet", 0, mod, 1, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_bullet"), EntitySpellBullet.class, "Spell Bullet", 0, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_placeable"), EntitySpellPlaceable.class, "Spell Placeable", 1, mod, 64, 1, true);
 	}
 
 	@SubscribeEvent
@@ -467,7 +470,6 @@ public class NeoOresRegisterEvents
 		particle2 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/particle2"));
 		particle3 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/particle3"));
 		particle4 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/particle4"));
-		particle1_animated = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/particle1_animated"));
 		particle0 = new TextureAtlasSprite[] { null, null, null, null, null, null, null, null };
 		for (int meta = 0; meta < 8; meta++)
 		{
@@ -496,7 +498,6 @@ public class NeoOresRegisterEvents
 
 	public static void registerFluids() 
 	{
-		System.out.println(FluidRegistry.addBucketForFluid(NeoOresBlocks.fluid_mana));
+		FluidRegistry.addBucketForFluid(NeoOresBlocks.fluid_mana);
 	}
-	
 }

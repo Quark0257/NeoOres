@@ -7,6 +7,7 @@ import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellFormNotEntity;
 import neo_ores.spell.SpellItemInterfaces.HasChanceLiquid;
+import neo_ores.spell.SpellItemInterfaces.HasReach;
 import neo_ores.spell.SpellItemInterfaces.HasUncollidable;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,10 +18,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, HasUncollidable
+public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, HasUncollidable, HasReach
 {
 	private boolean liquid = false;
 	private boolean uncollidable = false;
+	private int reachM = 0;
 
 	@Override
 	public void onSpellRunningServer(World world, EntityLivingBase runner, ItemStack stack, RayTraceResult result, NBTTagCompound spells)
@@ -50,8 +52,7 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, H
 				{
 					((Spell.SpellCorrection) correction).onCorrection(spell);
 				}
-				spell.onEffectRunToSelfAndOther(world, runner, result, stack);
-				spell.onEffectRunToOther(world, result, stack);
+				spell.onEffectRunToOther(world, runner, result, stack);
 			}
 		}
 		else
@@ -63,9 +64,10 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, H
 				if(runner instanceof EntityPlayer) {
 					reach = ((EntityPlayer)runner).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
 				}
-				traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, !this.uncollidable);
+				reach *= ((double)this.reachM / 3.0 + 1.0D);
+				traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, !this.uncollidable, true);
 			}
-
+			
 			if (traceresult != null && traceresult.typeOfHit != Type.MISS)
 			{
 				for (Spell effect : effects)
@@ -75,8 +77,7 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, H
 					{
 						((Spell.SpellCorrection) correction).onCorrection(spell);
 					}
-					spell.onEffectRunToSelfAndOther(world, runner, traceresult, stack);
-					spell.onEffectRunToOther(world, traceresult, stack);
+					spell.onEffectRunToOther(world, runner, traceresult, stack);
 				}
 			}
 		}
@@ -98,5 +99,11 @@ public class SpellTouch extends SpellFormNotEntity implements HasChanceLiquid, H
 	public void setUncollidable()
 	{
 		this.uncollidable = true;
+	}
+
+	@Override
+	public void setReach(int value)
+	{
+		this.reachM = value;
 	}
 }

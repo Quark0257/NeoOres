@@ -5,16 +5,25 @@ import java.util.List;
 
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 public class MathUtils
 {
-	public static Vec2f getYawPitch(double x, double y, double z)
+	public static Vec2d getYawPitch(double x, double y, double z)
 	{
 		double dh = Math.sqrt(x * x + z * z);
-		return new Vec2f((float) (Math.toDegrees(Math.atan2(-x, z))), (float) (-Math.toDegrees(Math.atan2(y, dh))));
+		return new Vec2d((Math.toDegrees(Math.atan2(-x, z))), (-Math.toDegrees(Math.atan2(y, dh))));
+	}
+	
+	public static Vec3d getFromYawPitch(float yaw, float pitch)
+	{
+		float f = MathHelper.cos(-yaw * 0.017453292F - (float)Math.PI);
+        float f1 = MathHelper.sin(-yaw * 0.017453292F - (float)Math.PI);
+        float f2 = -MathHelper.cos(-pitch * 0.017453292F);
+        float f3 = MathHelper.sin(-pitch * 0.017453292F);
+        return new Vec3d((double)(f1 * f2), (double)f3, (double)(f * f2));
 	}
 	
 	public static double copySign(double value) {

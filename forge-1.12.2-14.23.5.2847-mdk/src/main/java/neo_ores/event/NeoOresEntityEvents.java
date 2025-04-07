@@ -64,6 +64,7 @@ import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
@@ -75,6 +76,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -97,12 +99,16 @@ public class NeoOresEntityEvents
 				event.getEntityLiving().motionX = 0.0D;
 				event.getEntityLiving().motionY = -1.0D;
 				event.getEntityLiving().motionZ = 0.0D;
+				return;
 			}
 
 			if (event.getEntityLiving().isPotionActive(NeoOres.gravity))
 			{
 				event.getEntityLiving().motionY = -1.0D;
+				return;
 			}
+			
+			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
 	}
 
@@ -152,9 +158,15 @@ public class NeoOresEntityEvents
 				}
 			}
 		}
-		
-		if (!event.getEntityLiving().getEntityWorld().isRemote) {
+
+		if (!event.getEntityLiving().getEntityWorld().isRemote)
+		{
 			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
+			Entity entity = event.getSource().getTrueSource();
+			if (entity != null && entity instanceof EntityLivingBase)
+			{
+				SpellUtils.run(event.getEntityLiving().getEntityWorld(), (EntityLivingBase) entity, event);
+			}
 		}
 	}
 
@@ -198,16 +210,23 @@ public class NeoOresEntityEvents
 	@SubscribeEvent
 	public void onPlayerLoggin(PlayerLoggedInEvent event)
 	{
-		if (event.player instanceof EntityPlayerMP && NeoOresConfig.miscellaneous.allowInitialItems)
+		if (event.player instanceof EntityPlayerMP)
 		{
-			if (!event.player.getEntityData().hasKey("neo_ores"))
+			NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setLoggedIn(true);
+			if (NeoOresConfig.miscellaneous.allowInitialItems && !NeoOresData.instance.getPSD((EntityPlayerMP) event.player).hasInitialItems()) 
 			{
-				event.player.getEntityData().setTag("neo_ores", new NBTTagCompound());
+				InventoryUtils.addStackToPlayer(event.player, new ItemStack(NeoOresBlocks.instant_alter));
+				NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setInitialItems(true);			
 			}
-			if (event.player.getEntityData().getCompoundTag("neo_ores").hasKey("hasInitialItems") && event.player.getEntityData().getCompoundTag("neo_ores").getBoolean("hasInitialItems"))
-				return;
-			InventoryUtils.addStackToPlayer(event.player, new ItemStack(NeoOresBlocks.instant_alter));
-			event.player.getEntityData().getCompoundTag("neo_ores").setBoolean("hasInitialItems", true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerLogout(PlayerLoggedOutEvent event)
+	{
+		if (event.player instanceof EntityPlayerMP && NeoOresData.instance != null) 
+		{
+			NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setLoggedIn(false);
 		}
 	}
 
@@ -236,63 +255,81 @@ public class NeoOresEntityEvents
 		{
 			World worldIn = event.getEntity().getEntityWorld();
 			
-			if (!worldIn.isRemote) {
-				if (event.getEntityLiving() != null) {
+			// Passive Spells
+			if (!worldIn.isRemote)
+			{
+				if (event.getEntityLiving() != null)
+				{
 					EntityLivingBase runner = event.getEntityLiving();
 					Map<Integer, ItemStack> itemSpells = new HashMap<Integer, ItemStack>();
-					for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+					for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+					{
 						ItemStack stack = runner.getItemStackFromSlot(slot);
-						if (!stack.isEmpty()) {
+						if (!stack.isEmpty())
+						{
 							itemSpells.put(slot.getSlotIndex(), stack);
 						}
 					}
-					
-					if (runner instanceof EntityPlayerMP) {
-						EntityPlayerMP player = (EntityPlayerMP)runner;
+
+					if (runner instanceof EntityPlayerMP)
+					{
+						EntityPlayerMP player = (EntityPlayerMP) runner;
 						IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
-						for (int slot = 0; slot < handler.getSlots(); slot++) {
+						for (int slot = 0; slot < handler.getSlots(); slot++)
+						{
 							ItemStack stack = BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
-							if (!stack.isEmpty()) {
+							if (!stack.isEmpty())
+							{
 								itemSpells.put(slot + EntityEquipmentSlot.values().length, stack);
 							}
 						}
 					}
-					
-					for (int slot : itemSpells.keySet()) {
+
+					for (int slot : itemSpells.keySet())
+					{
 						ItemStack stack = itemSpells.get(slot);
 						List<SpellItem> list = SpellUtils.getListFromItemStackNBT(stack.getTagCompound());
-						if (!list.isEmpty()) {
+						if (!list.isEmpty())
+						{
 							Spell passiveSpell = null;
 							List<Spell> correctionSpells = new ArrayList<Spell>();
 							List<SpellItem> spells = new ArrayList<SpellItem>();
-							for (SpellItem raw : list) {
+							for (SpellItem raw : list)
+							{
 								Spell sc = raw.getSpellClass();
-								if (sc instanceof IPassiveSpell) {
-									if (sc instanceof Spell.SpellForm) {
+								if (sc instanceof IPassiveSpell)
+								{
+									if (sc instanceof Spell.SpellForm)
+									{
 										passiveSpell = sc;
 									}
-								} else if (sc instanceof Spell.SpellCorrection) {
+								}
+								else if (sc instanceof Spell.SpellCorrection)
+								{
 									correctionSpells.add(sc);
 									spells.add(raw);
-								} else {
+								}
+								else
+								{
 									spells.add(raw);
 								}
 							}
-							
-							if (passiveSpell != null) {
-								for (Spell correction : correctionSpells) {
+
+							if (passiveSpell != null)
+							{
+								for (Spell correction : correctionSpells)
+								{
 									((Spell.SpellCorrection) correction).onCorrection(passiveSpell);
 								}
 								((IPassiveSpell) passiveSpell).setSlot(slot);
 								((IPassiveSpell) passiveSpell).setMana(SpellUtils.getMPConsume(list));
-								((Spell.SpellForm) passiveSpell).onSpellRunning(worldIn, runner, stack, 
-										null, SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));
+								((Spell.SpellForm) passiveSpell).onSpellRunning(worldIn, runner, stack, null, SpellUtils.getItemStackNBTFromList(spells, new NBTTagCompound()));
 							}
 						}
 					}
 				}
 			}
-			
+
 			// MP updater
 			if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayerMP)
 			{
@@ -300,11 +337,6 @@ public class NeoOresEntityEvents
 				PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
 				if (playermp.ticksExisted % 20 == 0)
 				{
-					// pmd.addMana((long) ((float) pmd.getLevel() * ((float) pmd.getLevel() *
-					// 0.0001F) + 1.0F));
-					// System.out.println(SpellUtils.getItemStackNBTFromList(Arrays.asList(new
-					// SpellItemManager[] {NeoOres.spell_dig,NeoOres.spell_touch}), new
-					// NBTTagCompound()).toString());
 					double x = pmd.getLevel();
 					pmd.addMana((long) ((0.000007 * x * (x + 1) * (2 * x + 1) / 6 + x + NeoOresConfig.magic.init_max_mana) * (0.01 * Math.pow(2, -0.0007 * x) + 0.01)));
 				}
@@ -312,18 +344,6 @@ public class NeoOresEntityEvents
 				FakeAttributeMaxMana famm = new FakeAttributeMaxMana(playermp);
 				famm.initialize();
 				famm.applyToPlayer();
-
-				/*
-				 * ItemStack stack = playermp.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-				 * if(!stack.isEmpty()) { if(!FakeAttributeMaxMana.hasModifier(stack,
-				 * EntityEquipmentSlot.CHEST)) { FakeAttributeMaxMana.setToStack(stack,
-				 * EntityEquipmentSlot.CHEST, 10, 1.0F); famm.modifierToPlayer(10, 2.0F); } }
-				 */
-				/*
-				 * Set<IWorldGenerator> o =
-				 * ReflectionHelper.getPrivateValue(GameRegistry.class,new GameRegistry(),
-				 * "worldGenerators"); if(o !=null && !o.isEmpty()) System.out.println(o);
-				 */
 			}
 
 			// Environmental Controller
@@ -394,6 +414,17 @@ public class NeoOresEntityEvents
 					playerList.transferEntityToWorld(event.getEntity(), origin, server.getWorld(origin), server.getWorld(dest), teleporter);
 				}
 			}
+			
+			// SneakEvent
+			if (event.getEntity() != null && event.getEntity() instanceof EntityPlayerMP) 
+			{
+				EntityPlayerMP entityPlayerMP = (EntityPlayerMP)event.getEntity();
+				if (!NeoOresData.instance.getPSD(entityPlayerMP).isSneak() && entityPlayerMP.isSneaking()) 
+				{
+					SpellUtils.run(worldIn, entityPlayerMP, new SneakEvent(entityPlayerMP));
+				}
+				NeoOresData.instance.getPSD(entityPlayerMP).setSneak(entityPlayerMP.isSneaking());
+			}
 		}
 	}
 
@@ -423,8 +454,9 @@ public class NeoOresEntityEvents
 				return;
 			}
 		}
-		
-		if (!event.getEntityLiving().world.isRemote) {
+
+		if (!event.getEntityLiving().world.isRemote)
+		{
 			SpellUtils.run(event.getEntityLiving().world, event.getEntityLiving(), event);
 		}
 
@@ -445,6 +477,11 @@ public class NeoOresEntityEvents
 					player.inventory.getStackInSlot(i).setTagCompound(nbt);
 				}
 			}
+		}
+		
+		if (event.getEntityLiving().isServerWorld()) 
+		{
+			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
 	}
 
@@ -517,15 +554,6 @@ public class NeoOresEntityEvents
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onPlayerClone(PlayerEvent.Clone evt)
 	{
-		/*
-		if (evt.getEntityPlayer() instanceof EntityPlayerMP && evt.getOriginal().getEntityData().hasKey("neo_ores"))
-		{
-			evt.getEntityPlayer().getEntityData().setTag("neo_ores", evt.getOriginal().getEntityData().getCompoundTag("neo_ores"));
-			PlayerManaDataServer pmds = new PlayerManaDataServer((EntityPlayerMP) evt.getEntityPlayer());
-			pmds.sendToClient();
-		}
-		*/
-
 		if ((!evt.isWasDeath()) || (evt.isCanceled()))
 		{
 			return;
@@ -533,16 +561,6 @@ public class NeoOresEntityEvents
 		if ((evt.getOriginal() == null) || (evt.getEntityPlayer() == null) || ((evt.getEntityPlayer() instanceof FakePlayer)))
 		{
 			return;
-		}
-		
-		if (evt.getOriginal().getEntityData().hasKey("neo_ores") && evt.getOriginal().getEntityData().getCompoundTag("neo_ores").hasKey("hasInitialItems"))
-		{
-			boolean flag = evt.getOriginal().getEntityData().getCompoundTag("neo_ores").getBoolean("hasInitialItems");
-			if (!evt.getEntityPlayer().getEntityData().hasKey("neo_ores"))
-			{
-				evt.getEntityPlayer().getEntityData().setTag("neo_ores", new NBTTagCompound());
-			}
-			evt.getEntityPlayer().getEntityData().getCompoundTag("neo_ores").setBoolean("hasInitialItems", flag);
 		}
 
 		if (evt.getEntityPlayer().getEntityWorld().getGameRules().getBoolean("keepInventory"))
@@ -594,6 +612,15 @@ public class NeoOresEntityEvents
 					}
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onFallen(LivingFallEvent event)
+	{
+		if (event.getEntityLiving() != null && event.getEntityLiving().isServerWorld())
+		{
+			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
 	}
 

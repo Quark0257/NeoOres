@@ -201,6 +201,8 @@ public class BlockMechanicalMagician extends NeoOresBlock implements ITileEntity
 		{
 			InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityMechanicalMagician) tileentity);
 			worldIn.updateComparatorOutputLevel(pos, this);
+			
+			((TileEntityMechanicalMagician) tileentity).removeTileEntity();
 		}
 
 		super.breakBlock(worldIn, pos, state);

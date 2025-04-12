@@ -69,6 +69,7 @@ public class NeoOresRecipeRegisterEvents
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void registerSpellItems(final RegistryEvent.Register<SpellItem> event)
 	{
+		// NeoOresSpells.test();
 		for (SpellItem spell : NeoOresSpells.registry)
 		{
 			event.getRegistry().register(spell);

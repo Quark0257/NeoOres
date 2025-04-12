@@ -79,7 +79,7 @@ public class NeoOresSpells
 	public static final SpellItem spell_dig = new SpellItem(new BasicData(Reference.MOD_ID, "dig", 1, SpellItemType.EARTH, 10, 1), "dig",
 			new MageKnowledgeTableData(spell_touch, 0, -1, new ResourceLocation(Reference.MOD_ID, "dig"), NeoOres.neo_ores), SpellDig.class);
 	public static final SpellItem spell_support_liquid = new SpellItem(new BasicData(Reference.MOD_ID, "support_liquid", 5, SpellItemType.AIR, 20, 1), "support_liquid",
-			new MageKnowledgeTableData(spell_dig, 0, -2, new ResourceLocation(Reference.MOD_ID, "support_liquid"), NeoOres.neo_ores), SpellSupportLiquid.class);
+			new MageKnowledgeTableData(spell_dig, -1, -2, new ResourceLocation(Reference.MOD_ID, "support_liquid"), NeoOres.neo_ores), SpellSupportLiquid.class);
 	public static final SpellItem spell_place = new SpellItem(new BasicData(Reference.MOD_ID, "place", 1, SpellItemType.EARTH, 5, 1), "place",
 			new MageKnowledgeTableData(NeoOresSpells.spell_dig, 1, -1, new ResourceLocation(Reference.MOD_ID, "place"), NeoOres.neo_ores), SpellPlace.class);
 	public static final SpellItem spell_composition = new SpellItem(new BasicData(Reference.MOD_ID, "composition", 1, SpellItemType.EARTH, 15, 1), "composition",
@@ -345,4 +345,26 @@ public class NeoOresSpells
 			spell_blink, spell_teleport, spell_translocate, spell_light, spell_disarm, spell_sneak, spell_break_block, spell_fall, spell_death, spell_jumped, spell_amplify1, spell_amplify2,
 			spell_amplify3, spell_duration1, spell_duration2, spell_duration3, spell_duration4, spell_duration5, spell_duration6, spell_duration7, spell_duration8, spell_duration9, spell_duration10,
 			spell_duration11, spell_heal, spell_life_tap, spell_sunny, spell_rain, spell_thunder, spell_lightning, spell_grow, spell_day, spell_night);
+	
+	public static void test() 
+	{
+		boolean existOverlap = false;
+		for (int i = 0; i < registry.size(); i++) 
+		{
+			for (int j = i + 1; j < registry.size(); j++) 
+			{
+				SpellItem spellA = registry.get(i);
+				SpellItem spellB = registry.get(j);
+				if (spellA.getPositionX() == spellB.getPositionX() && spellA.getPositionY() == spellB.getPositionY()) 
+				{
+					System.out.println(spellA.getRegisteringId() + " and " + spellB.getRegisteringId() + " are overlapped.");
+					existOverlap = true;
+				}
+			}
+		}
+		if (!existOverlap)
+		{
+			System.out.println("There is no overlap");
+		}
+	}
 }

@@ -255,6 +255,13 @@ public class NeoOresItems
 			temm.noConsumeMana = 10L;
 		}
 	}.setRegistryName(Reference.MOD_ID, "upgrade_consume").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("upgrade_consume");
+	public static final Item upgrade_convert_mana = new ItemUpgrade()
+	{
+		public void upgrade(TileEntityMechanicalMagician temm)
+		{
+			temm.expToMana = true;
+		}
+	}.setRegistryName(Reference.MOD_ID, "upgrade_convert_mana").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("upgrade_convert_mana");
 	public static final Item position_sheet = new ItemSheetPosition().setRegistryName(Reference.MOD_ID, "position_sheet").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("position_sheet");
 
 	public static final List<Item> registry = Arrays.asList(undite, gnomite_ingot, salamite, sylphite, mana_ingot, essence, air_essence_core, earth_essence_core, fire_essence_core, water_essence_core,
@@ -264,5 +271,5 @@ public class NeoOresItems
 			salamite_shovel, salamite_sword, salamite_helmet, salamite_chestplate, salamite_leggings, salamite_boots, sylphite_axe, sylphite_hoe, sylphite_paxel, sylphite_pickaxe, sylphite_shovel,
 			sylphite_sword, sylphite_helmet, sylphite_chestplate, sylphite_leggings, sylphite_boots, creative_axe, creative_hoe, creative_paxel, creative_pickaxe, creative_shovel, creative_sword,
 			creative_helmet, creative_chestplate, creative_leggings, creative_boots, totem, totem_independent, totem_creative, upgrade_void, upgrade_xp, upgrade_fluid, upgrade_consume,
-			position_sheet);
+			position_sheet, upgrade_convert_mana);
 }

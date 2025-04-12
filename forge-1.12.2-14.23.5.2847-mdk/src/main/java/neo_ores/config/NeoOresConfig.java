@@ -550,7 +550,7 @@ public class NeoOresConfig
 		
 		@LangKey("config.magic.convert_rate")
 		@RequiresMcRestart
-		public double liquid_mana_convert_rate = 100000.0D;
+		public double liquid_mana_convert_rate = 1000.0D;
 	}
 
 	@LangKey("config.category.miscellaneous")

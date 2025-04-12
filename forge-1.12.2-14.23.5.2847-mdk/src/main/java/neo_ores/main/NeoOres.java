@@ -25,7 +25,9 @@ import neo_ores.packet.PacketMagicDataToServer;
 import neo_ores.packet.PacketParticleToClient;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
+import neo_ores.potion.PotionAntiGriefing;
 import neo_ores.potion.PotionAntiKnockback;
+import neo_ores.potion.PotionAntiTeleport;
 import neo_ores.potion.PotionFreeze;
 import neo_ores.potion.PotionGravity;
 import neo_ores.potion.PotionManaBoost;
@@ -313,6 +315,8 @@ public class NeoOres
 	public static final Potion undying = new PotionUndying("neo_ores.effect.undying").setIconIndex(6,0).setRegistryName(Reference.MOD_ID, "undying").setBeneficial();
 	public static final Potion shield = new PotionShield("neo_ores.effect.shield").setIconIndex(5,0).setRegistryName(Reference.MOD_ID, "shield").setBeneficial();
 	public static final Potion antiknockback = new PotionAntiKnockback("neo_ores.effect.antiknockback").setIconIndex(7,0).setRegistryName(Reference.MOD_ID, "antiknockback").setBeneficial();
+	public static final Potion antigriefing = new PotionAntiGriefing("neo_ores.effect.antigriefing").setIconIndex(8,0).setRegistryName(Reference.MOD_ID, "antigriefing");
+	public static final Potion antienderteleport = new PotionAntiTeleport("neo_ores.effect.antiteleport").setIconIndex(9,0).setRegistryName(Reference.MOD_ID, "antiteleport");
 	
 	public static final PotionType mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,3600)).setRegistryName(Reference.MOD_ID, "mana_regen");
 	public static final PotionType strong_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,1800,1)).setRegistryName(Reference.MOD_ID, "strong_mana_regen");

@@ -250,6 +250,8 @@ public class NeoOresRegisterEvents
 		event.getRegistry().register(NeoOres.gravity);
 		event.getRegistry().register(NeoOres.shield);
 		event.getRegistry().register(NeoOres.undying);
+		event.getRegistry().register(NeoOres.antigriefing);
+		event.getRegistry().register(NeoOres.antienderteleport);
 	}
 
 	@SubscribeEvent
@@ -313,6 +315,11 @@ public class NeoOresRegisterEvents
 		OreDictionary.registerOre("pedestalWatered", NeoOresBlocks.pedestal_water);
 		for (int i = 0; i < 5; i++)
 			OreDictionary.registerOre("essenceAll", new ItemStack(NeoOresItems.essence, 1, i));
+		OreDictionary.registerOre("earthEssence", new ItemStack(NeoOresItems.essence, 1, 0));
+		OreDictionary.registerOre("waterEssence", new ItemStack(NeoOresItems.essence, 1, 1));
+		OreDictionary.registerOre("fireEssence", new ItemStack(NeoOresItems.essence, 1, 2));
+		OreDictionary.registerOre("airEssence", new ItemStack(NeoOresItems.essence, 1, 3));
+		OreDictionary.registerOre("manaEssence", new ItemStack(NeoOresItems.essence, 1, 4));
 		OreDictionary.registerOre("mobBottle", NeoOresItems.mob_bottle);
 		OreDictionary.registerOre("mobBottle", NeoOresItems.mob_bottle_master);
 		for (int i = 0; i < 4; i++)

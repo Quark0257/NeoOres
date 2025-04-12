@@ -2,6 +2,7 @@ package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOres;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,12 @@ public class SpellTeleport extends SpellEffect
 		{
 			return;
 		}
+		
+		if (runner.isPotionActive(NeoOres.antienderteleport) && runner.getActivePotionEffect(NeoOres.antienderteleport).getAmplifier() >= 1)
+		{
+			return;
+		}
+		
 		double targetX = 0;
 		double targetY = 0;
 		double targetZ = 0;

@@ -86,7 +86,7 @@ public class PacketLineParticleToClient implements IMessage
 						double dy = vel.y * (double)k / multiplier;
 						double dz = vel.z * (double)k / multiplier;
 						ParticleMagic png = new ParticleMagic(world, start.x + dx, start.y + dy, start.z + dz, 0.0, 0.0, 0.0, color, 6 + world.rand.nextInt(4),
-								0.001F + 0.005f * world.rand.nextFloat(), NeoOresRegisterEvents.particle0);
+								1.0F, NeoOresRegisterEvents.particle0);
 						Minecraft.getMinecraft().effectRenderer.addEffect(png);
 					}
 				}

@@ -70,16 +70,16 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 		return this.sustainState != null ? state.getBlock() == this.sustainState : (state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.DIRT);
 	}
 
-	private boolean isTwoByTwoOfType(World worldIn, BlockPos pos, int p_181624_3_, int p_181624_4_)
+	private boolean isTwoByTwoOfType(World worldIn, BlockPos pos, int x, int z, Block block)
 	{
-		return this.isTypeAt(worldIn, pos.add(p_181624_3_, 0, p_181624_4_)) && this.isTypeAt(worldIn, pos.add(p_181624_3_ + 1, 0, p_181624_4_))
-				&& this.isTypeAt(worldIn, pos.add(p_181624_3_, 0, p_181624_4_ + 1)) && this.isTypeAt(worldIn, pos.add(p_181624_3_ + 1, 0, p_181624_4_ + 1));
+		return this.isTypeAt(worldIn, pos.add(x, 0, z), block) && this.isTypeAt(worldIn, pos.add(x + 1, 0, z), block)
+				&& this.isTypeAt(worldIn, pos.add(x, 0, z + 1), block) && this.isTypeAt(worldIn, pos.add(x + 1, 0, z + 1), block);
 	}
 
-	public boolean isTypeAt(World worldIn, BlockPos pos)
+	public boolean isTypeAt(World worldIn, BlockPos pos, Block block)
 	{
 		IBlockState iblockstate = worldIn.getBlockState(pos);
-		return iblockstate.getBlock() == this;
+		return iblockstate.getBlock() == block;
 	}
 
 	public void generateTree(World worldIn, BlockPos pos, IBlockState state, Random rand)
@@ -88,27 +88,28 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 		int i = 0;
 		int j = 0;
 		boolean flag = false;
-		label:
+		if (worldgenerator == null)
 		{
+			label:
 			for (i = 0; i >= -1; --i)
 			{
 				for (j = 0; j >= -1; --j)
 				{
-					if (this == NeoOresBlocks.air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.air_sapling))
 					{
 						worldgenerator = WorldGenMegaTree1.make(false, true, NeoOresBlocks.dim_log, NeoOresBlocks.dim_leaves, DimensionName.AIR);
 						flag = true;
 						break label;
 					}
 
-					if (this == NeoOresBlocks.corroded_air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.corroded_air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.corroded_air_sapling))
 					{
 						worldgenerator = WorldGenMegaTree1.make(false, true, NeoOresBlocks.dim_log, NeoOresBlocks.corroded_dim_leaves, DimensionName.AIR);
 						flag = true;
 						break label;
 					}
 
-					if (this == NeoOresBlocks.corroding_air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.corroding_air_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.corroding_air_sapling))
 					{
 						worldgenerator = WorldGenMegaTree1.make(false, true, NeoOresBlocks.dim_log, NeoOresBlocks.corroding_dim_leaves, DimensionName.AIR);
 						flag = true;
@@ -118,27 +119,28 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 			}
 		}
 
-		label:
+		if (worldgenerator == null)
 		{
+			label:
 			for (i = 0; i >= -1; --i)
 			{
 				for (j = 0; j >= -1; --j)
 				{
-					if (this == NeoOresBlocks.earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.earth_sapling))
 					{
 						worldgenerator = WorldGenMegaTree2.make(false, 10, 13, NeoOresBlocks.dim_log, NeoOresBlocks.dim_leaves, DimensionName.EARTH);
 						flag = true;
 						break label;
 					}
 
-					if (this == NeoOresBlocks.corroded_earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.corroded_earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.corroded_earth_sapling))
 					{
 						worldgenerator = WorldGenMegaTree2.make(false, 10, 13, NeoOresBlocks.dim_log, NeoOresBlocks.corroded_dim_leaves, DimensionName.EARTH);
 						flag = true;
 						break label;
 					}
 
-					if (this == NeoOresBlocks.corroding_earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j))
+					if (state.getBlock() == NeoOresBlocks.corroding_earth_sapling && this.isTwoByTwoOfType(worldIn, pos, i, j, NeoOresBlocks.corroding_earth_sapling))
 					{
 						worldgenerator = WorldGenMegaTree2.make(false, 10, 13, NeoOresBlocks.dim_log, NeoOresBlocks.corroding_dim_leaves, DimensionName.EARTH);
 						flag = true;
@@ -147,54 +149,54 @@ public class BlockDimensionSapling extends BlockBush implements INeoOresBlock, I
 				}
 			}
 		}
-		
-		if(!flag) 
+
+		if (!flag)
 		{
 			i = 0;
 			j = 0;
 		}
 
-		if (!flag && this == NeoOresBlocks.earth_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.earth_sapling)
 		{
 			worldgenerator = WorldGenSimpleTree.make(false, 6, 3, NeoOresBlocks.dim_log, NeoOresBlocks.dim_leaves, DimensionName.EARTH);
 		}
 
-		if (!flag && this == NeoOresBlocks.corroded_earth_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroded_earth_sapling)
 		{
 			worldgenerator = WorldGenSimpleTree.make(false, 6, 3, NeoOresBlocks.dim_log, NeoOresBlocks.corroded_dim_leaves, DimensionName.EARTH);
 		}
 
-		if (!flag && this == NeoOresBlocks.corroding_earth_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroding_earth_sapling)
 		{
 			worldgenerator = WorldGenSimpleTree.make(false, 6, 3, NeoOresBlocks.dim_log, NeoOresBlocks.corroding_dim_leaves, DimensionName.EARTH);
 		}
 
-		if (this == NeoOresBlocks.corroding_fire_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroding_fire_sapling)
 		{
 			worldgenerator = WorldGenTreeBig.make(true, NeoOresBlocks.dim_log, NeoOresBlocks.corroding_dim_leaves, DimensionName.FIRE);
 		}
 
-		if (this == NeoOresBlocks.fire_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.fire_sapling)
 		{
 			worldgenerator = WorldGenTreeBig.make(true, NeoOresBlocks.dim_log, NeoOresBlocks.dim_leaves, DimensionName.FIRE);
 		}
 
-		if (this == NeoOresBlocks.corroded_fire_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroded_fire_sapling)
 		{
 			worldgenerator = WorldGenTreeBig.make(true, NeoOresBlocks.dim_log, NeoOresBlocks.corroded_dim_leaves, DimensionName.FIRE);
 		}
 
-		if (this == NeoOresBlocks.corroding_water_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroding_water_sapling)
 		{
 			worldgenerator = WorldGenSeeweedTree.make(true, 7, 5, NeoOresBlocks.dim_log, NeoOresBlocks.corroding_dim_leaves, DimensionName.WATER);
 		}
 
-		if (this == NeoOresBlocks.water_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.water_sapling)
 		{
 			worldgenerator = WorldGenSeeweedTree.make(true, 7, 5, NeoOresBlocks.dim_log, NeoOresBlocks.dim_leaves, DimensionName.WATER);
 		}
 
-		if (this == NeoOresBlocks.corroded_water_sapling)
+		if (worldgenerator == null && state.getBlock() == NeoOresBlocks.corroded_water_sapling)
 		{
 			worldgenerator = WorldGenSeeweedTree.make(true, 7, 5, NeoOresBlocks.dim_log, NeoOresBlocks.corroded_dim_leaves, DimensionName.WATER);
 		}

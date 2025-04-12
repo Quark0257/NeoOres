@@ -66,16 +66,14 @@ public class RenderSpellBullet extends Render<EntitySpellBullet>
 			double dy = 0.0;
 			double dz = 0.0;
 			final double m = 0.3;
-			float ds = 0.0F;
 			for (int i = 0; i < 4; i++)
 			{
 				dx = m * entity.world.rand.nextDouble() - 0.5 * m;
 				dy = m * entity.world.rand.nextDouble() - 0.5 * m;
 				dz = m * entity.world.rand.nextDouble() - 0.5 * m;
-				ds = 0.005F * entity.world.rand.nextFloat();
 
 				ParticleMagic png = new ParticleMagic(entity.world, px + dx, py + dy, pz + dz, 0.0, 0.0, 0.0, SpellUtils.getColor(entity.getStack()),
-						Math.min(6 + entity.world.rand.nextInt(4), Math.max(0, entity.life - 1)), 0.001F + ds, NeoOresRegisterEvents.particle0);
+						Math.min(6 + entity.world.rand.nextInt(4), Math.max(0, entity.life - 1)), 1.0F, NeoOresRegisterEvents.particle0);
 				Minecraft.getMinecraft().effectRenderer.addEffect(png);
 			}
 		}

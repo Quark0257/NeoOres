@@ -60,7 +60,9 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -73,6 +75,7 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -107,7 +110,7 @@ public class NeoOresEntityEvents
 				event.getEntityLiving().motionY = -1.0D;
 				return;
 			}
-			
+
 			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
 	}
@@ -213,18 +216,18 @@ public class NeoOresEntityEvents
 		if (event.player instanceof EntityPlayerMP)
 		{
 			NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setLoggedIn(true);
-			if (NeoOresConfig.miscellaneous.allowInitialItems && !NeoOresData.instance.getPSD((EntityPlayerMP) event.player).hasInitialItems()) 
+			if (NeoOresConfig.miscellaneous.allowInitialItems && !NeoOresData.instance.getPSD((EntityPlayerMP) event.player).hasInitialItems())
 			{
 				InventoryUtils.addStackToPlayer(event.player, new ItemStack(NeoOresBlocks.instant_alter));
-				NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setInitialItems(true);			
+				NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setInitialItems(true);
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerLoggedOutEvent event)
 	{
-		if (event.player instanceof EntityPlayerMP && NeoOresData.instance != null) 
+		if (event.player instanceof EntityPlayerMP && NeoOresData.instance != null)
 		{
 			NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setLoggedIn(false);
 		}
@@ -254,7 +257,7 @@ public class NeoOresEntityEvents
 		if (event.getEntity() != null)
 		{
 			World worldIn = event.getEntity().getEntityWorld();
-			
+
 			// Passive Spells
 			if (!worldIn.isRemote)
 			{
@@ -414,12 +417,12 @@ public class NeoOresEntityEvents
 					playerList.transferEntityToWorld(event.getEntity(), origin, server.getWorld(origin), server.getWorld(dest), teleporter);
 				}
 			}
-			
+
 			// SneakEvent
-			if (event.getEntity() != null && event.getEntity() instanceof EntityPlayerMP) 
+			if (event.getEntity() != null && event.getEntity() instanceof EntityPlayerMP)
 			{
-				EntityPlayerMP entityPlayerMP = (EntityPlayerMP)event.getEntity();
-				if (!NeoOresData.instance.getPSD(entityPlayerMP).isSneak() && entityPlayerMP.isSneaking()) 
+				EntityPlayerMP entityPlayerMP = (EntityPlayerMP) event.getEntity();
+				if (!NeoOresData.instance.getPSD(entityPlayerMP).isSneak() && entityPlayerMP.isSneaking())
 				{
 					SpellUtils.run(worldIn, entityPlayerMP, new SneakEvent(entityPlayerMP));
 				}
@@ -478,8 +481,8 @@ public class NeoOresEntityEvents
 				}
 			}
 		}
-		
-		if (event.getEntityLiving().isServerWorld()) 
+
+		if (event.getEntityLiving().isServerWorld())
 		{
 			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
@@ -614,7 +617,7 @@ public class NeoOresEntityEvents
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onFallen(LivingFallEvent event)
 	{
@@ -694,5 +697,29 @@ public class NeoOresEntityEvents
 			}
 		}
 		return poses;
+	}
+
+	@SubscribeEvent
+	public void onMobGriefing(EntityMobGriefingEvent event)
+	{
+		if (event.getEntity() != null && event.getEntity() instanceof EntityLivingBase)
+		{
+			if (((EntityLivingBase) event.getEntity()).isPotionActive(NeoOres.antigriefing))
+			{
+				event.setResult(Result.DENY);
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEnderTeleport(EnderTeleportEvent event)
+	{
+		if (event.getEntity() != null && event.getEntity() instanceof EntityLivingBase)
+		{
+			if (((EntityLivingBase) event.getEntity()).isPotionActive(NeoOres.antienderteleport))
+			{
+				event.setCanceled(true);
+			}
+		}
 	}
 }

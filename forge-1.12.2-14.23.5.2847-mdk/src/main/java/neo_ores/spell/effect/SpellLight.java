@@ -3,12 +3,15 @@ package neo_ores.spell.effect;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -59,6 +62,14 @@ public class SpellLight extends SpellEffect implements HasRange
 				{
 					boolean flag = ((ItemBlock) Item.getItemFromBlock(NeoOresBlocks.light)).placeBlockAt(stack, player, world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y,
 							(float) result.hitVec.z, state);
+					if (flag) 
+					{
+						if (runner instanceof EntityPlayerMP)
+						{
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+							pmds.addMXP(1L);
+						}
+					}
 				}
 			}
 		}

@@ -2,13 +2,16 @@ package neo_ores.spell.effect;
 
 import neo_ores.api.InventoryUtils;
 import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,6 +53,11 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 						{
 							if (InventoryUtils.addInventoryfromInventorySlot(i, inventory, InventoryUtils.getPlayerInventory(player), face, EnumFacing.UP))
 							{
+								if (runner instanceof EntityPlayerMP)
+								{
+									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+									pmds.addMXP(1L);
+								}
 								break;
 							}
 						}
@@ -77,6 +85,11 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 					fluid.amount = 1000;
 					if (InventoryUtils.addFluidToInventoryFromTank(handler, InventoryUtils.getPlayerInventory(player), EnumFacing.UP, fluid))
 					{
+						if (runner instanceof EntityPlayerMP)
+						{
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+							pmds.addMXP(1L);
+						}
 						break;
 					}
 				}
@@ -111,6 +124,12 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 				entityitem.setItem(result);
 				if (entityitem.getItem().isEmpty())
 					entityitem.setDead();
+				
+				if (player instanceof EntityPlayerMP)
+				{
+					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) player);
+					pmds.addMXP(1L);
+				}
 			}
 		}
 	}

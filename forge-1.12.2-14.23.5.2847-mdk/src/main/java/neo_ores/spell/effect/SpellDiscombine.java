@@ -9,11 +9,14 @@ import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.IPostscriptDataIntoSpell;
+import neo_ores.main.NeoOresData;
 import neo_ores.main.NeoOresItems;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
@@ -104,6 +107,12 @@ public class SpellDiscombine extends SpellEffect
 				
 				((EntityItem) entity).setItem(ItemStack.EMPTY);
 				entity.setDead();
+				
+				if (runner instanceof EntityPlayerMP)
+				{
+					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+					pmds.addMXP(100L);
+				}
 			}
 		}
 	}

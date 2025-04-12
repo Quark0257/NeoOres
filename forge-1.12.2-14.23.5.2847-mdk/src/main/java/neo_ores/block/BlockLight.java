@@ -1,12 +1,18 @@
 package neo_ores.block;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
+import neo_ores.client.particle.ParticleMagic;
+import neo_ores.event.NeoOresRegisterEvents;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -75,4 +81,18 @@ public class BlockLight extends NeoOresBlock
     {
         return BlockFaceShape.UNDEFINED;
     }
+    
+    @SideOnly(Side.CLIENT)
+	public BlockRenderLayer getBlockLayer()
+	{
+		return BlockRenderLayer.CUTOUT_MIPPED;
+	}
+    
+    @SideOnly(Side.CLIENT)
+	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand)
+	{
+    	int color = 0x8B91DB;
+    	ParticleMagic png = new ParticleMagic(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0, 0.0, 0.0, color, 30, 10.0F, NeoOresRegisterEvents.particle0);
+		Minecraft.getMinecraft().effectRenderer.addEffect(png);
+	}
 }

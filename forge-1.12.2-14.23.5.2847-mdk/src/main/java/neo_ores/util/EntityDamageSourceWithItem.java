@@ -46,9 +46,10 @@ public class EntityDamageSourceWithItem extends EntityDamageSource
 			eds.setDamageAllowedInCreativeMode();
 		return eds;
 	}
-	
-	public static DamageSource getPhysicalDamage(EntityLivingBase entity) {
+
+	public static DamageSource getPhysicalDamage(EntityLivingBase entity)
+	{
 		boolean flag = entity instanceof EntityPlayer;
-		return flag ? DamageSource.causePlayerDamage((EntityPlayer)entity) : DamageSource.causeMobDamage(entity);
+		return flag ? DamageSource.causePlayerDamage((EntityPlayer) entity) : DamageSource.causeMobDamage(entity);
 	}
 }

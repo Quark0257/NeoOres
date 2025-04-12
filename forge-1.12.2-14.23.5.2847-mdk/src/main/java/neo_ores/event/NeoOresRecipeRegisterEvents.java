@@ -47,6 +47,8 @@ import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -89,38 +91,38 @@ public class NeoOresRecipeRegisterEvents
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv5, new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_pickaxe), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv6, new RecipeOreStack(new ItemStack(NeoOresItems.undite_pickaxe), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv7, new RecipeOreStack(new ItemStack(NeoOresItems.sylphite_pickaxe), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv8, new RecipeOreStack(new ItemStack(NeoOresItems.sylphite_pickaxe), 1), new RecipeOreStack("gemDiamond", 64)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv9, new RecipeOreStack(new ItemStack(NeoOresItems.salamite_pickaxe), 1), new RecipeOreStack("gemDiamond", 128)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv10, new RecipeOreStack(new ItemStack(NeoOresItems.salamite_pickaxe), 1), new RecipeOreStack("gemDiamond", 256)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv8, new RecipeOreStack(new ItemStack(NeoOresItems.sylphite_pickaxe), 1), new RecipeOreStack("gemDiamond", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv9, new RecipeOreStack(new ItemStack(NeoOresItems.salamite_pickaxe), 1), new RecipeOreStack("gemDiamond", 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_harvestLv10, new RecipeOreStack(new ItemStack(NeoOresItems.salamite_pickaxe), 1), new RecipeOreStack("gemDiamond", 4)));
 		event.getRegistry()
 				.register(new SpellRecipe(NeoOresSpells.spell_harvestLv11, new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_paxel), 1),
 						new RecipeOreStack(new ItemStack(NeoOresItems.sylphite_paxel), 1), new RecipeOreStack(new ItemStack(NeoOresItems.undite_paxel), 1),
 						new RecipeOreStack(new ItemStack(NeoOresItems.salamite_paxel), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck1, new RecipeOreStack("gemLapis", 8), new RecipeOreStack("gemDiamond", 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck2, new RecipeOreStack("gemLapis", 16), new RecipeOreStack("gemDiamond", 2)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck3, new RecipeOreStack("gemLapis", 32), new RecipeOreStack("gemDiamond", 3)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck4, new RecipeOreStack("gemLapis", 64), new RecipeOreStack("gemDiamond", 4)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck5, new RecipeOreStack("gemLapis", 128), new RecipeOreStack("gemDiamond", 5)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck6, new RecipeOreStack("gemLapis", 256), new RecipeOreStack("gemDiamond", 6)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck7, new RecipeOreStack("gemLapis", 512), new RecipeOreStack("gemDiamond", 7)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck8, new RecipeOreStack("gemLapis", 1024), new RecipeOreStack("gemDiamond", 8)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck9, new RecipeOreStack("gemLapis", 2048), new RecipeOreStack("gemDiamond", 9)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck10, new RecipeOreStack("gemLapis", 4096), new RecipeOreStack("gemDiamond", 10)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 10), new RecipeOreStack("wool", 1), new RecipeOreStack("feather", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck1, new RecipeOreStack("gemLapis", 4), new RecipeOreStack("gemDiamond", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck2, new RecipeOreStack("gemLapis", 8), new RecipeOreStack("gemDiamond", 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck3, new RecipeOreStack("gemLapis", 16), new RecipeOreStack("gemDiamond", 3)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck4, new RecipeOreStack("gemLapis", 32), new RecipeOreStack("gemDiamond", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck5, new RecipeOreStack("gemLapis", 64), new RecipeOreStack("gemDiamond", 5)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck6, new RecipeOreStack("gemLapis", 128), new RecipeOreStack("gemDiamond", 6)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck7, new RecipeOreStack("gemLapis", 256), new RecipeOreStack("gemDiamond", 7)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck8, new RecipeOreStack("gemLapis", 512), new RecipeOreStack("gemDiamond", 8)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck9, new RecipeOreStack("gemLapis", 1024), new RecipeOreStack("gemDiamond", 9)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_luck10, new RecipeOreStack("gemLapis", 2048), new RecipeOreStack("gemDiamond", 10)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_silk, new RecipeOreStack("gemEmerald", 1), new RecipeOreStack("wool", 1), new RecipeOreStack("feather", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier1, new RecipeOreStack("blockEarthEssence", 1), new RecipeOreStack("blockWaterEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier2, new RecipeOreStack("blockFireEssence", 1), new RecipeOreStack("blockAirEssence", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier3, new RecipeOreStack("gemDiamond", 1), new RecipeOreStack("gemEmerald", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_bullet, new RecipeOreStack(new ItemStack(Items.SNOWBALL), 1), new RecipeOreStack(new ItemStack(Items.ARROW), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed1, new RecipeOreStack("ingotGold", 4)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed2, new RecipeOreStack("ingotGold", 8)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed3, new RecipeOreStack("ingotGold", 16)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed4, new RecipeOreStack("ingotGold", 32)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed2, new RecipeOreStack("ingotGold", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed3, new RecipeOreStack("ingotGold", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_speed4, new RecipeOreStack("ingotGold", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation1, new RecipeOreStack("enderpearl", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation2, new RecipeOreStack("enderpearl", 2)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation3, new RecipeOreStack("enderpearl", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation4, new RecipeOreStack("enderpearl", 8)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_noGravity, new RecipeOreStack("enderpearl", 16)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_noAnyResistance, new RecipeOreStack("ingotGold", 64), new RecipeOreStack(new ItemStack(Items.ARROW), 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_noAnyResistance, new RecipeOreStack("ingotGold", 1), new RecipeOreStack(new ItemStack(Items.ARROW), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier4, new RecipeOreStack("ingotLandite", 1), new RecipeOreStack("ingotGuardite", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier5, new RecipeOreStack("ingotGnomite", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier6, new RecipeOreStack("ingotMarlite", 1), new RecipeOreStack("gemSanitite", 1)));
@@ -129,35 +131,95 @@ public class NeoOresRecipeRegisterEvents
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier9, new RecipeOreStack("gemSylphite", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier10, new RecipeOreStack("gemFlamite", 1), new RecipeOreStack("gemForcite", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_tier11, new RecipeOreStack("gemSalamite", 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range1, new RecipeOreStack("dustGlowstone", 16), new RecipeOreStack("string", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range1, new RecipeOreStack("dustGlowstone", 4), new RecipeOreStack("string", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_gather, new RecipeOreStack(new ItemStack(Blocks.HOPPER), 1), new RecipeOreStack(new ItemStack(Items.WATER_BUCKET), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range2, new RecipeOreStack("dustGlowstone", 64), new RecipeOreStack("string", 2)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range3, new RecipeOreStack("dustGlowstone", 256), new RecipeOreStack("string", 4)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range4, new RecipeOreStack("dustGlowstone", 1024), new RecipeOreStack("string", 8)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv1, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 4), new RecipeOreStack("gemQuartz", 4)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv2, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 8), new RecipeOreStack("gemQuartz", 8)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv3, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 16), new RecipeOreStack("gemQuartz", 16)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv4, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 32), new RecipeOreStack("gemQuartz", 32)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv5, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 64), new RecipeOreStack("gemQuartz", 64)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv6, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 128), new RecipeOreStack("gemQuartz", 128)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv7, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 256), new RecipeOreStack("gemQuartz", 256)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv8, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1024), new RecipeOreStack("gemQuartz", 1024)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv9, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 2048), new RecipeOreStack("gemQuartz", 2048)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv10, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 4096), new RecipeOreStack("gemQuartz", 4096)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv11, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 8192), new RecipeOreStack("gemQuartz", 8192)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range2, new RecipeOreStack("dustGlowstone", 8), new RecipeOreStack("string", 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range3, new RecipeOreStack("dustGlowstone", 16), new RecipeOreStack("string", 3)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range4, new RecipeOreStack("dustGlowstone", 32), new RecipeOreStack("string", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv1, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv2, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv3, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv4, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv5, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv6, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv7, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv8, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv9, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv10, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv11, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_summon, new RecipeOreStack("mobBottle", 1), new RecipeOreStack(new ItemStack(Items.NETHER_STAR), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_nbt_applying, new RecipeOreStack(new ItemStack(Items.NETHER_STAR), 64)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_nbt_applying, new RecipeOreStack(new ItemStack(Items.SKULL, 1, 0), 1), new RecipeOreStack(new ItemStack(Items.SKULL, 1, 1), 1),
+				new RecipeOreStack(new ItemStack(Items.SKULL, 1, 2), 1), new RecipeOreStack(new ItemStack(Items.SKULL, 1, 4), 1)));
 		event.getRegistry()
-				.register(new SpellRecipe(NeoOresSpells.spell_ore_gen, new RecipeOreStack(new ItemStack(Items.NETHER_STAR), 64), new RecipeOreStack(new ItemStack(NeoOresItems.sylphite), 16),
-						new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_ingot), 16), new RecipeOreStack(new ItemStack(NeoOresItems.salamite), 16),
-						new RecipeOreStack(new ItemStack(NeoOresItems.undite), 16)));
+				.register(new SpellRecipe(NeoOresSpells.spell_ore_gen, new RecipeOreStack(new ItemStack(Items.NETHER_STAR), 1), new RecipeOreStack(new ItemStack(NeoOresItems.sylphite), 1),
+						new RecipeOreStack(new ItemStack(NeoOresItems.gnomite_ingot), 1), new RecipeOreStack(new ItemStack(NeoOresItems.salamite), 1),
+						new RecipeOreStack(new ItemStack(NeoOresItems.undite), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_no_inertia, new RecipeOreStack(new ItemStack(Items.ENDER_EYE), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_uncollidable, new RecipeOreStack("enderpearl", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pull_item, new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_push_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pipe_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_worn_tick, RecipeOreStackWildCard.ANY_ITEM));
-		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_translocate, new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pipe_item, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1),
+				new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_worn_tick, RecipeOreStackWildCard.ANY_ITEM, new RecipeOreStack("gemUndite", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_translocate, new RecipeOreStack("enderpearl", 4), new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_grow, new RecipeOreStack("ingotGnomite", 1), new RecipeOreStack("gemUndite", 1)));
+		event.getRegistry().register(
+				new SpellRecipe(NeoOresSpells.spell_discombine, new RecipeOreStack(new ItemStack(Blocks.CRAFTING_TABLE), 1), new RecipeOreStack(new ItemStack(Items.FERMENTED_SPIDER_EYE), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_self, new RecipeOreStack(new ItemStack(Items.FLINT), 1), new RecipeOreStack(new ItemStack(Items.APPLE), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_offset_up, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_offset_down, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_heal, new RecipeOreStack(new ItemStack(Items.SPECKLED_MELON), 1), new RecipeOreStack(new ItemStack(Items.NETHER_WART), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_life_tap, new RecipeOreStack(new ItemStack(Items.SPECKLED_MELON), 1), new RecipeOreStack("waterEssence", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_whitelist, new RecipeOreStack("paper", 1), new RecipeOreStack(new ItemStack(Items.DYE, 1, 15), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_blacklist, new RecipeOreStack("paper", 1), new RecipeOreStack(new ItemStack(Items.DYE, 1, 0), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_blink, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack("dustGlowstone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_teleport, new RecipeOreStack("enderpearl", 1), new RecipeOreStack("dustGlowstone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_amplify1, new RecipeOreStack("dustGlowstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_amplify2, new RecipeOreStack("dustGlowstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_amplify3, new RecipeOreStack("dustGlowstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration1, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration2, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration3, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration4, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration5, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration6, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration7, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration8, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration9, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration10, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_duration11, new RecipeOreStack("dustRedstone", 4)));
+		event.getRegistry()
+				.register(new SpellRecipe(NeoOresSpells.spell_disarm, new RecipeOreStack(new ItemStack(Items.FERMENTED_SPIDER_EYE), 1), new RecipeOreStack(new ItemStack(Blocks.RED_MUSHROOM), 1)));
+		event.getRegistry()
+				.register(new SpellRecipe(NeoOresSpells.spell_placeable, new RecipeOreStack(new ItemStack(Items.DRAGON_BREATH), 1), new RecipeOreStack(new ItemStack(Blocks.TRIPWIRE_HOOK), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation_down1, new RecipeOreStack("ingotIron", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation_down2, new RecipeOreStack("ingotIron", 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation_down3, new RecipeOreStack("ingotIron", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_continuation_down4, new RecipeOreStack("ingotIron", 8)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_life_ended, new RecipeOreStack("airEssence", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_dimension_over, new RecipeOreStack("endstone", 1), new RecipeOreStack("netherrack", 1), new RecipeOreStack("gabrystone", 1),
+				new RecipeOreStack("urystone", 1), new RecipeOreStack("michastone", 1), new RecipeOreStack("raphastone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_day, new RecipeOreStack("fireEssence", 1), new RecipeOreStack("cropWheat", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_night, new RecipeOreStack("fireEssence", 1), new RecipeOreStack("obsidian", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_place, new RecipeOreStack("dirt", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_plantable, new RecipeOreStack(new ItemStack(Items.WHEAT_SEEDS), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_light, new RecipeOreStack("torch", 1), new RecipeOreStack("dustRedstone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_sunny, new RecipeOreStack(new ItemStack(Blocks.DOUBLE_PLANT, 1, 0), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_rain, new RecipeOreStack(new ItemStack(Items.WATER_BUCKET), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_thunder, new RecipeOreStack(new ItemStack(Blocks.TNT), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_lightning, new RecipeOreStack("dustGlowtone", 1), new RecipeOreStack(new ItemStack(Blocks.TNT), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_reach1, new RecipeOreStack("enderpearl", 1), new RecipeOreStack("ingotIron", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_reach2, new RecipeOreStack("enderpearl", 2), new RecipeOreStack("ingotIron", 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_reach3, new RecipeOreStack("enderpearl", 4), new RecipeOreStack("ingotIron", 3)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_reach4, new RecipeOreStack("enderpearl", 8), new RecipeOreStack("ingotIron", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_attacked, new RecipeOreStack("dustPrismarine", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damaged, new RecipeOreStack("gemPrismarine", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_attacking, new RecipeOreStack("string", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_break_block, new RecipeOreStack(new ItemStack(Blocks.REDSTONE_TORCH), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_jumped, new RecipeOreStack(new ItemStack(Items.RABBIT_FOOT), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_sneak, new RecipeOreStack(new ItemStack(Blocks.STONE_SLAB, 1, 7), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_fall, new RecipeOreStack("feather", 1), new RecipeOreStack("dustRedstone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_death, new RecipeOreStack(new ItemStack(Items.ROTTEN_FLESH), 1), new RecipeOreStack("bone", 1)));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -257,7 +319,19 @@ public class NeoOresRecipeRegisterEvents
 					new ItemStack(NeoOresItems.fire_essence_core, 1, i), 'X', "netherStar");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.chunk_loader), 100, "FIW", "AIE", "III", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'W', new ItemStack(NeoOresItems.essence, 1, 1),
 				'A', new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'I', "ingotIron");
-
+		this.addManaCraftingRecipe(FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)), 10000, "MMM", "MBM", "MMM", 'M', new ItemStack(NeoOresItems.mana_ingot), 'B', new ItemStack(Items.BUCKET));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.mechanical_magician, 1), 5000, "XFX", "A W", "XEX", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'A',
+				new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'W', new ItemStack(NeoOresItems.essence, 1, 1), 'X', "ingotIron");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.position_sheet), 10, "D", "R", 'D', "dirt", 'R', new ItemStack(NeoOresItems.recipe_sheet));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.totem), 100, "DWD", "WSW", " W ", 'D', "gemDiamond", 'W', "cropWheat", 'S', "string");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.totem_independent), 1000, "ETE", 'E', "gemEmerald", 'T', new ItemStack(NeoOresItems.totem));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.totem), 100, "DWD", "WSW", " W ", 'D', "gemDiamond", 'W', "cropWheat", 'S', "string");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_xp), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', "gemDrenite");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_void), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', "obsidian");
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_fluid), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_consume), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', new ItemStack(NeoOresItems.mana_ingot));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_convert_mana), 1000, "X", "U", 'U', new ItemStack(NeoOresItems.upgrade_xp), 'X', new ItemStack(NeoOresItems.mana_ingot));
+		
 		int n = 0;
 		for (ManaCraftingRecipeManager mcrm : manacraftingrecipes)
 		{

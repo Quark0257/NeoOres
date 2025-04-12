@@ -27,7 +27,7 @@ public class ParticleMagic extends Particle
 		this.posX = xCoordIn;
 		this.posY = yCoordIn;
 		this.posZ = zCoordIn;
-		this.particleBlue = (int) (color % (256 * 256)) / 256.0F;
+		this.particleBlue = (int) (color % 256) / 256.0F;
 		this.particleRed = (int) (color / (256 * 256)) / 256.0F;
 		this.particleGreen = (int) ((color / 256) % 256) / 256.0F;
 		this.prevPosX = this.posX;
@@ -36,7 +36,7 @@ public class ParticleMagic extends Particle
 		this.particleMaxAge = time;
 		this.particleAge = 0;
 		this.setSize(size, size);
-		this.particleScale *= this.rand.nextFloat() * 0.6F + 0.5F;
+		this.particleScale = size * this.rand.nextFloat() * 0.6F + 0.5F;
 		this.textures = texture;
 		this.index = 0;
 		this.setParticleTexture(this.textures[this.index]);

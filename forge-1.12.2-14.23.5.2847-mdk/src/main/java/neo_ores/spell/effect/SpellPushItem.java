@@ -4,13 +4,16 @@ import java.util.Map;
 
 import neo_ores.api.InventoryUtils;
 import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -55,6 +58,11 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 						{
 							if (InventoryUtils.addInventoryfromInventorySlot(i, target, inventory, EnumFacing.UP, face))
 							{
+								if (runner instanceof EntityPlayerMP)
+								{
+									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+									pmds.addMXP(1L);
+								}
 								break;
 							}
 						}
@@ -79,6 +87,11 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 								handler.fill(fluid, true);
 								target.getStackInSlot(i).setCount(0);
 								InventoryUtils.addInventoryfromStack(new ItemStack(Items.BUCKET), target, EnumFacing.UP);
+								if (runner instanceof EntityPlayerMP)
+								{
+									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+									pmds.addMXP(1L);
+								}
 								break;
 							}
 						}
@@ -97,6 +110,11 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 								target.getStackInSlot(i).setCount(0);
 								InventoryUtils.addInventoryfromStack(new ItemStack(Items.BUCKET), target, EnumFacing.UP);
 								SpellUtils.onDisplayParticleTypeA(world, new Vec3d(nextPos.getX(), nextPos.getY(), nextPos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+								if (runner instanceof EntityPlayerMP)
+								{
+									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+									pmds.addMXP(1L);
+								}
 								break;
 							}
 						}
@@ -125,6 +143,11 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 					SpellUtils.onDisplayParticleTypeAEntity(world, entityItem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
 					original.setCount(0);
 					count++;
+					if (runner instanceof EntityPlayerMP)
+					{
+						PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+						pmds.addMXP(1L);
+					}
 				}
 				if (trial <= count) {
 					break;

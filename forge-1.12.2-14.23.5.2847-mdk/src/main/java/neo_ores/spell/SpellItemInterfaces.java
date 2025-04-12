@@ -167,11 +167,6 @@ public class SpellItemInterfaces
 		public void setHarvestLevel(int value);
 	}
 
-	public static interface HasHealLevel extends ICorrectingBase
-	{
-		public void setHealLevel(int value);
-	}
-
 	public static interface HasDamageLevel extends ICorrectingBase
 	{
 		public void setDamageLevel(int value);

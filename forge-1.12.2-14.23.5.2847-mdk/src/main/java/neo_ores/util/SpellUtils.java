@@ -803,7 +803,7 @@ public class SpellUtils
 			for (int j = 0; j < particleVolume; j++)
 			{
 				int d = (int) (10.0D / (Math.random() + 0.5D));
-				ParticleMagic png = new ParticleMagic(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d, 0.0005F, texture);
+				ParticleMagic png = new ParticleMagic(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d, 1.0F, texture);
 				Minecraft.getMinecraft().effectRenderer.addEffect(png);
 			}
 		}

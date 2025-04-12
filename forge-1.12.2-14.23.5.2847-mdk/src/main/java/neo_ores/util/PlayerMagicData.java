@@ -69,6 +69,7 @@ public class PlayerMagicData
 
 		if (nbt.hasKey("studyData"))
 		{
+			this.studies.clear();
 			NBTTagCompound study = nbt.getCompoundTag("studyData");
 			for (String modid : study.getKeySet())
 			{
@@ -106,7 +107,6 @@ public class PlayerMagicData
 				NBTTagList list = new NBTTagList();
 				for (String id : entry.getValue())
 				{
-					// studyData.getTagList(entry.getKey(), 8);
 					list.appendTag(new NBTTagString(id));
 				}
 				study.setTag(entry.getKey(), list);

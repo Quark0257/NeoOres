@@ -3,16 +3,19 @@ package neo_ores.spell.effect;
 import neo_ores.api.InventoryUtils;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
+import neo_ores.main.NeoOresData;
 import neo_ores.packet.PacketLineParticleToClient;
 import neo_ores.spell.SpellItemInterfaces.HasDimensionOver;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasReach;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -113,6 +116,12 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 											Vec3d vel = pushVec.subtract(start);
 											NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 										}
+										
+										if (runner instanceof EntityPlayerMP)
+										{
+											PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+											pmds.addMXP(1L);
+										}
 										break;
 									}
 								}
@@ -135,6 +144,12 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 							{
 								int color = SpellUtils.getColor(stack);
 								NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
+							}
+							
+							if (runner instanceof EntityPlayerMP)
+							{
+								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+								pmds.addMXP(1L);
 							}
 						}
 					}
@@ -170,6 +185,12 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 										Vec3d vel = pushVec.subtract(start);
 										NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 									}
+									
+									if (runner instanceof EntityPlayerMP)
+									{
+										PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+										pmds.addMXP(1L);
+									}
 									break;
 								}
 							}
@@ -191,6 +212,12 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 							{
 								int color = SpellUtils.getColor(stack);
 								NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
+							}
+							
+							if (runner instanceof EntityPlayerMP)
+							{
+								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+								pmds.addMXP(1L);
 							}
 						}
 					}

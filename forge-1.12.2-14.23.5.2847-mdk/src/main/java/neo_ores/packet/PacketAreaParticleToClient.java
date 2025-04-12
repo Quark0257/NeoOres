@@ -92,7 +92,7 @@ public class PacketAreaParticleToClient implements IMessage
 							double dy = 0.5 * size.y * (world.rand.nextDouble() - 0.5D);
 							double dz = baseZ + dMulti * (world.rand.nextDouble());
 							ParticleMagic png = new ParticleMagic(world, target.x + dx, y + dy, target.z + dz, 0.0, 0.0, 0.0, color, 12 + world.rand.nextInt(8),
-									0.3F + 0.02f * world.rand.nextFloat(), NeoOresRegisterEvents.particle0);
+									1.0F, NeoOresRegisterEvents.particle0);
 							Minecraft.getMinecraft().effectRenderer.addEffect(png);
 						}
 					}

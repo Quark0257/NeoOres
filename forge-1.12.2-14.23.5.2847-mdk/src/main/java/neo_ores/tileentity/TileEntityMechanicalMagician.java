@@ -54,11 +54,12 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	public long noConsumeMana = 0L;
 	public boolean makeExp = false;
 	/**
-	 *  if this boolean is true, no work makeExp
+	 * if this boolean is true, no work makeExp
 	 */
 	public boolean useLiquidMana = false;
 	private ManaTank tank;
 	public boolean voidExp = false;
+	public boolean expToMana = false;
 
 	public boolean isUseLiquidManaGui = false;
 	public int liquidAmount = 0;
@@ -103,9 +104,9 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			this.playerNBT = compound.getCompoundTag("player");
 		}
 	}
-	
+
 	@Nullable
-	public FakePlayerMechanicalMagician getPlayer() 
+	public FakePlayerMechanicalMagician getPlayer()
 	{
 		return this.player;
 	}
@@ -341,12 +342,6 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 		{
 			this.player.rotationPitch = direction.getYAsFloat();
 			this.player.rotationYaw = direction.getXAsFloat();
-			PlayerMagicData pmd = NeoOresData.instance.getPMD(this.player);
-			if(pmd.getMana() == pmd.getMaxMana() && this.tank.fill(new FluidStack(NeoOresBlocks.fluid_mana, 1), false) == 1) 
-			{
-				pmd.setMana(0L);
-				this.tank.fill(new FluidStack(NeoOresBlocks.fluid_mana, 1), true);
-			}
 		}
 
 		if (this.redstone && !this.activated)
@@ -424,7 +419,8 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 		}
 
 		ItemStack totem = this.getStackInSlot(1);
-		if (!totem.isEmpty()) {
+		if (!totem.isEmpty())
+		{
 			IItemTotem itemtotem = (IItemTotem) totem.getItem();
 			if (itemtotem.needsPlayer(totem))
 			{
@@ -442,11 +438,25 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 						}
 					}
 				}
-			} else if (itemtotem.isCreative(totem)) {
+			}
+			else if (this.expToMana)
+			{
+				double rate = 10.0;
+				if (rate < this.mxp)
+				{
+					if (this.tank.fill(new FluidStack(NeoOresBlocks.fluid_mana, 1), false) == 1)
+					{
+						this.tank.fill(new FluidStack(NeoOresBlocks.fluid_mana, 1), true);
+						this.mxp -= rate;
+					}
+				}
+			}
+			else if (itemtotem.isCreative(totem))
+			{
 				this.mxp = 0;
 			}
 		}
-		
+
 		if (this.player != null && this.voidExp)
 		{
 			this.mxp = 0;
@@ -464,6 +474,7 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 		this.useLiquidMana = false;
 		this.makeExp = false;
 		this.voidExp = false;
+		this.expToMana = false;
 		this.noConsumeMana = 0L;
 	}
 
@@ -517,10 +528,10 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	{
 		return this.useLiquidMana ? this.tank : new ManaTank(0);
 	}
-	
-	public void removeTileEntity() 
+
+	public void removeTileEntity()
 	{
-		if (this.player != null) 
+		if (this.player != null)
 		{
 			this.player.setDead();
 		}

@@ -1,9 +1,12 @@
 package neo_ores.spell.effect;
 
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasAmplify;
 import neo_ores.spell.SpellItemInterfaces.HasDuration;
+import neo_ores.util.PlayerMagicData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -17,6 +20,11 @@ public abstract class SpellEffectEntityBuffBase extends SpellEffectEntityBase im
 		if (!this.isFakePlayer(elb)) 
 		{
 			this.onBuff(world, elb, runner, stack);
+			if (runner instanceof EntityPlayerMP)
+			{
+				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+				pmds.addMXP(1L + this.amp * 5 + this.duration * 3);
+			}
 		}
 	}
 	

@@ -5,11 +5,14 @@ import java.util.List;
 
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -67,6 +70,12 @@ public class SpellFilterWhiteList extends SpellEffect implements HasRange
 				blackList.removeAll(removeList);
 				SpellUtils.setFilteredItems(target, whiteList, false);
 				SpellUtils.setFilteredItems(target, blackList, true);
+				
+				if (runner instanceof EntityPlayerMP)
+				{
+					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+					pmds.addMXP(1L);
+				}
 			}
 		}
 	}

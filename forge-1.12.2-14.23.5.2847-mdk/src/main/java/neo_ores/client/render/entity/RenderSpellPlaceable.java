@@ -80,7 +80,7 @@ public class RenderSpellPlaceable extends Render<EntitySpellPlaceable>
 				double dy = 0.5 * size.y * (entity.world.rand.nextDouble() - 0.5D);
 				double dz = baseZ + dMulti * (entity.world.rand.nextDouble());
 				ParticleMagic png = new ParticleMagic(entity.world, min.x + dx, py + dy, min.z + dz, 0.0, 0.0, 0.0, color, 12 + entity.world.rand.nextInt(8),
-						0.3F + 0.02f * entity.world.rand.nextFloat(), NeoOresRegisterEvents.particle0);
+						1.0F, NeoOresRegisterEvents.particle0);
 				Minecraft.getMinecraft().effectRenderer.addEffect(png);
 			}
 		}

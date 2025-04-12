@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class SpellLifeTap extends SpellEffectEntityBase implements HasAmplify
+public class SpellHeal extends SpellEffectEntityBase implements HasAmplify
 {
 	private int amp = 0;
 
@@ -24,20 +24,18 @@ public class SpellLifeTap extends SpellEffectEntityBase implements HasAmplify
 	@Override
 	protected void onEffect(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
-		float pay = this.amp * 2.0f + 1.0f;
+		float heal = this.amp * 2.0f + 1.0f;
 		SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
-		if (!SpellUtils.spellPay(runner, pay))
-			return;
-		if (elb instanceof EntityPlayerMP)
+		if (elb instanceof EntityLivingBase)
 		{
-			double rate = 0.1 * pay / runner.getMaxHealth();
-			PlayerMagicData pmd = NeoOresData.instance.getPMD((EntityPlayerMP) elb);
-			pmd.addMana((long) (rate * pmd.getMaxMana()));
-
-			if (runner instanceof EntityPlayerMP)
+			boolean flag = SpellUtils.spellHeal((EntityLivingBase) elb, heal);
+			if (flag) 
 			{
-				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-				pmds.addMXP(1L + this.amp * 5);
+				if (runner instanceof EntityPlayerMP)
+				{
+					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+					pmds.addMXP(1L + this.amp * 5);
+				}
 			}
 		}
 	}

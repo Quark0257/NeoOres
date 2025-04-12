@@ -304,7 +304,7 @@ public class BlockNeoOre extends NeoOresBlock
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer()
 	{
-		return BlockRenderLayer.CUTOUT_MIPPED;
+		return BlockRenderLayer.SOLID;
 	}
 
 	public ModelResourceLocation getModel(int meta)

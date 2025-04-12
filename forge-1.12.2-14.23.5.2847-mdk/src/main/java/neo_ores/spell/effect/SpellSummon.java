@@ -25,11 +25,6 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 	private boolean applyNBT = false;
 
 	@Override
-	public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
-	{
-	}
-
-	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
 		if (world.isRemote)

@@ -25,12 +25,6 @@ import net.minecraft.world.World;
 
 public class SpellOreGen extends SpellEffect implements HasRange
 {
-	/*
-	 * private Set<IWorldGenerator> oreGenList; private static final Random random =
-	 * new Random(); private Map<IBlockState,Integer> oreList = new
-	 * HashMap<IBlockState,Integer>();
-	 */
-
 	private static final Random random = new Random();
 
 	private int range = 0;

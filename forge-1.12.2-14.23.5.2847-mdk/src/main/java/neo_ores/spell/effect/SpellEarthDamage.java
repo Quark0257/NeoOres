@@ -1,6 +1,5 @@
 package neo_ores.spell.effect;
 
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.util.EntityDamageSourceWithItem;
@@ -21,7 +20,7 @@ public class SpellEarthDamage extends SpellDamageBase
 		float amount = (float) (3.5 * Math.pow(1.5, this.damageLevel)) + 3.0f;
 		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), 0.6f * amount);
 		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(EntityDamageSourceWithItem.getPhysicalDamage(runner), runner, stack), 0.4f * amount);
-		SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+		SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 		if (runner instanceof EntityPlayerMP)
 		{
 			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);

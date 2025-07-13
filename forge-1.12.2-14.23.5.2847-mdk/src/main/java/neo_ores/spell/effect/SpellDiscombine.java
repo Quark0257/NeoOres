@@ -6,7 +6,6 @@ import java.util.List;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.RecipeOreStackWildCard;
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.IPostscriptDataIntoSpell;
 import neo_ores.main.NeoOresData;
@@ -40,7 +39,7 @@ public class SpellDiscombine extends SpellEffect
 				{
 					return;
 				}
-				SpellUtils.onDisplayParticleTypeAEntity(world, entity, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+				SpellUtils.onDisplayParticleTypeAEntity(world, entity, SpellUtils.getColor(stack), 16);
 				NBTTagCompound additionalData = new NBTTagCompound();
 				ItemStack sheet = ItemStack.EMPTY;
 				if (targetStack.getTagCompound().hasKey(SpellUtils.NBTTagUtils.ADDITIONAL, 10))

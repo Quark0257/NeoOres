@@ -1,8 +1,9 @@
 package neo_ores.client.render.entity;
 
-import neo_ores.client.particle.ParticleMagic;
+import neo_ores.client.particle.TexturedParticle;
 import neo_ores.entity.EntitySpellBullet;
-import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.event.NeoOresClientEvents;
+import neo_ores.main.NeoOres;
 import neo_ores.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -72,9 +73,9 @@ public class RenderSpellBullet extends Render<EntitySpellBullet>
 				dy = m * entity.world.rand.nextDouble() - 0.5 * m;
 				dz = m * entity.world.rand.nextDouble() - 0.5 * m;
 
-				ParticleMagic png = new ParticleMagic(entity.world, px + dx, py + dy, pz + dz, 0.0, 0.0, 0.0, SpellUtils.getColor(entity.getStack()),
-						Math.min(6 + entity.world.rand.nextInt(4), Math.max(0, entity.life - 1)), 1.0F, NeoOresRegisterEvents.particle0);
-				Minecraft.getMinecraft().effectRenderer.addEffect(png);
+				NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(px + dx, py + dy, pz + dz, 0.0, 0.0, 0.0, 
+						Math.min(6 + entity.world.rand.nextInt(4), Math.max(0, entity.life - 1)), 1.0F, NeoOres.PARTICLE_MAGIC)
+						.setColor(SpellUtils.getColor(entity.getStack()), 1.0F));
 			}
 		}
 	}

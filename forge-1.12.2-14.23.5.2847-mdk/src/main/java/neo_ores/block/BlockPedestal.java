@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresItems;
 import neo_ores.tileentity.TileEntityPedestal;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -108,6 +109,16 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 	{
 		return false;
 	}
+	
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+	{
+		boolean flag = worldIn.isBlockPowered(pos);
+		if (flag && worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityPedestal)
+		{
+			TileEntityPedestal tep = (TileEntityPedestal) worldIn.getTileEntity(pos);
+			tep.spellCreation(worldIn, fromPos, state, null);
+		}
+	}
 
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer()
@@ -151,7 +162,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 				}
 				else if (item == NeoOresItems.mana_wrench)
 				{
-					teep.spellCreation(worldIn, pos, state, playerIn, hand, facing, hitZ, hitZ, hitZ);
+					teep.spellCreation(worldIn, pos, state, playerIn);
 				}
 				else if (!playerIn.isSneaking())
 				{

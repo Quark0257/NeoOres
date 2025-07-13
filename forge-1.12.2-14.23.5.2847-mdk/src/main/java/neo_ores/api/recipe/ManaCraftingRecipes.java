@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -33,7 +34,7 @@ public class ManaCraftingRecipes
 	}
 
 	@SuppressWarnings({ "deprecation" })
-	public Object[] getResult(List<ItemStack[]> items)
+	public static Tuple<ItemStack, Long> getResult(List<ItemStack[]> items)
 	{
 		for (ManaCraftingRecipe recipe : GameRegistry.findRegistry(ManaCraftingRecipe.class).getValues())
 		{
@@ -56,7 +57,7 @@ public class ManaCraftingRecipes
 									d++;
 									if (d == recipe.getShapelessRecipe().size())
 									{
-										return new Object[] { recipe.getResult().copy(), recipe.mana() };
+										return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 									}
 								}
 							}
@@ -80,7 +81,7 @@ public class ManaCraftingRecipes
 									a++;
 									if (a == 9)
 									{
-										return new Object[] { recipe.getResult().copy(), recipe.mana() };
+										return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 									}
 								}
 							}
@@ -103,7 +104,7 @@ public class ManaCraftingRecipes
 										a++;
 										if (a == 6)
 										{
-											return new Object[] { recipe.getResult().copy(), recipe.mana() };
+											return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 										}
 									}
 								}
@@ -123,7 +124,7 @@ public class ManaCraftingRecipes
 								a++;
 								if (a == 3)
 								{
-									return new Object[] { recipe.getResult().copy(), recipe.mana() };
+									return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 								}
 							}
 						}
@@ -145,7 +146,7 @@ public class ManaCraftingRecipes
 										a++;
 										if (a == 6)
 										{
-											return new Object[] { recipe.getResult().copy(), recipe.mana() };
+											return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 										}
 									}
 								}
@@ -168,7 +169,7 @@ public class ManaCraftingRecipes
 									a++;
 									if (a == 3)
 									{
-										return new Object[] { recipe.getResult().copy(), recipe.mana() };
+										return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 									}
 								}
 							}
@@ -194,7 +195,7 @@ public class ManaCraftingRecipes
 											a++;
 											if (a == 4)
 											{
-												return new Object[] { recipe.getResult().copy(), recipe.mana() };
+												return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 											}
 										}
 									}
@@ -218,7 +219,7 @@ public class ManaCraftingRecipes
 									a++;
 									if (a == 2)
 									{
-										return new Object[] { recipe.getResult().copy(), recipe.mana() };
+										return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 									}
 								}
 							}
@@ -243,7 +244,7 @@ public class ManaCraftingRecipes
 										a++;
 										if (a == 2)
 										{
-											return new Object[] { recipe.getResult().copy(), recipe.mana() };
+											return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 										}
 									}
 								}
@@ -263,14 +264,11 @@ public class ManaCraftingRecipes
 										&& items.get(0)[(2 - m) / 2].isEmpty() && items.get(0)[2 - (m / 2)].isEmpty() && items.get((2 - l) / 2)[(2 - m) / 2].isEmpty()
 										&& items.get(2 - (l / 2))[(2 - m) / 2].isEmpty() && items.get((2 - l) / 2)[2 - (m / 2)].isEmpty() && items.get(2 - (l / 2))[2 - (m / 2)].isEmpty())
 								{
-									return new Object[] { recipe.getResult().copy(), recipe.mana() };
+									return new Tuple<>(recipe.getResult().copy(), recipe.mana());
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-		return new Object[] { ItemStack.EMPTY, 0L };
-	}
-}
+}return new Tuple<>(ItemStack.EMPTY,0L);}}

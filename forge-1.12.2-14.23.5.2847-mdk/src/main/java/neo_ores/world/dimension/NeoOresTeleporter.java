@@ -95,8 +95,6 @@ public class NeoOresTeleporter extends Teleporter
 								{
 									ObfuscationReflectionHelper.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
 									((EntityPlayerMP) entityIn).setPositionAndUpdate(j + x + 0.5D, k + y + 1.5D, l + z + 0.5D);
-									// ((EntityPlayerMP)entityIn).connection.setPlayerLocation(j + x + 0.5D, k + y +
-									// 1.5D, l + z + 0.5D, entityIn.rotationYaw, entityIn.rotationPitch);
 									((EntityPlayerMP) entityIn).connection.sendPacket(new SPacketCustomSound(SoundEvents.BLOCK_PORTAL_TRAVEL.getRegistryName().getResourcePath(), SoundCategory.PLAYERS,
 											entityIn.posX, entityIn.posY, entityIn.posZ, 0.5F, worldIn.provider.getDimension() == 0 ? 1.0F : this.soundPitch()));
 								}

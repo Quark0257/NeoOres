@@ -4,7 +4,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
@@ -49,7 +48,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 			EnumFacing face = result.sideHit;
 			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);

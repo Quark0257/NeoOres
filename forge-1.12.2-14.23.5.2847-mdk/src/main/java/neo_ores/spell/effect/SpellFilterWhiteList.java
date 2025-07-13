@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
@@ -37,7 +36,7 @@ public class SpellFilterWhiteList extends SpellEffect implements HasRange
 				{
 					return;
 				}
-				SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+				SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
 				List<Entity> list = HasRange.getRangedEntities(world, 0.5 + this.range, entity, runner, false, true);
 				List<ItemStack> whiteList = SpellUtils.getFilteredItems(target, false);
 				List<ItemStack> blackList = SpellUtils.getFilteredItems(target, true);

@@ -332,5 +332,16 @@ public class NeoOres
 	public static final Biome fire = new BiomeTheFire((new Biome.BiomeProperties("Michael's Forest")).setTemperature(2.0F)).setRegistryName(Reference.MOD_ID, "fire");
 	public static final Biome water = new BiomeTheWater((new Biome.BiomeProperties("Gabriel's Forest")).setTemperature(0.5F)).setRegistryName(Reference.MOD_ID, "water");
 	
+	public static final ResourceLocation[] PARTICLE_MAGIC = new ResourceLocation[] {
+			new ResourceLocation("neo_ores:textures/particles/particle_animated0.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated1.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated2.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated3.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated4.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated5.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated6.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated7.png"),
+	};
+	
 	public static final List<OreWeightRecipe> ore_gen_recipes = new ArrayList<OreWeightRecipe>();
 }

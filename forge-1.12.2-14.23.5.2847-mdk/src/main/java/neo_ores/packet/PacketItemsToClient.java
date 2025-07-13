@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import neo_ores.main.NeoOres;
 import neo_ores.tileentity.AbstractTileEntityPedestal;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
+import neo_ores.tileentity.TileEntityPedestal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -66,6 +67,11 @@ public class PacketItemsToClient implements IMessage
 						if (message.nbt.hasKey("slotsize") && teep instanceof TileEntityEnhancedPedestal)
 						{
 							((TileEntityEnhancedPedestal) teep).slotsize = message.nbt.getInteger("slotsize");
+						}
+						
+						if (message.nbt.hasKey("multiblock") && te instanceof TileEntityPedestal) {
+							((TileEntityPedestal) te).setClient(message.nbt.getBoolean("multiblock"), message.nbt.getInteger("phase"),
+									message.nbt.getInteger("maxPhase"), message.nbt.getBoolean("isCreating"));
 						}
 					}
 				}

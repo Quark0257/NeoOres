@@ -18,7 +18,8 @@ import com.google.common.base.Predicates;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
-import neo_ores.client.particle.ParticleMagic;
+import neo_ores.client.particle.TexturedParticle;
+import neo_ores.event.NeoOresClientEvents;
 import neo_ores.api.ILifeContainer;
 import neo_ores.api.MathUtils;
 import neo_ores.api.MathUtils.Surface;
@@ -31,8 +32,6 @@ import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
 import neo_ores.spell.form.IPassiveSpell;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -762,39 +761,39 @@ public class SpellUtils
 		return list;
 	}
 
-	private static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	private static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, int color, int particleVolume, boolean isSendPacket)
 	{
 		if (world.isRemote)
 		{
-			SpellUtils.displayParticleTypeA(world, target, size, texture, color, particleVolume);
+			SpellUtils.displayParticleTypeA(world, target, size, color, particleVolume);
 		}
 		else if (isSendPacket)
 		{
-			PacketParticleToClient ppc = new PacketParticleToClient(target, size, texture, color, particleVolume, world.provider.getDimension());
+			PacketParticleToClient ppc = new PacketParticleToClient(target, size, color, particleVolume, world.provider.getDimension());
 			NeoOres.PACKET.sendToAll(ppc);
 		}
 	}
 
-	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
+	public static void onDisplayParticleTypeA(World world, Vec3d target, Vec3d size, int color, int particleVolume)
 	{
-		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, true);
+		SpellUtils.onDisplayParticleTypeA(world, target, size, color, particleVolume, true);
 	}
 
-	private static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume, boolean isSendPacket)
+	private static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, int color, int particleVolume, boolean isSendPacket)
 	{
 		AxisAlignedBB aabb = targetEntity.getEntityBoundingBox();
 		Vec3d target = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
 		Vec3d size = new Vec3d(aabb.maxX - aabb.minX, aabb.maxY - aabb.minY, aabb.maxZ - aabb.minZ);
-		SpellUtils.onDisplayParticleTypeA(world, target, size, texture, color, particleVolume, isSendPacket);
+		SpellUtils.onDisplayParticleTypeA(world, target, size, color, particleVolume, isSendPacket);
 	}
 
-	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, TextureAtlasSprite[] texture, int color, int particleVolume)
+	public static void onDisplayParticleTypeAEntity(World world, Entity targetEntity, int color, int particleVolume)
 	{
-		SpellUtils.onDisplayParticleTypeAEntity(world, targetEntity, texture, color, particleVolume, true);
+		SpellUtils.onDisplayParticleTypeAEntity(world, targetEntity, color, particleVolume, true);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void displayParticleTypeA(World world, Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume)
+	public static void displayParticleTypeA(World world, Vec3d target, Vec3d size, int color, int particleVolume)
 	{
 		for (Pair<Vec3d, Vec3d> entry : SpellUtils.getPosVelOnParallelepiped(target, size, size))
 		{
@@ -803,8 +802,8 @@ public class SpellUtils
 			for (int j = 0; j < particleVolume; j++)
 			{
 				int d = (int) (10.0D / (Math.random() + 0.5D));
-				ParticleMagic png = new ParticleMagic(world, start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, color, d, 1.0F, texture);
-				Minecraft.getMinecraft().effectRenderer.addEffect(png);
+				NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d,
+						d, 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 			}
 		}
 	}

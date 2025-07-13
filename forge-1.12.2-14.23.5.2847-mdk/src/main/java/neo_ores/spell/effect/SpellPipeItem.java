@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.packet.PacketLineParticleToClient;
@@ -97,7 +96,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 						{
 							continue;
 						}
-						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						TileEntity te = world.getTileEntity(pos);
 						if (te != null && te instanceof IInventory)
 						{
@@ -166,7 +165,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 					EnumFacing face = result.sideHit;
 					for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 					{
-						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						TileEntity te = world.getTileEntity(pos);
 						if (te != null && te instanceof IInventory)
 						{
@@ -236,7 +235,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 			{
 				return false;
 			}
-			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
 			ItemStack result = InventoryUtils.addInventoryfromStack(target, dist, face);
 			if (!target.isEmpty() && result.getCount() != target.getCount())
 			{
@@ -259,7 +258,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 			{
 				return false;
 			}
-			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
 			if (!target.isEmpty())
 			{
 				this.entityItemSpawn(target.copy(), pushWorld, x, y, z);

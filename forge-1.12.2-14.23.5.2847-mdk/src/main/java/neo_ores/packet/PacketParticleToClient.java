@@ -1,11 +1,9 @@
 package neo_ores.packet;
 
 import io.netty.buffer.ByteBuf;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.util.SpellUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -27,7 +25,7 @@ public class PacketParticleToClient implements IMessage
 		this.nbt = nbt;
 	}
 
-	public PacketParticleToClient(Vec3d target, Vec3d size, TextureAtlasSprite[] texture, int color, int particleVolume, int dimension)
+	public PacketParticleToClient(Vec3d target, Vec3d size, int color, int particleVolume, int dimension)
 	{
 		this.nbt = new NBTTagCompound();
 		NBTTagCompound targetTag = new NBTTagCompound();
@@ -43,10 +41,6 @@ public class PacketParticleToClient implements IMessage
 		this.nbt.setInteger("particleVolume", particleVolume);
 		this.nbt.setInteger("color", color);
 		this.nbt.setInteger("dim", dimension);
-		if (texture == NeoOresRegisterEvents.particle0)
-			this.nbt.setString("type", "a_0");
-		else
-			this.nbt.setString("type", "-1");
 	}
 
 	@Override
@@ -78,17 +72,11 @@ public class PacketParticleToClient implements IMessage
 					{
 						return;
 					}
-					String type = message.nbt.getString("type");
-					if (type.equals("-1"))
-						return;
-					if (type.equals("a_0"))
-					{
-						NBTTagCompound targetTag = message.nbt.getCompoundTag("target");
-						Vec3d target = new Vec3d(targetTag.getDouble("x"), targetTag.getDouble("y"), targetTag.getDouble("z"));
-						NBTTagCompound sizeTag = message.nbt.getCompoundTag("size");
-						Vec3d size = new Vec3d(sizeTag.getDouble("x"), sizeTag.getDouble("y"), sizeTag.getDouble("z"));
-						SpellUtils.displayParticleTypeA(world, target, size, NeoOresRegisterEvents.particle0, message.nbt.getInteger("color"), message.nbt.getInteger("particleVolume"));
-					}
+					NBTTagCompound targetTag = message.nbt.getCompoundTag("target");
+					Vec3d target = new Vec3d(targetTag.getDouble("x"), targetTag.getDouble("y"), targetTag.getDouble("z"));
+					NBTTagCompound sizeTag = message.nbt.getCompoundTag("size");
+					Vec3d size = new Vec3d(sizeTag.getDouble("x"), sizeTag.getDouble("y"), sizeTag.getDouble("z"));
+					SpellUtils.displayParticleTypeA(world, target, size, message.nbt.getInteger("color"), message.nbt.getInteger("particleVolume"));
 				}
 			});
 			return null;

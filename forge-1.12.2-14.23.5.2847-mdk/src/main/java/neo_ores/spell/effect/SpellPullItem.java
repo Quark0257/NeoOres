@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
@@ -41,7 +40,7 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 			EnumFacing face = result.sideHit;
 			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te instanceof IInventory && !this.liquidMode)
 				{
@@ -117,7 +116,7 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 			{
 				return;
 			}
-			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
 			ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory(player), EnumFacing.UP);
 			if (!target.isEmpty() && result.getCount() != target.getCount())
 			{

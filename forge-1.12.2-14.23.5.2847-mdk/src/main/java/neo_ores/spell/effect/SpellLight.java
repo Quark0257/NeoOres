@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
@@ -54,7 +53,7 @@ public class SpellLight extends SpellEffect implements HasRange
 			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
 				BlockPos targetPos = posAir ? pos : pos.add(face.getDirectionVec());
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0,
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1),
 						SpellUtils.getColor(stack), 8);
 				IBlockState state = NeoOresBlocks.light.getStateForPlacement(world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z, 0, player,
 						player.getActiveHand());

@@ -2,7 +2,6 @@ package neo_ores.spell.effect;
 
 import neo_ores.api.recipe.MCPRUtils;
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresData;
 import neo_ores.main.NeoOresItems;
@@ -38,7 +37,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 		{
 			if (world.getBlockState(result.getBlockPos()).getBlock() == NeoOresBlocks.enhanced_pedestal)
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(result.getBlockPos().getX(), result.getBlockPos().getY(), result.getBlockPos().getZ()), new Vec3d(1, 0.8125, 1), NeoOresRegisterEvents.particle0,
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(result.getBlockPos().getX(), result.getBlockPos().getY(), result.getBlockPos().getZ()), new Vec3d(1, 0.8125, 1),
 						SpellUtils.getColor(stack), 8);
 				ItemStack itemstack = MCPRUtils.getResult(world, result.getBlockPos(), tier);
 				if (!itemstack.isEmpty())
@@ -79,7 +78,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 				TileEntity te = world.getTileEntity(result.getBlockPos());
 				if (te instanceof TileEntityPedestal)
 				{
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(result.getBlockPos().getX(), result.getBlockPos().getY(), result.getBlockPos().getZ()), new Vec3d(1, 0.8125, 1), NeoOresRegisterEvents.particle0,
+					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(result.getBlockPos().getX(), result.getBlockPos().getY(), result.getBlockPos().getZ()), new Vec3d(1, 0.8125, 1),
 							SpellUtils.getColor(stack), 8);
 					TileEntityPedestal tep = (TileEntityPedestal) te;
 					Item item = tep.getStackInSlot(0).getItem();
@@ -95,7 +94,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						if (runner instanceof EntityPlayerMP)
 						{
 							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-							pmds.addMXP(Integer.MAX_VALUE / 4);
+							pmds.addMXP(1L + (long) Math.pow(4, tier));
 						}
 					}
 					if (3 <= tier && item == NeoOresItems.essence && meta == 0)
@@ -106,7 +105,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						if (runner instanceof EntityPlayerMP)
 						{
 							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-							pmds.addMXP(Integer.MAX_VALUE / 16384);
+							pmds.addMXP(1L + (long) Math.pow(4, tier));
 						}
 					}
 					if (9 <= tier && item == NeoOresItems.essence && meta == 2)
@@ -117,7 +116,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						if (runner instanceof EntityPlayerMP)
 						{
 							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-							pmds.addMXP(Integer.MAX_VALUE);
+							pmds.addMXP(1L + (long) Math.pow(4, tier));
 						}
 					}
 					if (5 <= tier && item == NeoOresItems.essence && meta == 1)
@@ -128,7 +127,7 @@ public class SpellComposition extends SpellEffect implements HasTier
 						if (runner instanceof EntityPlayerMP)
 						{
 							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-							pmds.addMXP(Integer.MAX_VALUE / 64);
+							pmds.addMXP(1L + (long) Math.pow(4, tier));
 						}
 					}
 				}

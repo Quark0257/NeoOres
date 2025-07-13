@@ -1,6 +1,5 @@
 package neo_ores.spell.effect;
 
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasDimensionOver;
@@ -60,7 +59,7 @@ public class SpellTranslocate extends SpellEffectEntityBase implements HasDimens
 					elb.dismountRidingEntity();
 		        }
 				
-				SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+				SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 				
 				if (world.getBlockState(pushPos).getBlock() != Blocks.AIR)
 				{
@@ -92,7 +91,7 @@ public class SpellTranslocate extends SpellEffectEntityBase implements HasDimens
 						elb.dismountRidingEntity();
 			        }
 					
-					SpellUtils.onDisplayParticleTypeAEntity(world, elb, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+					SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 					
 					PlayerList playerList = server.getPlayerList();
 

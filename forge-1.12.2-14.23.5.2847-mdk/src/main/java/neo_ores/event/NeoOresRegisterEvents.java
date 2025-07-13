@@ -466,9 +466,8 @@ public class NeoOresRegisterEvents
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void textureHook(TextureStitchEvent.Pre event)
+	public void onTextureStitch(TextureStitchEvent.Pre event)
 	{
-		// event.getMap().updateAnimations();
 		earth0 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/earth0"));
 		water0 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/water0"));
 		air0 = event.getMap().registerSprite(new ResourceLocation("neo_ores:particles/air0"));

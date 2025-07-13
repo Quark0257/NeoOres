@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOres;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.EntityLivingBase;
@@ -61,7 +60,7 @@ public class SpellTeleport extends SpellEffect
 			runner.dismountRidingEntity();
         }
 		
-		SpellUtils.onDisplayParticleTypeAEntity(world, runner, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+		SpellUtils.onDisplayParticleTypeAEntity(world, runner, SpellUtils.getColor(stack), 16);
 		runner.setPositionAndUpdate(targetX, targetY, targetZ);
 	}
 }

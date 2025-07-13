@@ -3,7 +3,6 @@ package neo_ores.spell.effect;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,7 +18,7 @@ public class SpellDisarm extends SpellEffectEntityBase
 	{
 		if (entity instanceof EntityLivingBase && !this.isFakePlayer(entity))
 		{
-			SpellUtils.onDisplayParticleTypeAEntity(world, entity, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, entity, SpellUtils.getColor(stack), 16);
 			EntityLivingBase elb = (EntityLivingBase) entity;
 			List<EntityEquipmentSlot> slots = new ArrayList<EntityEquipmentSlot>();
 			for (EntityEquipmentSlot slot : EntityEquipmentSlot.values())

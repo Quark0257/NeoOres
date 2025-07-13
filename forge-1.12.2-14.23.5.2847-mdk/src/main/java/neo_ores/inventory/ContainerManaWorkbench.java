@@ -20,6 +20,7 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,7 +33,6 @@ public class ContainerManaWorkbench extends Container
 	private final World world;
 	private final BlockPos selfPosition;
 	public long cost;
-	public ManaCraftingRecipes recipe = new ManaCraftingRecipes();
 	private final EntityPlayer player;
 	private int count;
 
@@ -167,9 +167,9 @@ public class ContainerManaWorkbench extends Container
 		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(0), this.inputSlots.getStackInSlot(1), this.inputSlots.getStackInSlot(2) });
 		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(3), this.inputSlots.getStackInSlot(4), this.inputSlots.getStackInSlot(5) });
 		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(6), this.inputSlots.getStackInSlot(7), this.inputSlots.getStackInSlot(8) });
-
-		this.cost = (Long) recipe.getResult(items)[1];
-		ItemStack outputItem = (ItemStack) recipe.getResult(items)[0];
+		Tuple<ItemStack, Long> recipeResult = ManaCraftingRecipes.getResult(items);
+		this.cost = recipeResult.getSecond();
+		ItemStack outputItem = recipeResult.getFirst().copy();
 
 		if (outputItem.isEmpty())
 		{

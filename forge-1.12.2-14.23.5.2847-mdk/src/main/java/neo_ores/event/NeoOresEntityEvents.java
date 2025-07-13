@@ -28,6 +28,7 @@ import neo_ores.potion.PotionNeoOres;
 import neo_ores.spell.form.IPassiveSpell;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerMagicData;
+import neo_ores.util.ServerUtils;
 import neo_ores.util.SpellUtils;
 import neo_ores.world.dimension.FromAirTeleporter;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
@@ -64,11 +65,13 @@ import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
@@ -331,6 +334,8 @@ public class NeoOresEntityEvents
 						}
 					}
 				}
+
+				ServerUtils.resetEntityTarget(event.getEntity());
 			}
 
 			// MP updater
@@ -428,6 +433,23 @@ public class NeoOresEntityEvents
 				}
 				NeoOresData.instance.getPSD(entityPlayerMP).setSneak(entityPlayerMP.isSneaking());
 			}
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.NORMAL) 
+	public void onLivingDrop(LivingDropsEvent event)
+	{
+		EntityLivingBase entity = event.getEntityLiving();
+		World worldIn = entity.world;
+		if (worldIn.isRemote)
+		{
+			return;
+		}
+		NBTTagCompound tag = entity.getEntityData();
+		if (tag.hasKey("ownerUUID"))
+		{
+			boolean isOwnerPlayer = tag.getBoolean("ownerPlayer");
+			event.setCanceled(isOwnerPlayer);
 		}
 	}
 
@@ -615,6 +637,14 @@ public class NeoOresEntityEvents
 					}
 				}
 			}
+
+			if (player instanceof EntityPlayerMP && !(player instanceof FakePlayer) && event.getTarget() instanceof EntityLivingBase)
+			{
+				if (NeoOresData.instance != null)
+				{
+					NeoOresData.instance.getPSD((EntityPlayerMP) player).setAttackingEntity((EntityLivingBase) event.getTarget());
+				}
+			}
 		}
 	}
 
@@ -710,7 +740,7 @@ public class NeoOresEntityEvents
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onEnderTeleport(EnderTeleportEvent event)
 	{
@@ -722,4 +752,13 @@ public class NeoOresEntityEvents
 			}
 		}
 	}
+	
+	@SubscribeEvent
+	public void onEntityTargetSet(LivingSetAttackTargetEvent event) 
+	{
+		if (event.getEntity() != null && event.getTarget() != null) 
+		{
+			ServerUtils.resetEntityTarget(event.getEntity());
+		}
+	} 
 }

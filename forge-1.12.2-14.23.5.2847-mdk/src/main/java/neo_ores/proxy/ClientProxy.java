@@ -2,6 +2,7 @@ package neo_ores.proxy;
 
 import neo_ores.block.INeoOresBlock;
 import neo_ores.client.render.CustomModelFluid;
+import neo_ores.event.NeoOresClientEvents;
 import neo_ores.main.NeoOres;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -13,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.FMLClientHandler;
 
@@ -67,5 +69,6 @@ public class ClientProxy extends CommonProxy
 		gnome = EnumHelperClient.addMusicType("Gnome", NeoOres.MUSIC_EARTH, 3600, 12000);
 		salamandra = EnumHelperClient.addMusicType("Salamandra", NeoOres.MUSIC_FIRE, 3600, 12000);
 		undine = EnumHelperClient.addMusicType("Undine", NeoOres.MUSIC_WATER, 3600, 12000);
+		MinecraftForge.EVENT_BUS.register(NeoOresClientEvents.getInstance());
 	}
 }

@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -33,7 +32,7 @@ public class SpellLightningBolt extends SpellEffect
 		if (result.typeOfHit == Type.BLOCK)
 		{
 			BlockPos pos = result.getBlockPos();
-			SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+			SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 			world.addWeatherEffect(new EntityLightningBolt(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, false));
 			
 			if (runner instanceof EntityPlayerMP)
@@ -47,7 +46,7 @@ public class SpellLightningBolt extends SpellEffect
 			Entity entity = result.entityHit;
 			if (entity == null)
 				return;
-			SpellUtils.onDisplayParticleTypeAEntity(world, entity, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+			SpellUtils.onDisplayParticleTypeAEntity(world, entity, SpellUtils.getColor(stack), 16);
 			world.addWeatherEffect(new EntityLightningBolt(world, entity.posX, entity.posY, entity.posZ, false));
 			
 			if (runner instanceof EntityPlayerMP)

@@ -1,7 +1,11 @@
 package neo_ores.tileentity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -11,6 +15,8 @@ import neo_ores.api.StackUtils;
 import neo_ores.api.Structure;
 import neo_ores.api.StructureUtils;
 import neo_ores.api.spell.SpellItem;
+import neo_ores.client.particle.TexturedParticle;
+import neo_ores.event.NeoOresClientEvents;
 import neo_ores.item.ISpellWritable;
 import neo_ores.item.IPostscriptDataIntoSpell;
 import neo_ores.item.ISpellRecipeWritable;
@@ -20,6 +26,7 @@ import neo_ores.main.Reference;
 import neo_ores.packet.PacketItemsToClient;
 import neo_ores.util.CompareStateAlter;
 import neo_ores.util.SpellUtils;
+import net.jafama.FastMath;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -30,15 +37,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityPedestal extends AbstractTileEntityPedestal implements ISidedInventory
 {
@@ -47,10 +56,22 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	private boolean isMultiblock = false;
 	private boolean isCreating = false;
 	private int phase = 0;
+	private int maxPhase = 0;
 	private int requiredSize;
 	private NBTTagCompound additionalData = new NBTTagCompound();
 	private NBTTagList desc = new NBTTagList();
 	private ItemStack writingItem = ItemStack.EMPTY;
+	private String alterType = "";
+	private static final String[] ALTERS = new String[] { "alter_tier2", "alter_tier2_1", "alter_tier3", "alter_tier3_1", "alter_tier4" };
+
+	@SideOnly(Side.CLIENT)
+	public void setClient(boolean multiblock, int phase, int maxPhase, boolean isCreating)
+	{
+		this.isMultiblock = multiblock;
+		this.phase = phase;
+		this.maxPhase = maxPhase;
+		this.isCreating = isCreating;
+	}
 
 	public void readFromNBT(NBTTagCompound compound)
 	{
@@ -69,6 +90,8 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		this.additionalData = compound.getCompoundTag(SpellUtils.NBTTagUtils.ADDITIONAL);
 		this.desc = compound.getTagList(SpellUtils.NBTTagUtils.SPELL_DESC, 10);
 		this.writingItem = new ItemStack(compound.getCompoundTag("writingItem"));
+		this.alterType = compound.getString("alterType");
+		this.maxPhase = compound.getInteger("maxPhase");
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -86,6 +109,8 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		compound.setTag(SpellUtils.NBTTagUtils.ADDITIONAL, this.additionalData);
 		compound.setTag(SpellUtils.NBTTagUtils.SPELL_DESC, this.desc);
 		compound.setTag("writingItem", this.writingItem.writeToNBT(new NBTTagCompound()));
+		compound.setString("alterType", alterType);
+		compound.setInteger("maxPhase", maxPhase);
 		super.writeToNBT(compound);
 		return compound;
 	}
@@ -242,15 +267,19 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			nbttagcompound = stack.writeToNBT(nbttagcompound);
 			packet.setTag("display", nbttagcompound);
 			packet.setInteger("dim", this.world.provider.getDimension());
+			packet.setBoolean("multiblock", this.isMultiblock);
+			packet.setInteger("maxPhase", maxPhase);
+			packet.setInteger("phase", phase);
+			packet.setBoolean("isCreating", isCreating);
 			PacketItemsToClient pic = new PacketItemsToClient(packet);
 			NeoOres.PACKET.sendToAll(pic);
 		}
 
 		super.update();
-		this.isMultiblock = this.multiBlock();
 
 		if (!this.getWorld().isRemote)
 		{
+			this.isMultiblock = this.multiBlock();
 			boolean flag = false;
 			boolean flag2 = true;
 			if (this.isMultiblock && this.isCreating)
@@ -263,6 +292,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 				if (!flag)
 				{
 					List<RecipeOreStack> recipeFromList = SpellUtils.getRecipeFromList(recipeIn);
+					this.maxPhase = recipeFromList.size();
 					if (this.phase < recipeFromList.size())
 					{
 						if (!recipeFromList.get(this.phase).getListTogether().isEmpty())
@@ -278,11 +308,12 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 								{
 									if (recipeFromList.get(this.phase) instanceof RecipeOreStackWildCard)
 									{
-										if (stack.getItem() != NeoOresItems.spell_sheet) {
+										if (stack.getItem() != NeoOresItems.spell_sheet)
+										{
 											this.writingItem = stack.copy();
 											this.writingItem.setCount(1);
 										}
-										else 
+										else
 										{
 											this.writingItem = new ItemStack(NeoOresItems.spell);
 										}
@@ -371,7 +402,45 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 				this.isCreating = false;
 			}
 		}
+		else
+		{
+			boolean flag = this.isMultiblock();
+			if (flag)
+			{
+				double x = this.getPos().getX() + 0.5D;
+				double y = this.getPos().getY() + 0.5D;
+				double z = this.getPos().getZ() + 0.5D;
+				Random random = this.getWorld().rand;
+				for (int i = 0; i < 1; i++)
+				{
+					double r = 1.0 * random.nextDouble();
+					double theta = 2.0 * Math.PI * random.nextDouble();
+					double v = 3.0D * random.nextDouble() + 1.0D;
+					Vec3d start = new Vec3d(x + r * FastMath.cos(theta), y - 4.5D + (4.0D - v) * random.nextDouble(), z + r * FastMath.sin(theta));
+					Vec3d velocity = new Vec3d(0.0, v, 0.0);
+					for (int j = 0; j < 4; j++)
+					{
+						int d = (int) (60.0D / (random.nextDouble() + 0.5D));
+						NeoOresClientEvents.getInstance().addParticle(
+								new TexturedParticle(start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, d, 6.0F * random.nextFloat() + 1.0F, NeoOres.PARTICLE_MAGIC)
+										.setColor(this.getColor(), 1.0F));
+					}
+				}
+			}
+		}
+	}
 
+	private int getColor()
+	{
+		if (this.isCreating && this.maxPhase != 0)
+		{
+			double rate = 1.25 * Math.PI * (double) this.phase / (double) this.maxPhase;
+			double red = FastMath.min(FastMath.max(255.0 * FastMath.cos(rate), 0), 255) + FastMath.min(FastMath.max(-255.0 * FastMath.sin(rate), 0), 255);
+			double green = FastMath.min(FastMath.max(255.0 * FastMath.sin(rate), 0), 255);
+			double blue = FastMath.min(FastMath.max(-255.0 * FastMath.cos(rate), 0), 255);
+			return 256 * 256 * (int) red + 256 * (int) green + (int) blue;
+		}
+		return 0xDDDDDD;
 	}
 
 	public boolean multiBlock()
@@ -381,12 +450,21 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			if (this.getWorld() instanceof WorldServer)
 			{
 				WorldServer server = (WorldServer) this.getWorld();
-				Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/alter")).setPosition(this.getPos().add(-4, -5, -4));
+				if (!Arrays.asList(ALTERS).contains(this.alterType))
+				{
+					return false;
+				}
+				Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/" + this.alterType)).setPosition(this.getPos().add(-4, -5, -4));
 				CompareStateAlter csa = new CompareStateAlter(str);
 				return StructureUtils.isMatch(this.getWorld(), str, csa);
 			}
 		}
 		return false;
+	}
+
+	public boolean isMultiblock()
+	{
+		return this.isMultiblock;
 	}
 
 	private TileEntityEnhancedPedestal getEP()
@@ -465,26 +543,81 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		return stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage() && StackUtils.compareNBTWith(stack1, stack2);
 	}
 
-	public void spellCreation(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	public void spellCreation(World worldIn, BlockPos pos, IBlockState state, @Nullable EntityPlayer playerIn)
 	{
 		if (!world.isRemote)
 		{
+			if (!isMultiblock)
+			{
+				this.checkMultiBlockType();
+			}
 			if (!this.isMultiblock)
 			{
 				ITextComponent itextcomponent = new TextComponentTranslation("chat.noMultiblock");
-				playerIn.sendStatusMessage(itextcomponent, true);
+				if (playerIn != null)
+					playerIn.sendStatusMessage(itextcomponent, true);
 			}
 			else if (!this.isRecipeIn())
 			{
 				ITextComponent itextcomponent = new TextComponentTranslation("chat.noRecipe");
-				playerIn.sendStatusMessage(itextcomponent, true);
+				if (playerIn != null)
+					playerIn.sendStatusMessage(itextcomponent, true);
 			}
 			else if (!this.isCreating)
 			{
-				this.phase = 0;
-				this.isCreating = true;
-				this.requiredSize = 0;
-				this.writingItem = ItemStack.EMPTY;
+				if (SpellUtils.getMPConsume(getRecipeIn()) <= getMaxMana())
+				{
+					this.phase = 0;
+					this.isCreating = true;
+					this.requiredSize = 0;
+					this.writingItem = ItemStack.EMPTY;
+				}
+				else
+				{
+					ITextComponent itextcomponent = new TextComponentTranslation("chat.lackTier");
+					if (playerIn != null)
+						playerIn.sendStatusMessage(itextcomponent, true);
+				}
+			}
+		}
+	}
+
+	private long getMaxMana()
+	{
+		if (this.alterType.contains("alter_tier2"))
+		{
+			return 500L;
+		}
+		else if (this.alterType.contains("alter_tier3"))
+		{
+			return 50000L;
+		}
+		else if (this.alterType.contains("alter_tier4"))
+		{
+			return Long.MAX_VALUE;
+		}
+
+		return 0L;
+	}
+
+	private void checkMultiBlockType()
+	{
+		if (!this.getWorld().isRemote && this.offset < -0.4375)
+		{
+			if (this.getWorld() instanceof WorldServer)
+			{
+				WorldServer server = (WorldServer) this.getWorld();
+				for (String type : ALTERS)
+				{
+					Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/" + type)).setPosition(this.getPos().add(-4, -5, -4));
+					CompareStateAlter csa = new CompareStateAlter(str);
+					if (StructureUtils.isMatch(this.getWorld(), str, csa))
+					{
+						this.alterType = type;
+						this.isMultiblock = true;
+						break;
+					}
+				}
 			}
 		}
 	}

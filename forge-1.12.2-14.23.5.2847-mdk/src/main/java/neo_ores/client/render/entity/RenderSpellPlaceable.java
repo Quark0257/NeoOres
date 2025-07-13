@@ -1,8 +1,9 @@
 package neo_ores.client.render.entity;
 
-import neo_ores.client.particle.ParticleMagic;
+import neo_ores.client.particle.TexturedParticle;
 import neo_ores.entity.EntitySpellPlaceable;
-import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.event.NeoOresClientEvents;
+import neo_ores.main.NeoOres;
 import neo_ores.util.SpellUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -79,9 +80,8 @@ public class RenderSpellPlaceable extends Render<EntitySpellPlaceable>
 				double dx = baseX + dMulti * (entity.world.rand.nextDouble());
 				double dy = 0.5 * size.y * (entity.world.rand.nextDouble() - 0.5D);
 				double dz = baseZ + dMulti * (entity.world.rand.nextDouble());
-				ParticleMagic png = new ParticleMagic(entity.world, min.x + dx, py + dy, min.z + dz, 0.0, 0.0, 0.0, color, 12 + entity.world.rand.nextInt(8),
-						1.0F, NeoOresRegisterEvents.particle0);
-				Minecraft.getMinecraft().effectRenderer.addEffect(png);
+				NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(min.x + dx, py + dy, min.z + dz, 0.0, 0.0, 0.0,
+						12 + entity.world.rand.nextInt(8), 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 			}
 		}
 	}

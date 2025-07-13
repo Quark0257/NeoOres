@@ -34,7 +34,7 @@ public class BlockInstantAlter extends NeoOresBlock
 		if (worldIn.isRemote)
 			return true;
 		WorldServer server = (WorldServer) worldIn;
-		Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/alter")).setPosition(pos.add(-4, 0, -4));
+		Structure str = new Structure(server, new ResourceLocation(Reference.MOD_ID, "alter/alter_tier4")).setPosition(pos.add(-4, 0, -4));
 		str.addComponentParts(worldIn, new Random(), str.getBoundingBox());
 		return true;
 	}

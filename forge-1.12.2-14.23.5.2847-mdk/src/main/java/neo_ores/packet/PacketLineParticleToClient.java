@@ -1,8 +1,8 @@
 package neo_ores.packet;
 
 import io.netty.buffer.ByteBuf;
-import neo_ores.client.particle.ParticleMagic;
-import neo_ores.event.NeoOresRegisterEvents;
+import neo_ores.client.particle.TexturedParticle;
+import neo_ores.event.NeoOresClientEvents;
 import neo_ores.main.NeoOres;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -85,9 +85,8 @@ public class PacketLineParticleToClient implements IMessage
 						double dx = vel.x * (double)k / multiplier;
 						double dy = vel.y * (double)k / multiplier;
 						double dz = vel.z * (double)k / multiplier;
-						ParticleMagic png = new ParticleMagic(world, start.x + dx, start.y + dy, start.z + dz, 0.0, 0.0, 0.0, color, 6 + world.rand.nextInt(4),
-								1.0F, NeoOresRegisterEvents.particle0);
-						Minecraft.getMinecraft().effectRenderer.addEffect(png);
+						NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(start.x + dx, start.y + dy, start.z + dz, 0.0, 0.0, 0.0,
+								12 + world.rand.nextInt(8), 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 					}
 				}
 			});

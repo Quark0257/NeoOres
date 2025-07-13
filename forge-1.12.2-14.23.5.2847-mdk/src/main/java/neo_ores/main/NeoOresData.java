@@ -162,6 +162,15 @@ public class NeoOresData
 		}
 		return this.mapPlayerStatus.get(uuid);
 	}
+	
+	public PlayerStatusData getPSD(UUID uuid)
+	{
+		if (!this.mapPlayerStatus.containsKey(uuid))
+		{
+			return new PlayerStatusData();
+		}
+		return this.mapPlayerStatus.get(uuid);
+	}
 
 	@SideOnly(Side.CLIENT)
 	public static PlayerMagicDataClient getPMDC(UUID uuid)

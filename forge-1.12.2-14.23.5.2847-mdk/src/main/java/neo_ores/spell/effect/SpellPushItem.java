@@ -3,7 +3,6 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
@@ -49,7 +48,7 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te instanceof IInventory && !this.liquidMode)
 				{
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 					IInventory inventory = (IInventory) te;
 					Map<Integer, ItemStack> map = InventoryUtils.getInventoryStackList(target, true, EnumFacing.UP);
 					for (int i : map.keySet())
@@ -109,7 +108,7 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 							{
 								target.getStackInSlot(i).setCount(0);
 								InventoryUtils.addInventoryfromStack(new ItemStack(Items.BUCKET), target, EnumFacing.UP);
-								SpellUtils.onDisplayParticleTypeA(world, new Vec3d(nextPos.getX(), nextPos.getY(), nextPos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+								SpellUtils.onDisplayParticleTypeA(world, new Vec3d(nextPos.getX(), nextPos.getY(), nextPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 								if (runner instanceof EntityPlayerMP)
 								{
 									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -140,7 +139,7 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 					entityItem.motionY = 0.0;
 					entityItem.motionZ = 0.0;
 					world.spawnEntity(entityItem);
-					SpellUtils.onDisplayParticleTypeAEntity(world, entityItem, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+					SpellUtils.onDisplayParticleTypeAEntity(world, entityItem, SpellUtils.getColor(stack), 16);
 					original.setCount(0);
 					count++;
 					if (runner instanceof EntityPlayerMP)

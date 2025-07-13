@@ -1,7 +1,6 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasAmplify;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
@@ -53,7 +52,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 				IBlockState state = world.getBlockState(pos);
 				if (state.getBlock() instanceof IPlantable)
 				{
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 					for (int i = 0; i < (this.amp * this.amp * 2 + 1) * 10; i++)
 					{
 						state.getBlock().updateTick(world, pos, state, world.rand);
@@ -67,7 +66,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 				}
 				else if (state.getBlock() instanceof IGrowable)
 				{
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 					if (((IGrowable) state.getBlock()).canGrow(world, pos, state, false))
 					{
 						for (int i = 0; i < (this.amp * 2 + 1); i++)
@@ -95,7 +94,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 				{
 					EntityAgeable age = (EntityAgeable) temp;
 					age.ageUp(this.amp * 2 + 1, true);
-					SpellUtils.onDisplayParticleTypeAEntity(world, temp, NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 16);
+					SpellUtils.onDisplayParticleTypeAEntity(world, temp, SpellUtils.getColor(stack), 16);
 				}
 				
 				if (runner instanceof EntityPlayerMP)

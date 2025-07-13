@@ -3,7 +3,6 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
@@ -63,7 +62,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 			EnumFacing face = result.sideHit;
 			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
 			{
-				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0, SpellUtils.getColor(stack), 8);
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
 				{
 					IBlockState state = world.getBlockState(pos);

@@ -3,7 +3,6 @@ package neo_ores.spell.effect;
 import java.util.Map;
 
 import neo_ores.api.InventoryUtils;
-import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.spell.SpellItemInterfaces.HasPlantable;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.RayTraceUtils;
@@ -54,8 +53,7 @@ public class SpellPlace extends SpellEffectItemFiltered implements HasPlantable
 						continue;
 					if (item.getItem() instanceof ItemBlock && this.match(item, stack))
 					{
-						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0,
-								SpellUtils.getColor(stack), 8);
+						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						IBlockState state = ((ItemBlock) item.getItem()).getBlock().getStateForPlacement(world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y,
 								(float) result.hitVec.z, item.getMetadata(), player, player.getActiveHand());
 						if (state.getBlock().canPlaceBlockOnSide(world, targetPos, face)
@@ -68,15 +66,15 @@ public class SpellPlace extends SpellEffectItemFiltered implements HasPlantable
 					else if (item.getItem() instanceof IPlantable && this.match(item, stack) && this.plantable)
 					{
 						IPlantable plantable = (IPlantable) item.getItem();
-				        IBlockState state = world.getBlockState(pos);
-				        if (face == EnumFacing.UP && player.canPlayerEdit(pos.offset(face), face, item) && state.getBlock().canSustainPlant(state, world, pos, EnumFacing.UP, plantable) && world.isAirBlock(pos.up()))
-				        {
-				        	SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.up().getX(), pos.up().getY(), pos.up().getZ()), new Vec3d(1, 1, 1), NeoOresRegisterEvents.particle0,
-									SpellUtils.getColor(stack), 8);
-				            world.setBlockState(pos.up(), plantable.getPlant(world, pos.up()));
-				            item.shrink(1);
-				            break;
-				        }
+						IBlockState state = world.getBlockState(pos);
+						if (face == EnumFacing.UP && player.canPlayerEdit(pos.offset(face), face, item) && state.getBlock().canSustainPlant(state, world, pos, EnumFacing.UP, plantable)
+								&& world.isAirBlock(pos.up()))
+						{
+							SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.up().getX(), pos.up().getY(), pos.up().getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+							world.setBlockState(pos.up(), plantable.getPlant(world, pos.up()));
+							item.shrink(1);
+							break;
+						}
 					}
 				}
 			}

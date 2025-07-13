@@ -172,7 +172,7 @@ public class PlayerMagicData
 			return;
 		this.runMXP = true;
 		long gotLevel = this.getLevel();
-		float gotMXPBar = this.getMXPBar();
+		float gotMXPBar = this.getMXPBar() < 1.0F ? 1.0F : this.getMXPBar();
 		long gotMaxMana = this.getTrueMaxMana();
 		long level = 0;
 		long maxMana = 0;

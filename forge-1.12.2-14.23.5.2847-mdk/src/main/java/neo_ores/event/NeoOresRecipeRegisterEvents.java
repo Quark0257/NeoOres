@@ -19,8 +19,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 
+import neo_ores.api.PlayerTrigger;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.RecipeOreStackWildCard;
+import neo_ores.api.guide.GuidePage;
 import neo_ores.api.recipe.ManaCompositionRecipe;
 import neo_ores.api.recipe.ManaCraftingRecipe;
 import neo_ores.api.recipe.OreWeightRecipe;
@@ -28,7 +30,9 @@ import neo_ores.api.recipe.SpellRecipe;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.main.NeoOresGuidePages;
 import neo_ores.main.NeoOresItems;
+import neo_ores.main.NeoOresPlayerTriggers;
 import neo_ores.main.NeoOresSpells;
 import neo_ores.main.Reference;
 import net.minecraft.init.Blocks;
@@ -56,6 +60,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -73,6 +79,25 @@ public class NeoOresRecipeRegisterEvents
 		for (SpellItem spell : NeoOresSpells.registry)
 		{
 			event.getRegistry().register(spell);
+		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void registerPlayerTriggers(final RegistryEvent.Register<PlayerTrigger> event)
+	{
+		for (PlayerTrigger trigger : NeoOresPlayerTriggers.registry)
+		{
+			event.getRegistry().register(trigger);
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void registerGuidePages(final RegistryEvent.Register<GuidePage> event)
+	{
+		for (GuidePage page : NeoOresGuidePages.registry) 
+		{
+			event.getRegistry().register(page);
 		}
 	}
 
@@ -137,6 +162,11 @@ public class NeoOresRecipeRegisterEvents
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range2, new RecipeOreStack("dustGlowstone", 8), new RecipeOreStack("string", 2)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range3, new RecipeOreStack("dustGlowstone", 16), new RecipeOreStack("string", 3)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_range4, new RecipeOreStack("dustGlowstone", 32), new RecipeOreStack("string", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_chain1, new RecipeOreStack("dustGlowstone", 4), new RecipeOreStack(new ItemStack(Blocks.IRON_BARS), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_chain2, new RecipeOreStack("dustGlowstone", 8), new RecipeOreStack(new ItemStack(Blocks.IRON_BARS), 2)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_chain3, new RecipeOreStack("dustGlowstone", 16), new RecipeOreStack(new ItemStack(Blocks.IRON_BARS), 3)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_chain4, new RecipeOreStack("dustGlowstone", 32), new RecipeOreStack(new ItemStack(Blocks.IRON_BARS), 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_smelt, new RecipeOreStack(new ItemStack(Items.COAL, 1, 1), 2), new RecipeOreStack(new ItemStack(Blocks.FURNACE), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv1, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv2, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_damageLv3, new RecipeOreStack(new ItemStack(Items.SPIDER_EYE), 1), new RecipeOreStack("gemQuartz", 4)));
@@ -221,6 +251,11 @@ public class NeoOresRecipeRegisterEvents
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_sneak, new RecipeOreStack(new ItemStack(Blocks.STONE_SLAB, 1, 7), 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_fall, new RecipeOreStack("feather", 1), new RecipeOreStack("dustRedstone", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_death, new RecipeOreStack(new ItemStack(Items.ROTTEN_FLESH), 1), new RecipeOreStack("bone", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_craft, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack("dustRedstone", 1),
+				new RecipeOreStack(new ItemStack(Blocks.DROPPER), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pi, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1),
+				new RecipeOreStack("enderpearl", 4)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pi_mode, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack("string", 1)));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -320,7 +355,8 @@ public class NeoOresRecipeRegisterEvents
 					new ItemStack(NeoOresItems.fire_essence_core, 1, i), 'X', "netherStar");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.chunk_loader), 100, "FIW", "AIE", "III", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'W', new ItemStack(NeoOresItems.essence, 1, 1),
 				'A', new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'I', "ingotIron");
-		this.addManaCraftingRecipe(FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)), 10000, "MMM", "MBM", "MMM", 'M', new ItemStack(NeoOresItems.mana_ingot), 'B', new ItemStack(Items.BUCKET));
+		this.addManaCraftingRecipe(FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)), 10000, "MMM", "MBM", "MMM", 'M', new ItemStack(NeoOresItems.mana_ingot), 'B',
+				new ItemStack(Items.BUCKET));
 		this.addManaCraftingRecipe(new ItemStack(NeoOresBlocks.mechanical_magician, 1), 5000, "XFX", "A W", "XEX", 'F', new ItemStack(NeoOresItems.essence, 1, 2), 'A',
 				new ItemStack(NeoOresItems.essence, 1, 3), 'E', new ItemStack(NeoOresItems.essence, 1, 0), 'W', new ItemStack(NeoOresItems.essence, 1, 1), 'X', "ingotIron");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.position_sheet), 10, "D", "R", 'D', "dirt", 'R', new ItemStack(NeoOresItems.recipe_sheet));
@@ -329,10 +365,11 @@ public class NeoOresRecipeRegisterEvents
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.totem), 100, "DWD", "WSW", " W ", 'D', "gemDiamond", 'W', "cropWheat", 'S', "string");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_xp), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', "gemDrenite");
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_void), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', "obsidian");
-		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_fluid), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)));
+		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_fluid), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X',
+				FluidUtil.getFilledBucket(new FluidStack(NeoOresBlocks.fluid_mana, 1000)));
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_consume), 1000, "I I", " X ", "I I", 'I', "ingotIron", 'X', new ItemStack(NeoOresItems.mana_ingot));
 		this.addManaCraftingRecipe(new ItemStack(NeoOresItems.upgrade_convert_mana), 1000, "X", "U", 'U', new ItemStack(NeoOresItems.upgrade_xp), 'X', new ItemStack(NeoOresItems.mana_ingot));
-		
+
 		int n = 0;
 		for (ManaCraftingRecipeManager mcrm : manacraftingrecipes)
 		{
@@ -1095,6 +1132,18 @@ public class NeoOresRecipeRegisterEvents
 
 				configDefault.add("spell_ore_gen", spell_ore_gen);
 
+				JsonArray spell_infinity_place = new JsonArray();
+				JsonObject cobblestone = new JsonObject();
+				cobblestone.addProperty("id", "minecraft:cobblestone");
+				cobblestone.addProperty("metadata", 0);
+				spell_infinity_place.add(cobblestone);;
+				JsonObject stone1 = new JsonObject();
+				stone1.addProperty("id", "minecraft:stone");
+				stone1.addProperty("metadata", 0);
+				spell_infinity_place.add(stone1);
+				
+				configDefault.add("spell_infinity_place", spell_infinity_place);
+				
 				Gson gson = new GsonBuilder().serializeNulls().create();
 				writer.setIndent("  ");
 				gson.toJson(configDefault, writer);
@@ -1129,6 +1178,18 @@ public class NeoOresRecipeRegisterEvents
 						JsonObject gen = genE.getAsJsonObject();
 						OreWeightRecipe recipe = new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString()));
 						NeoOres.ore_gen_recipes.add(recipe);
+					}
+					catch (Exception e)
+					{
+						FMLLog.log.error("Unable to register");
+					}
+				}
+				for (JsonElement genE : jo.get("spell_infinity_place").getAsJsonArray())
+				{
+					try
+					{
+						JsonObject gen = genE.getAsJsonObject();
+						NeoOres.infinity_place_blocks.add(gen);
 					}
 					catch (Exception e)
 					{

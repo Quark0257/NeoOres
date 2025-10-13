@@ -9,7 +9,9 @@ import java.util.Random;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import neo_ores.api.IPlayerRunnable;
 import neo_ores.api.InventoryUtils;
+import neo_ores.api.PlayerTrigger;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.block.BlockDimension;
@@ -73,6 +75,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionExpiryEvent;
+import net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -83,6 +87,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -234,6 +239,10 @@ public class NeoOresEntityEvents
 		{
 			NeoOresData.instance.getPSD((EntityPlayerMP) event.player).setLoggedIn(false);
 		}
+		else
+		{
+			NeoOresData.resetStructures();
+		}
 	}
 
 	@SubscribeEvent
@@ -283,7 +292,7 @@ public class NeoOresEntityEvents
 						IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
 						for (int slot = 0; slot < handler.getSlots(); slot++)
 						{
-							ItemStack stack = BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
+							ItemStack stack = handler.getStackInSlot(slot);
 							if (!stack.isEmpty())
 							{
 								itemSpells.put(slot + EntityEquipmentSlot.values().length, stack);
@@ -433,10 +442,48 @@ public class NeoOresEntityEvents
 				}
 				NeoOresData.instance.getPSD(entityPlayerMP).setSneak(entityPlayerMP.isSneaking());
 			}
+			
+			// Run player tasks
+			if (event.getEntity() != null && event.getEntity() instanceof EntityPlayerMP) 
+			{
+				EntityPlayerMP entityPlayerMP = (EntityPlayerMP) event.getEntity();
+				List<IPlayerRunnable> unrunnables = new ArrayList<>();
+				while (true) 
+				{
+					IPlayerRunnable runnable = NeoOresData.instance.pollTask(entityPlayerMP);
+					if (runnable == null) 
+					{
+						break;
+					}
+					if (runnable.isRunnable(entityPlayerMP)) 
+					{
+						runnable.run(entityPlayerMP);
+					}
+					else
+					{
+						unrunnables.add(runnable);
+					}
+				}
+				for (IPlayerRunnable runnable : unrunnables) 
+				{
+					NeoOresData.instance.addPlayerTask(entityPlayerMP, runnable);
+				}
+			}
+			
+			// Player Triggers
+			if (event.getEntity() != null && event.getEntity() instanceof EntityPlayerMP) 
+			{
+				EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+				PlayerMagicData pmd = NeoOresData.instance.getPMD(player);
+				for (PlayerTrigger trigger : GameRegistry.findRegistry(PlayerTrigger.class).getValuesCollection()) 
+				{
+					pmd.triggerPlayerTrigger(trigger, player);
+				}
+			}
 		}
 	}
-	
-	@SubscribeEvent(priority = EventPriority.NORMAL) 
+
+	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public void onLivingDrop(LivingDropsEvent event)
 	{
 		EntityLivingBase entity = event.getEntityLiving();
@@ -752,13 +799,43 @@ public class NeoOresEntityEvents
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
-	public void onEntityTargetSet(LivingSetAttackTargetEvent event) 
+	public void onEntityTargetSet(LivingSetAttackTargetEvent event)
 	{
-		if (event.getEntity() != null && event.getTarget() != null) 
+		if (event.getEntity() != null && event.getTarget() != null)
 		{
 			ServerUtils.resetEntityTarget(event.getEntity());
 		}
-	} 
+	}
+
+	@SubscribeEvent
+	public void onPotionRemove(PotionRemoveEvent event)
+	{
+		if (event.getPotion() == NeoOres.flying)
+		{
+			if (event.getEntityLiving() != null && event.getEntityLiving() instanceof EntityPlayerMP)
+			{
+				EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+				player.capabilities.allowFlying = false;
+				player.capabilities.isFlying = false;
+				player.sendPlayerAbilities();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onPotionExpire(PotionExpiryEvent event)
+	{
+		if (event.getPotionEffect().getPotion() == NeoOres.flying)
+		{
+			if (event.getEntityLiving() != null && event.getEntityLiving() instanceof EntityPlayerMP)
+			{
+				EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+				player.capabilities.allowFlying = false;
+				player.capabilities.isFlying = false;
+				player.sendPlayerAbilities();
+			}
+		}
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import neo_ores.client.particle.TexturedParticle;
+import neo_ores.pi.PIClientData;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -17,11 +18,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class NeoOresClientEvents
 {
 	private static NeoOresClientEvents instance = null;
+	private final PIClientData piClient;
 	private final List<TexturedParticle> list;
 
 	private NeoOresClientEvents()
 	{
 		this.list = new ArrayList<>();
+		this.piClient = new PIClientData();
 	}
 
 	public static NeoOresClientEvents getInstance()
@@ -31,6 +34,11 @@ public class NeoOresClientEvents
 			instance = new NeoOresClientEvents();
 		}
 		return instance;
+	}
+	
+	public PIClientData getPIClientData()
+	{
+		return this.piClient;
 	}
 
 	public void addParticle(TexturedParticle particle)
@@ -81,7 +89,7 @@ public class NeoOresClientEvents
 	@SubscribeEvent
 	public void onClientTickEnd(TickEvent.ClientTickEvent event)
 	{
-		if (event.phase != TickEvent.Phase.END)
+		if (event.phase != TickEvent.Phase.END || Minecraft.getMinecraft().isGamePaused())
 		{
 			return;
 		}

@@ -1,11 +1,16 @@
 package neo_ores.tileentity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import neo_ores.api.LargeItemStack;
+import neo_ores.api.StackUtils;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresItems;
 import neo_ores.packet.PacketItemsToClient;
@@ -13,6 +18,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityHopper;
@@ -20,11 +26,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal implements ISidedInventory
 {
 	public int slotsize;
-	private NonNullList<LargeItemStack> item_list = NonNullList.withSize(this.slotsize, LargeItemStack.EMPTY);
+	private NonNullList<ItemStack> itemList = NonNullList.withSize(this.slotsize, ItemStack.EMPTY);
 	private int selectedSlot;
 	private boolean canSuck;
 	public int tickCount;
@@ -37,7 +46,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	public void setSize(int slotsize)
 	{
 		this.slotsize = 2 * (int) Math.pow(2.0D, (double) ((0 < slotsize && slotsize <= 8) ? slotsize : 1));
-		this.item_list = NonNullList.withSize(this.slotsize, LargeItemStack.EMPTY);
+		this.itemList = NonNullList.withSize(this.slotsize, ItemStack.EMPTY);
 	}
 
 	public void setSuckable(boolean canSuck)
@@ -103,15 +112,15 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 			this.display = new ItemStack(compound.getCompoundTag("display"));
 		}
 
-		this.item_list = NonNullList.withSize(this.getSizeInventory(), LargeItemStack.EMPTY);
-		LargeItemStack.getFromNBT(this.item_list, compound);
+		this.itemList = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		StackUtils.loadAllItems(compound, this.itemList);
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		super.writeToNBT(compound);
 
-		LargeItemStack.setToNBT(this.item_list, compound);
+		StackUtils.saveAllItems(compound, this.itemList);
 
 		NBTTagCompound nbttagcompound = new NBTTagCompound();
 		nbttagcompound = display.writeToNBT(nbttagcompound);
@@ -127,9 +136,9 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	public boolean isEmpty()
 	{
 		boolean flag = true;
-		for (int i = 0; i < this.item_list.size(); i++)
+		for (int i = 0; i < this.itemList.size(); i++)
 		{
-			flag = this.item_list.get(i).isEmpty();
+			flag = this.itemList.get(i).isEmpty();
 			if (!flag)
 				break;
 		}
@@ -138,103 +147,63 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 
 	public ItemStack getStackInSlot(int index)
 	{
-		return this.item_list.get(index).getMediate();
+		return this.itemList.get(index);
 	}
 
 	public ItemStack decrStackSize(int index, int count)
 	{
-		ItemStack stack1 = !this.item_list.get(index).isEmpty() && count > 0 ? this.item_list.get(index).getMediate().splitStack(count) : ItemStack.EMPTY;
-
-		if (!stack1.isEmpty())
-		{
-			this.markDirty();
-		}
-
-		return stack1;
+		return ItemStackHelper.getAndSplit(itemList, index, count);
 	}
 
 	public ItemStack removeStackFromSlot(int index)
 	{
-		ItemStack stack = this.item_list.get(index).getMediate().copy();
-		this.item_list.set(index, LargeItemStack.EMPTY);
-		return stack;
+		return ItemStackHelper.getAndRemove(itemList, index);
 	}
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack)
 	{
-		if (this.item_list.get(index).isEmpty())
-			this.item_list.set(index, new LargeItemStack(stack, (this.getInventoryStackLimit() < stack.getCount()) ? this.getInventoryStackLimit() : stack.getCount()));
-		else
+		if (index >= 0 && index < this.itemList.size())
 		{
-			ItemStack stack1 = stack.copy();
-			if (this.getInventoryStackLimit() < this.item_list.get(index).getSize() + stack.getCount())
+			this.itemList.set(index, stack);
+			if (stack.getCount() > this.getInventoryStackLimit())
 			{
-				stack1.setCount(this.getInventoryStackLimit() - this.item_list.get(index).getSize() - stack.getCount());
-				stack.setCount(stack.getCount() - this.getInventoryStackLimit() + this.item_list.get(index).getSize());
+				stack.setCount(this.getInventoryStackLimit());
 			}
-			this.item_list.get(index).addStack(stack1);
+			this.markDirty();
 		}
-
-		this.markDirty();
 	}
 
 	public ItemStack addItemStackToInventory(ItemStack stack)
 	{
-		ItemStack stack1 = stack.copy();
-		ItemStack stack2 = stack.copy();
-		if (this.isFull())
+		IItemHandler handler = this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		if (handler == null)
+		{
 			return stack;
-		int n = this.getSizeInventory();
-		for (int i = 0; i < n; i++)
+		}
+		for (int i = 0; i < handler.getSlots(); i++)
 		{
-			if (this.item_list.get(i).compareWith(stack))
+			if (!stack.isEmpty() && StackUtils.compareWith(handler.getStackInSlot(i), stack))
 			{
-				if (this.item_list.get(i).getSize() + stack2.getCount() > this.getInventoryStackLimit())
-				{
-					stack1.setCount(this.getInventoryStackLimit() - this.item_list.get(i).getSize());
-					stack2.setCount(stack2.getCount() - stack1.getCount());
-					this.setInventorySlotContents(i, stack1);
-				}
-				else
-				{
-					this.setInventorySlotContents(i, stack2);
-					return ItemStack.EMPTY;
-				}
+				stack = handler.insertItem(i, stack, false);
 			}
 		}
-
-		ItemStack stack3 = stack2.copy();
-
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < handler.getSlots(); i++)
 		{
-			if (this.item_list.get(i).isEmpty())
-			{
-				if (stack3.getCount() > this.getInventoryStackLimit())
-				{
-					stack2.setCount(this.getInventoryStackLimit());
-					stack3.setCount(stack3.getCount() - stack2.getCount());
-					this.setInventorySlotContents(i, stack2);
-				}
-				else
-				{
-					this.setInventorySlotContents(i, stack3);
-					return ItemStack.EMPTY;
-				}
-			}
+			stack = handler.insertItem(i, stack, false);
 		}
-		return stack3;
+		return stack;
 	}
 
 	public boolean isFull()
 	{
-		if (item_list.isEmpty())
+		if (itemList.isEmpty())
 			return true;
-		for (LargeItemStack stack : item_list)
+		for (ItemStack stack : itemList)
 		{
 			if (stack.isEmpty())
 				return false;
-			else if (stack.getSize() < this.getInventoryStackLimit())
+			else if (stack.getCount() < this.getInventoryStackLimit())
 				return false;
 		}
 		return true;
@@ -265,7 +234,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack)
 	{
-		return this.item_list.get(index).compareWith(stack) || this.item_list.get(index).isEmpty();
+		return StackUtils.compareWith(this.itemList.get(index), stack) || this.itemList.get(index).isEmpty();
 	}
 
 	@Override
@@ -289,9 +258,9 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public void clear()
 	{
-		for (int i = 0; i < this.item_list.size(); i++)
+		for (int i = 0; i < this.itemList.size(); i++)
 		{
-			this.item_list.set(i, LargeItemStack.EMPTY);
+			this.itemList.set(i, ItemStack.EMPTY);
 		}
 	}
 
@@ -310,28 +279,65 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public void update()
 	{
+		int meta = this.getBlockMetadata();
+		if (meta != -1 && this.itemList.size() == 0)
+		{
+			this.setSlot(meta % 8 + 1);
+			this.setSuckable((meta / 8) == 1);
+		}
+
 		if (!this.getWorld().isRemote)
 		{
+			Map<NBTTagCompound, Integer> pedestalData = new HashMap<>();
+			boolean flag = false;
 			for (int i = 0; i < this.getSizeInventory(); i++)
 			{
-				if (!this.item_list.get(i).isEmpty())
+				if (this.itemList.get(i).isEmpty() || this.itemList.get(i).getCount() >= this.getInventoryStackLimit())
 				{
-					for (int j = i + 1; j < this.getSizeInventory(); j++)
+					continue;
+				}
+				NBTTagCompound key = StackUtils.getNBT(this.itemList.get(i), true);
+				if (!pedestalData.containsKey(key))
+				{
+					pedestalData.put(key, 0);
+				}
+				else
+				{
+					flag = true;
+				}
+			}
+			if (flag)
+			{
+				for (int i = 0; i < this.getSizeInventory(); i++)
+				{
+					if (!this.itemList.get(i).isEmpty() && this.itemList.get(i).getCount() < this.getInventoryStackLimit())
 					{
-						if (!this.item_list.get(j).isEmpty())
+						for (int j = i + 1; j < this.getSizeInventory(); j++)
 						{
-							if (this.item_list.get(i).compareWith(this.item_list.get(j).getStack()))
+							ItemStack stackJ = this.itemList.get(j).copy();
+							ItemStack stackI = this.itemList.get(i).copy();
+							if (!stackJ.isEmpty() && !stackI.isEmpty())
 							{
-								if (this.getInventoryStackLimit() < this.item_list.get(i).getSize() + this.item_list.get(j).getSize())
+								if (StackUtils.compareWith(stackI, stackJ))
 								{
-									this.item_list.get(j).setSize((this.item_list.get(i).getSize() + this.item_list.get(j).getSize()) - this.getInventoryStackLimit());
-									this.item_list.get(i).setSize(this.getInventoryStackLimit());
+									if (this.getInventoryStackLimit() < stackI.getCount() + stackJ.getCount())
+									{
+										stackJ.setCount((stackI.getCount() + stackJ.getCount()) - this.getInventoryStackLimit());
+										stackI.setCount(this.getInventoryStackLimit());
+									}
+									else
+									{
+										stackI.grow(stackJ.getCount());
+										stackJ.shrink(stackJ.getCount());
+									}
 								}
-								else
-								{
-									this.item_list.get(i).addSize(this.item_list.get(j).getSize());
-									this.item_list.set(j, LargeItemStack.EMPTY);
-								}
+							}
+							this.itemList.set(j, stackJ.isEmpty() ? ItemStack.EMPTY : stackJ);
+							this.itemList.set(i, stackI);
+
+							if (this.itemList.get(i).getCount() >= this.getInventoryStackLimit())
+							{
+								break;
 							}
 						}
 					}
@@ -373,11 +379,11 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 
 		super.update();
 
-		if (!this.getWorld().isRemote && this.getItems().get(this.getSlot()).isEmpty())
+		if (!this.getWorld().isRemote && this.itemList.get(this.getSlot()).isEmpty())
 		{
 			for (int i = 0; i < this.getSizeInventory(); i++)
 			{
-				if (!this.getItems().get(i).isEmpty())
+				if (!this.itemList.get(i).isEmpty())
 				{
 					this.setSlot(i);
 					break;
@@ -420,9 +426,9 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 		return true;
 	}
 
-	public NonNullList<LargeItemStack> getItems()
+	public NonNullList<ItemStack> getItems()
 	{
-		return this.item_list;
+		return this.itemList;
 	}
 
 	public static void dropInventoryItems(World worldIn, BlockPos pos, TileEntityEnhancedPedestal tileentity)
@@ -430,10 +436,11 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 		double x = pos.getX();
 		double y = pos.getY();
 		double z = pos.getZ();
-		for (LargeItemStack stackWS : tileentity.getItems())
+		for (ItemStack stackI : tileentity.getItems())
 		{
-			if (!stackWS.isEmpty())
+			if (!stackI.isEmpty())
 			{
+				LargeItemStack stackWS = new LargeItemStack(stackI, stackI.getCount());
 				for (ItemStack stack : stackWS.asList(stackWS.getStack().getMaxStackSize()))
 				{
 					InventoryHelper.spawnItemStack(worldIn, x, y, z, stack);
@@ -452,5 +459,41 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	public boolean canInsert(int index, ItemStack stack, EnumFacing direction)
 	{
 		return direction != EnumFacing.UP && this.isItemValidForSlot(index, stack);
+	}
+
+	IItemHandler handlerTop = new EnhancedPedestalWrapper(this, EnumFacing.UP);
+	IItemHandler handlerBottom = new EnhancedPedestalWrapper(this, EnumFacing.DOWN);
+	IItemHandler handlerWest = new EnhancedPedestalWrapper(this, EnumFacing.WEST);
+	IItemHandler handlerEast = new EnhancedPedestalWrapper(this, EnumFacing.EAST);
+	IItemHandler handlerSouth = new EnhancedPedestalWrapper(this, EnumFacing.SOUTH);
+	IItemHandler handlerNorth = new EnhancedPedestalWrapper(this, EnumFacing.NORTH);
+
+	@Override
+	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+	{
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	{
+		if (!this.hasCapability(capability, facing))
+			return null;
+		if (facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			if (facing == EnumFacing.DOWN)
+				return (T) handlerBottom;
+			else if (facing == EnumFacing.UP)
+				return (T) handlerTop;
+			else if (facing == EnumFacing.WEST)
+				return (T) handlerWest;
+			else if (facing == EnumFacing.EAST)
+				return (T) handlerEast;
+			else if (facing == EnumFacing.SOUTH)
+				return (T) handlerSouth;
+			else if (facing == EnumFacing.NORTH)
+				return (T) handlerNorth;
+		return super.getCapability(capability, facing);
 	}
 }

@@ -1,10 +1,13 @@
 package neo_ores.spell.effect;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.packet.PacketLineParticleToClient;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasDimensionOver;
+import neo_ores.spell.SpellItemInterfaces.HasPI;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasReach;
 import neo_ores.util.PlayerMagicData;
@@ -19,7 +22,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -27,11 +29,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
-public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, HasDimensionOver
+public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, HasDimensionOver, HasPI
 {
 	private int reachValue = 0;
 	private boolean dimensionOver = false;
+	private boolean piMode = false;
 
 	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
@@ -63,10 +67,13 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 				}
 				else
 				{
-					MinecraftServer server = world.getMinecraftServer();
-					if (server != null)
+					if (!DimensionManager.isWorldQueuedToUnload(dim))
 					{
-						pushWorld = server.getWorld(dim);
+						pushWorld = DimensionManager.getWorld(dim);
+						if (pushWorld == null)
+						{
+							return;
+						}
 					}
 					else
 					{
@@ -90,9 +97,10 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 				if (result.typeOfHit == Type.BLOCK)
 				{
 					EnumFacing face = result.sideHit;
-					for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+					for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+							: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
 					{
-						if (dim == world.provider.getDimension() && pos.equals(pushPos)) 
+						if (dim == world.provider.getDimension() && pos.equals(pushPos))
 						{
 							continue;
 						}
@@ -115,7 +123,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 											Vec3d vel = pushVec.subtract(start);
 											NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 										}
-										
+
 										if (runner instanceof EntityPlayerMP)
 										{
 											PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -133,7 +141,8 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 					Entity entity = result.entityHit;
 					if (entity == null)
 						return;
-					for (Entity temp : HasRange.getRangedEntities(world, this.range, entity, runner, false, true))
+					for (Entity temp : this.rangeMode ? HasRange.getRangedEntities(world, this.range, entity, runner, false, true)
+							: HasChain.getChainedEntity(world, this.chain, entity, runner, false, true))
 					{
 						Vec3d start = new Vec3d(temp.posX, temp.posY, temp.posZ);
 						Vec3d vel = pushVec.subtract(start);
@@ -144,7 +153,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 								int color = SpellUtils.getColor(stack);
 								NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 							}
-							
+
 							if (runner instanceof EntityPlayerMP)
 							{
 								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -163,7 +172,8 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 				if (result.typeOfHit == Type.BLOCK)
 				{
 					EnumFacing face = result.sideHit;
-					for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+					for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+							: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
 					{
 						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						TileEntity te = world.getTileEntity(pos);
@@ -184,7 +194,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 										Vec3d vel = pushVec.subtract(start);
 										NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 									}
-									
+
 									if (runner instanceof EntityPlayerMP)
 									{
 										PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -212,7 +222,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 								int color = SpellUtils.getColor(stack);
 								NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
 							}
-							
+
 							if (runner instanceof EntityPlayerMP)
 							{
 								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -295,5 +305,11 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 	public void setDimensionOver()
 	{
 		this.dimensionOver = true;
+	}
+
+	@Override
+	public void setPIMode()
+	{
+		this.piMode = true;
 	}
 }

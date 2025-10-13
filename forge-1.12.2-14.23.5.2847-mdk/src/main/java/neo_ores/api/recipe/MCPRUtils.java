@@ -22,7 +22,7 @@ public class MCPRUtils
 		{
 			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) te;
 			List<LargeItemStack> inputitems = new ArrayList<LargeItemStack>();
-			for (LargeItemStack stack : teep.getItems())
+			for (ItemStack stack : teep.getItems())
 			{
 				if (!stack.isEmpty())
 				{
@@ -31,15 +31,15 @@ public class MCPRUtils
 					for (int i = 0; i < size; i++)
 					{
 						LargeItemStack input = inputitems.get(i);
-						if (input.compareWith(stack.getStack()))
+						if (input.compareWith(stack))
 						{
-							input.addSize(stack.getSize());
+							input.addSize(stack.getCount());
 							inputitems.set(i, input);
 							flag = false;
 						}
 					}
 					if (flag)
-						inputitems.add(stack);
+						inputitems.add(new LargeItemStack(stack, stack.getCount()));
 				}
 			}
 
@@ -85,8 +85,9 @@ public class MCPRUtils
 						{
 							int size = list.getSize();
 							int n = 0;
-							for (LargeItemStack isws : teep.getItems())
+							for (ItemStack stackI : teep.getItems())
 							{
+								LargeItemStack isws = new LargeItemStack(stackI, stackI.getCount());
 								if (list.compareStackWith(isws.getStack()) || list.compareOreDicWith(isws.getStack()))
 								{
 									if (size != 0)

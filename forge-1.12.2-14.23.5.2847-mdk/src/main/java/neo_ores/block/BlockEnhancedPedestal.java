@@ -5,7 +5,6 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import neo_ores.api.LargeItemStack;
 import neo_ores.block.properties.PedestalTiers;
 import neo_ores.item.ItemBlockEnhancedPedestal;
 import neo_ores.main.NeoOresItems;
@@ -26,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -54,6 +54,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		this.setHardness(5.0F);
 		this.setHarvestLevel("pickaxe", 0);
 		this.setResistance(Float.MAX_VALUE);
+		this.hasTileEntity = true;
 	}
 
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState)
@@ -92,10 +93,30 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 
 		if (tileentity instanceof TileEntityEnhancedPedestal)
 		{
-			TileEntityEnhancedPedestal.dropInventoryItems(worldIn, pos, (TileEntityEnhancedPedestal) tileentity);
+			ItemStack stack = new ItemStack(this.getItemDropped(state, RANDOM, 0), 1, this.getMetaFromState(state));
+			if (!stack.hasTagCompound())
+			{
+				stack.setTagCompound(new NBTTagCompound());
+			}
+			NBTTagCompound tileData = tileentity.serializeNBT();
+			tileData.removeTag("x");
+			tileData.removeTag("y");
+			tileData.removeTag("z");
+			stack.getTagCompound().setTag("BlockEntityTag", tileData);
+			EntityItem entityItem = new EntityItem(worldIn, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
+			worldIn.spawnEntity(entityItem);
 		}
 
 		super.breakBlock(worldIn, pos, state);
+	}
+
+	public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player)
+	{
+		return false;
+	}
+
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
+	{
 	}
 
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
@@ -155,36 +176,34 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		{
 			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) tileentity;
 			int slot = teep.getSlot();
-			LargeItemStack isws = teep.getItems().get(slot);
-			ItemStack stack = isws.getStack().copy();
+			ItemStack stack = teep.getItems().get(slot).copy();
 
 			if (player.isSneaking())
 			{
-				if (isws.getSize() > stack.getMaxStackSize())
+				if (stack.getCount() > stack.getMaxStackSize())
 				{
 					stack.setCount(stack.getMaxStackSize());
-					this.addStackToPlayer(player, stack.copy());
+					this.addStackToPlayer(player, stack);
 					teep.decrStackSize(slot, stack.getMaxStackSize());
 				}
 				else
 				{
-					stack.setCount(isws.getSize());
-					this.addStackToPlayer(player, stack.copy());
+					this.addStackToPlayer(player, stack);
 					teep.removeStackFromSlot(slot);
 				}
 			}
 			else
 			{
-				if (isws.getSize() > 1)
+				if (stack.getCount() > 1)
 				{
 					stack.setCount(1);
-					this.addStackToPlayer(player, stack.copy());
+					this.addStackToPlayer(player, stack);
 					teep.decrStackSize(slot, 1);
 				}
 				else
 				{
 					stack.setCount(1);
-					this.addStackToPlayer(player, stack.copy());
+					this.addStackToPlayer(player, stack);
 					teep.removeStackFromSlot(slot);
 				}
 			}
@@ -220,18 +239,6 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	{
 		return Item.getItemFromBlock(this);
 	}
-	
-	/*
-	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
-	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
-	}
-
-	protected ItemStack getSilkTouchDrop(IBlockState state)
-	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, this.getMetaFromState(state));
-	}
-	*/
 
 	@Override
 	public int damageDropped(IBlockState state)
@@ -242,7 +249,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return ((PedestalTiers)state.getValue(TIER)).getMeta();
+		return ((PedestalTiers) state.getValue(TIER)).getMeta();
 	}
 
 	@Override

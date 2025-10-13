@@ -68,10 +68,11 @@ public class PacketItemsToClient implements IMessage
 						{
 							((TileEntityEnhancedPedestal) teep).slotsize = message.nbt.getInteger("slotsize");
 						}
-						
-						if (message.nbt.hasKey("multiblock") && te instanceof TileEntityPedestal) {
-							((TileEntityPedestal) te).setClient(message.nbt.getBoolean("multiblock"), message.nbt.getInteger("phase"),
-									message.nbt.getInteger("maxPhase"), message.nbt.getBoolean("isCreating"));
+
+						if (message.nbt.hasKey("multiblock") && te instanceof TileEntityPedestal)
+						{
+							((TileEntityPedestal) te).setClient(message.nbt.getBoolean("multiblock"), message.nbt.getInteger("phase"), message.nbt.getInteger("maxPhase"),
+									message.nbt.getBoolean("isCreating"));
 						}
 					}
 				}

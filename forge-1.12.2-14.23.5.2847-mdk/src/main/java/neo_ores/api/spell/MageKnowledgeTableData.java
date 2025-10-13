@@ -11,6 +11,7 @@ public class MageKnowledgeTableData
 	final int y;
 	final ResourceLocation texture;
 	final KnowledgeTab tab;
+	ResourceLocation trigger;
 
 	public MageKnowledgeTableData(@Nonnull SpellItem parent, int table_x, int table_y, ResourceLocation texture, KnowledgeTab tab)
 	{
@@ -19,5 +20,12 @@ public class MageKnowledgeTableData
 		this.y = table_y;
 		this.texture = texture;
 		this.tab = tab;
+		this.trigger = null;
+	}
+	
+	public MageKnowledgeTableData setPlayerTrigger(ResourceLocation triggerId) 
+	{
+		this.trigger = triggerId;
+		return this;
 	}
 }

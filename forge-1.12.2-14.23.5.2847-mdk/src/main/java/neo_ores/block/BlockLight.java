@@ -11,7 +11,9 @@ import neo_ores.event.NeoOresClientEvents;
 import neo_ores.main.NeoOres;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialTransparent;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
@@ -29,13 +31,19 @@ public class BlockLight extends NeoOresBlock
 {
 	private static final AxisAlignedBB LIGHT_AABB = new AxisAlignedBB(0.4D, 0.4D, 0.4D, 0.6D, 0.6D, 0.6D);
 	private static final UUID PARTICLE_ID = UUID.fromString("e3d2c6e9-b431-40d3-96f2-c9951f46a883");
+	public static final Material LIGHT = new MaterialTransparent(MapColor.AIR) {
+		public boolean isLiquid()
+	    {
+	        return true;
+	    }
+	};
 
 	public BlockLight()
 	{
-		super(Material.STRUCTURE_VOID);
+		super(LIGHT);
 		this.setHardness(0.0F);
 		this.setResistance(10.0F);
-		this.setSoundType(SoundType.METAL);
+		this.setSoundType(SoundType.STONE);
 		this.setLightLevel(1.0F);
 		this.setHarvestLevel("pickaxe", 0);
 	}

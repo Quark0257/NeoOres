@@ -109,6 +109,11 @@ public class ItemSheetPosition extends INeoOresItem.Impl implements IPostscriptD
 		NBTTagCompound tag = nbtutils.getCompound("storedPosition");
 		return tag.hasKey("pos") && tag.hasKey("side") && tag.hasKey("dim");
 	}
+	
+	public boolean hasEffect(ItemStack stack) 
+	{
+		return this.hasPosData(stack);
+	}
 
 	public Tuple3<BlockPos, EnumFacing, Integer> getPosData(ItemStack stack)
 	{

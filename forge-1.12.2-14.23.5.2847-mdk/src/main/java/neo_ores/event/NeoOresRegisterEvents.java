@@ -1,10 +1,12 @@
 package neo_ores.event;
 
 import neo_ores.client.render.RendererPedestal;
+import neo_ores.client.render.entity.RenderEntityBossEarth;
 import neo_ores.client.render.entity.RenderSpellBullet;
 import neo_ores.client.render.entity.RenderSpellPlaceable;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.entity.EntitySpellPlaceable;
+import neo_ores.entity.boss.EntityBossEarth;
 import neo_ores.item.INeoOresItem;
 import neo_ores.item.ItemEssence;
 import neo_ores.item.ItemSpell;
@@ -23,6 +25,7 @@ import neo_ores.client.render.RendererChunkLoader;
 import neo_ores.client.render.RendererMechanicalMagician;
 import neo_ores.client.render.RendererNeoPortal;
 import neo_ores.client.render.RendererMageKnowledgeTable;
+import neo_ores.tileentity.TileEntityBossCapsule;
 import neo_ores.tileentity.TileEntityChunkLoader;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import neo_ores.tileentity.TileEntityManaFurnace;
@@ -252,6 +255,7 @@ public class NeoOresRegisterEvents
 		event.getRegistry().register(NeoOres.undying);
 		event.getRegistry().register(NeoOres.antigriefing);
 		event.getRegistry().register(NeoOres.antienderteleport);
+		event.getRegistry().register(NeoOres.flying);
 	}
 
 	@SubscribeEvent
@@ -282,6 +286,7 @@ public class NeoOresRegisterEvents
 		GameRegistry.registerTileEntity(TileEntitySpellRecipeCreationTable.class, new ResourceLocation(Reference.MOD_ID, "spell_recipe_creation_table"));
 		GameRegistry.registerTileEntity(TileEntityMechanicalMagician.class, new ResourceLocation(Reference.MOD_ID, "mechanical_magician"));
 		GameRegistry.registerTileEntity(TileEntityChunkLoader.class, new ResourceLocation(Reference.MOD_ID, "chunk_loader"));
+		GameRegistry.registerTileEntity(TileEntityBossCapsule.class, new ResourceLocation(Reference.MOD_ID, "boss_capsule"));
 	}
 
 	@SubscribeEvent
@@ -456,12 +461,14 @@ public class NeoOresRegisterEvents
 	{
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellBullet.class, new RenderSpellBullet.RenderSpellBulletFactory());
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellPlaceable.class, new RenderSpellPlaceable.RenderSpellPlaceableFactory());
+		RenderingRegistry.registerEntityRenderingHandler(EntityBossEarth.class, new RenderEntityBossEarth.RenderEntityBossEarthFactory());
 	}
 
 	public static void registerEntity(Object mod)
 	{
-		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_bullet"), EntitySpellBullet.class, "Spell Bullet", 0, mod, 64, 1, true);
-		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_placeable"), EntitySpellPlaceable.class, "Spell Placeable", 1, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_bullet"), EntitySpellBullet.class, "spell_bullet", 0, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_placeable"), EntitySpellPlaceable.class, "spell_placeable", 1, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "earth_boss"), EntityBossEarth.class, "earth_boss", 2, mod, 64, 1, true);
 	}
 
 	@SubscribeEvent

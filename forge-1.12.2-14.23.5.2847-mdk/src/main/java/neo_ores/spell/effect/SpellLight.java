@@ -1,8 +1,10 @@
 package neo_ores.spell.effect;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -21,14 +23,17 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellLight extends SpellEffect implements HasRange
+public class SpellLight extends SpellEffect implements HasRange, HasChain
 {
 	private int range = 0;
+	private int chain = 0;
+	private boolean rangeMode = true;
 
 	@Override
 	public void setRange(int value)
 	{
 		this.range = value;
+		this.rangeMode = true;
 	}
 
 	@Override
@@ -50,7 +55,7 @@ public class SpellLight extends SpellEffect implements HasRange
 		{
 			EnumFacing face = result.sideHit;
 			boolean posAir = world.isAirBlock(result.getBlockPos());
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				BlockPos targetPos = posAir ? pos : pos.add(face.getDirectionVec());
 				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1),
@@ -72,5 +77,12 @@ public class SpellLight extends SpellEffect implements HasRange
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setChain(int level)
+	{
+		this.rangeMode = false;
+		this.chain = level;
 	}
 }

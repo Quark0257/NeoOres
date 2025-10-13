@@ -1,8 +1,10 @@
 package neo_ores.spell.effect;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasAmplify;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -22,15 +24,18 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 
-public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
+public class SpellGrow extends SpellEffect implements HasRange, HasAmplify, HasChain
 {
 	private int range = 0;
 	private int amp = 0;
+	private int chain = 0;
+	private boolean rangeMode = true;
 
 	@Override
 	public void setRange(int value)
 	{
 		this.range = value;
+		this.rangeMode = true;
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 		if (result.typeOfHit == Type.BLOCK)
 		{
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				IBlockState state = world.getBlockState(pos);
 				if (state.getBlock() instanceof IPlantable)
@@ -57,7 +62,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 					{
 						state.getBlock().updateTick(world, pos, state, world.rand);
 					}
-					
+
 					if (runner instanceof EntityPlayerMP)
 					{
 						PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -74,7 +79,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 							((IGrowable) state.getBlock()).grow(world, world.rand, pos, state);
 						}
 					}
-					
+
 					if (runner instanceof EntityPlayerMP)
 					{
 						PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -88,7 +93,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 			Entity entity = result.entityHit;
 			if (entity == null)
 				return;
-			for (Entity temp : HasRange.getRangedEntities(world, this.range, entity, runner, false, true))
+			for (Entity temp : this.rangeMode ? HasRange.getRangedEntities(world, this.range, entity, runner, false, true) : HasChain.getChainedEntity(world, this.chain, entity, runner, false, true))
 			{
 				if (temp instanceof EntityAgeable)
 				{
@@ -96,7 +101,7 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 					age.ageUp(this.amp * 2 + 1, true);
 					SpellUtils.onDisplayParticleTypeAEntity(world, temp, SpellUtils.getColor(stack), 16);
 				}
-				
+
 				if (runner instanceof EntityPlayerMP)
 				{
 					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
@@ -110,5 +115,12 @@ public class SpellGrow extends SpellEffect implements HasRange, HasAmplify
 	public void setAmplify(int level)
 	{
 		this.amp = level;
+	}
+
+	@Override
+	public void setChain(int level)
+	{
+		this.chain = level;
+		this.rangeMode = false;
 	}
 }

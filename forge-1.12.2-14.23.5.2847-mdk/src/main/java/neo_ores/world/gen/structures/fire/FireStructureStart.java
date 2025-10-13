@@ -1,6 +1,7 @@
 package neo_ores.world.gen.structures.fire;
 
 import java.util.Random;
+import java.util.UUID;
 
 import neo_ores.world.gen.structures.RecursiveGenerator;
 import neo_ores.world.gen.structures.StructurePieceAndOption;
@@ -34,11 +35,12 @@ public class FireStructureStart extends StructureStart
 		{
 			BlockPos blockpos = new BlockPos(chunkX * 16 + 8, i, chunkZ * 16 + 8);
 			WorldServer server = (WorldServer) worldIn;
+			UUID uuid = UUID.randomUUID();
 			RecursiveGenerator rg;
 			while (true)
 			{
 				rg = new RecursiveGenerator();
-				rg.getRecursiveList(FireStructurePieces.BOSS, blockpos, rotation, null, random, 10);
+				rg.getRecursiveList(FireStructurePieces.BOSS, blockpos, rotation, null, random, 8);
 				if (rg.chestCount > 0)
 					break;
 			}
@@ -55,7 +57,7 @@ public class FireStructureStart extends StructureStart
 					}
 					count++;
 				}
-				FireStructurePieceComponent sn = new FireStructurePieceComponent(server, sp);
+				FireStructurePieceComponent sn = new FireStructurePieceComponent(server, sp, uuid);
 				this.components.add(sn);
 			}
 			this.updateBoundingBox();

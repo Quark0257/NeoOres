@@ -18,13 +18,23 @@ public class SpellEarthDamage extends SpellDamageBase
 	protected void onDamage(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
 		float amount = (float) (3.5 * Math.pow(1.5, this.damageLevel)) + 3.0f;
-		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), 0.6f * amount);
+		if (ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.EARTH, runner, stack), 0.6f * amount))
+		{
+			if (elb instanceof EntityLivingBase)
+			{
+				elb.hurtResistantTime = 0;
+			}
+		}
 		ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(EntityDamageSourceWithItem.getPhysicalDamage(runner), runner, stack), 0.4f * amount);
+		if (elb instanceof EntityLivingBase)
+		{
+			elb.hurtResistantTime = ((EntityLivingBase) elb).maxHurtResistantTime;
+		}
 		SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 		if (runner instanceof EntityPlayerMP)
 		{
 			PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-			pmds.addMXP(10L + (long) Math.pow(3, luck));
+			pmds.addMXP((long) amount + (long) Math.pow(3, luck));
 		}
 	}
 }

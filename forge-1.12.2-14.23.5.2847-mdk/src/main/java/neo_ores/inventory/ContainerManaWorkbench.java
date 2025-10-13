@@ -163,10 +163,11 @@ public class ContainerManaWorkbench extends Container
 
 	public void updateManaCraftOutput()
 	{
-		List<ItemStack[]> items = new ArrayList<ItemStack[]>();
-		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(0), this.inputSlots.getStackInSlot(1), this.inputSlots.getStackInSlot(2) });
-		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(3), this.inputSlots.getStackInSlot(4), this.inputSlots.getStackInSlot(5) });
-		items.add(new ItemStack[] { this.inputSlots.getStackInSlot(6), this.inputSlots.getStackInSlot(7), this.inputSlots.getStackInSlot(8) });
+		List<ItemStack> items = new ArrayList<ItemStack>();
+		for (int i = 0; i < 9; i++)
+		{
+			items.add(this.inputSlots.getStackInSlot(i));
+		}
 		Tuple<ItemStack, Long> recipeResult = ManaCraftingRecipes.getResult(items);
 		this.cost = recipeResult.getSecond();
 		ItemStack outputItem = recipeResult.getFirst().copy();

@@ -5,9 +5,10 @@ import javax.annotation.Nullable;
 
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresItems;
+import neo_ores.main.Reference;
 import neo_ores.tileentity.TileEntityPedestal;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -15,11 +16,14 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -27,6 +31,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -38,7 +43,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
+public class BlockPedestal extends BlockContainer implements INeoOresBlock
 {
 	private boolean watered;
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.VERTICAL);
@@ -123,7 +128,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer()
 	{
-		return BlockRenderLayer.TRANSLUCENT;
+		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
@@ -133,6 +138,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 		if (tileentity instanceof TileEntityPedestal)
 		{
 			TileEntityPedestal.dropInventoryItems(worldIn, pos, (TileEntityPedestal) tileentity);
+			worldIn.updateComparatorOutputLevel(pos, this);
 		}
 
 		super.breakBlock(worldIn, pos, state);
@@ -167,6 +173,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 				else if (!playerIn.isSneaking())
 				{
 					playerIn.setHeldItem(hand, teep.addItemStackToInventory(itemstack));
+					teep.markDirty();
 					return true;
 				}
 			}
@@ -220,6 +227,7 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 					teep.removeStackFromSlot(0);
 				}
 			}
+			teep.markDirty();
 		}
 	}
 
@@ -311,5 +319,36 @@ public class BlockPedestal extends NeoOresBlock implements ITileEntityProvider
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
 	{
 		return BlockFaceShape.SOLID;
+	}
+	
+	public boolean hasComparatorInputOverride(IBlockState state)
+    {
+        return true;
+    }
+
+    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return Container.calcRedstone(worldIn.getTileEntity(pos));
+    }
+
+    public ModelResourceLocation getModel(int meta)
+	{
+		return new ModelResourceLocation(new ResourceLocation(Reference.MOD_ID, this.getRegistryName().getResourcePath()), "inventory");
+	}
+
+	// 0~15 available
+	public int getMaxMeta()
+	{
+		return 1;
+	}
+
+	public Item getItemBlock(Block block)
+	{
+		return new ItemBlock(block).setRegistryName(block.getRegistryName());
+	}
+
+	public String getUnlocalizedName(ItemStack stack)
+	{
+		return "tile." + this.getRegistryName().getResourcePath();
 	}
 }

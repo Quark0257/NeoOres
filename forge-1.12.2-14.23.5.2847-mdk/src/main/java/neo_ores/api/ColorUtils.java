@@ -1,7 +1,21 @@
 package neo_ores.api;
 
+import net.minecraft.util.math.MathHelper;
+
 public class ColorUtils
 {
+	public static int makeColor4d(double r, double g, double b, double alpha) 
+	{
+		int rRaw = MathHelper.clamp((int)(r * 255.0D), 0, 255);
+		int gRaw = MathHelper.clamp((int)(g * 255.0D), 0, 255);
+		int bRaw = MathHelper.clamp((int)(b * 255.0D), 0, 255);
+		int alphaRaw = MathHelper.clamp((int)(alpha * 255.0D), 0, 255);
+		int color = bRaw;
+		color |= gRaw << 8;
+		color |= rRaw << 16;
+		color |= alphaRaw << 24;
+		return color;
+	}
 
 	public static class RGB
 	{

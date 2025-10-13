@@ -3,6 +3,7 @@ package neo_ores.client.gui;
 import neo_ores.inventory.ContainerManaFurnace;
 import neo_ores.inventory.ContainerManaWorkbench;
 import neo_ores.inventory.ContainerMechanicalMagician;
+import neo_ores.inventory.ContainerPIBase;
 import neo_ores.inventory.ContainerSpellRecipeCreationTable;
 import neo_ores.main.NeoOres;
 import neo_ores.tileentity.TileEntityManaFurnace;
@@ -28,6 +29,10 @@ public class GuiHandler implements IGuiHandler
 			return new ContainerSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
 		if (ID == NeoOres.guiIDMM)
 			return new ContainerMechanicalMagician(player.inventory, ((TileEntityMechanicalMagician) world.getTileEntity(new BlockPos(x, y, z))));
+		if (ID == NeoOres.guiIDPI)
+		{
+			return new ContainerPIBase(player.inventory, !world.isRemote, player);
+		}
 		return null;
 	}
 
@@ -45,6 +50,10 @@ public class GuiHandler implements IGuiHandler
 			return new GuiSpellRecipeCreationTable(player.inventory, ((TileEntitySpellRecipeCreationTable) world.getTileEntity(new BlockPos(x, y, z))));
 		if (ID == NeoOres.guiIDMM)
 			return new GuiMechanicalMagician(player.inventory, ((TileEntityMechanicalMagician) world.getTileEntity(new BlockPos(x, y, z))));
+		if (ID == NeoOres.guiIDPI)
+			return new GuiPedestalInterface(player.inventory, !world.isRemote, player);
+		if (ID == NeoOres.guiIDGuide)
+			return new GuiGuidebook();
 		return null;
 	}
 }

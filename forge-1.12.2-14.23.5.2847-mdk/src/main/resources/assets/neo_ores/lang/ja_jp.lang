@@ -119,6 +119,7 @@ tile.mechanical_magician.name=詠唱機
 tile.chunk_loader.name=チャンクローダー
 tile.liquid_mana.name=液体マナ
 tile.light.name=マナの光
+tile.boss_capsule.name=ボスアルター
 
 size.= (サイズ:
 hoppered.0=
@@ -153,6 +154,7 @@ item.recipe_sheet.name=レシピシート
 item.spell_sheet.name=スペルシート
 item.mob_bottle.name=キャプチャリングボトル
 item.mob_bottle_boss.name=マスターキャプチャリングボトル
+item.boss_key.name=鍵
 
 item.undite_axe.name=アンダイトの斧
 item.undite_hoe.name=アンダイトのクワ
@@ -213,11 +215,19 @@ item.upgrade_void.name=経験値除去アップグレード
 item.upgrade_consume.name=低消費帯カットアップグレード
 item.upgrade_convert_mana.name=マナ変換アップグレード
 item.position_sheet.name=ポジションシート
+item.guidebook.name=Neo Ores II : ガイド & クエスト
 
 fluid.neo_ores.mana=液体マナ
 
 enchantment.offensive=攻撃的
 enchantment.soulbound=ソウルバウンド
+
+entity.spell_placeable.name=設置魔法
+entity.spell_bullet.name=魔法弾
+entity.earth_boss.name=ウリエルの意志
+entity.fire_boss.name=ミカエルの意志
+entity.air_boss.name=ラファエルの意志
+entity.water_boss.name=ガブリエルの意志
 
 creativeItem=クリエイティブ専用
 
@@ -254,6 +264,7 @@ neo_ores.effect.shield=マナシールド
 neo_ores.effect.undying=不死
 neo_ores.effect.antigriefing=アンチグリーフィング
 neo_ores.effect.antiteleport=アンチテレポート
+neo_ores.effect.flying=飛翔
 
 potion.effect.mana_regen=マナ再生のポーション
 splash_potion.effect.mana_regen=マナ再生のスプラッシュポーション
@@ -287,6 +298,7 @@ gui.overlay.mana=マナ
 gui.mage_knowledge_table=魔術師の知識台
 gui.srct.all_delete=すべて消す
 gui.srct.write=書き込む
+gui.pedestal_interface=ペデスタルインターフェース
 
 container.mana_workbench=マナ作業台
 container.mana_workbench.cost=マナ
@@ -314,6 +326,8 @@ spell.silktouch.name=シルクタッチ
 spell.silktouch.desc=スペルにシルクタッチを与えるスペルアイテム。
 spell.range.name=範囲
 spell.range.desc=スペルの影響範囲を拡張するスペルアイテム。
+spell.chain.name=チェーン
+spell.chain.desc=スペルの影響範囲を鎖状に拡張するスペルアイテム。
 spell.gather.name=収集
 spell.gather.desc=スペルによって生産されたアイテムを回収するスペルアイテム。
 spell.tier.name=ランク
@@ -428,6 +442,14 @@ spell.death.name=死亡
 spell.death.desc=死亡したときにパッシブスペルを実行するスペルアイテム。
 spell.jumped.name=ジャンプ
 spell.jumped.desc=ジャンプしたときにパッシブスペルを実行するスペルアイテム。
+spell.craft.name=自動クラフト
+spell.craft.desc=自動クラフトをするスペルアイテム。
+spell.smelt.name=精錬
+spell.smelt.desc=スペルに精錬機能を付与するスペルアイテム。
+spell.pi_mode.name=PIモード
+spell.pi_mode.desc=スペルの範囲をPIモードにするスペルアイテム。
+spell.pedestal_interface.name=ペデスタルインターフェース
+spell.pedestal_interface.desc=ペデスタルインターフェースのUIを開くスペルアイテム。
 
 correction.0=
 correction.1= Ⅰ
@@ -463,6 +485,8 @@ chat.noMultiblock=§cマルチブロックに欠陥があります
 chat.displayRecipe=以下 : 呪文のレシピ
 chat.displayStack=
 chat.displayOreDic= (Forge鉱石辞書)
+chat.needBossKey=§c鍵がありません
+chat.notMatchKey=§c鍵が一致しません
 
 jei.gui.tier=必要ランク
 recipe.mana_composition=合成クラフト
@@ -565,3 +589,17 @@ neo_ores.whitelist=ホワイトリスト
 death.attack.neo_ores.payment=%1$sのライフは十分でなかった
 
 homerunbat=§b§oホームランバット
+
+trigger.earth_dim_visit.name=ウリー次元を訪れる
+trigger.earth_dim_visit.desc=ウリーポータルを通ってウリー次元へ行く
+
+quest.incompleted=未完了
+quest.claimable=報酬を左クリックで受け取る
+quest.completed=完了
+quest.reward=報酬 : 
+
+reward.mxp=魔術経験値 : %s
+reward.magic_point=知識ポイント : %s
+
+guide.quest.name=クエスト
+guide.index.name=目次

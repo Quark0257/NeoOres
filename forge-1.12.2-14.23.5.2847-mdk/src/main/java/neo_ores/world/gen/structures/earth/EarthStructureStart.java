@@ -1,6 +1,7 @@
 package neo_ores.world.gen.structures.earth;
 
 import java.util.Random;
+import java.util.UUID;
 
 import neo_ores.world.gen.structures.RecursiveGenerator;
 import neo_ores.world.gen.structures.StructurePieceAndOption;
@@ -34,11 +35,12 @@ public class EarthStructureStart extends StructureStart
 		{
 			BlockPos blockpos = new BlockPos(chunkX * 16 + 8, i, chunkZ * 16 + 8);
 			WorldServer server = (WorldServer) worldIn;
+			UUID uuid = UUID.randomUUID();
 			RecursiveGenerator rg;
 			while (true)
 			{
 				rg = new RecursiveGenerator();
-				rg.getRecursiveList(EarthStructurePieces.BOSS, blockpos, rotation, null, random, 15);
+				rg.getRecursiveList(EarthStructurePieces.BOSS, blockpos, rotation, null, random, 10);
 				if (rg.chestCount > 0)
 					break;
 			}
@@ -55,7 +57,7 @@ public class EarthStructureStart extends StructureStart
 					}
 					count++;
 				}
-				EarthStructurePieceComponent sn = new EarthStructurePieceComponent(server, sp);
+				EarthStructurePieceComponent sn = new EarthStructurePieceComponent(server, sp, uuid);
 				this.components.add(sn);
 			}
 			this.updateBoundingBox();

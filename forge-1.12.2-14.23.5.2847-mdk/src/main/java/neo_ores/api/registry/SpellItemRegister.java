@@ -12,11 +12,10 @@ import net.minecraftforge.registries.RegistryBuilder;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class SpellItemRegister
 {
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void create(RegistryEvent.NewRegistry event)
 	{
-		RegistryBuilder<SpellItem> spell = new RegistryBuilder();
+		RegistryBuilder<SpellItem> spell = new RegistryBuilder<>();
 		spell.setType(SpellItem.class);
 		ResourceLocation key = new ResourceLocation(Reference.MOD_ID, "spellItems");
 		spell.setName(key);

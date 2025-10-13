@@ -13,6 +13,7 @@ import neo_ores.spell.SpellItemInterfaces.HasContinuationDown;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasReach;
 import neo_ores.spell.SpellItemInterfaces.HasUncollidable;
+import neo_ores.spell.SpellItemInterfaces.HasVanished;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.ServerUtils;
 import neo_ores.util.SpellUtils;
@@ -29,7 +30,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasContinuation, HasUncollidable, HasContinuationDown, HasReach, HasChanceLiquid
+public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasContinuation, HasUncollidable, HasContinuationDown, HasReach, HasChanceLiquid, HasVanished
 {
 	private int size = 0;
 	private int continuation = 0;
@@ -37,7 +38,8 @@ public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasC
 	private int continuationDown = 0;
 	private int reachM = 0;
 	private boolean liquid = false;
-	
+	private boolean vanished = false;
+
 	@Override
 	public boolean needConditional()
 	{
@@ -51,30 +53,31 @@ public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasC
 		if (traceresult == null)
 		{
 			double reach = 3.0;
-			if(runner instanceof EntityPlayer) {
-				reach = ((EntityPlayer)runner).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+			if (runner instanceof EntityPlayer)
+			{
+				reach = ((EntityPlayer) runner).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
 			}
-			reach *= ((double)this.reachM / 3.0 + 1.0D);
+			reach *= ((double) this.reachM / 3.0 + 1.0D);
 			traceresult = SpellUtils.rayTrace(world, runner, reach, this.liquid, !this.uncollidable, true);
 		}
-		
+
 		if (traceresult == null)
 		{
 			return;
 		}
-		
-		if (traceresult.typeOfHit == Type.ENTITY && traceresult.entityHit != null) 
+
+		if (traceresult.typeOfHit == Type.ENTITY && traceresult.entityHit != null)
 		{
 			traceresult = RayTraceUtils.getSimpleResult(traceresult.entityHit.getPosition(), EnumFacing.DOWN);
 		}
-		
+
 		if (traceresult.typeOfHit != Type.BLOCK)
 		{
 			return;
 		}
-		
+
 		int maxLife = 200 * ((int) Math.pow(2, this.continuation)) / (this.continuationDown + 1);
-		EntitySpellPlaceable entity = new EntitySpellPlaceable(world, runner, maxLife, spells, stack, this.uncollidable, this.size);
+		EntitySpellPlaceable entity = new EntitySpellPlaceable(world, runner, maxLife, spells, stack, this.uncollidable, this.size, this.vanished);
 		BlockPos entitySpawn = traceresult.getBlockPos();
 		if (world.getBlockState(entitySpawn).getBlock() != Blocks.AIR)
 		{
@@ -128,7 +131,7 @@ public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasC
 	{
 		this.liquid = true;
 	}
-	
+
 	public static void runSpell(World world, EntityLivingBase runner, ItemStack stack, RayTraceResult result, NBTTagCompound spells)
 	{
 		List<Spell> corrections = new ArrayList<Spell>();
@@ -146,7 +149,7 @@ public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasC
 				effects.add(sc);
 			}
 		}
-		
+
 		if (result != null && result.typeOfHit != Type.MISS)
 		{
 			for (Spell effect : effects)
@@ -159,5 +162,11 @@ public class SpellPlaceable extends SpellFormNotEntity implements HasRange, HasC
 				spell.onEffectRunToOther(world, runner, result, stack);
 			}
 		}
+	}
+
+	@Override
+	public void setVanished()
+	{
+		this.vanished = true;
 	}
 }

@@ -15,7 +15,7 @@ public class StructureUtils
 	{
 		for (Entry<BlockPos, IBlockState> entry : makeMap(str).entrySet())
 		{
-			if (!icbs.compare(entry.getKey(), world.getBlockState(entry.getKey()), entry.getValue()))
+			if (!icbs.compare(world, entry.getKey(), world.getBlockState(entry.getKey()), entry.getValue()))
 			{
 				return false;
 			}

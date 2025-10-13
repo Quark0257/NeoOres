@@ -1,5 +1,6 @@
 package neo_ores.world.dimension;
 
+import neo_ores.util.ServerUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -7,7 +8,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class DestinationTeleporter extends Teleporter
 {
@@ -43,7 +43,6 @@ public class DestinationTeleporter extends Teleporter
 		return true;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public boolean placeInExistingPortal(Entity entityIn, float rotationYaw) 
 	{
 		BlockPos pushPos = this.destination;
@@ -61,7 +60,7 @@ public class DestinationTeleporter extends Teleporter
 		
 		if (entityIn instanceof EntityPlayerMP)
 		{
-			ObfuscationReflectionHelper.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
+			ServerUtils.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
 			((EntityPlayerMP) entityIn).setPositionAndUpdate(pushPos.getX() + 0.5D, pushPos.getY(), pushPos.getZ() + 0.5D);
 		}
 		else

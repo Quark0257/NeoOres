@@ -12,11 +12,10 @@ import net.minecraftforge.registries.RegistryBuilder;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class WeightSpellOreGenRegister
 {
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void create(RegistryEvent.NewRegistry event)
 	{
-		RegistryBuilder<OreWeightRecipe> spell = new RegistryBuilder();
+		RegistryBuilder<OreWeightRecipe> spell = new RegistryBuilder<>();
 		spell.setType(OreWeightRecipe.class);
 		ResourceLocation key = new ResourceLocation(Reference.MOD_ID, "oreWeights");
 		spell.setName(key);

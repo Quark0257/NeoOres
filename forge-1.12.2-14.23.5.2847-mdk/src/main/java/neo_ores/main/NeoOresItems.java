@@ -6,12 +6,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import neo_ores.item.INeoOresItem;
+import neo_ores.item.ItemBossKey;
 import neo_ores.item.ItemEffected;
 import neo_ores.item.ItemEssence;
 import neo_ores.item.ItemEssenceCoreAir;
 import neo_ores.item.ItemEssenceCoreEarth;
 import neo_ores.item.ItemEssenceCoreFire;
 import neo_ores.item.ItemEssenceCoreWater;
+import neo_ores.item.ItemGuidebook;
 import neo_ores.item.ItemManaWrench;
 import neo_ores.item.ItemMobBottle;
 import neo_ores.item.ItemNeoArmor;
@@ -263,7 +265,9 @@ public class NeoOresItems
 		}
 	}.setRegistryName(Reference.MOD_ID, "upgrade_convert_mana").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("upgrade_convert_mana");
 	public static final Item position_sheet = new ItemSheetPosition().setRegistryName(Reference.MOD_ID, "position_sheet").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("position_sheet");
-
+	public static final Item guidebook = new ItemGuidebook().setRegistryName(Reference.MOD_ID, "guidebook").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("guidebook");
+	public static final Item boss_key = new ItemBossKey().setRegistryName(Reference.MOD_ID, "boss_key").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("boss_key");
+	
 	public static final List<Item> registry = Arrays.asList(undite, gnomite_ingot, salamite, sylphite, mana_ingot, essence, air_essence_core, earth_essence_core, fire_essence_core, water_essence_core,
 			aerite, drenite, flamite, forcite, guardite_ingot, landite_ingot, marlite_ingot, sanitite, spell, mana_wrench, recipe_sheet, spell_sheet, mob_bottle, mob_bottle_master, undite_axe,
 			undite_hoe, undite_paxel, undite_pickaxe, undite_shovel, undite_sword, undite_helmet, undite_chestplate, undite_leggings, undite_boots, gnomite_axe, gnomite_hoe, gnomite_paxel,
@@ -271,5 +275,5 @@ public class NeoOresItems
 			salamite_shovel, salamite_sword, salamite_helmet, salamite_chestplate, salamite_leggings, salamite_boots, sylphite_axe, sylphite_hoe, sylphite_paxel, sylphite_pickaxe, sylphite_shovel,
 			sylphite_sword, sylphite_helmet, sylphite_chestplate, sylphite_leggings, sylphite_boots, creative_axe, creative_hoe, creative_paxel, creative_pickaxe, creative_shovel, creative_sword,
 			creative_helmet, creative_chestplate, creative_leggings, creative_boots, totem, totem_independent, totem_creative, upgrade_void, upgrade_xp, upgrade_fluid, upgrade_consume,
-			position_sheet, upgrade_convert_mana);
+			position_sheet, upgrade_convert_mana, guidebook, boss_key);
 }

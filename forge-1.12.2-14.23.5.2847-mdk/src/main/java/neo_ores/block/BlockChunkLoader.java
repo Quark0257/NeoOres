@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import neo_ores.api.IChunkLoader;
 import neo_ores.main.Reference;
 import neo_ores.tileentity.TileEntityChunkLoader;
 import net.minecraft.block.Block;
@@ -26,7 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockChunkLoader extends BlockContainer implements INeoOresBlock
+public class BlockChunkLoader extends BlockContainer implements INeoOresBlock, IChunkLoader
 {
 	protected static final AxisAlignedBB AABB_BOUNDING = new AxisAlignedBB(0.125D, 0.0D, 0.125D, 0.875D, 0.875D, 0.875D);
 	public BlockChunkLoader()
@@ -97,5 +98,11 @@ public class BlockChunkLoader extends BlockContainer implements INeoOresBlock
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		return "tile." + this.getRegistryName().getResourcePath();
+	}
+
+	@Override
+	public boolean isLoadable()
+	{
+		return true;
 	}
 }

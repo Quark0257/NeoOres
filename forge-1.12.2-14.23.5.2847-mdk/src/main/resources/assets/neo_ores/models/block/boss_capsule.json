@@ -1,0 +1,13 @@
+{
+	"parent": "block/cube",
+	"textures": 
+	{
+	  	"particle": "neo_ores:blocks/boss_capsule_top",
+	    "down": "neo_ores:blocks/boss_capsule",
+	    "up": "neo_ores:blocks/boss_capsule_top",
+	    "north": "neo_ores:blocks/boss_capsule",
+	    "east": "neo_ores:blocks/boss_capsule",
+	    "south": "neo_ores:blocks/boss_capsule",
+	    "west":"neo_ores:blocks/boss_capsule"
+	}
+}

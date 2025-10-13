@@ -26,6 +26,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -44,6 +45,7 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 	private boolean notCollided;
 	private String shooterName = "";
 	private int range;
+	private boolean vanished = false;
 
 	private static final Predicate<Entity> PROJECTILE_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE);
 
@@ -58,7 +60,7 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 		super(worldIn, x, y, z);
 	}
 
-	public EntitySpellPlaceable(World worldIn, EntityLivingBase shooter, int life, NBTTagCompound spells, ItemStack handItem, boolean applyNotCollidedFilter, int range)
+	public EntitySpellPlaceable(World worldIn, EntityLivingBase shooter, int life, NBTTagCompound spells, ItemStack handItem, boolean applyNotCollidedFilter, int range, boolean vanish)
 	{
 		super(worldIn, shooter);
 		this.spells = SpellUtils.getListFromItemStackNBT(spells);
@@ -71,6 +73,7 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 		this.shooterName = getShooterName(shooter);
 		this.notCollided = applyNotCollidedFilter;
 		this.range = range;
+		this.vanished = vanish;
 		this.setSize(this.range);
 	}
 
@@ -103,21 +106,21 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 			{
 				this.setDead();
 			}
-			
-			if (playerEntity) 
+
+			if (playerEntity)
 			{
-				EntityPlayerMP player = (EntityPlayerMP)this.getThrower();
-				if (player instanceof FakePlayerMechanicalMagician) 
+				EntityPlayerMP player = (EntityPlayerMP) this.getThrower();
+				if (player instanceof FakePlayerMechanicalMagician)
 				{
-					FakePlayerMechanicalMagician fake = (FakePlayerMechanicalMagician)player;
-					if (!fake.isEntityAlive()) 
+					FakePlayerMechanicalMagician fake = (FakePlayerMechanicalMagician) player;
+					if (!fake.isEntityAlive())
 					{
 						this.setDead();
 					}
-				} 
-				else if (!(player instanceof FakePlayer)) 
+				}
+				else if (!(player instanceof FakePlayer))
 				{
-					if (!player.isEntityAlive() && NeoOresData.instance.getPSD(player).isLoggedIn()) 
+					if (!player.isEntityAlive() && NeoOresData.instance.getPSD(player).isLoggedIn())
 					{
 						this.setDead();
 					}
@@ -181,6 +184,12 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 		--this.life;
 		if (this.life <= 0)
 		{
+			if (this.vanished)
+			{
+				EnumFacing vanishedFace = EnumFacing.getFacingFromVector((float) this.motionX, (float) this.motionY, (float) this.motionZ).getOpposite();
+				SpellPlaceable.runSpell(this.world, this.getThrower(), this.getStack(), RayTraceUtils.getSimpleResult(this.posX, this.posY, this.posZ, vanishedFace),
+						SpellUtils.getItemStackNBTFromList(this.spells, new NBTTagCompound()));
+			}
 			this.setDead();
 		}
 
@@ -238,6 +247,7 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 		this.shooterName = compound.getString("shooterName");
 		this.stack = new ItemStack(compound.getCompoundTag("stack"));
 		this.range = compound.getInteger("range");
+		this.vanished = compound.getBoolean("vanished");
 		this.setSize(this.range);
 	}
 
@@ -258,6 +268,7 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 		compound.setString("shooterName", this.shooterName);
 		compound.setBoolean("notCollided", this.notCollided);
 		compound.setInteger("range", this.range);
+		compound.setBoolean("vanished", this.vanished);
 		super.writeEntityToNBT(compound);
 	}
 

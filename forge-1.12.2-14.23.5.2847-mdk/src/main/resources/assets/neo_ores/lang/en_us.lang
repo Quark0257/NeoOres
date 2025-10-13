@@ -119,6 +119,7 @@ tile.mechanical_magician.name=Mechanical Magician
 tile.chunk_loader.name=Chunk Loader
 tile.liquid_mana.name=Fluid Mana
 tile.light.name=Light of Mana
+tile.boss_capsule.name=Boss Alter
 
 size.= (Size:
 hoppered.0=
@@ -153,6 +154,7 @@ item.recipe_sheet.name=Recipe Sheet
 item.spell_sheet.name=Spell Sheet
 item.mob_bottle.name=Bottle o' Capturing
 item.mob_bottle_boss.name=Master Bottle o' Capturing
+item.boss_key.name=Boss Key
 
 item.undite_axe.name=Undite Axe
 item.undite_hoe.name=Undite Hoe
@@ -213,11 +215,19 @@ item.upgrade_void.name=Xp Void Upgrade
 item.upgrade_consume.name=Ignore Low Consume Upgrade
 item.upgrade_convert_mana.name=Convert Mana Upgrade
 item.position_sheet.name=Position Sheet
+item.guidebook.name=Neo Ores II : Guides & Quests
 
 fluid.neo_ores.mana=Fluid Mana
 
 enchantment.offensive=Offensive
 enchantment.soulbound=Soul Bound
+
+entity.spell_placeable.name=Placeable Spell
+entity.spell_bullet.name=Bullet Spell
+entity.earth_boss.name=Uriel's Will
+entity.fire_boss.name=Michael's Will
+entity.air_boss.name=Raphael's Will
+entity.water_boss.name=Gabriel's Will
 
 creativeItem=Creative Only
 
@@ -254,6 +264,7 @@ neo_ores.effect.shield=Mana Shield
 neo_ores.effect.undying=Undying
 neo_ores.effect.antigriefing=Anti-Griefing
 neo_ores.effect.antiteleport=Anti-Teleport
+neo_ores.effect.flying=Flight
 
 potion.effect.mana_regen=Potion of Mana Regeneration
 splash_potion.effect.mana_regen=Splash Potion of Mana Regeneration
@@ -287,6 +298,7 @@ gui.overlay.mana=Mana
 gui.mage_knowledge_table=Knowledge Table of Mage
 gui.srct.all_delete=Delete All
 gui.srct.write=Write
+gui.pedestal_interface=Pedestal Interface
 
 container.mana_workbench=Mana Crafting Table
 container.mana_workbench.cost=Mana
@@ -314,18 +326,20 @@ spell.silktouch.name=Silk Touch
 spell.silktouch.desc=The Spell Item of giving silk touch to the spell.
 spell.range.name=Range
 spell.range.desc=The Spell Item of increasing range the spell affects.
+spell.chain.name=Chain
+spell.chain.desc=The Spell Item of increasing range the spell affects in a chain.
 spell.gather.name=Gathering
 spell.gather.desc=The Spell Item of gathering items produced by the spell.
 spell.tier.name=Tier
-spell.tier.desc=The Spell Item of increasing tier of composition crafting and allowing auto-craft to use mana.
+spell.tier.desc=The Spell Item of increasing tier of composition crafting and allowing Auto-Crafting to use mana.
 spell.tier3.name=Tier
-spell.tier3.desc=The Spell Item of increasing tier of composition crafting and allowing auto-craft to use mana. More than this is required to open the Ury Portal.
+spell.tier3.desc=The Spell Item of increasing tier of composition crafting and allowing Auto-Crafting to use mana. More than this is required to open the Ury Portal.
 spell.tier5.name=Tier
-spell.tier5.desc=The Spell Item of increasing tier of composition crafting and allowing auto-craft to use mana. More than this is required to open the Gabry Portal.
+spell.tier5.desc=The Spell Item of increasing tier of composition crafting and allowing Auto-Crafting to use mana. More than this is required to open the Gabry Portal.
 spell.tier7.name=Tier
-spell.tier7.desc=The Spell Item of increasing tier of composition crafting and allowing auto-craft to use mana. More than this is required to open the Rapha Portal.
+spell.tier7.desc=The Spell Item of increasing tier of composition crafting and allowing Auto-Crafting to use mana. More than this is required to open the Rapha Portal.
 spell.tier9.name=Tier
-spell.tier9.desc=The Spell Item of increasing tier of composition crafting and allowing auto-craft to use mana. More than this is required to open the Micha Portal.
+spell.tier9.desc=The Spell Item of increasing tier of composition crafting and allowing Auto-Crafting to use mana. More than this is required to open the Micha Portal.
 spell.spell_bullet.name=Bullet
 spell.spell_bullet.desc=The Spell Item of flying a spell bullet and activating the spell to the target by hitting the target on the bullet.
 spell.speed.name=Speed
@@ -428,6 +442,14 @@ spell.death.name=Dead
 spell.death.desc=The Spell Item of running passive spells when you are dead.
 spell.jumped.name=Jumping
 spell.jumped.desc=The Spell Item of running passive spells when you are jumping.
+spell.craft.name=Auto-Crafting
+spell.craft.desc=The Spell Item of auto-crafting.
+spell.smelt.name=Smelt
+spell.smelt.desc=The Spell Item of adding a smelting aspect to the spell.
+spell.pi_mode.name=PI Mode
+spell.pi_mode.desc=The Spell Item of changing spell range to PI mode.
+spell.pedestal_interface.name=Pedestal Interface
+spell.pedestal_interface.desc=The Spell Item of open Pedestal Interface UI.
 
 correction.0=
 correction.1= I
@@ -463,6 +485,8 @@ chat.noMultiblock=§cMultiblock defective
 chat.displayRecipe=Below : Spell Recipe
 chat.displayStack=
 chat.displayOreDic= (Forge Ore Dictionary)
+chat.needBossKey=§cThere's no boss key
+chat.notMatchKey=§cThe key doesn't match
 
 jei.gui.tier=Required Tier
 recipe.mana_composition=Composition Craft
@@ -567,3 +591,17 @@ neo_ores.whitelist=White List
 death.attack.neo_ores.payment=%1$s's lives weren't enough
 
 homerunbat=§b§oHome Run Bat
+
+trigger.earth_dim_visit.name=Visit Ury Dim
+trigger.earth_dim_visit.desc=Through Ury Portal and Visit Ury Dim
+
+quest.incompleted=Incompleted
+quest.claimable=Claim rewards to LEFT-CLICK
+quest.completed=Completed
+quest.reward=Reward :
+
+reward.mxp=Magic XP : %s
+reward.magic_point=Magic Point : %s
+
+guide.quest.name=Quests
+guide.index.name=Indexes

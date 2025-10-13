@@ -1,15 +1,23 @@
 package neo_ores.spell.effect;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
+import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasPlantable;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
+import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -42,11 +50,13 @@ public class SpellPlace extends SpellEffectItemFiltered implements HasPlantable
 		{
 			EnumFacing face = result.sideHit;
 			boolean posAir = world.isAirBlock(result.getBlockPos());
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				BlockPos targetPos = posAir ? pos : pos.add(face.getDirectionVec());
-				Map<Integer, ItemStack> map = InventoryUtils.getInventoryStackList(target, false, null);
-				for (int i : map.keySet())
+				LinkedHashMap<Integer, ItemStack> map = InventoryUtils.getInventoryStackList(target, false, null, true);
+				List<Integer> inventoryIndexes = new ArrayList<>(map.keySet());
+				Collections.reverse(inventoryIndexes);
+				for (int i : inventoryIndexes)
 				{
 					ItemStack item = map.get(i);
 					if (item.isEmpty())
@@ -56,10 +66,15 @@ public class SpellPlace extends SpellEffectItemFiltered implements HasPlantable
 						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						IBlockState state = ((ItemBlock) item.getItem()).getBlock().getStateForPlacement(world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y,
 								(float) result.hitVec.z, item.getMetadata(), player, player.getActiveHand());
-						if (state.getBlock().canPlaceBlockOnSide(world, targetPos, face)
-								&& ((ItemBlock) item.getItem()).placeBlockAt(stack, player, world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z, state))
+						if (world.mayPlace(state.getBlock(), targetPos, false, face, player)
+								&& ((ItemBlock) item.getItem()).placeBlockAt(item, player, world, targetPos, face, (float) result.hitVec.x, (float) result.hitVec.y, (float) result.hitVec.z, state))
 						{
 							map.get(i).shrink(1);
+							if (runner instanceof EntityPlayerMP)
+							{
+								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+								pmds.addMXP(1);
+							}
 							break;
 						}
 					}
@@ -67,12 +82,17 @@ public class SpellPlace extends SpellEffectItemFiltered implements HasPlantable
 					{
 						IPlantable plantable = (IPlantable) item.getItem();
 						IBlockState state = world.getBlockState(pos);
-						if (face == EnumFacing.UP && player.canPlayerEdit(pos.offset(face), face, item) && state.getBlock().canSustainPlant(state, world, pos, EnumFacing.UP, plantable)
+						if (face == EnumFacing.UP && state.getBlock().canSustainPlant(state, world, pos, EnumFacing.UP, plantable)
 								&& world.isAirBlock(pos.up()))
 						{
 							SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.up().getX(), pos.up().getY(), pos.up().getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 							world.setBlockState(pos.up(), plantable.getPlant(world, pos.up()));
 							item.shrink(1);
+							if (runner instanceof EntityPlayerMP)
+							{
+								PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+								pmds.addMXP(1);
+							}
 							break;
 						}
 					}

@@ -3,10 +3,10 @@ package neo_ores.util;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import neo_ores.main.NeoOres;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -14,7 +14,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
-import net.minecraftforge.fml.common.FMLLog;
 
 public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 {
@@ -27,6 +26,7 @@ public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 		int dimension = world.provider.getDimension();
 		for (Ticket ticket : tickets)
 		{
+			// ticket might be null
 			this.mapTicket.put(dimension, ticket);
 			for (ChunkPos pos : ticket.getChunkList())
 			{
@@ -37,17 +37,16 @@ public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 
 	public Ticket getTicket(MinecraftServer server, int dimension)
 	{
-		Ticket ticket = this.mapTicket.get(dimension);
-		if (ticket == null && DimensionManager.isDimensionRegistered(dimension))
+		if (this.mapTicket.get(dimension) == null && DimensionManager.isDimensionRegistered(dimension))
 		{
 			WorldServer world = server.getWorld(dimension);
-			ticket = ForgeChunkManager.requestTicket(NeoOres.instance, world, Type.NORMAL);
+			Ticket ticket = ForgeChunkManager.requestTicket(NeoOres.instance, world, Type.NORMAL);
 			if (ticket != null)
 			{
 				this.mapTicket.put(dimension, ticket);
 			}
 		}
-		return ticket;
+		return this.mapTicket.get(dimension);
 	}
 
 	public void forceChunk(MinecraftServer server, ChunkPosLoading pos)
@@ -55,14 +54,9 @@ public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 		if (this.mapTicket.get(pos.dimension) != null && this.mapTicket.get(pos.dimension).getChunkList().contains(pos.pos))
 			return;
 		Ticket ticket = this.getTicket(server, pos.dimension);
-		try
+		if (ticket != null) 
 		{
-			Objects.requireNonNull(ticket);
 			ForgeChunkManager.forceChunk(ticket, pos.pos);
-		}
-		catch (Exception e)
-		{
-			FMLLog.log.error("Unknown error occured!");
 		}
 	}
 
@@ -85,21 +79,24 @@ public class NeoOresChunkManager implements ForgeChunkManager.LoadingCallback
 		public final int posZ;
 		public final int dimension;
 		public final ChunkPos pos;
+		public final BlockPos keyPos;
 
-		public ChunkPosLoading(int posX, int posZ, int dimension)
+		public ChunkPosLoading(int posX, int posZ, int dimension, BlockPos pos)
 		{
 			this.posX = posX;
 			this.posZ = posZ;
 			this.dimension = dimension;
 			this.pos = new ChunkPos(posX, posZ);
+			this.keyPos = pos;
 		}
 		
-		public ChunkPosLoading(ChunkPos pos, int dimension)
+		public ChunkPosLoading(ChunkPos pos, int dimension, BlockPos keyPos)
 		{
 			this.posX = pos.x;
 			this.posZ = pos.z;
 			this.dimension = dimension;
 			this.pos = pos;
+			this.keyPos = keyPos;
 		}
 	}
 }

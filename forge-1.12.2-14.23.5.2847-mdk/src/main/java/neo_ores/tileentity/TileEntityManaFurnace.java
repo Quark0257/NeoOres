@@ -1,5 +1,7 @@
 package neo_ores.tileentity;
 
+import javax.annotation.Nullable;
+
 import neo_ores.api.RingArray;
 import neo_ores.api.RingArrayElement;
 import neo_ores.api.TierUtils;
@@ -25,8 +27,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class TileEntityManaFurnace extends TileEntityLockable implements ITickable, ISidedInventory
 {
@@ -578,19 +584,19 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
 		this.manaFurnaceItemStacks.clear();
 	}
 
-	net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
-	net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.DOWN);
-	net.minecraftforge.items.IItemHandler handlerWest = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.WEST);
-	net.minecraftforge.items.IItemHandler handlerEast = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.EAST);
-	net.minecraftforge.items.IItemHandler handlerSouth = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.SOUTH);
-	net.minecraftforge.items.IItemHandler handlerNorth = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.NORTH);
+	IItemHandler handlerTop = new SidedInvWrapper(this, EnumFacing.UP);
+	IItemHandler handlerBottom = new SidedInvWrapper(this, EnumFacing.DOWN);
+	IItemHandler handlerWest = new SidedInvWrapper(this, EnumFacing.WEST);
+	IItemHandler handlerEast = new SidedInvWrapper(this, EnumFacing.EAST);
+	IItemHandler handlerSouth = new SidedInvWrapper(this, EnumFacing.SOUTH);
+	IItemHandler handlerNorth = new SidedInvWrapper(this, EnumFacing.NORTH);
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@javax.annotation.Nullable
-	public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable EnumFacing facing)
+	@Nullable
+	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
 	{
-		if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+		if (facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			if (facing == EnumFacing.DOWN)
 				return (T) handlerBottom;
 			else if (facing == EnumFacing.UP)

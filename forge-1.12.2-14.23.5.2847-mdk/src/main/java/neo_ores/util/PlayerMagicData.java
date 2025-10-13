@@ -7,14 +7,18 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import neo_ores.api.PlayerTrigger;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
 import neo_ores.packet.PacketMagicDataToClient;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class PlayerMagicData
 {
@@ -34,6 +38,8 @@ public class PlayerMagicData
 	protected long level;
 	protected long mxp;
 	protected final Map<String, Boolean> studies;
+	protected final Map<String, Boolean> triggers;
+	protected final Map<String, Boolean> triggerRewards;
 
 	public PlayerMagicData(boolean isFake)
 	{
@@ -50,6 +56,13 @@ public class PlayerMagicData
 		this.mxp = 0L;
 		this.clientChanged = false;
 		this.studies = new HashMap<String, Boolean>();
+		this.triggers = new HashMap<String, Boolean>();
+		this.triggerRewards = new HashMap<String, Boolean>();
+		for (PlayerTrigger trigger : GameRegistry.findRegistry(PlayerTrigger.class).getValuesCollection()) 
+		{
+			this.triggers.put(trigger.getId(), false);
+			this.triggerRewards.put(trigger.getId(), false);
+		}
 	}
 
 	public void readFromNBT(NBTTagCompound nbt)
@@ -79,6 +92,26 @@ public class PlayerMagicData
 					String id = ((NBTTagString) list.get(i)).getString();
 					this.studies.put(modid + "@" + id, true);
 				}
+			}
+		}
+		
+		if (nbt.hasKey("triggerData")) 
+		{
+			this.triggers.clear();
+			NBTTagCompound trigger = nbt.getCompoundTag("triggerData");
+			for (String key : trigger.getKeySet())
+			{
+				this.triggers.put(key, trigger.getBoolean(key));
+			}
+		}
+		
+		if (nbt.hasKey("rewardData")) 
+		{
+			this.triggerRewards.clear();
+			NBTTagCompound rewardData = nbt.getCompoundTag("rewardData");
+			for (String key : rewardData.getKeySet())
+			{
+				this.triggerRewards.put(key, rewardData.getBoolean(key));
 			}
 		}
 
@@ -113,6 +146,18 @@ public class PlayerMagicData
 			}
 		}
 		nbt.setTag("studyData", study);
+		NBTTagCompound trigger = new NBTTagCompound();
+		for (String key : this.triggers.keySet()) 
+		{
+			trigger.setBoolean(key, this.triggers.get(key));
+		}
+		nbt.setTag("triggerData", trigger);
+		NBTTagCompound rewardData = new NBTTagCompound();
+		for (String key : this.triggerRewards.keySet()) 
+		{
+			rewardData.setBoolean(key, this.triggerRewards.get(key));
+		}
+		nbt.setTag("rewardData", rewardData);
 		return nbt;
 	}
 
@@ -198,7 +243,7 @@ public class PlayerMagicData
 			double b = 5.0D;
 			double at = Math.atan(b);
 			double compares = (Math.atan(a * (gotLevel + level) - b) + at) / (at + Math.PI * 0.5D);
-			if ((gotLevel + level) % pro == 0 && random.nextDouble() > compares)
+			if ((gotLevel + level) % (long)pro == 0L && random.nextDouble() > compares)
 			{
 				magicpoint++;
 			}
@@ -451,7 +496,7 @@ public class PlayerMagicData
 		this.needSending = true;
 	}
 
-	public void sendToOtherSide(UUID uuid)
+	public void sendToOtherSide(UUID uuid, EntityPlayerMP player)
 	{
 		if (this.needSending)
 		{
@@ -459,10 +504,53 @@ public class PlayerMagicData
 			send.setString("uuid", uuid.toString());
 			send.setBoolean("isClientChanged", this.clientChanged);
 			PacketMagicDataToClient pmdc = new PacketMagicDataToClient(send);
-			NeoOres.PACKET.sendToAll((IMessage) pmdc);
+			NeoOres.PACKET.sendTo((IMessage) pmdc, player);
 
 			this.clientChanged = false;
 		}
 		this.needSending = false;
+	}
+	
+	public void triggerPlayerTrigger(PlayerTrigger trigger, EntityPlayer player) 
+	{
+		if (trigger.canTrigger(player)) 
+		{
+			if (!this.checkTrigger(trigger)) 
+			{
+				trigger.trigger(player);
+				this.triggers.put(trigger.getId(), true);
+				if (trigger.hasDialogRewards()) 
+				{
+					this.triggerRewards.put(trigger.getId(), true);
+				}
+				this.markSending();
+				this.markDirty();
+			}
+		}
+	}
+	
+	public void takeReward(PlayerTrigger trigger) 
+	{
+		this.triggerRewards.put(trigger.getId(), false);
+		this.markSending();
+		this.markDirty();
+	}
+	
+	public boolean checkTrigger(PlayerTrigger trigger) 
+	{
+		return !this.triggers.containsKey(trigger.getId()) || this.triggers.get(trigger.getId());
+	}
+	
+	public boolean checkReward(PlayerTrigger trigger) 
+	{
+		return trigger.hasDialogRewards() && !trigger.getRewards().isEmpty() && (!this.triggerRewards.containsKey(trigger.getId()) || this.triggerRewards.get(trigger.getId()));
+	}
+	
+	public void resetTrigger(PlayerTrigger trigger) 
+	{
+		this.triggers.put(trigger.getId(), false);
+		this.triggerRewards.put(trigger.getId(), false);
+		this.markSending();
+		this.markDirty();
 	}
 }

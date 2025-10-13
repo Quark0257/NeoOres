@@ -6,13 +6,13 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
-import neo_ores.api.LongUtils;
 import neo_ores.api.NBTUtils;
 import neo_ores.api.TierUtils;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.item.ItemRecipeSheet;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
+import neo_ores.util.NumberUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
@@ -53,7 +53,7 @@ public class NeoOresItemEvents
 		{
 			List<String> list = e.getToolTip();
 			List<SpellItem> spells = SpellUtils.getListFromItemStackNBT(stack.getTagCompound().copy());
-			list.add(I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString(SpellUtils.getMPConsume(spells)));
+			list.add(I18n.format("tooltip.mana").trim() + " : " + NumberUtils.getPrefixedNumber(SpellUtils.getMPConsume(spells), 3));
 			NBTUtils.ForItemStack util = new NBTUtils.ForItemStack(stack);
 			NBTTagList desclist = util.getListAsList(SpellUtils.NBTTagUtils.SPELL_DESC);
 			for (int i = 0; i < desclist.tagCount(); i++)

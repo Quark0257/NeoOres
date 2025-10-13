@@ -1,7 +1,7 @@
 package neo_ores.client.gui;
 
-import neo_ores.api.LongUtils;
 import neo_ores.main.NeoOresData;
+import neo_ores.util.NumberUtils;
 import neo_ores.util.PlayerMagicDataClient;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -98,7 +98,7 @@ public class GuiNeoGameOverlay extends Gui
 						}
 					}
 					width += 83;
-					String level = I18n.format("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
+					String level = I18n.format("gui.overlay.level") + " : " + NumberUtils.getPrefixedNumber(this.level, 4);
 					fontrenderer.drawString(level, width - 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(level, width + 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(level, width, height - 1, Integer.parseInt("000000", 16));
@@ -106,7 +106,7 @@ public class GuiNeoGameOverlay extends Gui
 					fontrenderer.drawString(level, width, height, Integer.parseInt("66AAFF", 16));
 
 					height += 10;
-					String mana = I18n.format("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
+					String mana = I18n.format("gui.overlay.mana") + " : " + NumberUtils.getPrefixedNumber(this.mana, 4) + "/" + NumberUtils.getPrefixedNumber(this.maxMana, 4);
 					fontrenderer.drawString(mana, width - 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(mana, width + 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(mana, width, height - 1, Integer.parseInt("000000", 16));
@@ -151,7 +151,7 @@ public class GuiNeoGameOverlay extends Gui
 						}
 					}
 					width += 83;
-					String level = I18n.format("gui.overlay.level") + " : " + LongUtils.convertString(this.level);
+					String level = I18n.format("gui.overlay.level") + " : " + NumberUtils.getPrefixedNumber(this.level, 4);
 					fontrenderer.drawString(level, width - 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(level, width + 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(level, width, height - 1, Integer.parseInt("000000", 16));
@@ -159,7 +159,7 @@ public class GuiNeoGameOverlay extends Gui
 					fontrenderer.drawString(level, width, height, Integer.parseInt("66AAFF", 16));
 
 					height += 10;
-					String mana = I18n.format("gui.overlay.mana") + " : " + LongUtils.convertString(this.mana) + "/" + LongUtils.convertString(this.maxMana);
+					String mana = I18n.format("gui.overlay.mana") + " : " + NumberUtils.getPrefixedNumber(this.mana, 4) + "/" + NumberUtils.getPrefixedNumber(this.maxMana, 4);
 					fontrenderer.drawString(mana, width - 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(mana, width + 1, height, Integer.parseInt("000000", 16));
 					fontrenderer.drawString(mana, width, height - 1, Integer.parseInt("000000", 16));

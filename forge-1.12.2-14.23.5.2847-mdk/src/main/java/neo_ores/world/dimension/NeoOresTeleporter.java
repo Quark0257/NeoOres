@@ -2,6 +2,7 @@ package neo_ores.world.dimension;
 
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
+import neo_ores.util.ServerUtils;
 import net.minecraft.block.BlockPane;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,7 +15,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class NeoOresTeleporter extends Teleporter
 {
@@ -36,7 +36,6 @@ public class NeoOresTeleporter extends Teleporter
 		this.lastDim = lastDim;
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean placeInExistingPortal(Entity entityIn, float rotationYaw)
 	{
 		if (entityIn.dimension == NeoOres.THE_WATER.getId() || entityIn.dimension == NeoOres.THE_EARTH.getId() || entityIn.dimension == NeoOres.THE_AIR.getId()
@@ -56,7 +55,7 @@ public class NeoOresTeleporter extends Teleporter
 				{
 					if (entityIn instanceof EntityPlayerMP)
 					{
-						ObfuscationReflectionHelper.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
+						ServerUtils.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
 						((EntityPlayerMP) entityIn).setPositionAndUpdate(blockpos.getX() + 0.5D, blockpos.getY() + 1.5D, blockpos.getZ() + 0.5D);
 						((EntityPlayerMP) entityIn).connection.sendPacket(new SPacketCustomSound(SoundEvents.BLOCK_PORTAL_TRAVEL.getRegistryName().getResourcePath(), SoundCategory.PLAYERS,
 								entityIn.posX, entityIn.posY, entityIn.posZ, 0.5F, worldIn.provider.getDimension() == 0 ? 1.0F : this.soundPitch()));
@@ -93,7 +92,7 @@ public class NeoOresTeleporter extends Teleporter
 								this.destinationCoordinateCache.put(pos, new PortalPosition(new BlockPos(j + x, k + y, l + z), this.world.getTotalWorldTime()));
 								if (entityIn instanceof EntityPlayerMP)
 								{
-									ObfuscationReflectionHelper.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
+									ServerUtils.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
 									((EntityPlayerMP) entityIn).setPositionAndUpdate(j + x + 0.5D, k + y + 1.5D, l + z + 0.5D);
 									((EntityPlayerMP) entityIn).connection.sendPacket(new SPacketCustomSound(SoundEvents.BLOCK_PORTAL_TRAVEL.getRegistryName().getResourcePath(), SoundCategory.PLAYERS,
 											entityIn.posX, entityIn.posY, entityIn.posZ, 0.5F, worldIn.provider.getDimension() == 0 ? 1.0F : this.soundPitch()));
@@ -113,11 +112,8 @@ public class NeoOresTeleporter extends Teleporter
 			this.destinationCoordinateCache.put(pos, new PortalPosition(tpp.add(0, -1, 0), this.world.getTotalWorldTime()));
 			if (entityIn instanceof EntityPlayerMP)
 			{
-				ObfuscationReflectionHelper.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
+				ServerUtils.setPrivateValue(EntityPlayerMP.class, (EntityPlayerMP) entityIn, true, reflectionField);
 				((EntityPlayerMP) entityIn).setPositionAndUpdate((double) tpp.getX() + 0.5D, tpp.getY() + 0.5D, (double) tpp.getZ() + 0.5D);
-				// ((EntityPlayerMP)entityIn).connection.setPlayerLocation((double)tpp.getX() +
-				// 0.5D, tpp.getY() + 0.5D, (double)tpp.getZ() + 0.5D, entityIn.rotationYaw,
-				// entityIn.rotationPitch);
 				((EntityPlayerMP) entityIn).connection.sendPacket(new SPacketCustomSound(SoundEvents.BLOCK_PORTAL_TRAVEL.getRegistryName().getResourcePath(), SoundCategory.PLAYERS, entityIn.posX,
 						entityIn.posY, entityIn.posZ, 0.5F, worldIn.provider.getDimension() == 0 ? 1.0F : this.soundPitch()));
 			}

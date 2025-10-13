@@ -126,13 +126,7 @@ public class SpellUtils
 		List<KnowledgeTab> list = new ArrayList<KnowledgeTab>();
 		for (SpellItem spell : registry)
 		{
-			boolean flag = false;
-			for (KnowledgeTab tab : list)
-			{
-				if (tab == spell.getTab())
-					flag = true;
-			}
-			if (!flag)
+			if (!list.contains(spell.getTab()))
 				list.add(spell.getTab());
 		}
 

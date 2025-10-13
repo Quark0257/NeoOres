@@ -37,7 +37,7 @@ public class SpellFilterWhiteList extends SpellEffect implements HasRange
 					return;
 				}
 				SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
-				List<Entity> list = HasRange.getRangedEntities(world, 0.5 + this.range, entity, runner, false, true);
+				List<Entity> list = HasRange.getRangedEntities(world, -1, 0.5 + this.range, entity, runner, false, true);
 				List<ItemStack> whiteList = SpellUtils.getFilteredItems(target, false);
 				List<ItemStack> blackList = SpellUtils.getFilteredItems(target, true);
 				List<ItemStack> removeList = new ArrayList<ItemStack>();

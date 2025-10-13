@@ -8,8 +8,8 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IStackHelper;
-import neo_ores.api.LongUtils;
 import neo_ores.api.recipe.ManaCraftingRecipe;
+import neo_ores.util.NumberUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -75,7 +75,7 @@ public class ManaCraftingWrapper implements IRecipeWrapper
 					list.add(new ArrayList<ItemStack>());
 				}
 			}
-			jeiRecipes.add(new ManaCraftingWrapper(list, mcr.getResult(), TextFormatting.BLUE + I18n.format("container.mana_workbench.cost") + " : " + LongUtils.convertString(mcr.mana())));
+			jeiRecipes.add(new ManaCraftingWrapper(list, mcr.getResult(), TextFormatting.BLUE + I18n.format("container.mana_workbench.cost") + " : " + NumberUtils.getPrefixedNumber(mcr.mana(), 4)));
 		}
 		return jeiRecipes;
 	}

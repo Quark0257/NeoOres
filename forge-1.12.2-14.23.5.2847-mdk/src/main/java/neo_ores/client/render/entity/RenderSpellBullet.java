@@ -87,7 +87,6 @@ public class RenderSpellBullet extends Render<EntitySpellBullet>
 
 	public static class RenderSpellBulletFactory implements IRenderFactory<EntitySpellBullet>
 	{
-
 		@Override
 		public Render<? super EntitySpellBullet> createRenderFor(RenderManager manager)
 		{

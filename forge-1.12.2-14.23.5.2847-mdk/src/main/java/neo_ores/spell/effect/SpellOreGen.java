@@ -3,8 +3,10 @@ package neo_ores.spell.effect;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -22,16 +24,19 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellOreGen extends SpellEffect implements HasRange
+public class SpellOreGen extends SpellEffect implements HasRange, HasChain
 {
 	private static final Random random = new Random();
 
 	private int range = 0;
+	private int chain = 0;
+	private boolean rangeMode = true;
 
 	@Override
 	public void setRange(int value)
 	{
 		range = value;
+		this.rangeMode = true;
 	}
 
 	@Override
@@ -46,7 +51,7 @@ public class SpellOreGen extends SpellEffect implements HasRange
 		{
 			ItemStack item = stack.copy();
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1.0, 1.0, 1.0), SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
@@ -101,5 +106,12 @@ public class SpellOreGen extends SpellEffect implements HasRange
 	{
 		BlockPos pos = new BlockPos(runner.posX, runner.posY, runner.posZ);
 		return RayTraceUtils.getSimpleResult(pos, null);
+	}
+
+	@Override
+	public void setChain(int level)
+	{
+		this.chain = level;
+		this.rangeMode = false;
 	}
 }

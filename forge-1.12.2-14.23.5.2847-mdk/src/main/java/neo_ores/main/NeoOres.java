@@ -22,12 +22,17 @@ import neo_ores.packet.PacketItemsToClient;
 import neo_ores.packet.PacketLineParticleToClient;
 import neo_ores.packet.PacketMagicDataToClient;
 import neo_ores.packet.PacketMagicDataToServer;
+import neo_ores.packet.PacketPISyncToClient;
+import neo_ores.packet.PacketPISyncToServer;
 import neo_ores.packet.PacketParticleToClient;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
+import neo_ores.packet.PacketSyncConstantDataToClient;
+import neo_ores.packet.PacketSyncConstantDataToServer;
 import neo_ores.potion.PotionAntiGriefing;
 import neo_ores.potion.PotionAntiKnockback;
 import neo_ores.potion.PotionAntiTeleport;
+import neo_ores.potion.PotionFlying;
 import neo_ores.potion.PotionFreeze;
 import neo_ores.potion.PotionGravity;
 import neo_ores.potion.PotionManaBoost;
@@ -96,6 +101,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.gson.JsonObject;
+
 import morph.avaritia.recipe.AvaritiaRecipeManager;
 import morph.avaritia.recipe.extreme.ExtremeShapedRecipe;
 
@@ -137,6 +144,10 @@ public class NeoOres
 		PACKET.registerMessage(PacketEntityToClient.Handler.class, PacketEntityToClient.class, 7, Side.CLIENT);
 		PACKET.registerMessage(PacketLineParticleToClient.Handler.class, PacketLineParticleToClient.class, 8, Side.CLIENT);
 		PACKET.registerMessage(PacketAreaParticleToClient.Handler.class, PacketAreaParticleToClient.class, 9, Side.CLIENT);
+		PACKET.registerMessage(PacketPISyncToClient.Handler.class, PacketPISyncToClient.class, 10, Side.CLIENT);
+		PACKET.registerMessage(PacketPISyncToServer.Handler.class, PacketPISyncToServer.class, 11, Side.SERVER);
+		PACKET.registerMessage(PacketSyncConstantDataToClient.Handler.class, PacketSyncConstantDataToClient.class, 12, Side.CLIENT);
+		PACKET.registerMessage(PacketSyncConstantDataToServer.Handler.class, PacketSyncConstantDataToServer.class, 13, Side.SERVER);
 		
 		if(event.getSide().isClient())
 		{
@@ -285,6 +296,8 @@ public class NeoOres
 	public static final int guiIDStudyTable = 2;
 	public static final int guiIDSRCT = 3;
 	public static final int guiIDMM = 4;
+	public static final int guiIDPI = 5;
+	public static final int guiIDGuide = 6;
 	
 	public static final SimpleNetworkWrapper PACKET = NetworkRegistry.INSTANCE.newSimpleChannel("neo_ores".toLowerCase());
 	
@@ -317,6 +330,7 @@ public class NeoOres
 	public static final Potion antiknockback = new PotionAntiKnockback("neo_ores.effect.antiknockback").setIconIndex(7,0).setRegistryName(Reference.MOD_ID, "antiknockback").setBeneficial();
 	public static final Potion antigriefing = new PotionAntiGriefing("neo_ores.effect.antigriefing").setIconIndex(8,0).setRegistryName(Reference.MOD_ID, "antigriefing");
 	public static final Potion antienderteleport = new PotionAntiTeleport("neo_ores.effect.antiteleport").setIconIndex(9,0).setRegistryName(Reference.MOD_ID, "antiteleport");
+	public static final Potion flying = new PotionFlying("neo_ores.effect.flying").setIconIndex(10,0).setRegistryName(Reference.MOD_ID, "flying").setBeneficial();
 	
 	public static final PotionType mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,3600)).setRegistryName(Reference.MOD_ID, "mana_regen");
 	public static final PotionType strong_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,1800,1)).setRegistryName(Reference.MOD_ID, "strong_mana_regen");
@@ -344,4 +358,5 @@ public class NeoOres
 	};
 	
 	public static final List<OreWeightRecipe> ore_gen_recipes = new ArrayList<OreWeightRecipe>();
+	public static final List<JsonObject> infinity_place_blocks = new ArrayList<JsonObject>();
 }

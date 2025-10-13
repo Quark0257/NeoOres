@@ -2,6 +2,7 @@ package neo_ores.api;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -18,14 +19,17 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class InventoryUtils
-{
-	public static boolean addInventoryfromInventorySlot(int targetindex, IInventory target, IInventory distination, @Nullable EnumFacing facingTarget, @Nullable EnumFacing facingDist)
+{	
+	public static boolean addInventoryfromInventorySlot(int targetindex, IInventory target, IInventory distination, @Nullable EnumFacing facingTarget, @Nullable EnumFacing facingDist) 
 	{
 		if (targetindex < target.getSizeInventory())
 		{
@@ -41,6 +45,30 @@ public class InventoryUtils
 			if (targetstack.isEmpty())
 				return false;
 			int targetcount = targetstack.getCount();
+			if (distination instanceof ICapabilityProvider) 
+			{
+				ICapabilityProvider cap = (ICapabilityProvider) distination;
+				IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facingDist);
+				if (handler != null) 
+				{
+					for (int i = 0; i < handler.getSlots(); i++) 
+					{
+						if (!targetstack.isEmpty() && StackUtils.compareWith(handler.getStackInSlot(i), targetstack)) 
+						{
+							targetstack = handler.insertItem(i, targetstack, false);
+						}
+					}
+					for (int i = 0; i < handler.getSlots(); i++) 
+					{
+						targetstack = handler.insertItem(i, targetstack, false);
+					}
+					if (targetstack.getCount() != targetcount) 
+					{
+						target.decrStackSize(targetindex, targetcount - targetstack.getCount());
+					}
+					return targetstack.getCount() != targetcount;
+				}
+			}
 			int size = distination.getSizeInventory();
 			for (int i = 0; i < size; i++)
 			{
@@ -140,6 +168,29 @@ public class InventoryUtils
 	{
 		if (stack.isEmpty())
 			return ItemStack.EMPTY;
+		if (distination instanceof ICapabilityProvider) 
+		{
+			ICapabilityProvider cap = (ICapabilityProvider) distination;
+			if (cap.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) 
+			{
+				IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+				if (handler != null) 
+				{
+					for (int i = 0; i < handler.getSlots(); i++) 
+					{
+						if (!stack.isEmpty() && StackUtils.compareWith(stack, handler.getStackInSlot(i))) 
+						{
+							stack = handler.insertItem(i, stack, false);
+						}
+					}
+					for (int i = 0; i < handler.getSlots(); i++) 
+					{
+						stack = handler.insertItem(i, stack, false);
+					}
+					return stack;
+				}
+			}
+		}
 		ItemStack targetstack = stack.copy();
 		int size = distination.getSizeInventory();
 		// for slots are not empty
@@ -232,15 +283,19 @@ public class InventoryUtils
 		return stack;
 	}
 
-	public static Map<Integer, ItemStack> getInventoryStackList(IInventory target, boolean exceptHoldItem, @Nullable EnumFacing facing)
+	public static Map<Integer, ItemStack> getInventoryStackList(IInventory target, boolean exceptHoldItem, @Nullable EnumFacing facing) {
+		return getInventoryStackList(target, exceptHoldItem, facing, false);
+	}
+	
+	public static LinkedHashMap<Integer, ItemStack> getInventoryStackList(IInventory target, boolean exceptHoldItem, @Nullable EnumFacing facing, boolean includeArmorAndOffhand)
 	{
-		Map<Integer, ItemStack> map = new HashMap<Integer, ItemStack>();
+		LinkedHashMap<Integer, ItemStack> map = new LinkedHashMap<Integer, ItemStack>();
 		int size = target.getSizeInventory();
 		for (int i = 0; i < size; i++)
 		{
 			if (target instanceof InventoryPlayer)
 			{
-				if (((InventoryPlayer) target).mainInventory.size() <= i || (exceptHoldItem && ((InventoryPlayer) target).currentItem == i))
+				if ((includeArmorAndOffhand ? ((InventoryPlayer) target).getSizeInventory() : ((InventoryPlayer) target).mainInventory.size()) <= i || (exceptHoldItem && ((InventoryPlayer) target).currentItem == i))
 					continue;
 			}
 			if (target instanceof ISidedInventory && facing != null)
@@ -257,7 +312,7 @@ public class InventoryUtils
 
 	public static FluidStack addFluidToInventory(FluidStack stack, IInventory inventory, @Nullable EnumFacing facing)
 	{
-		Map<Integer, ItemStack> map = getInventoryStackList(inventory, false, facing);
+		Map<Integer, ItemStack> map = getInventoryStackList(inventory, false, facing, true);
 		for (int key : map.keySet())
 		{
 			ItemStack itemStack = map.get(key);

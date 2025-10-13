@@ -12,6 +12,7 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class CompareStateAlter implements ICompareBlockState
 {
@@ -30,7 +31,7 @@ public class CompareStateAlter implements ICompareBlockState
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean compare(BlockPos pos, IBlockState a, IBlockState b)
+	public boolean compare(World world, BlockPos pos, IBlockState a, IBlockState b)
 	{
 		if (a.getBlock() instanceof BlockStairs)
 		{

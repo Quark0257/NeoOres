@@ -5,10 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.annotation.Nullable;
 
+import neo_ores.api.PlayerTrigger;
 import neo_ores.api.PrimitiveUtils;
 import neo_ores.main.Reference;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -176,5 +178,11 @@ public class SpellItem extends IForgeRegistryEntry.Impl<SpellItem>
 	public String toString()
 	{
 		return this.bdata.modid + ":" + this.bdata.registerID;
+	}
+	
+	@Nullable
+	public PlayerTrigger getTrigger() 
+	{
+		return GameRegistry.findRegistry(PlayerTrigger.class).getValue(this.stdata.trigger);
 	}
 }

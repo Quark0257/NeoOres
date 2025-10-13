@@ -39,6 +39,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class TileEntityMechanicalMagician extends TileEntityLockable implements ITickable, ISidedInventory
 {
@@ -344,8 +347,10 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			this.player.rotationYaw = direction.getXAsFloat();
 		}
 
+		boolean saveFlag = false;
 		if (this.redstone && !this.activated)
 		{
+			saveFlag = true;
 			ItemStack itemspell = this.getStackInSlot(0);
 			if (itemspell.getTagCompound() != null && itemspell.getTagCompound().hasKey(SpellUtils.NBTTagUtils.SPELL))
 			{
@@ -402,8 +407,6 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 				}
 			}
 			this.activated = true;
-
-			this.markDirty();
 		}
 
 		if (!this.redstone)
@@ -467,6 +470,11 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			PacketDestinationToClient pdc = new PacketDestinationToClient(this.getPos(), this.destination);
 			NeoOres.PACKET.sendToAll(pdc);
 		}
+		
+		if (saveFlag) 
+		{
+			this.markDirty();
+		}
 	}
 
 	public void upgradeInit()
@@ -505,6 +513,14 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 	{
 		return new ContainerMechanicalMagician(playerInventory, this);
 	}
+	
+
+	IItemHandler handlerTop = new SidedInvWrapper(this, EnumFacing.UP);
+	IItemHandler handlerBottom = new SidedInvWrapper(this, EnumFacing.DOWN);
+	IItemHandler handlerWest = new SidedInvWrapper(this, EnumFacing.WEST);
+	IItemHandler handlerEast = new SidedInvWrapper(this, EnumFacing.EAST);
+	IItemHandler handlerSouth = new SidedInvWrapper(this, EnumFacing.SOUTH);
+	IItemHandler handlerNorth = new SidedInvWrapper(this, EnumFacing.NORTH);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -515,6 +531,19 @@ public class TileEntityMechanicalMagician extends TileEntityLockable implements 
 			return null;
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
 			return (T) this.tank;
+		if (facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			if (facing == EnumFacing.DOWN)
+				return (T) handlerBottom;
+			else if (facing == EnumFacing.UP)
+				return (T) handlerTop;
+			else if (facing == EnumFacing.WEST)
+				return (T) handlerWest;
+			else if (facing == EnumFacing.EAST)
+				return (T) handlerEast;
+			else if (facing == EnumFacing.SOUTH)
+				return (T) handlerSouth;
+			else if (facing == EnumFacing.NORTH)
+				return (T) handlerNorth;
 		return super.getCapability(capability, facing);
 	}
 

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.RecipeOreStackWildCard;
+import neo_ores.api.RecipeOreStackWildCardPostScript;
 import neo_ores.api.StackUtils;
 import neo_ores.api.Structure;
 import neo_ores.api.StructureUtils;
@@ -46,8 +47,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class TileEntityPedestal extends AbstractTileEntityPedestal implements ISidedInventory
 {
@@ -128,27 +133,24 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 
 	public ItemStack decrStackSize(int index, int count)
 	{
-		return !stack.isEmpty() && count > 0 ? stack.splitStack(count) : ItemStack.EMPTY;
+		return !this.stack.isEmpty() && count > 0 ? this.stack.splitStack(count) : ItemStack.EMPTY;
 	}
 
 	public ItemStack removeStackFromSlot(int index)
 	{
-		ItemStack stackcopy = this.stack.copy();
+		ItemStack prev = this.stack;
 		this.stack = ItemStack.EMPTY;
-		return stackcopy;
+		return prev;
 	}
 
 	@Override
 	public void setInventorySlotContents(int index, ItemStack stack)
 	{
-		if (this.compareWith(stack, this.stack))
+		this.stack = stack;
+
+		if (stack.getCount() > this.getInventoryStackLimit())
 		{
-			ItemStack stack2 = this.stack.copy();
-			this.stack.setCount(stack2.getCount() + stack.getCount());
-		}
-		else if (this.stack.isEmpty())
-		{
-			this.stack = stack;
+			stack.setCount(this.getInventoryStackLimit());
 		}
 	}
 
@@ -302,32 +304,36 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 						}
 						loop0: for (int index = 0; index < this.getEP().getSizeInventory(); index++)
 						{
-							for (ItemStack stack : this.getEP().getItems().get(index).asList(64))
+							ItemStack stack = this.getEP().getItems().get(index);
+							if (recipeFromList.get(this.phase).compareWith(stack))
 							{
-								if (recipeFromList.get(this.phase).compareWith(stack))
+								if (recipeFromList.get(this.phase) instanceof RecipeOreStackWildCardPostScript) 
 								{
-									if (recipeFromList.get(this.phase) instanceof RecipeOreStackWildCard)
-									{
-										if (stack.getItem() != NeoOresItems.spell_sheet)
-										{
-											this.writingItem = stack.copy();
-											this.writingItem.setCount(1);
-										}
-										else
-										{
-											this.writingItem = new ItemStack(NeoOresItems.spell);
-										}
-									}
-									else if (stack.getItem() instanceof IPostscriptDataIntoSpell)
-									{
-										this.additionalData = ((IPostscriptDataIntoSpell) stack.getItem()).postscript(stack, this.world, this.additionalData);
-										this.desc = ((IPostscriptDataIntoSpell) stack.getItem()).addFormattedDesc(stack, this.world, this.desc);
-									}
-
-									this.getEP().decrStackSize(index, 1);
-									this.requiredSize++;
-									break loop0;
+									IPostscriptDataIntoSpell post = (RecipeOreStackWildCardPostScript) recipeFromList.get(this.phase);
+									this.additionalData = post.postscript(stack, this.world, this.additionalData);
+									this.desc = post.addFormattedDesc(stack, this.world, this.desc);
 								}
+								else if (recipeFromList.get(this.phase) instanceof RecipeOreStackWildCard)
+								{
+									if (stack.getItem() != NeoOresItems.spell_sheet)
+									{
+										this.writingItem = stack.copy();
+										this.writingItem.setCount(1);
+									}
+									else
+									{
+										this.writingItem = new ItemStack(NeoOresItems.spell);
+									}
+								}
+								else if (stack.getItem() instanceof IPostscriptDataIntoSpell)
+								{
+									this.additionalData = ((IPostscriptDataIntoSpell) stack.getItem()).postscript(stack, this.world, this.additionalData);
+									this.desc = ((IPostscriptDataIntoSpell) stack.getItem()).addFormattedDesc(stack, this.world, this.desc);
+								}
+
+								this.getEP().decrStackSize(index, 1);
+								this.requiredSize++;
+								break loop0;
 							}
 						}
 						if (requiredSize >= recipeFromList.get(this.phase).getSize())
@@ -345,12 +351,12 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 							this.getEP().setDisplay(new ItemStack(NeoOresItems.spell_sheet));
 							for (int index = 0; index < this.getEP().getSizeInventory(); index++)
 							{
-								if (this.getEP().getItems().get(index).getStack().getItem() instanceof ISpellWritable)
+								if (this.getEP().getItems().get(index).getItem() instanceof ISpellWritable)
 								{
-									ItemStack stack = this.getEP().getItems().get(index).getStack().copy();
+									ItemStack stack = this.getEP().getItems().get(index).copy();
 									ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(recipeIn, stack);
-									stack1.getTagCompound().setTag("additionalData", this.additionalData);
-									stack1.getTagCompound().setTag("desc", this.desc);
+									stack1.getTagCompound().setTag(SpellUtils.NBTTagUtils.ADDITIONAL, this.additionalData);
+									stack1.getTagCompound().setTag(SpellUtils.NBTTagUtils.SPELL_DESC, this.desc);
 									InventoryHelper.spawnItemStack(this.getWorld(), this.getPos().getX(), this.getPos().getY() - 1, this.getPos().getZ(), stack1);
 									this.getEP().decrStackSize(index, 1);
 									this.additionalData = new NBTTagCompound();
@@ -545,7 +551,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 
 	public void spellCreation(World worldIn, BlockPos pos, IBlockState state, @Nullable EntityPlayer playerIn)
 	{
-		if (!world.isRemote)
+		if (!world.isRemote && this.offset < -0.4375)
 		{
 			if (!isMultiblock)
 			{
@@ -632,5 +638,42 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		if (this.isRecipeIn())
 			return ((ISpellRecipeWritable) this.getStackInSlot(0).getItem()).readRecipeSpells(this.getStackInSlot(0));
 		return new ArrayList<SpellItem>();
+	}
+	
+
+	IItemHandler handlerTop = new SidedInvWrapper(this, EnumFacing.UP);
+	IItemHandler handlerBottom = new SidedInvWrapper(this, EnumFacing.DOWN);
+	IItemHandler handlerWest = new SidedInvWrapper(this, EnumFacing.WEST);
+	IItemHandler handlerEast = new SidedInvWrapper(this, EnumFacing.EAST);
+	IItemHandler handlerSouth = new SidedInvWrapper(this, EnumFacing.SOUTH);
+	IItemHandler handlerNorth = new SidedInvWrapper(this, EnumFacing.NORTH);
+	
+	@Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+    {
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
+    }
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	@Nullable
+	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+	{
+		if (!this.hasCapability(capability, facing))
+			return null;
+		if (facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			if (facing == EnumFacing.DOWN)
+				return (T) handlerBottom;
+			else if (facing == EnumFacing.UP)
+				return (T) handlerTop;
+			else if (facing == EnumFacing.WEST)
+				return (T) handlerWest;
+			else if (facing == EnumFacing.EAST)
+				return (T) handlerEast;
+			else if (facing == EnumFacing.SOUTH)
+				return (T) handlerSouth;
+			else if (facing == EnumFacing.NORTH)
+				return (T) handlerNorth;
+		return super.getCapability(capability, facing);
 	}
 }

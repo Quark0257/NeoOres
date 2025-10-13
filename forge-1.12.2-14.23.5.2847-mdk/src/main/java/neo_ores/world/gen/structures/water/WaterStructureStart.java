@@ -1,6 +1,7 @@
 package neo_ores.world.gen.structures.water;
 
 import java.util.Random;
+import java.util.UUID;
 
 import neo_ores.world.gen.structures.RecursiveGenerator;
 import neo_ores.world.gen.structures.StructurePieceAndOption;
@@ -34,11 +35,12 @@ public class WaterStructureStart extends StructureStart
 		{
 			BlockPos blockpos = new BlockPos(chunkX * 16 + 8, i, chunkZ * 16 + 8);
 			WorldServer server = (WorldServer) worldIn;
+			UUID uuid = UUID.randomUUID();
 			RecursiveGenerator rg;
 			while (true)
 			{
 				rg = new RecursiveGenerator();
-				rg.getRecursiveList(WaterStructurePieces.BOSS, blockpos, rotation, null, random, 12);
+				rg.getRecursiveList(WaterStructurePieces.BOSS, blockpos, rotation, null, random, 9);
 				if (rg.chestCount > 0)
 					break;
 			}
@@ -55,7 +57,7 @@ public class WaterStructureStart extends StructureStart
 					}
 					count++;
 				}
-				WaterStructurePieceComponent sn = new WaterStructurePieceComponent(server, sp);
+				WaterStructurePieceComponent sn = new WaterStructurePieceComponent(server, sp, uuid);
 				this.components.add(sn);
 			}
 			this.updateBoundingBox();

@@ -6,6 +6,7 @@ import java.util.List;
 import neo_ores.api.ListUtils;
 import neo_ores.block.BlockAerite;
 import neo_ores.block.BlockAirEssence;
+import neo_ores.block.BlockBossCapsule;
 import neo_ores.block.BlockChunkLoader;
 import neo_ores.block.BlockDimension;
 import neo_ores.block.BlockDimensionLeaves;
@@ -232,6 +233,10 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID, "liquid_mana")
 			.setUnlocalizedName("liquid_mana")
 			.setCreativeTab(NeoOres.neo_ores_tab);	
+	public static final Block boss_capsule = new BlockBossCapsule()
+			.setRegistryName(Reference.MOD_ID, "boss_capsule")
+			.setUnlocalizedName("boss_capsule")
+			.setCreativeTab(NeoOres.neo_ores_tab);	
 	
 	public static final List<Block> color_saplings = Arrays.asList(
 			corroded_air_sapling,
@@ -306,6 +311,7 @@ public class NeoOresBlocks
 			corroding_dim_leaves,
 			chunk_loader,
 			liquid_mana,
-			light
+			light,
+			boss_capsule
 			),color_saplings);	
 }

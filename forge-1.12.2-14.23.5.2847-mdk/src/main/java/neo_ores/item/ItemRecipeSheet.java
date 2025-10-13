@@ -3,11 +3,11 @@ package neo_ores.item;
 import java.util.ArrayList;
 import java.util.List;
 
-import neo_ores.api.LongUtils;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.Spell.SpellCorrection;
+import neo_ores.util.NumberUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -94,7 +94,7 @@ public class ItemRecipeSheet extends INeoOresItem.Impl implements ISpellRecipeWr
 				list.add(TextFormatting.GRAY + getName(spell) + (flag.isAdvanced() ? TextFormatting.DARK_GRAY + " (" + spell.toString() + ")" : ""));
 			}
 			long manaConsume = SpellUtils.getMPConsume(spells);
-			list.add(TextFormatting.GRAY + I18n.format("tooltip.mana").trim() + " : " + LongUtils.convertString(manaConsume));
+			list.add(TextFormatting.GRAY + I18n.format("tooltip.mana").trim() + " : " + NumberUtils.getPrefixedNumber(manaConsume, 4));
 		}
 	}
 

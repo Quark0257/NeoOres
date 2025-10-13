@@ -60,7 +60,7 @@ public class RenderSpellPlaceable extends Render<EntitySpellPlaceable>
 		{
 			return;
 		}
-
+		
 		AxisAlignedBB aabb = entity.getEntityBoundingBox();
 		Vec3d min = new Vec3d(aabb.minX, aabb.minY, aabb.minZ);
 		Vec3d max = new Vec3d(aabb.maxX, aabb.maxY, aabb.maxZ);
@@ -75,13 +75,17 @@ public class RenderSpellPlaceable extends Render<EntitySpellPlaceable>
 		{
 			for (int j = 0; j < maxZ; j++)
 			{
+				if (entity.world.rand.nextDouble() < 0.95) 
+				{
+					continue;
+				}
 				double baseX = (double) i / multiplier;
 				double baseZ = (double) j / multiplier;
 				double dx = baseX + dMulti * (entity.world.rand.nextDouble());
 				double dy = 0.5 * size.y * (entity.world.rand.nextDouble() - 0.5D);
 				double dz = baseZ + dMulti * (entity.world.rand.nextDouble());
 				NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(min.x + dx, py + dy, min.z + dz, 0.0, 0.0, 0.0,
-						12 + entity.world.rand.nextInt(8), 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
+						12 + entity.world.rand.nextInt(8), 6.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 			}
 		}
 	}

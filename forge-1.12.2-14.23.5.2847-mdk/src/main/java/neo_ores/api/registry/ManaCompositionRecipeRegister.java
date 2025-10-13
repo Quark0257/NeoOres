@@ -12,11 +12,10 @@ import net.minecraftforge.registries.RegistryBuilder;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class ManaCompositionRecipeRegister
 {
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void create(RegistryEvent.NewRegistry event)
 	{
-		RegistryBuilder<ManaCompositionRecipe> spell = new RegistryBuilder();
+		RegistryBuilder<ManaCompositionRecipe> spell = new RegistryBuilder<>();
 		spell.setType(ManaCompositionRecipe.class);
 		ResourceLocation key = new ResourceLocation(Reference.MOD_ID, "manaCompositionRecipes");
 		spell.setName(key);

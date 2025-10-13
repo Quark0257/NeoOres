@@ -48,7 +48,7 @@ public class ServerUtils
 		if (entity instanceof MultiPartEntityPart)
 		{
 			IEntityMultiPart parent = ((MultiPartEntityPart) entity).parent;
-			parent.attackEntityFromPart((MultiPartEntityPart) entity, source, amount);
+			return parent.attackEntityFromPart((MultiPartEntityPart) entity, source, amount);
 		}
 		return entity.attackEntityFrom(source, amount);
 	}

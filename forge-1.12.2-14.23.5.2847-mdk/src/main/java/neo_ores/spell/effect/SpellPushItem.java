@@ -2,8 +2,11 @@ package neo_ores.spell.effect;
 
 import java.util.Map;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
+import neo_ores.spell.SpellItemInterfaces.HasPI;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -29,8 +32,10 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class SpellPushItem extends SpellEffectItemFilteredOrFluid
+public class SpellPushItem extends SpellEffectItemFilteredOrFluid implements HasPI
 {
+	private boolean piMode = false;
+	
 	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
@@ -43,7 +48,8 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 		if (result.typeOfHit == Type.BLOCK)
 		{
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+					: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
 			{
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te instanceof IInventory && !this.liquidMode)
@@ -76,7 +82,7 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 						for (int i : map.keySet())
 						{
 							FluidStack fluid = map.get(i);
-							if (!this.match(fluid.getFluid(), stack)) 
+							if (!this.match(fluid.getFluid(), stack))
 							{
 								continue;
 							}
@@ -99,7 +105,7 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 					{
 						for (int i : map.keySet())
 						{
-							if (!this.match(map.get(i).getFluid(), stack)) 
+							if (!this.match(map.get(i).getFluid(), stack))
 							{
 								continue;
 							}
@@ -148,7 +154,8 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 						pmds.addMXP(1L);
 					}
 				}
-				if (trial <= count) {
+				if (trial <= count)
+				{
 					break;
 				}
 			}
@@ -169,5 +176,11 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid
 	{
 		BlockPos pos = new BlockPos(runner.posX, runner.posY, runner.posZ);
 		return RayTraceUtils.getSimpleResult(pos, null);
+	}
+
+	@Override
+	public void setPIMode()
+	{
+		this.piMode = true;
 	}
 }

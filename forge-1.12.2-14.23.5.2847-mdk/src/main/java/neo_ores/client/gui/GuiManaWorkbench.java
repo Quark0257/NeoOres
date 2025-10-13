@@ -2,8 +2,8 @@ package neo_ores.client.gui;
 
 import java.io.IOException;
 
-import neo_ores.api.LongUtils;
 import neo_ores.inventory.ContainerManaWorkbench;
+import neo_ores.util.NumberUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -57,7 +57,7 @@ public class GuiManaWorkbench extends GuiContainer implements IContainerListener
 		{
 			int i = 32255;
 			boolean flag = true;
-			String s = I18n.format("container.mana_workbench.cost") + " : " + LongUtils.convertString(this.mana_workbench.cost);
+			String s = I18n.format("container.mana_workbench.cost") + " : " + NumberUtils.getPrefixedNumber(this.mana_workbench.cost, 4);
 
 			if (!this.mana_workbench.getSlot(9).getHasStack())
 			{

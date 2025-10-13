@@ -1,6 +1,7 @@
 package neo_ores.spell.effect;
 
 import neo_ores.api.spell.Spell.SpellEffect;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.RayTraceUtils;
 import net.minecraft.entity.Entity;
@@ -11,14 +12,23 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 
-public abstract class SpellEffectEntityBase extends SpellEffect implements HasRange
+public abstract class SpellEffectEntityBase extends SpellEffect implements HasRange, HasChain
 {
 	protected int range0 = 0;
+	protected int chain = 0;
+	protected boolean rangeMode = true;
 
 	@Override
 	public void setRange(int value)
 	{
 		this.range0 = value;
+		this.rangeMode = true;
+	}
+
+	public void setChain(int level)
+	{
+		this.chain = level;
+		this.rangeMode = false;
 	}
 
 	@Override
@@ -27,7 +37,7 @@ public abstract class SpellEffectEntityBase extends SpellEffect implements HasRa
 		if (result != null && result.typeOfHit == Type.ENTITY && result.entityHit != null)
 		{
 			Entity entity = (Entity) result.entityHit;
-			for (Entity elb : HasRange.getRangedEntities(world, this.range0, entity, runner, true, false))
+			for (Entity elb : this.rangeMode ? HasRange.getRangedEntities(world, this.range0, entity, runner, true, false) : HasChain.getChainedEntity(world, this.chain, entity, runner, true, false))
 			{
 				this.onEffect(world, elb, runner, stack);
 			}
@@ -35,8 +45,8 @@ public abstract class SpellEffectEntityBase extends SpellEffect implements HasRa
 	}
 
 	protected abstract void onEffect(World world, Entity elb, EntityLivingBase runner, ItemStack stack);
-	
-	protected boolean isFakePlayer(Entity elb) 
+
+	protected boolean isFakePlayer(Entity elb)
 	{
 		return elb instanceof FakePlayer;
 	}
@@ -47,4 +57,3 @@ public abstract class SpellEffectEntityBase extends SpellEffect implements HasRa
 		return RayTraceUtils.getSimpleResult(runner);
 	}
 }
-

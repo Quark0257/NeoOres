@@ -1,6 +1,5 @@
 package neo_ores.block;
 
-import neo_ores.api.IChunkLoader;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.tileentity.TileEntityMechanicalMagician;
@@ -29,7 +28,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockMechanicalMagician extends NeoOresBlock implements ITileEntityProvider, IWrenchUsed, IChunkLoader
+public class BlockMechanicalMagician extends NeoOresBlock implements ITileEntityProvider, IWrenchUsed
 {
 	public BlockMechanicalMagician()
 	{
@@ -52,7 +51,7 @@ public class BlockMechanicalMagician extends NeoOresBlock implements ITileEntity
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer()
 	{
-		return BlockRenderLayer.TRANSLUCENT;
+		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
 	public boolean isFullCube(IBlockState iblockstate)
@@ -185,12 +184,6 @@ public class BlockMechanicalMagician extends NeoOresBlock implements ITileEntity
 			nextPos.setInteger("z", pos.getZ());
 			stack.getTagCompound().setTag("nextSetPos", nextPos);
 		}
-	}
-
-	@Override
-	public boolean isLoadable()
-	{
-		return true;
 	}
 	
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)

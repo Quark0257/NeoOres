@@ -1,7 +1,10 @@
 package neo_ores.spell.effect;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
+import neo_ores.spell.SpellItemInterfaces.HasPI;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -25,8 +28,10 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class SpellPullItem extends SpellEffectItemFilteredOrFluid
+public class SpellPullItem extends SpellEffectItemFilteredOrFluid implements HasPI
 {
+	private boolean piMode = false;
+
 	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
@@ -38,7 +43,8 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 		if (result.typeOfHit == Type.BLOCK)
 		{
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+					: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
 			{
 				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 				TileEntity te = world.getTileEntity(pos);
@@ -99,7 +105,7 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 			Entity entity = result.entityHit;
 			if (entity == null)
 				return;
-			for (Entity temp : HasRange.getRangedEntities(world, this.range, entity, runner, false, true))
+			for (Entity temp : this.rangeMode ? HasRange.getRangedEntities(world, this.range, entity, runner, false, true) : HasChain.getChainedEntity(world, this.chain, entity, runner, false, true))
 			{
 				this.entityFor(temp, player, world, stack);
 			}
@@ -123,7 +129,7 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 				entityitem.setItem(result);
 				if (entityitem.getItem().isEmpty())
 					entityitem.setDead();
-				
+
 				if (player instanceof EntityPlayerMP)
 				{
 					PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) player);
@@ -137,5 +143,11 @@ public class SpellPullItem extends SpellEffectItemFilteredOrFluid
 	public RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
 		return RayTraceUtils.getSimpleResult(runner);
+	}
+
+	@Override
+	public void setPIMode()
+	{
+		this.piMode = true;
 	}
 }

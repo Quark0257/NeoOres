@@ -1,6 +1,7 @@
 package neo_ores.world.gen.structures.air;
 
 import java.util.Random;
+import java.util.UUID;
 
 import neo_ores.world.dimension.ChunkGeneratorTheAir;
 import neo_ores.world.gen.structures.RecursiveGenerator;
@@ -43,6 +44,7 @@ public class AirStructureStart extends StructureStart
 		{
 			BlockPos blockpos = new BlockPos(chunkX * 16 + 8, i, chunkZ * 16 + 8);
 			WorldServer server = (WorldServer) worldIn;
+			UUID uuid = UUID.randomUUID();
 			RecursiveGenerator rg;
 			while (true)
 			{
@@ -64,7 +66,7 @@ public class AirStructureStart extends StructureStart
 					}
 					count++;
 				}
-				AirStructurePieceComponent sn = new AirStructurePieceComponent(server, sp);
+				AirStructurePieceComponent sn = new AirStructurePieceComponent(server, sp, uuid);
 				this.components.add(sn);
 			}
 			this.isSizeable = true;

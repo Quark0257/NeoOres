@@ -2,13 +2,16 @@ package neo_ores.spell.effect;
 
 import java.util.Map;
 
+import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresData;
+import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasSilk;
+import neo_ores.spell.SpellItemInterfaces.HasSmelt;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
@@ -22,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -32,12 +36,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
-public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather
+public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather, HasChain, HasSmelt
 {
 	private int fortune = 0;
 	private boolean isSilktouch = false;
 	private int harvestlevel = 0;
 	private boolean canGather = false;
+	private boolean smelting = false;
 
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
@@ -60,7 +65,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 			}
 
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : HasRange.rangedPos(result.getBlockPos(), face, this.range))
+			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 				if (!world.isRemote)
@@ -76,7 +81,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 					{
 						this.breakBlock(state, world, pos, runner, xpvalue, item);
 					}
-					else 
+					else
 					{
 						this.breakBlockByMob(state, world, pos, runner);
 					}
@@ -108,6 +113,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 	{
 		if (state.getBlock().getHarvestLevel(state) <= this.harvestlevel || state.getBlock() instanceof IShearable)
 		{
+			int xp = 0;
 			if (state.getBlock().getBlockHardness(state, world, pos) < 0.0F)
 			{
 				if (this.harvestlevel == 11)
@@ -124,9 +130,24 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 							pmds.addMXP(1L + (long) Math.pow(2, harvestlevel) + (long) Math.pow(3, fortune) + (long) silk_xp);
 						}
 					}
+					
+					ItemStack target = eitem.getItem();
+					if (this.smelting)
+					{
+						ItemStack copied = target.copy();
+						copied.setCount(1);
+						ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(target).copy();
+						if (!smeltingResult.isEmpty())
+						{
+							int fortuneMag = world.rand.nextInt(this.fortune + 1) + 1;
+							xp += target.getCount() * FurnaceRecipes.instance().getSmeltingExperience(target);
+							smeltingResult.setCount(fortuneMag * target.getCount() * smeltingResult.getCount());
+							eitem.setItem(smeltingResult);
+							target = eitem.getItem();
+						}
+					}
 					if (this.canGather)
 					{
-						ItemStack target = eitem.getItem();
 						ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
 						if (!target.isEmpty() && result.getCount() != target.getCount())
 						{
@@ -142,22 +163,31 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 				state.getBlock().harvestBlock(world, (EntityPlayer) runner, pos, state, world.getTileEntity(pos), item);
 				if (!this.isSilktouch)
 				{
-					int i = state.getBlock().getExpDrop(state, world, pos, this.fortune);
-					if (i > 0)
-					{
-						EntityXPOrb exp = new EntityXPOrb(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, i);
-						world.spawnEntity(exp);
-					}
+					xp += state.getBlock().getExpDrop(state, world, pos, this.fortune);
 				}
 
 				if (!world.isRemote)
 				{
 					world.destroyBlock(pos, false);
-					if (this.canGather)
+					for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)))
 					{
-						for (EntityItem entity : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)))
+						ItemStack target = entity.getItem();
+						if (this.smelting)
 						{
-							ItemStack target = entity.getItem();
+							ItemStack copied = target.copy();
+							copied.setCount(1);
+							ItemStack smeltingResult = FurnaceRecipes.instance().getSmeltingResult(target).copy();
+							if (!smeltingResult.isEmpty())
+							{
+								int fortuneMag = world.rand.nextInt(this.fortune + 1) + 1;
+								xp += target.getCount() * FurnaceRecipes.instance().getSmeltingExperience(target);
+								smeltingResult.setCount(fortuneMag * target.getCount() * smeltingResult.getCount());
+								entity.setItem(smeltingResult);
+								target = entity.getItem();
+							}
+						}
+						if (this.canGather)
+						{
 							ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
 							if (!target.isEmpty() && result.getCount() != target.getCount())
 							{
@@ -175,19 +205,26 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 					}
 				}
 			}
+			
+			if (xp > 0)
+			{
+				EntityXPOrb exp = new EntityXPOrb(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, xp);
+				world.spawnEntity(exp);
+			}
 		}
 	}
 
-	
-	private void breakBlockByMob(IBlockState state, World world, BlockPos pos, EntityLivingBase runner) 
+	private void breakBlockByMob(IBlockState state, World world, BlockPos pos, EntityLivingBase runner)
 	{
-		if (state.getBlock().canEntityDestroy(state, world, pos, runner) && ForgeEventFactory.onEntityDestroyBlock(runner, pos, state)) 
+		if (state.getBlock().getHarvestLevel(state) <= this.harvestlevel || state.getBlock() instanceof IShearable)
 		{
-			world.destroyBlock(pos, true);
+			if (state.getBlock().canEntityDestroy(state, world, pos, runner) && ForgeEventFactory.onEntityDestroyBlock(runner, pos, state))
+			{
+				world.destroyBlock(pos, true);
+			}
 		}
 	}
-	
-	
+
 	public void setSilkTouch()
 	{
 		this.isSilktouch = true;
@@ -215,5 +252,11 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 	{
 		BlockPos pos = new BlockPos(runner.posX, runner.posY, runner.posZ);
 		return RayTraceUtils.getSimpleResult(pos, null);
+	}
+
+	@Override
+	public void setSmelt()
+	{
+		this.smelting = true;
 	}
 }

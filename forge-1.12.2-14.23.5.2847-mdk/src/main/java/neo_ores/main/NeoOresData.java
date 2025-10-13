@@ -1,15 +1,25 @@
 package neo_ores.main;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import neo_ores.api.IChunkLoader;
 import neo_ores.api.IMagicContainer;
+import neo_ores.api.IPlayerRunnable;
 import neo_ores.api.NBTUtils;
+import neo_ores.api.Structure;
+import neo_ores.packet.PacketSyncConstantDataToServer;
+import neo_ores.pi.PIServerData;
 import neo_ores.util.NeoOresChunkManager;
 import neo_ores.util.NeoOresChunkManager.ChunkPosLoading;
 import neo_ores.util.PlayerMagicData;
@@ -25,9 +35,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -44,12 +57,16 @@ public class NeoOresData
 	public long time;
 	private WorldServer world;
 	private boolean needSaving;
-	private Map<BlockPos, ChunkPosLoading> mapChunk = new HashMap<BlockPos, ChunkPosLoading>();
+	private List<ChunkPosLoading> listChunk = new ArrayList<ChunkPosLoading>();
 	private Map<UUID, PlayerMagicData> mapPlayers = new HashMap<UUID, PlayerMagicData>();
 	private Map<UUID, PlayerStatusData> mapPlayerStatus = new HashMap<UUID, PlayerStatusData>();
 	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> mapPassiveSpellList = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
 	private Map<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>> bufferPassiveSpells = new HashMap<UUID, Map<Integer, Tuple3<ItemStack, NBTTagCompound, Long>>>();
 	private static final Map<UUID, PlayerMagicDataClient> mapPlayersClient = new HashMap<UUID, PlayerMagicDataClient>();
+	private final Map<UUID, PIServerData> currentTargetPedestals = new HashMap<>();
+	private final Map<UUID, Deque<IPlayerRunnable>> tasks = new HashMap<>();
+	private final Map<UUID, List<UUID>> keys = new HashMap<>();
+	private static final Map<ResourceLocation, Template> structureTemplates = new HashMap<>();
 
 	public NeoOresData(MinecraftServer server)
 	{
@@ -91,6 +108,143 @@ public class NeoOresData
 		}
 	}
 
+	public void addKey(UUID uuid, @Nonnull UUID key)
+	{
+		synchronized (this.keys)
+		{
+			if (!this.keys.containsKey(uuid))
+			{
+				this.keys.put(uuid, new ArrayList<>());
+			}
+			this.keys.get(uuid).add(key);
+		}
+	}
+
+	public void removeKey(EntityPlayerMP runner, @Nonnull UUID key)
+	{
+		synchronized (this.keys)
+		{
+			if (runner instanceof FakePlayer)
+				return;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (!this.keys.containsKey(uuid))
+			{
+				this.keys.put(uuid, new ArrayList<>());
+			}
+			this.keys.get(uuid).remove(key);
+		}
+	}
+
+	public boolean hasKey(EntityPlayerMP runner, UUID key)
+	{
+		synchronized (this.keys)
+		{
+			if (runner instanceof FakePlayer)
+				return false;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (this.tasks.containsKey(uuid))
+			{
+				return this.keys.get(uuid).contains(key);
+			}
+			return false;
+		}
+	}
+
+	public void setCurrentTargetPedestals(EntityPlayerMP runner, int dim, EnumFacing facing, List<BlockPos> poses)
+	{
+		synchronized (this.currentTargetPedestals)
+		{
+			if (runner instanceof FakePlayer)
+				return;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			List<BlockPos> newList = new ArrayList<>();
+			for (BlockPos pos : poses)
+			{
+				newList.add(new BlockPos(pos.getX(), pos.getY(), pos.getZ()));
+			}
+			if (!this.currentTargetPedestals.containsKey(uuid))
+			{
+				this.currentTargetPedestals.put(uuid, new PIServerData());
+			}
+			this.currentTargetPedestals.get(uuid).setPosList(newList);
+			this.currentTargetPedestals.get(uuid).setDim(dim);
+			this.currentTargetPedestals.get(uuid).setFace(facing);
+			
+			this.currentTargetPedestals.get(uuid).update(uuid, runner, this.server);
+		}
+	}
+
+	public void addPlayerTask(EntityPlayerMP runner, @Nonnull IPlayerRunnable exe)
+	{
+		synchronized (this.tasks)
+		{
+			if (runner instanceof FakePlayer)
+				return;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (!this.tasks.containsKey(uuid))
+			{
+				this.tasks.put(uuid, new ArrayDeque<>());
+			}
+			this.tasks.get(uuid).addLast(exe);
+		}
+	}
+
+	@Nullable
+	public IPlayerRunnable pollTask(EntityPlayerMP runner)
+	{
+		synchronized (this.tasks)
+		{
+			if (runner instanceof FakePlayer)
+				return null;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (!this.tasks.containsKey(uuid))
+			{
+				return null;
+			}
+			if (!this.tasks.get(uuid).isEmpty())
+			{
+				return this.tasks.get(uuid).pollFirst();
+			}
+			return null;
+		}
+	}
+
+	public void removeTask(UUID key, EntityPlayerMP runner)
+	{
+		synchronized (this.tasks)
+		{
+			if (runner instanceof FakePlayer)
+				return;
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (this.tasks.containsKey(uuid))
+			{
+				this.tasks.get(uuid).removeIf(new Predicate<IPlayerRunnable>()
+				{
+					@Override
+					public boolean test(IPlayerRunnable t)
+					{
+						return t.getKey().equals(key);
+					}
+				});
+			}
+		}
+	}
+
+	public PIServerData getCurrentTargetPedestals(EntityPlayerMP runner)
+	{
+		synchronized (this.currentTargetPedestals)
+		{
+			if (runner instanceof FakePlayer)
+				return new PIServerData();
+			UUID uuid = EntityPlayer.getUUID(((EntityPlayerMP) runner).getGameProfile());
+			if (this.currentTargetPedestals.containsKey(uuid))
+			{
+				return this.currentTargetPedestals.get(uuid);
+			}
+			return new PIServerData();
+		}
+	}
+
 	public static boolean isLoadable(World world, BlockPos pos)
 	{
 		IBlockState state = world.getBlockState(pos);
@@ -114,12 +268,19 @@ public class NeoOresData
 
 	public boolean addLoadingChunk(World world, BlockPos pos)
 	{
-		if (this.mapChunk.containsKey(pos))
+		if (this.listChunk.stream().anyMatch(new Predicate<ChunkPosLoading>()
+		{
+			@Override
+			public boolean test(ChunkPosLoading arg0)
+			{
+				return arg0.keyPos == pos;
+			}
+		}))
 			return false;
 		if (!isLoadable(world, pos))
 			return false;
-		ChunkPosLoading chunkPos = new ChunkPosLoading(world.getChunkFromBlockCoords(pos).getPos(), world.provider.getDimension());
-		this.mapChunk.put(pos, chunkPos);
+		ChunkPosLoading chunkPos = new ChunkPosLoading(world.getChunkFromBlockCoords(pos).getPos(), world.provider.getDimension(), pos);
+		this.listChunk.add(chunkPos);
 		this.markDirty();
 		return true;
 	}
@@ -162,7 +323,7 @@ public class NeoOresData
 		}
 		return this.mapPlayerStatus.get(uuid);
 	}
-	
+
 	public PlayerStatusData getPSD(UUID uuid)
 	{
 		if (!this.mapPlayerStatus.containsKey(uuid))
@@ -204,38 +365,55 @@ public class NeoOresData
 			}
 		}
 
-		List<BlockPos> removeList = new ArrayList<BlockPos>();
-		for (Map.Entry<BlockPos, ChunkPosLoading> entry : this.mapChunk.entrySet())
+		List<ChunkPosLoading> removeList = new ArrayList<ChunkPosLoading>();
+		for (ChunkPosLoading entry : this.listChunk)
 		{
-			if (!isLoadable(this.server.getWorld(entry.getValue().dimension), entry.getKey()))
+			if (!isLoadable(this.server.getWorld(entry.dimension), entry.keyPos))
 			{
-				NeoOresChunkManager.INSTANCE.unforceChunk(entry.getValue());
-				removeList.add(entry.getKey());
+				NeoOresChunkManager.INSTANCE.unforceChunk(entry);
+				removeList.add(entry);
 			}
 		}
 
 		if (!removeList.isEmpty())
 		{
-			for (BlockPos pos : removeList)
+			for (ChunkPosLoading pos : removeList)
 			{
-				this.mapChunk.remove(pos);
+				this.listChunk.remove(pos);
 			}
 			this.markDirty();
 		}
 
 		if (this.needSaving)
 		{
-			for (Map.Entry<BlockPos, ChunkPosLoading> entry : this.mapChunk.entrySet())
+			for (ChunkPosLoading entry : this.listChunk)
 			{
-				NeoOresChunkManager.INSTANCE.forceChunk(this.server, entry.getValue());
+				NeoOresChunkManager.INSTANCE.forceChunk(this.server, entry);
 			}
 		}
 
 		for (Map.Entry<UUID, PlayerMagicData> entry : this.mapPlayers.entrySet())
 		{
-			entry.getValue().sendToOtherSide(entry.getKey());
+			EntityPlayerMP player = this.server.getPlayerList().getPlayerByUUID(entry.getKey());
+			if (player == null)
+			{
+				continue;
+			}
+			entry.getValue().sendToOtherSide(entry.getKey(), player);
 		}
-		// this.save();
+		
+		synchronized (this.currentTargetPedestals) 
+		{
+			for (UUID key : this.currentTargetPedestals.keySet()) 
+			{
+				EntityPlayerMP player = this.server.getPlayerList().getPlayerByUUID(key);
+				if (player == null)
+				{
+					continue;
+				}
+				this.currentTargetPedestals.get(key).update(key, player, this.server);
+			}
+		}
 	}
 
 	public static void onServerToStart(FMLServerAboutToStartEvent event)
@@ -292,8 +470,9 @@ public class NeoOresData
 			{
 				NBTTagCompound chunk = list.getCompoundTagAt(i);
 				BlockPos pos = new BlockPos(chunk.getInteger("posX"), chunk.getInteger("posY"), chunk.getInteger("posZ"));
-				ChunkPosLoading load = new ChunkPosLoading(chunk.getInteger("chunkX"), chunk.getInteger("chunkZ"), chunk.getInteger("dimension"));
-				this.mapChunk.put(pos, load);
+				ChunkPosLoading load = new ChunkPosLoading(chunk.getInteger("chunkX"), chunk.getInteger("chunkZ"), chunk.getInteger("dimension"), pos);
+				this.listChunk.add(load);
+				this.markDirty();
 			}
 		}
 
@@ -324,15 +503,15 @@ public class NeoOresData
 		{
 			NBTTagCompound chunkData = new NBTTagCompound();
 			NBTTagList list = new NBTTagList();
-			for (Map.Entry<BlockPos, ChunkPosLoading> entry : this.mapChunk.entrySet())
+			for (ChunkPosLoading entry : this.listChunk)
 			{
 				NBTTagCompound chunk = new NBTTagCompound();
-				chunk.setInteger("posX", entry.getKey().getX());
-				chunk.setInteger("posY", entry.getKey().getY());
-				chunk.setInteger("posZ", entry.getKey().getZ());
-				chunk.setInteger("chunkX", entry.getValue().posX);
-				chunk.setInteger("chunkZ", entry.getValue().posZ);
-				chunk.setInteger("dimension", entry.getValue().dimension);
+				chunk.setInteger("posX", entry.keyPos.getX());
+				chunk.setInteger("posY", entry.keyPos.getY());
+				chunk.setInteger("posZ", entry.keyPos.getZ());
+				chunk.setInteger("chunkX", entry.posX);
+				chunk.setInteger("chunkZ", entry.posZ);
+				chunk.setInteger("dimension", entry.dimension);
 				list.appendTag(chunk);
 			}
 			chunkData.setTag("loadedChunks", list);
@@ -352,4 +531,77 @@ public class NeoOresData
 			}
 		}
 	}
+	
+	@Nullable
+	public NBTTagCompound getConstantValue(NBTTagCompound compound) 
+	{
+		if (compound.hasKey("neo_ores_structure")) 
+		{
+			NBTTagCompound result = new NBTTagCompound();
+			NBTTagCompound structure = compound.getCompoundTag("neo_ores_structure").copy();
+			NBTTagCompound nbt = new Structure(this.server.getWorld(0), new ResourceLocation(structure.getString("domain"), structure.getString("path"))).getTemplate().writeToNBT(new NBTTagCompound());
+			structure.setTag("template", nbt);
+			result.setTag("neo_ores_structure", structure);
+			return result;
+		}
+		return null;
+	}
+	
+	public static NBTTagCompound getStructureMessage(ResourceLocation location)
+	{
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString("domain", location.getResourceDomain());
+		compound.setString("path", location.getResourcePath());
+		NBTTagCompound result = new NBTTagCompound();
+		result.setTag("neo_ores_structure", compound);
+		return result;
+	}
+	
+	public static void setConstantValue(NBTTagCompound compound) 
+	{
+		if (compound.hasKey("neo_ores_structure")) 
+		{
+			NBTTagCompound structure = compound.getCompoundTag("neo_ores_structure");
+			Template template = new Template();
+			template.read(structure.getCompoundTag("template"));
+			ResourceLocation key = new ResourceLocation(structure.getString("domain"), structure.getString("path"));
+			structureTemplates.put(key, template);
+		}
+	}
+	
+	@Nullable
+	public static Template getStructureTemplate(ResourceLocation location) 
+	{
+		return structureTemplates.get(location);
+	}
+	
+	public static void setStructure(ResourceLocation location) 
+	{
+		if (!structureTemplates.containsKey(location)) 
+		{
+			structureTemplates.put(location, null);
+		}
+	}
+	
+	public static void syncStructures() 
+	{
+		for (ResourceLocation location : structureTemplates.keySet()) 
+		{
+			if (structureTemplates.get(location) == null) 
+			{
+				NeoOres.PACKET.sendToServer(new PacketSyncConstantDataToServer(getStructureMessage(location)));
+				structureTemplates.put(location, new Template());
+			}
+		}
+	}
+	
+	public static void resetStructures() 
+	{
+		for (ResourceLocation location : structureTemplates.keySet()) 
+		{
+			structureTemplates.put(location, null);
+		}
+	}
+	
+	public static int guidePage = 0;
 }

@@ -17,6 +17,7 @@ import neo_ores.spell.conditional.SpellJumped;
 import neo_ores.spell.conditional.SpellSneaking;
 import neo_ores.spell.correction.SpellAmplify;
 import neo_ores.spell.correction.SpellCanApplyNBT;
+import neo_ores.spell.correction.SpellChain;
 import neo_ores.spell.correction.SpellUncollidable;
 import neo_ores.spell.correction.SpellVanished;
 import neo_ores.spell.correction.SpellContinuation;
@@ -27,25 +28,32 @@ import neo_ores.spell.correction.SpellDuration;
 import neo_ores.spell.correction.SpellGather;
 import neo_ores.spell.correction.SpellHarvestLevel;
 import neo_ores.spell.correction.SpellLuck;
+import neo_ores.spell.correction.SpellNegative;
 import neo_ores.spell.correction.SpellNoAnyResistance;
 import neo_ores.spell.correction.SpellNoGravity;
 import neo_ores.spell.correction.SpellNoInertia;
 import neo_ores.spell.correction.SpellOffsetDown;
 import neo_ores.spell.correction.SpellOffsetUp;
+import neo_ores.spell.correction.SpellPIMode;
 import neo_ores.spell.correction.SpellPlantable;
+import neo_ores.spell.correction.SpellPositive;
 import neo_ores.spell.correction.SpellRange;
 import neo_ores.spell.correction.SpellReach;
 import neo_ores.spell.correction.SpellSilk;
+import neo_ores.spell.correction.SpellSmelt;
 import neo_ores.spell.correction.SpellSpeed;
 import neo_ores.spell.correction.SpellSupportLiquid;
 import neo_ores.spell.correction.SpellTier;
 import neo_ores.spell.effect.SpellBlink;
 import neo_ores.spell.effect.SpellComposition;
+import neo_ores.spell.effect.SpellCraft;
 import neo_ores.spell.effect.SpellDay;
 import neo_ores.spell.effect.SpellDig;
 import neo_ores.spell.effect.SpellDisarm;
 import neo_ores.spell.effect.SpellDiscombine;
+import neo_ores.spell.effect.SpellDispel;
 import neo_ores.spell.effect.SpellEarthDamage;
+import neo_ores.spell.effect.SpellExplode;
 import neo_ores.spell.effect.SpellFilterBlackList;
 import neo_ores.spell.effect.SpellFilterWhiteList;
 import neo_ores.spell.effect.SpellGrow;
@@ -55,8 +63,10 @@ import neo_ores.spell.effect.SpellLight;
 import neo_ores.spell.effect.SpellLightningBolt;
 import neo_ores.spell.effect.SpellNight;
 import neo_ores.spell.effect.SpellOreGen;
+import neo_ores.spell.effect.SpellPedestalInterface;
 import neo_ores.spell.effect.SpellPipeItem;
 import neo_ores.spell.effect.SpellPlace;
+import neo_ores.spell.effect.SpellPlaceInfinity;
 import neo_ores.spell.effect.SpellPullItem;
 import neo_ores.spell.effect.SpellPushItem;
 import neo_ores.spell.effect.SpellRain;
@@ -78,8 +88,6 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(null, 0, 0, new ResourceLocation(Reference.MOD_ID, "touch"), NeoOres.neo_ores), SpellTouch.class);
 	public static final SpellItem spell_dig = new SpellItem(new BasicData(Reference.MOD_ID, "dig", 1, SpellItemType.EARTH, 10, 1), "dig",
 			new MageKnowledgeTableData(spell_touch, 0, -1, new ResourceLocation(Reference.MOD_ID, "dig"), NeoOres.neo_ores), SpellDig.class);
-	public static final SpellItem spell_support_liquid = new SpellItem(new BasicData(Reference.MOD_ID, "support_liquid", 5, SpellItemType.AIR, 20, 1), "support_liquid",
-			new MageKnowledgeTableData(spell_dig, -1, -2, new ResourceLocation(Reference.MOD_ID, "support_liquid"), NeoOres.neo_ores), SpellSupportLiquid.class);
 	public static final SpellItem spell_place = new SpellItem(new BasicData(Reference.MOD_ID, "place", 1, SpellItemType.EARTH, 5, 1), "place",
 			new MageKnowledgeTableData(NeoOresSpells.spell_dig, 1, -1, new ResourceLocation(Reference.MOD_ID, "place"), NeoOres.neo_ores), SpellPlace.class);
 	public static final SpellItem spell_composition = new SpellItem(new BasicData(Reference.MOD_ID, "composition", 1, SpellItemType.EARTH, 15, 1), "composition",
@@ -218,6 +226,14 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_range2, 1, -4, new ResourceLocation(Reference.MOD_ID, "range"), NeoOres.neo_ores), SpellRange.class, 3);
 	public static final SpellItem spell_range4 = new SpellItem(new BasicData(Reference.MOD_ID, "range4", 11, SpellItemType.EARTH, 1, 81), "range",
 			new MageKnowledgeTableData(NeoOresSpells.spell_range3, 1, -5, new ResourceLocation(Reference.MOD_ID, "range"), NeoOres.neo_ores), SpellRange.class, 4);
+	public static final SpellItem spell_chain1 = new SpellItem(new BasicData(Reference.MOD_ID, "chain1", 2, SpellItemType.EARTH, 1, 9), "chain",
+			new MageKnowledgeTableData(NeoOresSpells.spell_dig, -1, -2, new ResourceLocation(Reference.MOD_ID, "chain"), NeoOres.neo_ores), SpellChain.class, 1);
+	public static final SpellItem spell_chain2 = new SpellItem(new BasicData(Reference.MOD_ID, "chain2", 5, SpellItemType.EARTH, 1, 25), "chain",
+			new MageKnowledgeTableData(NeoOresSpells.spell_chain1, -1, -3, new ResourceLocation(Reference.MOD_ID, "chain"), NeoOres.neo_ores), SpellChain.class, 2);
+	public static final SpellItem spell_chain3 = new SpellItem(new BasicData(Reference.MOD_ID, "chain3", 8, SpellItemType.EARTH, 1, 49), "chain",
+			new MageKnowledgeTableData(NeoOresSpells.spell_chain2, -1, -4, new ResourceLocation(Reference.MOD_ID, "chain"), NeoOres.neo_ores), SpellChain.class, 3);
+	public static final SpellItem spell_chain4 = new SpellItem(new BasicData(Reference.MOD_ID, "chain4", 11, SpellItemType.EARTH, 1, 81), "chain",
+			new MageKnowledgeTableData(NeoOresSpells.spell_chain3, -1, -5, new ResourceLocation(Reference.MOD_ID, "chain"), NeoOres.neo_ores), SpellChain.class, 4);
 	public static final SpellItem spell_no_inertia = new SpellItem(new BasicData(Reference.MOD_ID, "no_inertia", 1, SpellItemType.EARTH, 10, 1), "no_inertia",
 			new MageKnowledgeTableData(NeoOresSpells.spell_bullet, 2, 2, new ResourceLocation(Reference.MOD_ID, "no_inertia"), NeoOres.neo_ores), SpellNoInertia.class);
 	public static final SpellItem spell_reach1 = new SpellItem(new BasicData(Reference.MOD_ID, "reach1", 2, SpellItemType.AIR, 1, 2.0f), "reach",
@@ -246,6 +262,8 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_self, -1, 2, new ResourceLocation(Reference.MOD_ID, "worn_tick"), NeoOres.neo_ores), SpellWornTick.class);
 	public static final SpellItem spell_light = new SpellItem(new BasicData(Reference.MOD_ID, "light", 1, SpellItemType.EARTH, 10, 1), "light",
 			new MageKnowledgeTableData(NeoOresSpells.spell_place, 2, -2, new ResourceLocation(Reference.MOD_ID, "light"), NeoOres.neo_ores), SpellLight.class);
+	public static final SpellItem spell_support_liquid = new SpellItem(new BasicData(Reference.MOD_ID, "support_liquid", 5, SpellItemType.AIR, 20, 1), "support_liquid",
+			new MageKnowledgeTableData(spell_light, 3, -3, new ResourceLocation(Reference.MOD_ID, "support_liquid"), NeoOres.neo_ores), SpellSupportLiquid.class);
 	public static final SpellItem spell_plantable = new SpellItem(new BasicData(Reference.MOD_ID, "plantable", 2, SpellItemType.EARTH, 2, 2.0f), "plantable",
 			new MageKnowledgeTableData(NeoOresSpells.spell_light, 2, -3, new ResourceLocation(Reference.MOD_ID, "plantable"), NeoOres.neo_ores), SpellPlantable.class);
 	public static final SpellItem spell_blacklist = new SpellItem(new BasicData(Reference.MOD_ID, "blacklist", 2, SpellItemType.AIR, 10, 1), "blacklist",
@@ -256,6 +274,8 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_worn_tick, -1, 3, new ResourceLocation(Reference.MOD_ID, "break_block"), NeoOres.neo_ores), SpellBreaking.class);
 	public static final SpellItem spell_attacking = new SpellItem(new BasicData(Reference.MOD_ID, "attacking", 2, SpellItemType.EARTH, 5, 1), "attacking",
 			new MageKnowledgeTableData(NeoOresSpells.spell_break_block, -2, 4, new ResourceLocation(Reference.MOD_ID, "damage_given"), NeoOres.neo_ores), SpellAttacking.class);
+	public static final SpellItem spell_smelt = new SpellItem(new BasicData(Reference.MOD_ID, "smelt", 2, SpellItemType.FIRE, 1, 2.0f), "smelt",
+			new MageKnowledgeTableData(NeoOresSpells.spell_break_block, -1, 4, new ResourceLocation(Reference.MOD_ID, "smelt"), NeoOres.neo_ores), SpellSmelt.class);
 	public static final SpellItem spell_jumped = new SpellItem(new BasicData(Reference.MOD_ID, "jumped", 4, SpellItemType.AIR, 10, 1), "jumped",
 			new MageKnowledgeTableData(NeoOresSpells.spell_attacking, -2, 5, new ResourceLocation(Reference.MOD_ID, "jumped"), NeoOres.neo_ores), SpellJumped.class);
 	public static final SpellItem spell_sneak = new SpellItem(new BasicData(Reference.MOD_ID, "sneak", 4, SpellItemType.AIR, 10, 1), "sneak",
@@ -273,23 +293,23 @@ public class NeoOresSpells
 	public static final SpellItem spell_duration2 = new SpellItem(new BasicData(Reference.MOD_ID, "duration2", 2, SpellItemType.FIRE, 0, 2), "duration",
 			new MageKnowledgeTableData(NeoOresSpells.spell_duration1, -3, 3, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 2);
 	public static final SpellItem spell_duration3 = new SpellItem(new BasicData(Reference.MOD_ID, "duration3", 3, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration2, -4, 4, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 3);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration2, -3, 4, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 3);
 	public static final SpellItem spell_duration4 = new SpellItem(new BasicData(Reference.MOD_ID, "duration4", 4, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration3, -5, 5, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 4);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration3, -4, 5, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 4);
 	public static final SpellItem spell_duration5 = new SpellItem(new BasicData(Reference.MOD_ID, "duration5", 5, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration4, -6, 6, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 5);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration4, -5, 5, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 5);
 	public static final SpellItem spell_duration6 = new SpellItem(new BasicData(Reference.MOD_ID, "duration6", 6, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration5, -7, 7, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 6);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration5, -6, 5, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 6);
 	public static final SpellItem spell_duration7 = new SpellItem(new BasicData(Reference.MOD_ID, "duration7", 7, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration6, -8, 8, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 7);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration6, -7, 6, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 7);
 	public static final SpellItem spell_duration8 = new SpellItem(new BasicData(Reference.MOD_ID, "duration8", 8, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration7, -9, 9, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 8);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration7, -7, 7, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 8);
 	public static final SpellItem spell_duration9 = new SpellItem(new BasicData(Reference.MOD_ID, "duration9", 9, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration8, -10, 10, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 9);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration8, -7, 8, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 9);
 	public static final SpellItem spell_duration10 = new SpellItem(new BasicData(Reference.MOD_ID, "duration10", 10, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration9, -11, 11, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 10);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration9, -8, 9, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 10);
 	public static final SpellItem spell_duration11 = new SpellItem(new BasicData(Reference.MOD_ID, "duration11", 11, SpellItemType.FIRE, 0, 2), "duration",
-			new MageKnowledgeTableData(NeoOresSpells.spell_duration10, -12, 12, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 11);
+			new MageKnowledgeTableData(NeoOresSpells.spell_duration10, -9, 9, new ResourceLocation(Reference.MOD_ID, "duration"), NeoOres.neo_ores), SpellDuration.class, 11);
 	public static final SpellItem spell_amplify1 = new SpellItem(new BasicData(Reference.MOD_ID, "amplify1", 3, SpellItemType.WATER, 0, 8), "amplify",
 			new MageKnowledgeTableData(NeoOresSpells.spell_duration2, -4, 3, new ResourceLocation(Reference.MOD_ID, "amplify"), NeoOres.neo_ores), SpellAmplify.class, 1);
 	public static final SpellItem spell_amplify2 = new SpellItem(new BasicData(Reference.MOD_ID, "amplify2", 6, SpellItemType.WATER, 0, 8), "amplify",
@@ -308,8 +328,10 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_rain, 5, -2, new ResourceLocation(Reference.MOD_ID, "thunder"), NeoOres.neo_ores), SpellThunder.class);
 	public static final SpellItem spell_lightning = new SpellItem(new BasicData(Reference.MOD_ID, "lightning", 4, SpellItemType.EARTH, 1000, 1), "lightning",
 			new MageKnowledgeTableData(NeoOresSpells.spell_thunder, 6, -3, new ResourceLocation(Reference.MOD_ID, "lightning_bolt"), NeoOres.neo_ores), SpellLightningBolt.class);
-	public static final SpellItem spell_grow = new SpellItem(new BasicData(Reference.MOD_ID, "grow", 1, SpellItemType.EARTH, 50, 1), "grow",
+	public static final SpellItem spell_grow = new SpellItem(new BasicData(Reference.MOD_ID, "grow", 4, SpellItemType.EARTH, 50, 1), "grow",
 			new MageKnowledgeTableData(NeoOresSpells.spell_silk, -2, -1, new ResourceLocation(Reference.MOD_ID, "grow"), NeoOres.neo_ores), SpellGrow.class);
+	public static final SpellItem spell_craft = new SpellItem(new BasicData(Reference.MOD_ID, "craft", 8, SpellItemType.EARTH, 100, 1), "craft",
+			new MageKnowledgeTableData(NeoOresSpells.spell_grow, -3, -1, new ResourceLocation(Reference.MOD_ID, "craft"), NeoOres.neo_ores), SpellCraft.class);
 	public static final SpellItem spell_summon = new SpellItem(new BasicData(Reference.MOD_ID, "summon", 5, SpellItemType.EARTH, 100, 10), "summon",
 			new MageKnowledgeTableData(NeoOresSpells.spell_grow, -3, -2, new ResourceLocation(Reference.MOD_ID, "summon"), NeoOres.neo_ores), SpellSummon.class);
 	public static final SpellItem spell_nbt_applying = new SpellItem(new BasicData(Reference.MOD_ID, "nbt_apply", 11, SpellItemType.WATER, 1, 10000), "nbt_apply",
@@ -330,9 +352,23 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_amplify1, -5, 2, new ResourceLocation(Reference.MOD_ID, "disarm"), NeoOres.neo_ores), SpellDisarm.class);
 	public static final SpellItem spell_day = new SpellItem(new BasicData(Reference.MOD_ID, "day", 11, SpellItemType.FIRE, 10000, 1), "day",
 			new MageKnowledgeTableData(NeoOresSpells.spell_translocate, 5, 6, new ResourceLocation(Reference.MOD_ID, "day"), NeoOres.neo_ores), SpellDay.class);
+	public static final SpellItem spell_explode = new SpellItem(new BasicData(Reference.MOD_ID, "explode", 1, SpellItemType.AIR, 1, 100), "explode",
+			new MageKnowledgeTableData(NeoOresSpells.spell_discombine, -3, -3, new ResourceLocation(Reference.MOD_ID, "explode"), NeoOres.neo_ores), SpellExplode.class);
+	public static final SpellItem spell_dispel = new SpellItem(new BasicData(Reference.MOD_ID, "dispel", 1, SpellItemType.AIR, 1, 100), "dispel",
+			new MageKnowledgeTableData(NeoOresSpells.spell_heal, -4, 1, new ResourceLocation(Reference.MOD_ID, "dispel"), NeoOres.neo_ores), SpellDispel.class);
+	public static final SpellItem spell_positive = new SpellItem(new BasicData(Reference.MOD_ID, "positive", 1, SpellItemType.AIR, 1, 100), "positive",
+			new MageKnowledgeTableData(NeoOresSpells.spell_dispel, -5, 1, new ResourceLocation(Reference.MOD_ID, "positive"), NeoOres.neo_ores), SpellPositive.class);
+	public static final SpellItem spell_negative = new SpellItem(new BasicData(Reference.MOD_ID, "negative", 1, SpellItemType.AIR, 1, 100), "negative",
+			new MageKnowledgeTableData(NeoOresSpells.spell_positive, -6, 1, new ResourceLocation(Reference.MOD_ID, "negative"), NeoOres.neo_ores), SpellNegative.class);
+	public static final SpellItem spell_place_infinity = new SpellItem(new BasicData(Reference.MOD_ID, "place_infinity", 1, SpellItemType.AIR, 1, 100), "place_infinity",
+			new MageKnowledgeTableData(NeoOresSpells.spell_plantable, 2, -4, new ResourceLocation(Reference.MOD_ID, "place_infinity"), NeoOres.neo_ores), SpellPlaceInfinity.class);
 	public static final SpellItem spell_night = new SpellItem(new BasicData(Reference.MOD_ID, "night", 11, SpellItemType.FIRE, 10000, 1), "night",
 			new MageKnowledgeTableData(NeoOresSpells.spell_translocate, 6, 5, new ResourceLocation(Reference.MOD_ID, "night"), NeoOres.neo_ores), SpellNight.class);
-	
+	public static final SpellItem spell_pi = new SpellItem(new BasicData(Reference.MOD_ID, "pedestal_interface", 1, SpellItemType.AIR, 1000, 1), "pedestal_interface",
+			new MageKnowledgeTableData(NeoOresSpells.spell_pipe_item, 6, 2, new ResourceLocation(Reference.MOD_ID, "pedestal_interface"), NeoOres.neo_ores), SpellPedestalInterface.class);
+	public static final SpellItem spell_pi_mode = new SpellItem(new BasicData(Reference.MOD_ID, "pi_mode", 1, SpellItemType.AIR, 1, 100), "pi_mode",
+			new MageKnowledgeTableData(NeoOresSpells.spell_pi, 7, 2, new ResourceLocation(Reference.MOD_ID, "pi_mode"), NeoOres.neo_ores), SpellPIMode.class);
+
 	public static final List<SpellItem> registry = Arrays.asList(spell_touch, spell_dig, spell_support_liquid, spell_composition, spell_earth_damage, spell_harvestLv1, spell_harvestLv2,
 			spell_harvestLv3, spell_harvestLv4, spell_harvestLv5, spell_harvestLv6, spell_harvestLv7, spell_harvestLv8, spell_harvestLv9, spell_harvestLv10, spell_harvestLv11, spell_luck1,
 			spell_luck2, spell_luck3, spell_luck4, spell_luck5, spell_luck6, spell_luck7, spell_luck8, spell_luck9, spell_luck10, spell_silk, spell_tier1, spell_tier2, spell_tier3, spell_tier4,
@@ -344,18 +380,19 @@ public class NeoOresSpells
 			spell_worn_tick, spell_damaged, spell_plantable, spell_blacklist, spell_whitelist, spell_self, spell_attacked, spell_attacking, spell_dimension_over, spell_discombine, spell_placeable,
 			spell_blink, spell_teleport, spell_translocate, spell_light, spell_disarm, spell_sneak, spell_break_block, spell_fall, spell_death, spell_jumped, spell_amplify1, spell_amplify2,
 			spell_amplify3, spell_duration1, spell_duration2, spell_duration3, spell_duration4, spell_duration5, spell_duration6, spell_duration7, spell_duration8, spell_duration9, spell_duration10,
-			spell_duration11, spell_heal, spell_life_tap, spell_sunny, spell_rain, spell_thunder, spell_lightning, spell_grow, spell_day, spell_night);
-	
-	public static void test() 
+			spell_duration11, spell_heal, spell_life_tap, spell_sunny, spell_rain, spell_thunder, spell_lightning, spell_grow, spell_day, spell_night, spell_craft, spell_chain1, spell_chain2,
+			spell_chain3, spell_chain4, spell_smelt, spell_pi, spell_pi_mode, spell_explode, spell_positive, spell_negative, spell_place_infinity, spell_dispel);
+
+	public static void test()
 	{
 		boolean existOverlap = false;
-		for (int i = 0; i < registry.size(); i++) 
+		for (int i = 0; i < registry.size(); i++)
 		{
-			for (int j = i + 1; j < registry.size(); j++) 
+			for (int j = i + 1; j < registry.size(); j++)
 			{
 				SpellItem spellA = registry.get(i);
 				SpellItem spellB = registry.get(j);
-				if (spellA.getPositionX() == spellB.getPositionX() && spellA.getPositionY() == spellB.getPositionY()) 
+				if (spellA.getPositionX() == spellB.getPositionX() && spellA.getPositionY() == spellB.getPositionY())
 				{
 					System.out.println(spellA.getRegisteringId() + " and " + spellB.getRegisteringId() + " are overlapped.");
 					existOverlap = true;

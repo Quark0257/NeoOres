@@ -15,8 +15,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonWriter;
 
 import neo_ores.api.PlayerTrigger;
@@ -1162,44 +1164,58 @@ public class NeoOresRecipeRegisterEvents
 			{
 				config = parser.parse(reader);
 			}
-			catch (Exception e)
+			catch (JsonIOException e)
 			{
-				FMLLog.log.error("Unable to load {}", configFile);
+				FMLLog.log.error("Unable to load {} because of JsonIOException", configFile);
+				config = new JsonObject();
+			}
+			catch (JsonSyntaxException e)
+			{
+				FMLLog.log.error("Unable to load {} because of JsonSyntaxException", configFile);
 				config = new JsonObject();
 			}
 
 			if (config.isJsonObject())
 			{
 				JsonObject jo = config.getAsJsonObject();
-				for (JsonElement genE : jo.get("spell_ore_gen").getAsJsonArray())
+				if (jo.get("spell_ore_gen") != null) 
 				{
-					try
+					for (JsonElement genE : jo.get("spell_ore_gen").getAsJsonArray())
 					{
-						JsonObject gen = genE.getAsJsonObject();
-						OreWeightRecipe recipe = new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString()));
-						NeoOres.ore_gen_recipes.add(recipe);
-					}
-					catch (Exception e)
-					{
-						FMLLog.log.error("Unable to register");
+						try
+						{
+							JsonObject gen = genE.getAsJsonObject();
+							OreWeightRecipe recipe = new OreWeightRecipe(gen).setRegistryName(new ResourceLocation(Reference.MOD_ID, gen.get("registry_name").getAsString()));
+							NeoOres.ore_gen_recipes.add(recipe);
+						}
+						catch (Exception e)
+						{
+							FMLLog.log.error("Unable to register");
+						}
 					}
 				}
-				for (JsonElement genE : jo.get("spell_infinity_place").getAsJsonArray())
+				
+				if (jo.get("spell_infinity_place") != null) 
 				{
-					try
+					for (JsonElement genE : jo.get("spell_infinity_place").getAsJsonArray())
 					{
-						JsonObject gen = genE.getAsJsonObject();
-						NeoOres.infinity_place_blocks.add(gen);
-					}
-					catch (Exception e)
-					{
-						FMLLog.log.error("Unable to register");
+						try
+						{
+							JsonObject gen = genE.getAsJsonObject();
+							NeoOres.infinity_place_blocks.add(gen);
+						}
+						catch (Exception e)
+						{
+							FMLLog.log.error("Unable to register");
+						}
 					}
 				}
 			}
+			FMLLog.log.info("Successfully parsed {}", configFile);
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			FMLLog.log.error("Unable to parse {} - skipping", configFile);
 		}
 	}

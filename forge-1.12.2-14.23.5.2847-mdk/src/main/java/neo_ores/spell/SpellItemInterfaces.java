@@ -458,4 +458,9 @@ public class SpellItemInterfaces
 	{
 		public void setPositive();
 	}
+	
+	public static interface HasDominant extends ICorrectingBase
+	{
+		public void setDominant();
+	}
 }

@@ -170,6 +170,7 @@ public class NeoOres
 	@EventHandler
 	public void init(FMLInitializationEvent event) 
 	{
+		NeoOresSpells.test();
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		NeoOresRegisterEvents.registerEntity(this);
 		NeoOres.proxy.init();

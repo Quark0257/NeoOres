@@ -52,7 +52,7 @@ import neo_ores.spell.effect.SpellDig;
 import neo_ores.spell.effect.SpellDisarm;
 import neo_ores.spell.effect.SpellDiscombine;
 import neo_ores.spell.effect.SpellDispel;
-import neo_ores.spell.effect.SpellEarthDamage;
+import neo_ores.spell.effect.SpellBasicDamage;
 import neo_ores.spell.effect.SpellExplode;
 import neo_ores.spell.effect.SpellFilterBlackList;
 import neo_ores.spell.effect.SpellFilterWhiteList;
@@ -67,6 +67,7 @@ import neo_ores.spell.effect.SpellPedestalInterface;
 import neo_ores.spell.effect.SpellPipeItem;
 import neo_ores.spell.effect.SpellPlace;
 import neo_ores.spell.effect.SpellPlaceInfinity;
+import neo_ores.spell.effect.SpellPotionEffect;
 import neo_ores.spell.effect.SpellPullItem;
 import neo_ores.spell.effect.SpellPushItem;
 import neo_ores.spell.effect.SpellRain;
@@ -80,6 +81,8 @@ import neo_ores.spell.form.SpellPlaceable;
 import neo_ores.spell.form.SpellSelf;
 import neo_ores.spell.form.SpellTouch;
 import neo_ores.spell.form.SpellWornTick;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 
 public class NeoOresSpells
@@ -93,7 +96,13 @@ public class NeoOresSpells
 	public static final SpellItem spell_composition = new SpellItem(new BasicData(Reference.MOD_ID, "composition", 1, SpellItemType.EARTH, 15, 1), "composition",
 			new MageKnowledgeTableData(NeoOresSpells.spell_place, 1, 0, new ResourceLocation(Reference.MOD_ID, "composition"), NeoOres.neo_ores), SpellComposition.class);
 	public static final SpellItem spell_earth_damage = new SpellItem(new BasicData(Reference.MOD_ID, "earth_damage", 1, SpellItemType.EARTH, 30, 1), "earth_damage",
-			new MageKnowledgeTableData(NeoOresSpells.spell_touch, 0, 1, new ResourceLocation(Reference.MOD_ID, "damage"), NeoOres.neo_ores), SpellEarthDamage.class);
+			new MageKnowledgeTableData(NeoOresSpells.spell_touch, 0, 1, new ResourceLocation(Reference.MOD_ID, "damage"), NeoOres.neo_ores), SpellBasicDamage.class, NeoOres.EARTH, 3.5f, 0.6f);
+	public static final SpellItem spell_water_damage = new SpellItem(new BasicData(Reference.MOD_ID, "water_damage", 1, SpellItemType.EARTH, 30, 1), "earth_damage",
+			new MageKnowledgeTableData(NeoOresSpells.spell_touch, 0, 1, new ResourceLocation(Reference.MOD_ID, "damage"), NeoOres.neo_ores), SpellBasicDamage.class, NeoOres.WATER, 4.0f, 0.8f);
+	public static final SpellItem spell_air_damage = new SpellItem(new BasicData(Reference.MOD_ID, "air_damage", 1, SpellItemType.EARTH, 30, 1), "earth_damage",
+			new MageKnowledgeTableData(NeoOresSpells.spell_touch, 0, 1, new ResourceLocation(Reference.MOD_ID, "damage"), NeoOres.neo_ores), SpellBasicDamage.class, NeoOres.AIR, 4.5f, 0.9f);
+	public static final SpellItem spell_fire_damage = new SpellItem(new BasicData(Reference.MOD_ID, "fire_damage", 1, SpellItemType.EARTH, 30, 1), "earth_damage",
+			new MageKnowledgeTableData(NeoOresSpells.spell_touch, 0, 1, new ResourceLocation(Reference.MOD_ID, "damage"), NeoOres.neo_ores), SpellBasicDamage.class, NeoOres.FIRE, 5.5f, 0.95f);
 	public static final SpellItem spell_harvestLv1 = new SpellItem(new BasicData(Reference.MOD_ID, "harvest1", 1, SpellItemType.EARTH, 1, 1.6f), "harvest_level",
 			new MageKnowledgeTableData(NeoOresSpells.spell_dig, 0, -2, new ResourceLocation(Reference.MOD_ID, "dig"), NeoOres.neo_ores), SpellHarvestLevel.class, (int) 1);
 	public static final SpellItem spell_harvestLv2 = new SpellItem(new BasicData(Reference.MOD_ID, "harvest2", 2, SpellItemType.EARTH, 1, 1.6f), "harvest_level",
@@ -368,7 +377,11 @@ public class NeoOresSpells
 			new MageKnowledgeTableData(NeoOresSpells.spell_pipe_item, 6, 2, new ResourceLocation(Reference.MOD_ID, "pedestal_interface"), NeoOres.neo_ores), SpellPedestalInterface.class);
 	public static final SpellItem spell_pi_mode = new SpellItem(new BasicData(Reference.MOD_ID, "pi_mode", 1, SpellItemType.AIR, 1, 100), "pi_mode",
 			new MageKnowledgeTableData(NeoOresSpells.spell_pi, 7, 2, new ResourceLocation(Reference.MOD_ID, "pi_mode"), NeoOres.neo_ores), SpellPIMode.class);
-
+	public static final SpellItem spell_blindness = new SpellItem(new BasicData(Reference.MOD_ID, "blindness", 1, SpellItemType.AIR, 1, 100), "blindness",
+			new MageKnowledgeTableData(NeoOresSpells.spell_pi, 7, 3, new ResourceLocation(Reference.MOD_ID, "blindness"), NeoOres.neo_ores), SpellPotionEffect.class, new PotionEffect(MobEffects.BLINDNESS, 600, 0));
+	public static final SpellItem spell_speed = new SpellItem(new BasicData(Reference.MOD_ID, "speed", 1, SpellItemType.AIR, 1, 100), "speed",
+			new MageKnowledgeTableData(NeoOresSpells.spell_pi, 7, 3, new ResourceLocation(Reference.MOD_ID, "speed"), NeoOres.neo_ores), SpellPotionEffect.class, new PotionEffect(MobEffects.BLINDNESS, 600, 0));
+	
 	public static final List<SpellItem> registry = Arrays.asList(spell_touch, spell_dig, spell_support_liquid, spell_composition, spell_earth_damage, spell_harvestLv1, spell_harvestLv2,
 			spell_harvestLv3, spell_harvestLv4, spell_harvestLv5, spell_harvestLv6, spell_harvestLv7, spell_harvestLv8, spell_harvestLv9, spell_harvestLv10, spell_harvestLv11, spell_luck1,
 			spell_luck2, spell_luck3, spell_luck4, spell_luck5, spell_luck6, spell_luck7, spell_luck8, spell_luck9, spell_luck10, spell_silk, spell_tier1, spell_tier2, spell_tier3, spell_tier4,
@@ -381,7 +394,7 @@ public class NeoOresSpells
 			spell_blink, spell_teleport, spell_translocate, spell_light, spell_disarm, spell_sneak, spell_break_block, spell_fall, spell_death, spell_jumped, spell_amplify1, spell_amplify2,
 			spell_amplify3, spell_duration1, spell_duration2, spell_duration3, spell_duration4, spell_duration5, spell_duration6, spell_duration7, spell_duration8, spell_duration9, spell_duration10,
 			spell_duration11, spell_heal, spell_life_tap, spell_sunny, spell_rain, spell_thunder, spell_lightning, spell_grow, spell_day, spell_night, spell_craft, spell_chain1, spell_chain2,
-			spell_chain3, spell_chain4, spell_smelt, spell_pi, spell_pi_mode, spell_explode, spell_positive, spell_negative, spell_place_infinity, spell_dispel);
+			spell_chain3, spell_chain4, spell_smelt, spell_pi, spell_pi_mode, spell_explode, spell_positive, spell_negative, spell_place_infinity, spell_dispel, spell_blindness);
 
 	public static void test()
 	{
@@ -401,7 +414,8 @@ public class NeoOresSpells
 		}
 		if (!existOverlap)
 		{
-			System.out.println("There is no overlap");
+			System.out.println("There is no overlap.");
 		}
+		System.out.println(registry.size() + " spells are loaded."); //143+tame+ thruster + (38-1-3instant(heal, damage, saturation))xbuff + 3xdamage =182+TimeAccel+biomeChanger=185(+place infinity, undying + saturation)
 	}
 }

@@ -8,12 +8,14 @@ import org.lwjgl.input.Mouse;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.api.PlayerTrigger;
+import neo_ores.api.Vec2I;
 import neo_ores.api.spell.KnowledgeTab;
 import neo_ores.api.spell.Spell.SpellCorrection;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
+import neo_ores.util.ClientUtils;
 import neo_ores.util.NumberUtils;
 import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
@@ -286,25 +288,21 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				int endY = spellitem.getParent().getPositionY() * interval + y + 16;
 				if (isWide)
 				{
-					this.drawLine(startX, endX, startY, endY, 0x000000);
-					this.drawLine(startX + 1, endX + 1, startY, endY, 0x000000);
-					this.drawLine(startX - 1, endX - 1, startY, endY, 0x000000);
-					this.drawLine(startX, endX, startY + 1, endY + 1, 0x000000);
-					this.drawLine(startX, endX, startY - 1, endY - 1, 0x000000);
+					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 3.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 				}
 				else
 				{
 					if (this.canGet(spellitem))
 					{
-						this.drawLine(startX, endX, startY, endY, 0x0000FF);
+						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 					}
 					else if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 					{
-						this.drawLine(startX, endX, startY, endY, 0x00FF00);
+						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 					}
 					else
 					{
-						this.drawLine(startX, endX, startY, endY, 0xFF0000);
+						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 					}
 				}
 			}

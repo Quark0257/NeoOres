@@ -4,6 +4,7 @@ import neo_ores.api.NBTUtils;
 import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasCanApplyNBT;
+import neo_ores.spell.SpellItemInterfaces.HasDominant;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.ServerUtils;
 import neo_ores.util.SpellUtils;
@@ -23,10 +24,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 
-public class SpellSummon extends SpellEffect implements HasCanApplyNBT
+public class SpellSummon extends SpellEffect implements HasCanApplyNBT, HasDominant
 {
 	private boolean applyNBT = false;
-	private boolean tamed = true;
+	private boolean tamed = false;
 
 	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
@@ -101,5 +102,11 @@ public class SpellSummon extends SpellEffect implements HasCanApplyNBT
 	public RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack)
 	{
 		return null;
+	}
+
+	@Override
+	public void setDominant()
+	{
+		this.tamed = true;
 	}
 }

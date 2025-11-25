@@ -1,19 +1,21 @@
 package neo_ores.spell.effect;
 
+import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasNegative;
 import neo_ores.spell.SpellItemInterfaces.HasPositive;
+import neo_ores.util.PlayerMagicData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
-public class SpellDispel extends SpellEffectEntityBuffBase implements HasNegative, HasPositive
+public class SpellDispel extends SpellEffectEntityBase implements HasNegative, HasPositive
 {
 	private boolean negative = false;
 	private boolean positive = false;
 
-	@Override
 	protected void onBuff(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
 		if (!this.negative && !this.positive)
@@ -42,5 +44,19 @@ public class SpellDispel extends SpellEffectEntityBuffBase implements HasNegativ
 	public void setNegative()
 	{
 		this.negative = true;
+	}
+
+	@Override
+	protected void onEffect(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
+	{
+		if (!this.isFakePlayer(elb)) 
+		{
+			this.onBuff(world, elb, runner, stack);
+			if (runner instanceof EntityPlayerMP)
+			{
+				PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+				pmds.addMXP(1L);
+			}
+		}
 	}
 }

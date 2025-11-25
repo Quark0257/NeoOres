@@ -37,6 +37,7 @@ public class SpellBlink extends SpellEffectEntityBase implements HasAmplify
 			}
 		}
 		
+		// TODO check space more
 		int length = 3 + this.amp * 2;
 		Vec3d vec = MathUtils.getFromYawPitch(elb.rotationYaw, elb.rotationPitch);
 		Vec3d pos = elb.getPositionVector().add(vec.normalize().scale(length));

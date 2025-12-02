@@ -253,6 +253,7 @@ public class ClientUtils
 			}
 		}
 	}
+	
 
 	public static void drawPixel(int x, int y, float red, float green, float blue, float alpha)
 	{

@@ -349,6 +349,12 @@ public class NeoOresData
 	{
 		NeoOresData.mapPlayersClient.put(uuid, pmdc);
 	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void clearAllPMDC()
+	{
+		NeoOresData.mapPlayersClient.clear();
+	}
 
 	public void update()
 	{

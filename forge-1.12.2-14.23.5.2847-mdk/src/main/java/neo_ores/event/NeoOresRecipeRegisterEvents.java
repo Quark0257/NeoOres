@@ -258,6 +258,7 @@ public class NeoOresRecipeRegisterEvents
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pi, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack(new ItemStack(NeoOresItems.position_sheet), 1),
 				new RecipeOreStack("enderpearl", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pi_mode, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack("string", 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_terraform, new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 4), 1), new RecipeOreStack(new ItemStack(NeoOresItems.biome_bottle), 1)));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

@@ -216,6 +216,7 @@ item.upgrade_consume.name=低消費帯カットアップグレード
 item.upgrade_convert_mana.name=マナ変換アップグレード
 item.position_sheet.name=ポジションシート
 item.guidebook.name=Neo Ores II : ガイド & クエスト
+item.biome_bottle.name=バイオームボトル
 
 fluid.neo_ores.mana=液体マナ
 
@@ -251,6 +252,8 @@ totem.disable_dim=§fディメンションを超えた使用は不可
 
 tooltip.stored_position=§f座標[x=%s, y=%s, z=%s, side=%s, dim=%s]を保持
 tooltip.not_stored_position=§f右クリックで座標を保存
+tooltip.stored_biome=§fバイオーム %s を保持
+tooltip.not_stored_biome=§f右クリックでバイオームを保存
 
 attribute.name.neo_ores.maxMana=最大マナ
 

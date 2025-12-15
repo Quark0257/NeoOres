@@ -134,7 +134,7 @@ public class StructurePanel extends AbstractPageComponent
 			double sizeZ = aabb.maxZ - aabb.minZ + 1;
 			this.maxSlice = (int) sizeY;
 			access.setSlice(this.slice);
-			double structureWidthR = Math.max(sizeZ, Math.max(sizeX, sizeY)) * 0.5D;
+			double structureWidthR = Math.max(sizeY, Math.max(sizeX, sizeZ)) * 0.5D;
 			if (mouseDragging && this.isMouseOver(mouseX, mouseY))
 			{
 				this.rotX -= draggedMouseDelta.getY();
@@ -151,10 +151,14 @@ public class StructurePanel extends AbstractPageComponent
 			GlStateManager.translate((sizeX % 2 == 1) ? -0.5 * scale : 0.0, (sizeY % 2 == 1) ? 0.5 * scale : 0.0, (sizeZ % 2 == 1) ? -0.5 * scale : 0.0);
 			GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.translate(0.0F, 0.0F, -sizeY * 0.5 * scale);
-			guide.mc.fontRenderer.drawString("N", 0, -(int)((structureWidthR + 1) * scale), 4210752);
-			guide.mc.fontRenderer.drawString("S", 0, (int)((structureWidthR + 1) * scale), 4210752);
-			guide.mc.fontRenderer.drawString("W", -(int)((structureWidthR + 1) * scale), 0, 4210752);
-			guide.mc.fontRenderer.drawString("E", (int)((structureWidthR + 1) * scale), 0, 4210752);
+			int height = guide.mc.fontRenderer.FONT_HEIGHT;
+			int width = guide.mc.fontRenderer.getStringWidth("N");
+			double structureWidthXZ = Math.max(sizeX, sizeZ) * 0.5D;
+			double additionalRadius = height / scale;
+			guide.mc.fontRenderer.drawString("N", (int)(0.5D * scale) - width / 2, (int)((-(structureWidthXZ + additionalRadius) + 0.5D) * scale) - height /2, 4210752);
+			guide.mc.fontRenderer.drawString("S", (int)(0.5D * scale) - width / 2, (int)((structureWidthXZ + additionalRadius + 0.5D) * scale) - height /2, 4210752);
+			guide.mc.fontRenderer.drawString("W", (int)((-(structureWidthXZ + additionalRadius) + 0.5D) * scale) - width / 2, (int)(0.5D * scale) - height /2, 4210752);
+			guide.mc.fontRenderer.drawString("E", (int)((structureWidthXZ + additionalRadius + 0.5D) * scale) - width / 2, (int)(0.5D * scale) - height /2, 4210752);
 			GlStateManager.translate(0.0F, 0.0F, sizeY * 0.5 * scale);
 			GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.scale(scale, -scale, scale);

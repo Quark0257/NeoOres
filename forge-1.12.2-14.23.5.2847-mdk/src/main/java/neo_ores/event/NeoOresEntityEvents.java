@@ -242,6 +242,7 @@ public class NeoOresEntityEvents
 		else
 		{
 			NeoOresData.resetStructures();
+			NeoOresData.clearAllPMDC();
 		}
 	}
 

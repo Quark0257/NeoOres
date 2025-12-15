@@ -16,6 +16,7 @@ import neo_ores.event.NeoOresWorldEvents;
 import neo_ores.event.NeoOresBlockEvents;
 import neo_ores.event.NeoOresEntityEvents;
 import neo_ores.packet.PacketAreaParticleToClient;
+import neo_ores.packet.PacketBiomeChangeToClient;
 import neo_ores.packet.PacketDestinationToClient;
 import neo_ores.packet.PacketEntityToClient;
 import neo_ores.packet.PacketItemsToClient;
@@ -25,6 +26,7 @@ import neo_ores.packet.PacketMagicDataToServer;
 import neo_ores.packet.PacketPISyncToClient;
 import neo_ores.packet.PacketPISyncToServer;
 import neo_ores.packet.PacketParticleToClient;
+import neo_ores.packet.PacketParticleTypeBToClient;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
 import neo_ores.packet.PacketSyncConstantDataToClient;
@@ -148,6 +150,8 @@ public class NeoOres
 		PACKET.registerMessage(PacketPISyncToServer.Handler.class, PacketPISyncToServer.class, 11, Side.SERVER);
 		PACKET.registerMessage(PacketSyncConstantDataToClient.Handler.class, PacketSyncConstantDataToClient.class, 12, Side.CLIENT);
 		PACKET.registerMessage(PacketSyncConstantDataToServer.Handler.class, PacketSyncConstantDataToServer.class, 13, Side.SERVER);
+		PACKET.registerMessage(PacketBiomeChangeToClient.Handler.class, PacketBiomeChangeToClient.class, 14, Side.CLIENT);
+		PACKET.registerMessage(PacketParticleTypeBToClient.Handler.class, PacketParticleTypeBToClient.class, 15, Side.CLIENT);
 		
 		if(event.getSide().isClient())
 		{

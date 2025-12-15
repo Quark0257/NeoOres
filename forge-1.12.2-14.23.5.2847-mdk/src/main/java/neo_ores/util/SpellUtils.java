@@ -31,7 +31,9 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
+import neo_ores.packet.PacketParticleTypeBToClient;
 import neo_ores.spell.form.IPassiveSpell;
+import net.jafama.FastMath;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -796,9 +798,37 @@ public class SpellUtils
 			for (int j = 0; j < particleVolume; j++)
 			{
 				int d = (int) (10.0D / (Math.random() + 0.5D));
-				NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d,
-						d, 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
+				NeoOresClientEvents.getInstance()
+						.addParticle(new TexturedParticle(start.x, start.y, start.z, velocity.x / d, velocity.y / d, velocity.z / d, d, 1.0F, NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 			}
+		}
+	}
+
+	public static void displayParticleTypeB(World world, Vec3d target, double maxRadius, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color, boolean sendPacket)
+	{
+		if (world.isRemote)
+		{
+			displayParticleTypeB(world, target, maxRadius, minCount, maxCount, minParticleVolume, maxParticleVolume, color);
+		}
+		else if (sendPacket)
+		{
+			PacketParticleTypeBToClient ppc = new PacketParticleTypeBToClient(target, maxRadius, minCount, maxCount, minParticleVolume, maxParticleVolume, color, world.provider.getDimension());
+			NeoOres.PACKET.sendToAll(ppc);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void displayParticleTypeB(World world, Vec3d target, double maxRadius, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color)
+	{
+		int count = world.rand.nextInt(maxCount - minCount + 1) + minCount;
+		for (int i = 0; i < count; i++)
+		{
+			double r = maxRadius * world.rand.nextDouble();
+			double theta = 2.0 * Math.PI * world.rand.nextDouble();
+			double dx = r * FastMath.cos(theta);
+			double dz = r * FastMath.sin(theta);
+			NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(target.x + dx, target.y, target.z + dz, 0.0, 0.1, 0.0, 5 + world.rand.nextInt(10),
+					minParticleVolume + (maxParticleVolume - minParticleVolume) * world.rand.nextFloat(), NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 		}
 	}
 
@@ -903,8 +933,8 @@ public class SpellUtils
 		}
 		return false;
 	}
-	
-	public static boolean isFluidContainer(ItemStack stack) 
+
+	public static boolean isFluidContainer(ItemStack stack)
 	{
 		return stack.getItem() == ForgeModContainer.getInstance().universalBucket || stack.getItem() == Items.WATER_BUCKET || stack.getItem() == Items.LAVA_BUCKET;
 	}
@@ -948,7 +978,8 @@ public class SpellUtils
 		}
 		if (!stack.getTagCompound().hasKey("additionalData"))
 		{
-			stack.getTagCompound().setTag("additionalData", new NBTTagCompound());;
+			stack.getTagCompound().setTag("additionalData", new NBTTagCompound());
+			;
 		}
 		String key = getFilterKey(isBlackList);
 		NBTUtils nbt = new NBTUtils(stack.getTagCompound().getCompoundTag("additionalData"));

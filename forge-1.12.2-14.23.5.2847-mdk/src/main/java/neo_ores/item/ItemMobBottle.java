@@ -1,8 +1,12 @@
 package neo_ores.item;
 
+import java.util.List;
+
 import neo_ores.api.NBTUtils;
 import neo_ores.main.Reference;
+import neo_ores.util.ServerUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,6 +26,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataIntoSpell
 {
@@ -30,7 +36,7 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 	public ItemMobBottle(boolean isMaster)
 	{
 		this.isMaster = isMaster;
-		this.setMaxStackSize(1);
+		this.setMaxStackSize(64);
 	}
 
 	/**
@@ -114,10 +120,21 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 		}
 		entity.setPositionAndRotation(entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, entity.rotationYaw, entity.rotationPitch);
 		world.spawnEntity(entity);
-		stack.removeSubCompound("storedEntity");
-		world.playSound(player, entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 0.75F);
-		if (stack.getTagCompound().getSize() <= 0)
-			stack.setTagCompound(null);
+		ItemStack resultStack = stack.copy();
+		resultStack.setCount(1);
+		resultStack.removeSubCompound("storedEntity");
+		ServerUtils.playSound(player.getEntityWorld(), entitySpawn.getX() + 0.5, entitySpawn.getY(), entitySpawn.getZ() + 0.5, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 0.75F);
+		if (resultStack.getTagCompound().getSize() <= 0)
+			resultStack.setTagCompound(null);
+		if (stack.getCount() > 1)
+		{
+			stack.shrink(1);
+			player.inventory.addItemStackToInventory(resultStack);
+		}
+		else
+		{
+			player.setHeldItem(hand, resultStack);
+		}
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 	}
 
@@ -132,21 +149,26 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 		{
 			return false;
 		}
-		if (!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		NBTUtils.ForItemStack nbtutils = new NBTUtils.ForItemStack(stack);
+		ItemStack result = stack.copy();
+		result.setCount(1);
+		if (!result.hasTagCompound())
+			result.setTagCompound(new NBTTagCompound());
+		NBTUtils.ForItemStack nbtutils = new NBTUtils.ForItemStack(result);
 		if (nbtutils.getCompound("storedEntity") != null && !nbtutils.getCompound("storedEntity").equals(new NBTTagCompound()))
 			return false;
 		NBTTagCompound entity = new NBTTagCompound();
 		entity.setTag("tag", target.writeToNBT(new NBTTagCompound()));
 		entity.setString("id", EntityList.getKey(target).toString());
 		nbtutils.setTagCompound("storedEntity", entity);
-
-		if (player.capabilities.isCreativeMode)
+		ServerUtils.playSound(player.getEntityWorld(), target.posX, target.posY, target.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 1.0F, 0.75F);
+		if (stack.getCount() > 1)
 		{
-			ItemStack copied = stack.copy();
-			copied.setTagCompound(nbtutils.get());
-			player.setHeldItem(hand, copied);
+			stack.shrink(1);
+			player.inventory.addItemStackToInventory(result);
+		}
+		else
+		{
+			player.setHeldItem(hand, result);
 		}
 		target.setDead();
 
@@ -166,7 +188,7 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 	@Override
 	public void invertPostscript(ItemStack item, World world, NBTTagCompound additionalData)
 	{
-		if (additionalData.hasKey("storedEntity")) 
+		if (additionalData.hasKey("storedEntity"))
 		{
 			if (!item.hasTagCompound())
 			{
@@ -174,5 +196,18 @@ public class ItemMobBottle extends INeoOresItem.Impl implements IPostscriptDataI
 			}
 			item.getTagCompound().setTag("storedEntity", additionalData.getCompoundTag("storedEntity"));
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack itemStack, World world, List<String> list, ITooltipFlag flag)
+	{
+		super.addInformation(itemStack, world, list, flag);
+		NBTUtils.ForItemStack nbtutils = new NBTUtils.ForItemStack(itemStack);
+		NBTTagCompound entityTag = nbtutils.getCompound("storedEntity");
+		Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(entityTag.getString("id")), world);
+		if (entity == null || !(entity instanceof EntityLivingBase))
+			return;
+		EntityLivingBase entityliving = (EntityLivingBase) entity;
+		list.add(entityliving.getDisplayName().getFormattedText());
 	}
 }

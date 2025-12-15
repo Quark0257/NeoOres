@@ -272,7 +272,6 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		}
 
 		this.drawConnectivity(this.scrollX, this.scrollY, true);
-		this.drawConnectivity(this.scrollX, this.scrollY, false);
 		this.draw(this.scrollX, this.scrollY);
 	}
 
@@ -289,21 +288,19 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				if (isWide)
 				{
 					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 3.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+					
+				}
+				if (this.canGet(spellitem))
+				{
+					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+				}
+				else if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
+				{
+					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 				}
 				else
 				{
-					if (this.canGet(spellitem))
-					{
-						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-					}
-					else if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
-					{
-						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
-					}
-					else
-					{
-						ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-					}
+					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 				}
 			}
 		}

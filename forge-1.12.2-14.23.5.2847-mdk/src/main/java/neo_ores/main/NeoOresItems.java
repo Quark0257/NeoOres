@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import neo_ores.item.INeoOresItem;
+import neo_ores.item.ItemBiomeBottle;
 import neo_ores.item.ItemBossKey;
 import neo_ores.item.ItemEffected;
 import neo_ores.item.ItemEssence;
@@ -267,6 +268,7 @@ public class NeoOresItems
 	public static final Item position_sheet = new ItemSheetPosition().setRegistryName(Reference.MOD_ID, "position_sheet").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("position_sheet");
 	public static final Item guidebook = new ItemGuidebook().setRegistryName(Reference.MOD_ID, "guidebook").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("guidebook");
 	public static final Item boss_key = new ItemBossKey().setRegistryName(Reference.MOD_ID, "boss_key").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("boss_key");
+	public static final Item biome_bottle = new ItemBiomeBottle().setRegistryName(Reference.MOD_ID, "biome_bottle").setCreativeTab(NeoOres.neo_ores_tab).setUnlocalizedName("biome_bottle");
 	
 	public static final List<Item> registry = Arrays.asList(undite, gnomite_ingot, salamite, sylphite, mana_ingot, essence, air_essence_core, earth_essence_core, fire_essence_core, water_essence_core,
 			aerite, drenite, flamite, forcite, guardite_ingot, landite_ingot, marlite_ingot, sanitite, spell, mana_wrench, recipe_sheet, spell_sheet, mob_bottle, mob_bottle_master, undite_axe,
@@ -275,5 +277,5 @@ public class NeoOresItems
 			salamite_shovel, salamite_sword, salamite_helmet, salamite_chestplate, salamite_leggings, salamite_boots, sylphite_axe, sylphite_hoe, sylphite_paxel, sylphite_pickaxe, sylphite_shovel,
 			sylphite_sword, sylphite_helmet, sylphite_chestplate, sylphite_leggings, sylphite_boots, creative_axe, creative_hoe, creative_paxel, creative_pickaxe, creative_shovel, creative_sword,
 			creative_helmet, creative_chestplate, creative_leggings, creative_boots, totem, totem_independent, totem_creative, upgrade_void, upgrade_xp, upgrade_fluid, upgrade_consume,
-			position_sheet, upgrade_convert_mana, guidebook, boss_key);
+			position_sheet, upgrade_convert_mana, guidebook, boss_key, biome_bottle);
 }

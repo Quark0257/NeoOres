@@ -36,7 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
-public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather, HasChain, HasSmelt
+public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather, HasSmelt
 {
 	private int fortune = 0;
 	private boolean isSilktouch = false;

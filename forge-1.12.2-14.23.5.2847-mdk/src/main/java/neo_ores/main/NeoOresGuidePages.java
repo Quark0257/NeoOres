@@ -31,7 +31,12 @@ public class NeoOresGuidePages
 			.addComponent(new StructurePanel(8, 4 + 27, GuiGuidebook.pageSizeX - 16, 116, new ResourceLocation(Reference.MOD_ID, "alter/alter_tier3_1"))).setRegistryName(Reference.MOD_ID, "structure5");
 	public static final GuidePage structure6 = new GuidePage(structureTab, 6).addComponent(new ComponentTextTitle("guide.structure6"))
 			.addComponent(new StructurePanel(8, 4 + 27, GuiGuidebook.pageSizeX - 16, 116, new ResourceLocation(Reference.MOD_ID, "alter/alter_tier4"))).setRegistryName(Reference.MOD_ID, "structure6");
+	public static final GuidePage structure7 = new GuidePage(structureTab, 7).addComponent(new ComponentTextTitle("guide.structure7"))
+			.addComponent(new StructurePanel(8, 4 + 27, GuiGuidebook.pageSizeX - 16, 116, new ResourceLocation(Reference.MOD_ID, "auto_crafter"))).setRegistryName(Reference.MOD_ID, "structure7");
+	public static final GuidePage structure8 = new GuidePage(structureTab, 8).addComponent(new ComponentTextTitle("guide.structure8"))
+			.addComponent(new StructurePanel(8, 4 + 27, GuiGuidebook.pageSizeX - 16, 116, new ResourceLocation(Reference.MOD_ID, "auto_mana_crafter"))).setRegistryName(Reference.MOD_ID, "structure8");
+	public static final GuidePage structure9 = new GuidePage(structureTab, 9).addComponent(new ComponentTextTitle("guide.structure9"))
+			.addComponent(new StructurePanel(8, 4 + 27, GuiGuidebook.pageSizeX - 16, 116, new ResourceLocation(Reference.MOD_ID, "enchantment_extractor"))).setRegistryName(Reference.MOD_ID, "structure9");
 	
-	
-	public static final List<GuidePage> registry = Arrays.asList(essence1, structure1, structure2, structure3, structure4, structure5, structure6);
+	public static final List<GuidePage> registry = Arrays.asList(essence1, structure1, structure2, structure3, structure4, structure5, structure6, structure7, structure8, structure9);
 }

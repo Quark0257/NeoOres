@@ -6,6 +6,7 @@ import neo_ores.client.render.entity.RenderSpellBullet;
 import neo_ores.client.render.entity.RenderSpellPlaceable;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.entity.EntitySpellPlaceable;
+import neo_ores.entity.EntityThruster;
 import neo_ores.entity.boss.EntityBossEarth;
 import neo_ores.item.INeoOresItem;
 import neo_ores.item.ItemEssence;
@@ -468,7 +469,8 @@ public class NeoOresRegisterEvents
 	{
 		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_bullet"), EntitySpellBullet.class, "spell_bullet", 0, mod, 64, 1, true);
 		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_placeable"), EntitySpellPlaceable.class, "spell_placeable", 1, mod, 64, 1, true);
-		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "earth_boss"), EntityBossEarth.class, "earth_boss", 2, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "spell_thruster"), EntityThruster.class, "spell_thruster", 2, mod, 64, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "earth_boss"), EntityBossEarth.class, "earth_boss", 3, mod, 64, 1, true);
 	}
 
 	@SubscribeEvent

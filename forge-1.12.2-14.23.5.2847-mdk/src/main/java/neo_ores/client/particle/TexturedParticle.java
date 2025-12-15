@@ -2,6 +2,7 @@ package neo_ores.client.particle;
 
 import java.util.UUID;
 
+import neo_ores.api.IFunction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -18,26 +19,27 @@ import net.minecraft.util.math.Vec3d;
 public class TexturedParticle
 {
 	private boolean expired;
-	protected double prevPosX;
-	protected double prevPosY;
-	protected double prevPosZ;
-	protected double posX;
-	protected double posY;
-	protected double posZ;
-	protected double motionX;
-	protected double motionY;
-	protected double motionZ;
-	protected int particleAge;
-	protected int particleMaxAge;
-	protected final ResourceLocation[] textures;
-	protected float particleSize;
-	protected float textureSize;
-	protected float particleRed;
-    protected float particleGreen;
-    protected float particleBlue;
-    protected float particleAlpha;
-    private UUID uuid;
-    private BlockPos pos;
+	public double prevPosX;
+	public double prevPosY;
+	public double prevPosZ;
+	public double posX;
+	public double posY;
+	public double posZ;
+	public double motionX;
+	public double motionY;
+	public double motionZ;
+	public int particleAge;
+	public int particleMaxAge;
+	public final ResourceLocation[] textures;
+	public float particleSize;
+	public float textureSize;
+	public float particleRed;
+	public float particleGreen;
+	public float particleBlue;
+	public float particleAlpha;
+	private UUID uuid;
+	private BlockPos pos;
+	private IFunction<TexturedParticle> updateFunc;
 
 	public TexturedParticle(double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int time, float size, ResourceLocation... list)
 	{
@@ -51,7 +53,8 @@ public class TexturedParticle
 		this.particleAge = 0;
 		this.particleMaxAge = time;
 		this.textures = list;
-		this.particleSize = size * Minecraft.getMinecraft().world.rand.nextFloat() * 0.6F + 0.5F;;
+		this.particleSize = size * Minecraft.getMinecraft().world.rand.nextFloat() * 0.6F + 0.5F;
+		;
 		this.textureSize = 4.0F;
 		this.particleAlpha = 1.0F;
 		this.particleRed = 1.0F;
@@ -59,25 +62,32 @@ public class TexturedParticle
 		this.particleGreen = 1.0F;
 		this.uuid = UUID.randomUUID();
 		this.pos = BlockPos.ORIGIN;
+		this.updateFunc = null;
 	}
-	
-	public UUID getUUID() 
+
+	public TexturedParticle setUpdateFunc(IFunction<TexturedParticle> func)
+	{
+		this.updateFunc = func;
+		return this;
+	}
+
+	public UUID getUUID()
 	{
 		return this.uuid;
 	}
-	
-	public BlockPos getPos() 
+
+	public BlockPos getPos()
 	{
 		return this.pos;
 	}
-	
-	public TexturedParticle setUUID(UUID uuid) 
+
+	public TexturedParticle setUUID(UUID uuid)
 	{
 		this.uuid = uuid;
 		return this;
 	}
-	
-	public TexturedParticle setPos(BlockPos pos) 
+
+	public TexturedParticle setPos(BlockPos pos)
 	{
 		this.pos = new BlockPos(pos.getX(), pos.getY(), pos.getZ());
 		return this;
@@ -96,9 +106,9 @@ public class TexturedParticle
 		GlStateManager.disableCull();
 		GlStateManager.depthMask(false);
 		GlStateManager.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
-		double interpX = this.posX;
-		double interpY = this.posY;
-		double interpZ = this.posZ;
+		double interpX = this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks;
+		double interpY = this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks;
+		double interpZ = this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks;
 		float rotX = ActiveRenderInfo.getRotationX();
 		float rotZ = ActiveRenderInfo.getRotationZ();
 		float rotXY = ActiveRenderInfo.getRotationXY();
@@ -116,11 +126,8 @@ public class TexturedParticle
 		double posX = interpX - entityX;
 		double posY = interpY - entityY;
 		double posZ = interpZ - entityZ;
-		Vec3d[] avec3d = new Vec3d[] { 
-				new Vec3d(-rotX * f4 - rotYZ * f4, -rotXZ * f4, -rotZ * f4 - rotXY * f4),
-				new Vec3d(-rotX * f4 + rotYZ * f4, rotXZ * f4, -rotZ * f4 + rotXY * f4),
-				new Vec3d(rotX * f4 + rotYZ * f4, rotXZ * f4, rotZ * f4 + rotXY * f4),
-				new Vec3d(rotX * f4 - rotYZ * f4, -rotXZ * f4, rotZ * f4 - rotXY * f4) };
+		Vec3d[] avec3d = new Vec3d[] { new Vec3d(-rotX * f4 - rotYZ * f4, -rotXZ * f4, -rotZ * f4 - rotXY * f4), new Vec3d(-rotX * f4 + rotYZ * f4, rotXZ * f4, -rotZ * f4 + rotXY * f4),
+				new Vec3d(rotX * f4 + rotYZ * f4, rotXZ * f4, rotZ * f4 + rotXY * f4), new Vec3d(rotX * f4 - rotYZ * f4, -rotXZ * f4, rotZ * f4 - rotXY * f4) };
 		for (int l = 0; l < 4; ++l)
 		{
 			avec3d[l] = avec3d[l].scale(1.0 / this.textureSize);
@@ -156,10 +163,17 @@ public class TexturedParticle
 		this.prevPosY = this.posY;
 		this.prevPosZ = this.posZ;
 
-		this.posX += this.motionX;
-		this.posY += this.motionY;
-		this.posZ += this.motionZ;
-
+		if (this.updateFunc != null)
+		{
+			this.updateFunc.function(this);
+		}
+		else
+		{
+			this.posX += this.motionX;
+			this.posY += this.motionY;
+			this.posZ += this.motionZ;
+		}
+		
 		if (this.particleAge++ >= this.particleMaxAge)
 		{
 			this.setExpired();

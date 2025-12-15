@@ -216,6 +216,7 @@ item.upgrade_consume.name=Ignore Low Consume Upgrade
 item.upgrade_convert_mana.name=Convert Mana Upgrade
 item.position_sheet.name=Position Sheet
 item.guidebook.name=Neo Ores II : Guides & Quests
+item.biome_bottle.name=Bottle o' Biome
 
 fluid.neo_ores.mana=Fluid Mana
 
@@ -251,6 +252,8 @@ totem.disable_dim=§fCannot be used across dimensions
 
 tooltip.stored_position=§fStored Position : [x=%s, y=%s, z=%s, side=%s, dim=%s]
 tooltip.not_stored_position=§fRIGHT-CLICK to store the position
+tooltip.stored_biome=§fStored Biome : %s
+tooltip.not_stored_biome=§fRIGHT-CLICK to store the biome
 
 attribute.name.neo_ores.maxMana=Max Mana
 

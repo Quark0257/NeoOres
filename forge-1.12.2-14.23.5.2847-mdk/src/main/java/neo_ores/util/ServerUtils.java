@@ -1,9 +1,14 @@
 package neo_ores.util;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
+
+import com.google.common.base.Predicate;
 
 import neo_ores.main.NeoOresData;
 import net.minecraft.entity.Entity;
@@ -15,13 +20,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketCustomSound;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.CombatEntry;
 import net.minecraft.util.CombatTracker;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class ServerUtils
@@ -163,22 +171,22 @@ public class ServerUtils
 			{
 				EntityLiving living = (EntityLiving) entity;
 				EntityLivingBase target = null;
-				
+
 				CombatTracker entityCombat = living.getCombatTracker();
 				List<CombatEntry> entries = ServerUtils.<List<CombatEntry>, CombatTracker>getPrivateValue(CombatTracker.class, entityCombat, combatEntries);
 				if (entries != null)
 				{
 					target = ServerUtils.getAlivedBestAttacker(entries);
 				}
-				
+
 				if (target == null && NeoOresData.instance != null)
 				{
 					target = NeoOresData.instance.getPSD(uuid).getPrevAttackedEntity(server);
 				}
-				
-				if (target != null) 
+
+				if (target != null)
 				{
-					if (!target.isEntityAlive()) 
+					if (!target.isEntityAlive())
 					{
 						target = null;
 					}
@@ -226,7 +234,7 @@ public class ServerUtils
 	{
 		return getAlivedBestAttackerExcluded(entries, null);
 	}
-	
+
 	@Nullable
 	public static EntityLivingBase getAlivedBestAttackerExcluded(List<CombatEntry> entries, Entity entity)
 	{
@@ -260,5 +268,55 @@ public class ServerUtils
 		{
 			return entitylivingbase;
 		}
+	}
+
+	public static void playSound(World world, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
+	{
+		if (!world.isRemote)
+		{
+			for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, new Predicate<EntityPlayerMP>()
+			{
+
+				@Override
+				public boolean apply(EntityPlayerMP input)
+				{
+					return !(input instanceof FakePlayer);
+				}
+			}))
+			{
+				if (player instanceof EntityPlayerMP)
+				{
+					((EntityPlayerMP) player).connection.sendPacket(new SPacketSoundEffect(soundIn, category, x, y, z, volume, pitch));
+				}
+			}
+		}
+	}
+
+	public static void playSound(EntityPlayer player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
+	{
+		if (player instanceof EntityPlayerMP)
+		{
+			((EntityPlayerMP) player).connection.sendPacket(new SPacketSoundEffect(soundIn, category, x, y, z, volume, pitch));
+		}
+	}
+
+	public static <K, V> List<Tuple<K, V>> mapToList(Map<K, V> map)
+	{
+		List<Tuple<K, V>> result = new ArrayList<>();
+		for (K key : map.keySet())
+		{
+			result.add(new Tuple<>(key, map.get(key)));
+		}
+		return result;
+	}
+	
+	public static <K, V> Map<K, V> listToMap(List<Tuple<K, V>> list)
+	{
+		Map<K, V> result = new LinkedHashMap<>();
+		for (Tuple<K, V> pair : list)
+		{
+			result.put(pair.getFirst(), pair.getSecond());
+		}
+		return result;
 	}
 }

@@ -23,7 +23,7 @@ public class SpellHeal extends SpellEffectEntityBase implements HasAmplify
 	@Override
 	protected void onEffect(World world, Entity elb, EntityLivingBase runner, ItemStack stack)
 	{
-		float heal = this.amp * 2.0f + 1.0f;
+		float heal = (float) Math.pow(2.0, this.amp + 1.0) * 2.0F;
 		SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 		if (elb instanceof EntityLivingBase)
 		{

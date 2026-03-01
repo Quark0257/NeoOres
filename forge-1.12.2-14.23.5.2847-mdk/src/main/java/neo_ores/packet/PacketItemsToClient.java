@@ -3,6 +3,7 @@ package neo_ores.packet;
 import io.netty.buffer.ByteBuf;
 import neo_ores.main.NeoOres;
 import neo_ores.tileentity.AbstractTileEntityPedestal;
+import neo_ores.tileentity.TileEntityPedestalNetworkDetector;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import neo_ores.tileentity.TileEntityPedestal;
 import net.minecraft.client.Minecraft;
@@ -73,6 +74,11 @@ public class PacketItemsToClient implements IMessage
 						{
 							((TileEntityPedestal) te).setClient(message.nbt.getBoolean("multiblock"), message.nbt.getInteger("phase"), message.nbt.getInteger("maxPhase"),
 									message.nbt.getBoolean("isCreating"));
+						}
+						
+						if (message.nbt.hasKey("count") && message.nbt.hasKey("inputPower") && teep instanceof TileEntityPedestalNetworkDetector) 
+						{
+							((TileEntityPedestalNetworkDetector) teep).setClient(message.nbt.getInteger("count"), message.nbt.getBoolean("inputPower"));
 						}
 					}
 				}

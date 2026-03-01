@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
@@ -87,8 +88,32 @@ public class SpellPedestalInterface extends SpellEffect implements HasDimensionO
 			}
 
 			List<BlockPos> posResult = HasPI.getPIPos(targetWorld, targetPos);
+			if (posResult.isEmpty()) 
+			{
+				return;
+			}
+			for (BlockPos pos : posResult)
+			{
+				SpellUtils.onDisplayParticleTypeA(targetWorld, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+			}
 			EntityPlayerMP player = (EntityPlayerMP) runner;
 			NeoOresData.instance.setCurrentTargetPedestals(player, dim, EnumFacing.DOWN, posResult);
+			player.openGui(NeoOres.instance, NeoOres.guiIDPI, world, MathHelper.floor(player.posX), MathHelper.floor(player.posY), MathHelper.floor(player.posZ));
+			NeoOresData.instance.getPMD(player).addMXP(1L);
+		} 
+		else if (result.typeOfHit == Type.BLOCK) 
+		{
+			List<BlockPos> posResult = HasPI.getPIPos(world, result.getBlockPos());
+			if (posResult.isEmpty()) 
+			{
+				return;
+			}
+			for (BlockPos pos : posResult)
+			{
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+			}
+			EntityPlayerMP player = (EntityPlayerMP) runner;
+			NeoOresData.instance.setCurrentTargetPedestals(player, world.provider.getDimension(), result.sideHit, posResult);
 			player.openGui(NeoOres.instance, NeoOres.guiIDPI, world, MathHelper.floor(player.posX), MathHelper.floor(player.posY), MathHelper.floor(player.posZ));
 			NeoOresData.instance.getPMD(player).addMXP(1L);
 		}

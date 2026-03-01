@@ -42,8 +42,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-public class BlockPedestal extends BlockContainer implements INeoOresBlock
+public class BlockPedestal extends BlockContainer implements INeoOresBlock, IPedestalInterfaceComponent, IAcceptCreativeLeftClick
 {
 	private boolean watered;
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.VERTICAL);
@@ -155,6 +157,11 @@ public class BlockPedestal extends BlockContainer implements INeoOresBlock
 		if (tileentity instanceof TileEntityPedestal)
 		{
 			TileEntityPedestal teep = (TileEntityPedestal) tileentity;
+			IItemHandler handler = teep.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			if (handler == null) 
+			{
+				return false;
+			}
 			if (itemstack.isEmpty())
 			{
 				return false;
@@ -168,12 +175,15 @@ public class BlockPedestal extends BlockContainer implements INeoOresBlock
 				}
 				else if (item == NeoOresItems.mana_wrench)
 				{
-					teep.spellCreation(worldIn, pos, state, playerIn);
+					boolean result = teep.spellCreation(worldIn, pos, state, playerIn);
+					if (!result) 
+					{
+						teep.changeStackMode();
+					}
 				}
 				else if (!playerIn.isSneaking())
 				{
-					playerIn.setHeldItem(hand, teep.addItemStackToInventory(itemstack));
-					teep.markDirty();
+					playerIn.setHeldItem(hand, handler.insertItem(0, itemstack, false));
 					return true;
 				}
 			}
@@ -196,38 +206,20 @@ public class BlockPedestal extends BlockContainer implements INeoOresBlock
 		if (tileentity instanceof TileEntityPedestal)
 		{
 			TileEntityPedestal teep = (TileEntityPedestal) tileentity;
-			ItemStack stack = teep.getStackInSlot(0).copy();
+			IItemHandler handler = teep.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			if (handler == null) 
+			{
+				return;
+			}
+			ItemStack stack = handler.getStackInSlot(0);
 			if (player.isSneaking())
 			{
-				if (stack.getCount() > stack.getMaxStackSize())
-				{
-					stack.setCount(stack.getMaxStackSize());
-					InventoryUtils.addStackToPlayer(player, stack.copy());
-					teep.decrStackSize(0, stack.getMaxStackSize());
-				}
-				else
-				{
-					stack.setCount(stack.getCount());
-					InventoryUtils.addStackToPlayer(player, stack.copy());
-					teep.removeStackFromSlot(0);
-				}
+				InventoryUtils.addStackToPlayer(player, handler.extractItem(0, Math.min(stack.getCount(), stack.getMaxStackSize()), false));
 			}
 			else
 			{
-				if (stack.getCount() > 1)
-				{
-					stack.setCount(1);
-					InventoryUtils.addStackToPlayer(player, stack.copy());
-					teep.decrStackSize(0, 1);
-				}
-				else
-				{
-					stack.setCount(1);
-					InventoryUtils.addStackToPlayer(player, stack.copy());
-					teep.removeStackFromSlot(0);
-				}
+				InventoryUtils.addStackToPlayer(player, handler.extractItem(0, 1, false));
 			}
-			teep.markDirty();
 		}
 	}
 
@@ -318,7 +310,7 @@ public class BlockPedestal extends BlockContainer implements INeoOresBlock
 
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
 	{
-		return BlockFaceShape.SOLID;
+		return face == state.getValue(FACING) ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 	
 	public boolean hasComparatorInputOverride(IBlockState state)
@@ -350,5 +342,11 @@ public class BlockPedestal extends BlockContainer implements INeoOresBlock
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		return "tile." + this.getRegistryName().getResourcePath();
+	}
+
+	@Override
+	public boolean isContent()
+	{
+		return true;
 	}
 }

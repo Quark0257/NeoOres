@@ -5,20 +5,57 @@ import java.lang.reflect.ParameterizedType;
 import javax.annotation.Nullable;
 
 import neo_ores.api.FakePlayerMechanicalMagician;
+import neo_ores.main.NeoOres;
 import neo_ores.spell.SpellItemInterfaces.ICorrectingBase;
+import neo_ores.util.RayTraceUtils;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class Spell
 {
-	public static abstract class SpellForm extends Spell
+	public boolean canEditBlocksBySpells(EntityLivingBase runner, ItemStack stack, World world, @Nullable BlockPos pos, @Nullable EnumFacing face) 
 	{
+		if (runner instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer) runner;
+			if (runner.isPotionActive(NeoOres.antigriefing)) 
+			{
+				return false;
+			}
+			
+			if (!player.capabilities.allowEdit) 
+			{
+				if (pos != null) 
+				{
+					player.canPlayerEdit(pos, face, stack);
+				}
+				else 
+				{
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		else 
+		{
+			return ForgeEventFactory.getMobGriefingEvent(world, runner);
+		}
+	}
+	
+	public static abstract class SpellForm extends Spell
+	{	
 		/**
 		 * If this is true, it's means this spell need primary form such as Touch or
 		 * Self
@@ -102,6 +139,30 @@ public abstract class Spell
 	{
 		@Nullable
 		public abstract RayTraceResult getResultAsRunningToSelf(World world, EntityLivingBase runner, ItemStack stack);
+		
+		public RayTraceResult getResultBlockFromEntity(World world, RayTraceResult result, ItemStack stack, boolean offsetUp, boolean offsetDown) 
+		{
+			if (result != null && result.typeOfHit == Type.ENTITY && result.entityHit instanceof EntityLivingBase) 
+			{
+				RayTraceResult result2 = this.getResultAsRunningToSelf(world, (EntityLivingBase)result.entityHit, stack);
+				if (result2 != null && result2.typeOfHit == RayTraceResult.Type.BLOCK) 
+				{
+					EnumFacing face = offsetUp ? EnumFacing.UP : EnumFacing.DOWN;
+					BlockPos pos = result2.getBlockPos();
+					if (offsetDown) 
+					{
+						pos = pos.add(EnumFacing.DOWN.getDirectionVec());
+					}
+					if (offsetUp) 
+					{
+						pos = pos.add(EnumFacing.UP.getDirectionVec());
+					}
+					return RayTraceUtils.getSimpleResult(pos, face);
+				}
+				return result;
+			}
+			return result;
+		}
 
 		public void onEffectRunToSelf(World world, EntityLivingBase runner, ItemStack stack)
 		{

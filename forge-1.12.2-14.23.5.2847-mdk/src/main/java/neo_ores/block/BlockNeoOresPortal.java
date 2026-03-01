@@ -132,7 +132,7 @@ public class BlockNeoOresPortal extends BlockContainer implements INeoOresBlock
 
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
 	{
-		return BlockFaceShape.SOLID;
+		return face == EnumFacing.DOWN ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override

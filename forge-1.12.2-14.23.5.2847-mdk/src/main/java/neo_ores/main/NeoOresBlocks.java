@@ -8,6 +8,7 @@ import neo_ores.block.BlockAerite;
 import neo_ores.block.BlockAirEssence;
 import neo_ores.block.BlockBossCapsule;
 import neo_ores.block.BlockChunkLoader;
+import neo_ores.block.BlockPedestalNetworkDetector;
 import neo_ores.block.BlockDimension;
 import neo_ores.block.BlockDimensionLeaves;
 import neo_ores.block.BlockDimensionLog;
@@ -36,6 +37,8 @@ import neo_ores.block.BlockNeoOre;
 import neo_ores.block.BlockNeoOreOriginal;
 import neo_ores.block.BlockNeoOresPortal;
 import neo_ores.block.BlockPedestal;
+import neo_ores.block.BlockPedestalNetworkBus;
+import neo_ores.block.BlockPedestalNetworkConnector;
 import neo_ores.block.BlockSalamite;
 import neo_ores.block.BlockSanitite;
 import neo_ores.block.BlockSpellRecipeCreationTable;
@@ -188,6 +191,22 @@ public class NeoOresBlocks
 			.setRegistryName(Reference.MOD_ID,"light")
 			.setUnlocalizedName("light")
 			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block detector_pedestal = new BlockPedestalNetworkDetector()
+			.setRegistryName(Reference.MOD_ID, "pedestal_network_detector")
+			.setUnlocalizedName("pedestal_network_detector")
+			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block lit_detector_pedestal = new BlockPedestalNetworkDetector()
+			.setRegistryName(Reference.MOD_ID,"lit_pedestal_network_detector")
+			.setUnlocalizedName("lit_pedestal_network_detector")
+			.setCreativeTab(null);
+	public static final Block pedestal_network_bus = new BlockPedestalNetworkBus()
+			.setRegistryName(Reference.MOD_ID, "pedestal_network_bus")
+			.setUnlocalizedName("pedestal_network_bus")
+			.setCreativeTab(NeoOres.neo_ores_tab);
+	public static final Block pedestal_network_connector = new BlockPedestalNetworkConnector()
+			.setRegistryName(Reference.MOD_ID, "pedestal_network_connector")
+			.setUnlocalizedName("pedestal_network_connector")
+			.setCreativeTab(NeoOres.neo_ores_tab);
 			
 	public static final Block custom_lit_redstone_ore = new BlockNeoOre("custom_lit_redstone_ore",2,null, 0.625F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(null);
 	public static final Block custom_redstone_ore = new BlockNeoOre("custom_redstone_ore",2,null, 0.0F, false, Items.REDSTONE,0, 4, 5, 1, 5).setCreativeTab(NeoOres.neo_ores_tab);
@@ -312,6 +331,10 @@ public class NeoOresBlocks
 			chunk_loader,
 			liquid_mana,
 			light,
-			boss_capsule
+			boss_capsule,
+			detector_pedestal,
+			lit_detector_pedestal,
+			pedestal_network_bus,
+			pedestal_network_connector
 			),color_saplings);	
 }

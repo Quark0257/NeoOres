@@ -62,7 +62,7 @@ public class EntityThruster extends Entity
 		this.motionX = this.rand.nextGaussian() * 0.001D;
 		this.motionZ = this.rand.nextGaussian() * 0.001D;
 		this.motionY = 0.05D;
-		this.life = 5 * (amplifier + 1);
+		this.life = (int) (5.0 * Math.pow(2.0, amplifier));
 	}
 
 	public EntityThruster(World world, int color, int amplifier, EntityLivingBase target)

@@ -1,5 +1,10 @@
 package neo_ores.spell.effect;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Predicate;
+
 import neo_ores.api.ICompareBlockState;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOres;
@@ -10,6 +15,7 @@ import neo_ores.spell.SpellItemInterfaces.HasDimensionOver;
 import neo_ores.spell.SpellItemInterfaces.HasPI;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasReach;
+import neo_ores.tileentity.DetectorWrapper;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
 import neo_ores.util.SpellUtils;
@@ -30,6 +36,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, HasDimensionOver, HasPI
 {
@@ -97,39 +106,76 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 				if (result.typeOfHit == Type.BLOCK)
 				{
 					EnumFacing face = result.sideHit;
-					for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
-							: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
+					List<BlockPos> blockPoss = this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+							: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM));
+					List<BlockPos> detectors = new ArrayList<>();
+					boolean successedProcess = false;
+					for (BlockPos pos : blockPoss)
+					{
+						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+					}
+					for (BlockPos pos : blockPoss)
 					{
 						if (dim == world.provider.getDimension() && pos.equals(pushPos))
 						{
 							continue;
 						}
-						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						TileEntity te = world.getTileEntity(pos);
-						if (te != null && te instanceof IInventory)
+						boolean checkDetector = false;
+						if (te != null && te instanceof ICapabilityProvider)
+						{
+							ICapabilityProvider cap = (ICapabilityProvider) te;
+							IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+							checkDetector = handler instanceof DetectorWrapper;
+							if (checkDetector)
+							{
+								detectors.add(pos);
+							}
+						}
+						if (te != null && te instanceof IInventory && !checkDetector)
 						{
 							IInventory inventory = (IInventory) te;
-							int size = inventory.getSizeInventory();
-							for (int i = 0; i < size; i++)
+							if (InventoryUtils.addInventoryFromInventorySlot(inventory, pushInv, face, face, new Predicate<ItemStack>()
 							{
-								if (!inventory.getStackInSlot(i).isEmpty() && this.match(inventory.getStackInSlot(i), stack))
+								@Override
+								public boolean apply(ItemStack input)
 								{
-									if (InventoryUtils.addInventoryfromInventorySlot(i, inventory, pushInv, face, pushFace))
-									{
-										if (dim == world.provider.getDimension())
-										{
-											int color = SpellUtils.getColor(stack);
-											Vec3d start = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-											Vec3d vel = pushVec.subtract(start);
-											NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
-										}
+									return match(input, stack);
+								}
+							}))
+							{
+								successedProcess = true;
+								if (dim == world.provider.getDimension())
+								{
+									int color = SpellUtils.getColor(stack);
+									Vec3d start = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+									Vec3d vel = pushVec.subtract(start);
+									NeoOres.PACKET.sendToAll(new PacketLineParticleToClient(start, vel, color, dim));
+								}
 
-										if (runner instanceof EntityPlayerMP)
-										{
-											PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-											pmds.addMXP(1L);
-										}
-										break;
+								if (runner instanceof EntityPlayerMP)
+								{
+									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+									pmds.addMXP(1L);
+								}
+							}
+						}
+					}
+					if (this.piMode && !successedProcess)
+					{
+						loop: for (BlockPos pos : detectors)
+						{
+							TileEntity te = world.getTileEntity(pos);
+							if (te != null && te instanceof ICapabilityProvider)
+							{
+								ICapabilityProvider cap = (ICapabilityProvider) te;
+								IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+								for (int slot = 0; slot < handler.getSlots(); slot++)
+								{
+									if (!handler.getStackInSlot(slot).isEmpty() && this.match(handler.getStackInSlot(slot), stack))
+									{
+										handler.extractItem(slot, 1, false);
+										break loop;
 									}
 								}
 							}
@@ -246,7 +292,7 @@ public class SpellPipeItem extends SpellEffectItemFiltered implements HasReach, 
 				return false;
 			}
 			SpellUtils.onDisplayParticleTypeAEntity(world, entityitem, SpellUtils.getColor(stack), 16);
-			ItemStack result = InventoryUtils.addInventoryfromStack(target, dist, face);
+			ItemStack result = InventoryUtils.addInventoryFromStack(target, dist, face);
 			if (!target.isEmpty() && result.getCount() != target.getCount())
 			{
 				entityitem.setItem(result);

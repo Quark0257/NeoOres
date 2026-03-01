@@ -1,6 +1,7 @@
 package neo_ores.util;
 
 import neo_ores.api.Vec2I;
+import neo_ores.api.Vec2d;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -12,6 +13,35 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientUtils
 {
+	public static void drawLine(Vec2I start, Vec2I end, float width, float red, float green, float blue, float alpha) 
+	{
+		double x0 = start.getX();
+		double y0 = start.getY();
+		Vec2I rVec = end.subtract(start);
+		double r = rVec.getNorm();
+		float arg = (float) rVec.getArgument();
+		double halfWidth = 0.5 * width;
+		
+		Vec2d pos0 = Vec2d.getFromPolar(halfWidth, arg + 0.5D * Math.PI).negate().add(new Vec2d(x0, y0));
+		Vec2d pos3 = Vec2d.getFromPolar(halfWidth, arg + 0.5D * Math.PI).add(new Vec2d(x0, y0));
+		Vec2d pos1 = Vec2d.getFromPolar(r, arg).add(pos0);
+		Vec2d pos2 = Vec2d.getFromPolar(r, arg).add(pos3);
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		GlStateManager.enableBlend();
+		GlStateManager.disableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.color(red, green, blue, alpha);
+		bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
+		bufferbuilder.pos(pos0.getX(), pos0.getY(), 0.0D).endVertex();
+		bufferbuilder.pos(pos3.getX(), pos3.getY(), 0.0D).endVertex();
+		bufferbuilder.pos(pos2.getX(), pos2.getY(), 0.0D).endVertex();
+		bufferbuilder.pos(pos1.getX(), pos1.getY(), 0.0D).endVertex();
+		tessellator.draw();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+	}
+	
 	public static void drawSmoothLine(Vec2I start, Vec2I end, float width, float red, float green, float blue, float alpha)
 	{
 		int x0 = start.getX();

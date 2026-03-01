@@ -1,8 +1,11 @@
 package neo_ores.pi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import neo_ores.api.StackUtils;
+import neo_ores.tileentity.DetectorWrapper;
+import neo_ores.util.PIUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
@@ -50,6 +53,9 @@ public class PICommand
 					}
 
 				}
+			}
+			loop0: for (IItemHandler handler : handlers)
+			{
 				for (int i = 0; i < handler.getSlots(); i++)
 				{
 					this.target = handler.insertItem(i, this.target, false);
@@ -78,8 +84,15 @@ public class PICommand
 		else if (this.command.equals(EXTRACT))
 		{
 			int count = this.target.getCount();
+			boolean flag = false;
+			List<IItemHandler> detectors = new ArrayList<>();
 			for (IItemHandler handler : handlers)
 			{
+				if (handler instanceof DetectorWrapper) 
+				{
+					detectors.add(handler);
+					continue;
+				}
 				for (int i = 0; i < handler.getSlots(); i++)
 				{
 					if (StackUtils.compareWith(handler.getStackInSlot(i), this.target))
@@ -96,11 +109,27 @@ public class PICommand
 								this.result.setCount(this.result.getCount() + stack.getCount());
 							}
 							count -= stack.getCount();
+							flag = true;
 						}
 					}
 					if (count <= 0)
 					{
 						return;
+					}
+				}
+			}
+			if (!flag) 
+			{
+				for (IItemHandler handler : detectors)
+				{
+					for (int i = 0; i < handler.getSlots(); i++)
+					{
+						if (StackUtils.compareWith(handler.getStackInSlot(i), this.target))
+						{
+							handler.extractItem(i, count, false);
+							this.result = ItemStack.EMPTY;
+							return;
+						}
 					}
 				}
 			}
@@ -157,7 +186,7 @@ public class PICommand
 
 	public PICommand setTarget(ItemStack stack)
 	{
-		this.target = stack;
+		this.target = PIUtils.removeRequestableTag(stack);
 		return this;
 	}
 

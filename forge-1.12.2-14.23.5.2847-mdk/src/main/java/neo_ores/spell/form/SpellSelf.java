@@ -54,15 +54,19 @@ public class SpellSelf extends SpellFormNotEntity implements HasOffsetDown, HasO
 			{
 				((Spell.SpellCorrection) correction).onCorrection(spell);
 			}
-			if (this.offsetDown || this.offsetUp) {
+			if (this.offsetDown || this.offsetUp) 
+			{
 				RayTraceResult spellTrace = spell.getResultAsRunningToSelf(world, runner, stack);
-				if (spellTrace != null && spellTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
+				if (spellTrace != null && spellTrace.typeOfHit == RayTraceResult.Type.BLOCK) 
+				{
 					EnumFacing face = this.offsetUp ? EnumFacing.UP : EnumFacing.DOWN;
 					BlockPos pos = spellTrace.getBlockPos();
-					if (this.offsetDown) {
+					if (this.offsetDown) 
+					{
 						pos = pos.add(EnumFacing.DOWN.getDirectionVec());
 					}
-					if (this.offsetUp) {
+					if (this.offsetUp) 
+					{
 						pos = pos.add(EnumFacing.UP.getDirectionVec());
 					}
 					spellTrace = RayTraceUtils.getSimpleResult(pos, face);

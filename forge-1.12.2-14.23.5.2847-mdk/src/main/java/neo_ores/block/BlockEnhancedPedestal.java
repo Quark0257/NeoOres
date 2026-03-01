@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import neo_ores.api.InventoryUtils;
 import neo_ores.block.properties.PedestalTiers;
 import neo_ores.item.ItemBlockEnhancedPedestal;
 import neo_ores.main.NeoOresItems;
@@ -15,6 +16,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,7 +24,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,8 +38,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityProvider
+public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityProvider, IPedestalInterfaceComponent, IAcceptCreativeLeftClick
 {
 	protected static final AxisAlignedBB AABB_BOUNDING = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.8125D, 1.0D);
 	protected static final AxisAlignedBB AABB_BOTTOM = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5625D, 1.0D);
@@ -105,6 +108,7 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 			stack.getTagCompound().setTag("BlockEntityTag", tileData);
 			EntityItem entityItem = new EntityItem(worldIn, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
 			worldIn.spawnEntity(entityItem);
+			worldIn.updateComparatorOutputLevel(pos, this);
 		}
 
 		super.breakBlock(worldIn, pos, state);
@@ -140,11 +144,13 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 				if (!playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
 				{
 					teep.addSlot(1);
+					teep.markDirty();
 					return true;
 				}
 				else if (playerIn.isSneaking() && item == NeoOresItems.mana_wrench)
 				{
 					teep.addSlot(-1);
+					teep.markDirty();
 					return true;
 				}
 				else if (item == NeoOresItems.spell)
@@ -153,7 +159,8 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 				}
 				else if (!playerIn.isSneaking())
 				{
-					playerIn.setHeldItem(hand, teep.addItemStackToInventory(itemstack));
+					ItemStack stack = InventoryUtils.addInventoryFromStack(itemstack, teep, facing);
+					playerIn.setHeldItem(hand, stack);
 					return true;
 				}
 			}
@@ -176,36 +183,20 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		{
 			TileEntityEnhancedPedestal teep = (TileEntityEnhancedPedestal) tileentity;
 			int slot = teep.getSlot();
-			ItemStack stack = teep.getItems().get(slot).copy();
 
+			IItemHandler handler = teep.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			if (handler == null) 
+			{
+				return;
+			}
+			ItemStack stack = handler.getStackInSlot(slot);
 			if (player.isSneaking())
 			{
-				if (stack.getCount() > stack.getMaxStackSize())
-				{
-					stack.setCount(stack.getMaxStackSize());
-					this.addStackToPlayer(player, stack);
-					teep.decrStackSize(slot, stack.getMaxStackSize());
-				}
-				else
-				{
-					this.addStackToPlayer(player, stack);
-					teep.removeStackFromSlot(slot);
-				}
+				InventoryUtils.addStackToPlayer(player, handler.extractItem(slot, Math.min(stack.getCount(), stack.getMaxStackSize()), false));
 			}
 			else
 			{
-				if (stack.getCount() > 1)
-				{
-					stack.setCount(1);
-					this.addStackToPlayer(player, stack);
-					teep.decrStackSize(slot, 1);
-				}
-				else
-				{
-					stack.setCount(1);
-					this.addStackToPlayer(player, stack);
-					teep.removeStackFromSlot(slot);
-				}
+				InventoryUtils.addStackToPlayer(player, handler.extractItem(slot, 1, false));
 			}
 		}
 	}
@@ -284,35 +275,6 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 		return this.getUnlocalizedName();
 	}
 
-	private void addStackToPlayer(EntityPlayer entityplayer, ItemStack itemstack)
-	{
-		if (!itemstack.isEmpty() && entityplayer.isServerWorld())
-		{
-			boolean flag = entityplayer.inventory.addItemStackToInventory(itemstack);
-
-			if (flag)
-			{
-				entityplayer.world.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F,
-						((entityplayer.getRNG().nextFloat() - entityplayer.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-				entityplayer.inventoryContainer.detectAndSendChanges();
-			}
-
-			if (flag && itemstack.isEmpty())
-			{
-			}
-			else
-			{
-				EntityItem entityitem = entityplayer.dropItem(itemstack, false);
-
-				if (entityitem != null)
-				{
-					entityitem.setNoPickupDelay();
-					entityitem.setOwner(entityplayer.getName());
-				}
-			}
-		}
-	}
-
 	// 0~15 available
 	public int getMaxMeta()
 	{
@@ -322,5 +284,35 @@ public class BlockEnhancedPedestal extends NeoOresBlock implements ITileEntityPr
 	public Item getItemBlock(Block block)
 	{
 		return new ItemBlockEnhancedPedestal(block).setRegistryName(block.getRegistryName());
+	}
+	
+	public boolean hasComparatorInputOverride(IBlockState state)
+    {
+        return true;
+    }
+
+    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+    	if (worldIn.getTileEntity(pos) == null || !(worldIn.getTileEntity(pos) instanceof TileEntityEnhancedPedestal)) 
+    	{
+    		return 0;
+    	}
+        return TileEntityEnhancedPedestal.calcRedstoneFromInventory((TileEntityEnhancedPedestal) worldIn.getTileEntity(pos));
+    }
+
+	@Override
+	public boolean isContent()
+	{
+		return true;
+	}
+	
+	public boolean isTopSolid(IBlockState state) 
+	{
+		return false;
+	}
+	
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+	{
+		return face == EnumFacing.DOWN ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 }

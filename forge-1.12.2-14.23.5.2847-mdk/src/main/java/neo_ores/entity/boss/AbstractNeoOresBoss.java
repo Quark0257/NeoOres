@@ -102,6 +102,7 @@ public abstract class AbstractNeoOresBoss extends EntityCreature implements IBou
 		super.entityInit();
 		this.dataManager.register(SPAWN_TIME, Integer.valueOf(0));
 		this.dataManager.register(PEACE, Boolean.valueOf(false));
+		this.dataManager.register(SPELL, Boolean.valueOf(false));
 	}
 
 	protected void initEntityAI()

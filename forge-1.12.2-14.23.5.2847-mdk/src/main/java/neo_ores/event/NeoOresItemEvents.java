@@ -13,6 +13,7 @@ import neo_ores.item.ItemRecipeSheet;
 import neo_ores.main.NeoOresItems;
 import neo_ores.main.Reference;
 import neo_ores.util.NumberUtils;
+import neo_ores.util.PIUtils;
 import neo_ores.util.SpellUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
@@ -49,6 +50,12 @@ public class NeoOresItemEvents
 	public void onTooltip(ItemTooltipEvent e)
 	{
 		ItemStack stack = e.getItemStack();
+		if (PIUtils.hasRequestableTag(stack)) 
+		{
+			List<String> list = e.getToolTip();
+			list.add("" + TextFormatting.GRAY + TextFormatting.BOLD + TextFormatting.ITALIC + I18n.format("neo_ores.requestable"));
+		}
+		
 		if (SpellUtils.containsSpell(stack))
 		{
 			List<String> list = e.getToolTip();

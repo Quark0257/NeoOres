@@ -1,0 +1,23 @@
+{
+    "multipart": [
+        {   "apply": { "model": "neo_ores:pedestal_network_connector_base" }},
+        {   "when": { "north": "true" },
+            "apply": { "model": "neo_ores:pedestal_network_connector_side", "uvlock": true }
+        },
+        {   "when": { "east": "true" },
+            "apply": { "model": "neo_ores:pedestal_network_connector_side", "y": 90, "uvlock": true }
+        },
+        {   "when": { "south": "true" },
+            "apply": { "model": "neo_ores:pedestal_network_connector_side", "y": 180, "uvlock": true }
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "neo_ores:pedestal_network_connector_side", "y": 270, "uvlock": true }
+        },
+		{   "when": { "up": "true" },
+            "apply": { "model": "neo_ores:pedestal_network_connector_side", "x": 270, "uvlock": true }
+        },
+		{   "when": { "down": "true" },
+			"apply": { "model": "neo_ores:pedestal_network_connector_side", "x": 90, "uvlock": true }
+		}
+    ]
+}

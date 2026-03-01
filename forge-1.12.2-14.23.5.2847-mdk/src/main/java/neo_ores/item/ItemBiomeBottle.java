@@ -22,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -136,7 +135,7 @@ public class ItemBiomeBottle extends INeoOresItem.Impl implements IPostscriptDat
 		{
 			return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
 		}
-		SpellUtils.displayParticleTypeB(world, new Vec3d(pos.getX() + 0.5D, pos.getY() + 1.1D, pos.getZ() + 0.5D), 0.5D, 5, 10, 2.0F, 5.0F, 0xFFFFFF, true);
+		SpellUtils.displayParticleTypeB(world, rayTrace.hitVec, 0.5D, 5, 10, 2.0F, 5.0F, 0xFFFFFF, true);
 		ItemStack result = stack.copy();
 		result.setCount(1);
 		result.removeSubCompound("storedBiome");

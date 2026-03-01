@@ -2,17 +2,17 @@ package neo_ores.client.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.ToIntFunction;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import neo_ores.config.NeoOresConfig;
 import neo_ores.event.NeoOresClientEvents;
 import neo_ores.inventory.ContainerPedestalInterface;
+import neo_ores.main.Reference;
 import neo_ores.pi.IPIListener;
 import neo_ores.pi.InventoryPI;
 import neo_ores.pi.PICommand;
@@ -44,6 +44,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
 
 public class GuiPedestalInterface extends GuiContainer implements IPIListener
 {
@@ -59,6 +61,7 @@ public class GuiPedestalInterface extends GuiContainer implements IPIListener
 	private PICommand standbyCommand = null;
 	private PICommand prevCommand = null;
 	private boolean prevCommandExecuted = false;
+	private GuiButton sortButton;
 
 	public GuiPedestalInterface(InventoryPlayer inventory, boolean isLocalWorld, EntityPlayer player)
 	{
@@ -79,6 +82,23 @@ public class GuiPedestalInterface extends GuiContainer implements IPIListener
 		this.searchField.setEnableBackgroundDrawing(true);
 		this.searchField.setMaxStringLength(127);
 		this.prevCommandExecuted = true;
+		this.sortButton = new GuiButton(101, (this.width - xSize) / 2 + 120, (this.height - ySize) / 2 + 2, 18, 20,
+				I18n.format(EnumItemSortType.getSortType(NeoOresConfig.miscellaneous.sortType).getView()))
+		{
+			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+			{
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if (flag)
+				{
+					NeoOresConfig.miscellaneous.sortType = EnumItemSortType.getId(EnumItemSortType.getSortType(NeoOresConfig.miscellaneous.sortType).getNext());
+					ConfigManager.sync(Reference.MOD_ID, Config.Type.INSTANCE);
+					GuiPedestalInterface.this.updateSearch();
+					this.displayString = I18n.format(EnumItemSortType.getSortType(NeoOresConfig.miscellaneous.sortType).getView());
+				}
+				return flag;
+			}
+		};
+		this.buttonList.add(this.sortButton);
 	}
 
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
@@ -133,14 +153,7 @@ public class GuiPedestalInterface extends GuiContainer implements IPIListener
 					itr.remove();
 			}
 		}
-		this.getPIContainer().itemList.sort(Comparator.comparingInt(new ToIntFunction<ItemStack>()
-		{
-			@Override
-			public int applyAsInt(ItemStack arg0)
-			{
-				return -arg0.getCount();
-			}
-		}));
+		this.getPIContainer().itemList.sort(EnumItemSortType.getSortType(NeoOresConfig.miscellaneous.sortType).getComparator());
 		this.getPIContainer().scrollTo(this.currentScroll);
 	}
 

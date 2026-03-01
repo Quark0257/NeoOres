@@ -1,0 +1,19 @@
+{
+    "textures": {
+		"texture": "neo_ores:blocks/pedestal_network_connector_side",
+        "particle": "neo_ores:blocks/pedestal_network_connector_side"
+    },
+    "elements": [
+        {   
+        	"from": [ 3, 3, 0 ],
+            "to": [ 13, 13, 3 ],
+            "faces": {
+                "down":  { "uv": [ 3, 13, 13, 16 ], "texture": "#texture" },
+                "up":    { "uv": [ 3, 0, 13, 3 ], "texture": "#texture" },
+                "north": { "uv": [ 3, 3, 13, 13 ], "texture": "#texture", "cullface": "north" },
+                "west":  { "uv": [ 0, 3, 3, 13 ], "texture": "#texture" },
+                "east":  { "uv": [ 13, 3, 16, 13 ], "texture": "#texture" }
+            }
+        }
+    ]
+}

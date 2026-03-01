@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -152,12 +153,16 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 
 	public ItemStack decrStackSize(int index, int count)
 	{
-		return ItemStackHelper.getAndSplit(itemList, index, count);
+		ItemStack result = ItemStackHelper.getAndSplit(itemList, index, count);
+		this.markDirty();
+		return result;
 	}
 
 	public ItemStack removeStackFromSlot(int index)
 	{
-		return ItemStackHelper.getAndRemove(itemList, index);
+		ItemStack result = ItemStackHelper.getAndRemove(itemList, index);
+		this.markDirty();
+		return result;
 	}
 
 	@Override
@@ -267,7 +272,7 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public String getName()
 	{
-		return "container.enhance_pedestal";
+		return "container.enhanced_pedestal";
 	}
 
 	@Override
@@ -401,17 +406,19 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
 	{
+		/*
 		if (side != EnumFacing.UP)
 		{
-			List<Integer> list = new ArrayList<Integer>();
-			int size = this.getSizeInventory();
-			for (int i = 0; i < size; i++)
-			{
-				list.add(i);
-			}
-			return ArrayUtils.toPrimitive(list.toArray(new Integer[] {}));
 		}
 		return new int[] {};
+		*/
+		List<Integer> list = new ArrayList<Integer>();
+		int size = this.getSizeInventory();
+		for (int i = 0; i < size; i++)
+		{
+			list.add(i);
+		}
+		return ArrayUtils.toPrimitive(list.toArray(new Integer[] {}));
 	}
 
 	@Override
@@ -449,18 +456,6 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 		}
 	}
 
-	@Override
-	public boolean canExtract(int index, ItemStack stack, EnumFacing direction)
-	{
-		return direction != EnumFacing.UP;
-	}
-
-	@Override
-	public boolean canInsert(int index, ItemStack stack, EnumFacing direction)
-	{
-		return direction != EnumFacing.UP && this.isItemValidForSlot(index, stack);
-	}
-
 	IItemHandler handlerTop = new EnhancedPedestalWrapper(this, EnumFacing.UP);
 	IItemHandler handlerBottom = new EnhancedPedestalWrapper(this, EnumFacing.DOWN);
 	IItemHandler handlerWest = new EnhancedPedestalWrapper(this, EnumFacing.WEST);
@@ -496,4 +491,31 @@ public class TileEntityEnhancedPedestal extends AbstractTileEntityPedestal imple
 				return (T) handlerNorth;
 		return super.getCapability(capability, facing);
 	}
+	
+	public static int calcRedstoneFromInventory(@Nullable TileEntityEnhancedPedestal inv)
+    {
+        if (inv == null || inv.getSizeInventory() == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            int i = 0;
+            float f = 0.0F;
+
+            for (int j = 0; j < inv.getSizeInventory(); ++j)
+            {
+                ItemStack itemstack = inv.getStackInSlot(j);
+
+                if (!itemstack.isEmpty())
+                {
+                    f += (float)itemstack.getCount() / inv.getInventoryStackLimit();
+                    ++i;
+                }
+            }
+
+            f = f / (float)inv.getSizeInventory();
+            return MathHelper.floor(f * 14.0F) + (i > 0 ? 1 : 0);
+        }
+    }
 }

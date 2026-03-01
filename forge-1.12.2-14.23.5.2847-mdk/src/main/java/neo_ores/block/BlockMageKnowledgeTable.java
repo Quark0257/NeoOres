@@ -191,7 +191,7 @@ public class BlockMageKnowledgeTable extends BlockContainer implements INeoOresB
 
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
 	{
-		return BlockFaceShape.SOLID;
+		return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	public ModelResourceLocation getModel(int meta)
@@ -213,5 +213,10 @@ public class BlockMageKnowledgeTable extends BlockContainer implements INeoOresB
 	public String getUnlocalizedName(ItemStack stack)
 	{
 		return "tile." + this.getRegistryName().getResourcePath();
+	}
+	
+	public boolean isTopSolid(IBlockState state) 
+	{
+		return false;
 	}
 }

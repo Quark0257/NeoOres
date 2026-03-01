@@ -5,6 +5,8 @@ import neo_ores.api.spell.Spell.SpellEffect;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasChain;
+import neo_ores.spell.SpellItemInterfaces.HasOffsetDown;
+import neo_ores.spell.SpellItemInterfaces.HasOffsetUp;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.RayTraceUtils;
@@ -23,11 +25,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 
-public class SpellLight extends SpellEffect implements HasRange, HasChain
+public class SpellLight extends SpellEffect implements HasRange, HasChain, HasOffsetUp, HasOffsetDown
 {
 	private int range = 0;
 	private int chain = 0;
 	private boolean rangeMode = true;
+	private boolean offsetUp = false;
+	private boolean offsetDown = false;
 
 	@Override
 	public void setRange(int value)
@@ -44,8 +48,9 @@ public class SpellLight extends SpellEffect implements HasRange, HasChain
 	}
 
 	@Override
-	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
+	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result1, ItemStack stack)
 	{
+		RayTraceResult result = this.getResultBlockFromEntity(world, result1, stack, this.offsetUp, this.offsetDown);
 		if (result == null)
 			return;
 		if (!(runner instanceof EntityPlayer))
@@ -84,5 +89,17 @@ public class SpellLight extends SpellEffect implements HasRange, HasChain
 	{
 		this.rangeMode = false;
 		this.chain = level;
+	}
+	
+	@Override
+	public void setOffsetDown()
+	{
+		this.offsetDown = true;
+	}
+
+	@Override
+	public void setOffsetUp()
+	{
+		this.offsetUp = true;
 	}
 }

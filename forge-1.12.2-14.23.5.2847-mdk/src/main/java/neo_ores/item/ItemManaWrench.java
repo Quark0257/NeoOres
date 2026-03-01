@@ -28,8 +28,9 @@ public class ItemManaWrench extends INeoOresItem.Impl
 	{
 		ItemStack stack = player.getHeldItem(hand);
 		
-		if(worldIn.getBlockState(pos).getBlock() instanceof IWrenchUsed) {
-			((IWrenchUsed)worldIn.getBlockState(pos).getBlock()).wrench(worldIn, pos, stack);
+		if(worldIn.getBlockState(pos).getBlock() instanceof IWrenchUsed) 
+		{
+			((IWrenchUsed) worldIn.getBlockState(pos).getBlock()).wrench(worldIn, pos, stack);
 			return EnumActionResult.SUCCESS;
 		}
 		
@@ -45,6 +46,10 @@ public class ItemManaWrench extends INeoOresItem.Impl
 				TileEntityMechanicalMagician temm = (TileEntityMechanicalMagician) te;
 				temm.setDestination(pos);
 				stack.getTagCompound().removeTag("nextSetPos");
+				if (stack.getTagCompound().hasNoTags()) 
+				{
+					stack.setTagCompound(null);
+				}
 				return EnumActionResult.SUCCESS;
 			}
 		}

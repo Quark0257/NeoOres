@@ -15,8 +15,7 @@ import neo_ores.api.PlayerTrigger;
 import neo_ores.api.spell.Spell;
 import neo_ores.api.spell.SpellItem;
 import neo_ores.block.BlockDimension;
-import neo_ores.block.BlockEnhancedPedestal;
-import neo_ores.block.BlockPedestal;
+import neo_ores.block.IAcceptCreativeLeftClick;
 import neo_ores.client.gui.GuiNeoGameOverlay;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.entity.fakeattribute.FakeAttributeMaxMana;
@@ -66,6 +65,8 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -122,31 +123,13 @@ public class NeoOresEntityEvents
 			SpellUtils.run(event.getEntityLiving().getEntityWorld(), event.getEntityLiving(), event);
 		}
 	}
-
+	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onEntityWasAttacked(LivingHurtEvent event)
+	public void onEntityWasDamaged(LivingHurtEvent event) 
 	{
-		if (event.getEntityLiving() == null || event.isCanceled())
-			return;
-
-		for (PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
-		{
-			if (effect.getPotion() == NeoOres.shield)
-			{
-				event.setCanceled(true);
-				if (!event.getEntityLiving().world.isRemote)
-				{
-					event.getEntityLiving().removePotionEffect(effect.getPotion());
-					if (effect.getAmplifier() > 0)
-					{
-						event.getEntityLiving()
-								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
-					}
-				}
-				return;
-			}
-		}
-
+		// LivingHurtEvent
+		// LivingDamageEvent
+		// LivingAttackEvent
 		if (event.getEntityLiving() instanceof EntityPlayer && event.getSource() instanceof EntityDamageSource)
 		{
 			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
@@ -177,6 +160,42 @@ public class NeoOresEntityEvents
 			if (entity != null && entity instanceof EntityLivingBase)
 			{
 				SpellUtils.run(event.getEntityLiving().getEntityWorld(), (EntityLivingBase) entity, event);
+			}
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityWasAttacked(LivingAttackEvent event)
+	{
+		if (event.getEntityLiving() == null || event.isCanceled())
+			return;
+		if (event.getEntityLiving() instanceof EntityPlayer && ((EntityPlayer) event.getEntityLiving()).capabilities.isCreativeMode) 
+		{
+			if (!event.getSource().canHarmInCreative()) 
+			{
+				return;
+			}
+		}
+		if (event.getSource() == NeoOres.PAYMENT) 
+		{
+			return;
+		}
+		for (PotionEffect effect : event.getEntityLiving().getActivePotionEffects())
+		{
+			if (effect.getPotion() == NeoOres.shield)
+			{
+				event.setCanceled(true);
+				if (!event.getEntityLiving().world.isRemote)
+				{
+					event.getEntityLiving().removePotionEffect(effect.getPotion());
+					if (effect.getAmplifier() > 0)
+					{
+						event.getEntityLiving()
+								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
+					}
+					ServerUtils.playSound(event.getEntityLiving(), SoundEvents.BLOCK_GLASS_BREAK, 1.0F, 0.5F);
+				}
+				return;
 			}
 		}
 	}
@@ -257,7 +276,7 @@ public class NeoOresEntityEvents
 		if (!event.getWorld().isRemote && event.getEntityPlayer() != null && event.getEntityPlayer().capabilities.isCreativeMode && event.getItemStack().getItem() == NeoOresItems.mana_wrench)
 		{
 			IBlockState state = event.getWorld().getBlockState(event.getPos());
-			if (state != null && ((state.getBlock() instanceof BlockEnhancedPedestal) || state.getBlock() instanceof BlockPedestal))
+			if (state != null && state.getBlock() instanceof IAcceptCreativeLeftClick)
 			{
 				state.getBlock().onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
 			}
@@ -818,9 +837,12 @@ public class NeoOresEntityEvents
 			if (event.getEntityLiving() != null && event.getEntityLiving() instanceof EntityPlayerMP)
 			{
 				EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-				player.capabilities.allowFlying = false;
-				player.capabilities.isFlying = false;
-				player.sendPlayerAbilities();
+				if (!player.capabilities.isCreativeMode) 
+				{
+					player.capabilities.allowFlying = false;
+					player.capabilities.isFlying = false;
+					player.sendPlayerAbilities();
+				}
 			}
 		}
 	}
@@ -833,9 +855,12 @@ public class NeoOresEntityEvents
 			if (event.getEntityLiving() != null && event.getEntityLiving() instanceof EntityPlayerMP)
 			{
 				EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-				player.capabilities.allowFlying = false;
-				player.capabilities.isFlying = false;
-				player.sendPlayerAbilities();
+				if (!player.capabilities.isCreativeMode) 
+				{
+					player.capabilities.allowFlying = false;
+					player.capabilities.isFlying = false;
+					player.sendPlayerAbilities();
+				}
 			}
 		}
 	}

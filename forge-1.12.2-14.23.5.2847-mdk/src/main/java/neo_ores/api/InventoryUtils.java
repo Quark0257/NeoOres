@@ -1,26 +1,26 @@
 package neo_ores.api;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+
+import neo_ores.inventory.WrapperPlayerInventory;
 import neo_ores.util.SpellUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -29,6 +29,103 @@ import net.minecraftforge.items.IItemHandler;
 
 public class InventoryUtils
 {	
+	public static boolean addInventoryFromInventorySlot(IInventory target, IInventory destination, @Nullable EnumFacing facingTarget, @Nullable EnumFacing facingDest) 
+	{
+		return InventoryUtils.addInventoryFromInventorySlot(target, destination, facingTarget, facingDest, new Predicate<ItemStack>() {
+			@Override
+			public boolean apply(ItemStack input)
+			{
+				return true;
+			}});
+	}
+	
+	public static boolean addInventoryFromInventorySlot(IInventory target, IInventory destination, @Nullable EnumFacing facingTarget, @Nullable EnumFacing facingDest, @Nonnull Predicate<ItemStack> filter) 
+	{
+		if (target instanceof ICapabilityProvider && destination instanceof ICapabilityProvider) 
+		{
+			IItemHandler targetHandler = ((ICapabilityProvider) target).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facingTarget);
+			IItemHandler destHandler = ((ICapabilityProvider) destination).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facingDest);
+			if (targetHandler != null && destHandler != null) 
+			{
+				for (int targetSlot = 0; targetSlot < targetHandler.getSlots(); targetSlot++) 
+				{
+					ItemStack stack = targetHandler.getStackInSlot(targetSlot).copy();
+					if (!stack.isEmpty() && filter.apply(stack)) 
+					{
+						for (int destSlot = 0; destSlot < destHandler.getSlots(); destSlot++) 
+						{
+							if (destHandler.isItemValid(destSlot, stack) && !destHandler.getStackInSlot(destSlot).isEmpty()) 
+							{
+								ItemStack remainStack = destHandler.insertItem(destSlot, stack, true);
+								int amount = stack.getCount() - remainStack.getCount();
+								ItemStack simulatedStack = targetHandler.extractItem(targetSlot, amount, true);
+								amount = Math.min(amount, simulatedStack.getCount());
+								if (amount > 0) 
+								{
+									ItemStack extractedStack = targetHandler.extractItem(targetSlot, amount, false);
+									destHandler.insertItem(destSlot, extractedStack, false);
+									return true;
+								}
+							}
+						}
+						for (int destSlot = 0; destSlot < destHandler.getSlots(); destSlot++) 
+						{
+							if (destHandler.isItemValid(destSlot, stack) && destHandler.getStackInSlot(destSlot).isEmpty()) 
+							{
+								ItemStack remainStack = destHandler.insertItem(destSlot, stack, true);
+								int amount = stack.getCount() - remainStack.getCount();
+								ItemStack simulatedStack = targetHandler.extractItem(targetSlot, amount, true);
+								amount = Math.min(amount, simulatedStack.getCount());
+								if (amount > 0) 
+								{
+									ItemStack extractedStack = targetHandler.extractItem(targetSlot, amount, false);
+									destHandler.insertItem(destSlot, extractedStack, false);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static ItemStack addInventoryFromStack(ItemStack stack, IInventory destination, @Nullable EnumFacing facing)
+	{
+		if (stack.isEmpty())
+			return ItemStack.EMPTY;
+		IItemHandler destHandler = ((ICapabilityProvider) destination).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+		if (destHandler == null)
+			return stack;
+		for (int destSlot = 0; destSlot < destHandler.getSlots(); destSlot++) 
+		{
+			if (destHandler.isItemValid(destSlot, stack) && !destHandler.getStackInSlot(destSlot).isEmpty()) 
+			{
+				ItemStack remainStack = destHandler.insertItem(destSlot, stack, true);
+				int amount = stack.getCount() - remainStack.getCount();
+				if (amount > 0) 
+				{
+					return destHandler.insertItem(destSlot, stack, false);
+				}
+			}
+		}
+		for (int destSlot = 0; destSlot < destHandler.getSlots(); destSlot++) 
+		{
+			if (destHandler.isItemValid(destSlot, stack) && destHandler.getStackInSlot(destSlot).isEmpty()) 
+			{
+				ItemStack remainStack = destHandler.insertItem(destSlot, stack, true);
+				int amount = stack.getCount() - remainStack.getCount();
+				if (amount > 0) 
+				{
+					return destHandler.insertItem(destSlot, stack, false);
+				}
+			}
+		}
+		return stack;
+	}
+	
+	/*
 	public static boolean addInventoryfromInventorySlot(int targetindex, IInventory target, IInventory distination, @Nullable EnumFacing facingTarget, @Nullable EnumFacing facingDist) 
 	{
 		if (targetindex < target.getSizeInventory())
@@ -282,40 +379,33 @@ public class InventoryUtils
 		}
 		return stack;
 	}
+	*/
 
-	public static Map<Integer, ItemStack> getInventoryStackList(IInventory target, boolean exceptHoldItem, @Nullable EnumFacing facing) {
-		return getInventoryStackList(target, exceptHoldItem, facing, false);
-	}
-	
-	public static LinkedHashMap<Integer, ItemStack> getInventoryStackList(IInventory target, boolean exceptHoldItem, @Nullable EnumFacing facing, boolean includeArmorAndOffhand)
+	public static IItemHandler getInventoryStackList(IInventory target, @Nullable EnumFacing facing)
 	{
-		LinkedHashMap<Integer, ItemStack> map = new LinkedHashMap<Integer, ItemStack>();
-		int size = target.getSizeInventory();
-		for (int i = 0; i < size; i++)
+		if (target instanceof ICapabilityProvider) 
 		{
-			if (target instanceof InventoryPlayer)
-			{
-				if ((includeArmorAndOffhand ? ((InventoryPlayer) target).getSizeInventory() : ((InventoryPlayer) target).mainInventory.size()) <= i || (exceptHoldItem && ((InventoryPlayer) target).currentItem == i))
-					continue;
-			}
-			if (target instanceof ISidedInventory && facing != null)
-			{
-				if (!Arrays.stream(((ISidedInventory) target).getSlotsForFace(facing)).boxed().collect(Collectors.toList()).contains(i))
-				{
-					continue;
-				}
-			}
-			map.put(i, target.getStackInSlot(i));
+			return ((ICapabilityProvider) target).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 		}
-		return map;
+		return null;
 	}
 
 	public static FluidStack addFluidToInventory(FluidStack stack, IInventory inventory, @Nullable EnumFacing facing)
 	{
-		Map<Integer, ItemStack> map = getInventoryStackList(inventory, false, facing, true);
-		for (int key : map.keySet())
+		IItemHandler handler = null;
+		if (inventory instanceof ICapabilityProvider) 
 		{
-			ItemStack itemStack = map.get(key);
+			handler = ((ICapabilityProvider) inventory).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+		}
+		
+		if (handler == null) 
+		{
+			return stack;
+		}
+		
+		for (int slot = 0; slot < handler.getSlots(); slot++)
+		{
+			ItemStack itemStack = handler.getStackInSlot(slot);
 			if (itemStack.getItem() == Items.BUCKET)
 			{
 				if (itemStack.getCount() == 1)
@@ -327,7 +417,7 @@ public class InventoryUtils
 						newFluidStack.amount = 1000;
 						stack.amount -= 1000;
 						ItemStack newStack = FluidUtil.getFilledBucket(newFluidStack);
-						addInventoryfromStack(newStack, inventory, null);
+						addInventoryFromStack(newStack, inventory, null);
 					}
 				}
 				else
@@ -337,7 +427,7 @@ public class InventoryUtils
 						FluidStack newFluidStack = stack.copy();
 						newFluidStack.amount = 1000;
 						ItemStack newStack = FluidUtil.getFilledBucket(newFluidStack);
-						if (addInventoryfromStack(newStack, inventory, null).isEmpty())
+						if (addInventoryFromStack(newStack, inventory, null).isEmpty())
 						{
 							itemStack.shrink(1);
 							stack.amount -= 1000;
@@ -348,8 +438,133 @@ public class InventoryUtils
 		}
 		return stack;
 	}
-
+	
+	public static boolean outputFluidFromInventory(IInventory target, @Nullable EnumFacing targetFacing, @Nullable IFluidHandler destFluidHandler, BlockPos destPos, 
+			EnumFacing destFacing, IFunction<BlockPos> function, Predicate<Fluid> filter, World world, EntityPlayer player) 
+	{
+		IItemHandler handler = null;
+		if (target instanceof ICapabilityProvider) 
+		{
+			handler = ((ICapabilityProvider) target).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, targetFacing);
+		}
+		
+		if (handler == null) 
+		{
+			return false;
+		}
+		
+		if (destFluidHandler != null)
+		{
+			for (int slot = 0; slot < handler.getSlots(); slot++)
+			{
+				ItemStack stack = handler.getStackInSlot(slot);
+				if (SpellUtils.isFluidContainer(stack))
+				{
+					FluidStack fluid = FluidUtil.getFluidContained(stack);
+					if (fluid != null && fluid.getFluid() != null)
+					{
+						if (!filter.apply(fluid.getFluid()))
+						{
+							continue;
+						}
+						int willFill = destFluidHandler.fill(fluid, false);
+						IFluidHandler stackHandler = FluidUtil.getFluidHandler(stack);
+						FluidStack fluidStack = stackHandler.drain(fluid, false);
+						if (fluidStack == null) 
+						{
+							continue;
+						}
+						int amount = Math.min(fluidStack.amount, willFill);
+						if (amount > 0)
+						{
+							FluidStack drained = stackHandler.drain(new FluidStack(fluidStack.getFluid(), amount), true);
+							destFluidHandler.fill(drained, true);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			for (int slot = 0; slot < handler.getSlots(); slot++)
+			{
+				ItemStack stack = handler.getStackInSlot(slot);
+				if (SpellUtils.isFluidContainer(stack))
+				{
+					FluidStack fluid = FluidUtil.getFluidContained(stack);
+					if (fluid != null && fluid.getFluid() != null)
+					{
+						if (!filter.apply(fluid.getFluid()))
+						{
+							continue;
+						}
+						IFluidHandler stackHandler = FluidUtil.getFluidHandler(stack);
+						int amount = stackHandler.drain(fluid, false).amount;
+						if (amount >= 1000) 
+						{
+							BlockPos nextPos = destPos.add(destFacing.getDirectionVec());
+							FluidStack willDrain = new FluidStack(fluid.getFluid(), 1000);
+							if (FluidUtil.tryPlaceFluid(player, world, nextPos, stack, willDrain) != FluidActionResult.FAILURE) 
+							{
+								stackHandler.drain(willDrain, true);
+								function.function(nextPos);
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	/*
 	public static Map<Integer, FluidStack> getFluidFromInventory(IInventory inventory, boolean exceptHoldItem, @Nullable EnumFacing facing)
+	{
+		Map<Integer, FluidStack> map = new HashMap<Integer, FluidStack>();
+		IItemHandler handler = null;
+		if (inventory instanceof WrapperPlayerInventory) 
+		{
+			handler = ((WrapperPlayerInventory) inventory).getMainCap();
+		} 
+		else if (inventory instanceof ICapabilityProvider) 
+		{
+			handler = ((ICapabilityProvider) inventory).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+		}
+		
+		int size = inventory.getSizeInventory();
+		for (int i = 0; i < size; i++)
+		{
+			if (inventory instanceof InventoryPlayer)
+			{
+				if (((InventoryPlayer) inventory).mainInventory.size() <= i || (exceptHoldItem && ((InventoryPlayer) inventory).currentItem == i))
+					continue;
+			}
+			if (inventory instanceof ISidedInventory && facing != null)
+			{
+				if (!Arrays.stream(((ISidedInventory) inventory).getSlotsForFace(facing)).boxed().collect(Collectors.toList()).contains(i))
+				{
+					continue;
+				}
+			}
+
+			ItemStack stack = inventory.getStackInSlot(i).copy();
+			if (SpellUtils.isFluidContainer(stack))
+			{
+				FluidStack fluid = FluidUtil.getFluidContained(stack);
+				if (fluid != null && fluid.getFluid() != null)
+				{
+					map.put(i, fluid);
+				}
+			}
+		}
+
+		return map;
+	}
+
+	public static Map<Integer, FluidStack> getFluidFromInventory2(IInventory inventory, boolean exceptHoldItem, @Nullable EnumFacing facing)
 	{
 		Map<Integer, FluidStack> map = new HashMap<Integer, FluidStack>();
 		int size = inventory.getSizeInventory();
@@ -381,10 +596,10 @@ public class InventoryUtils
 
 		return map;
 	}
+	*/
 
 	public static boolean addFluidToInventoryFromTank(IFluidHandler handler, IInventory inventory, @Nullable EnumFacing facing, FluidStack target)
 	{
-
 		FluidStack stack = handler.drain(target, false).copy();
 		if (stack != null && stack.amount == target.amount)
 		{
@@ -428,6 +643,6 @@ public class InventoryUtils
 	{
 		if (player instanceof FakePlayer && player instanceof HasInventory)
 			return ((HasInventory) player).getInventory();
-		return player.inventory;
+		return new WrapperPlayerInventory(player.inventory);
 	}
 }

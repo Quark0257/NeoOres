@@ -31,6 +31,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -48,6 +49,10 @@ public class SpellEnchantmentExtract extends SpellEffect
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
 		if (!(world instanceof WorldServer))
+		{
+			return;
+		}
+		if (result.typeOfHit != Type.BLOCK) 
 		{
 			return;
 		}

@@ -38,7 +38,7 @@ public class PIServerData
 	}
 
 	
-	// TODO Request in Server side
+	// TODO Request in Server side (implement command execute)
 	public void update(UUID uuid, EntityPlayerMP player, MinecraftServer server)
 	{
 		NBTTagCompound compound = new NBTTagCompound();

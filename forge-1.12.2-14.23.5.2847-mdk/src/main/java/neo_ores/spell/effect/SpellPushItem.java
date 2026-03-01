@@ -1,8 +1,11 @@
 package neo_ores.spell.effect;
 
-import java.util.Map;
+import java.util.List;
+
+import com.google.common.base.Predicate;
 
 import neo_ores.api.ICompareBlockState;
+import neo_ores.api.IFunction;
 import neo_ores.api.InventoryUtils;
 import neo_ores.main.NeoOresData;
 import neo_ores.spell.SpellItemInterfaces.HasChain;
@@ -16,7 +19,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -26,16 +28,15 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class SpellPushItem extends SpellEffectItemFilteredOrFluid implements HasPI
 {
 	private boolean piMode = false;
-	
+
 	@Override
 	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
 	{
@@ -48,80 +49,59 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid implements Has
 		if (result.typeOfHit == Type.BLOCK)
 		{
 			EnumFacing face = result.sideHit;
-			for (BlockPos pos : this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
-					: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM)))
+			List<BlockPos> blockPoss = this.piMode ? HasPI.getPIPos(world, result.getBlockPos())
+					: (this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM));
+			for (BlockPos pos : blockPoss)
+			{
+				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+			}
+			for (BlockPos pos : blockPoss)
 			{
 				TileEntity te = world.getTileEntity(pos);
 				if (te != null && te instanceof IInventory && !this.liquidMode)
 				{
-					SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 					IInventory inventory = (IInventory) te;
-					Map<Integer, ItemStack> map = InventoryUtils.getInventoryStackList(target, true, EnumFacing.UP);
-					for (int i : map.keySet())
+					if (InventoryUtils.addInventoryFromInventorySlot(target, inventory, EnumFacing.UP, face, new Predicate<ItemStack>()
 					{
-						if (!target.getStackInSlot(i).isEmpty() && this.match(inventory.getStackInSlot(i), stack))
+						@Override
+						public boolean apply(ItemStack input)
 						{
-							if (InventoryUtils.addInventoryfromInventorySlot(i, target, inventory, EnumFacing.UP, face))
-							{
-								if (runner instanceof EntityPlayerMP)
-								{
-									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-									pmds.addMXP(1L);
-								}
-								break;
-							}
+							return match(input, stack);
+						}
+					}))
+					{
+						if (runner instanceof EntityPlayerMP)
+						{
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+							pmds.addMXP(1L);
 						}
 					}
 				}
 				if (this.liquidMode)
 				{
-					Map<Integer, FluidStack> map = InventoryUtils.getFluidFromInventory(target, false, EnumFacing.UP);
 					IFluidHandler handler = getFluidHandler(te, face);
-					if (handler != null)
+					if (InventoryUtils.outputFluidFromInventory(target, EnumFacing.UP, handler, pos, face, new IFunction<BlockPos>()
 					{
-						for (int i : map.keySet())
+						@Override
+						public BlockPos function(BlockPos nextPos)
 						{
-							FluidStack fluid = map.get(i);
-							if (!this.match(fluid.getFluid(), stack))
-							{
-								continue;
-							}
-							int willFill = handler.fill(fluid, false);
-							if (willFill == fluid.amount)
-							{
-								handler.fill(fluid, true);
-								target.getStackInSlot(i).setCount(0);
-								InventoryUtils.addInventoryfromStack(new ItemStack(Items.BUCKET), target, EnumFacing.UP);
-								if (runner instanceof EntityPlayerMP)
-								{
-									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-									pmds.addMXP(1L);
-								}
-								break;
-							}
+							SpellUtils.onDisplayParticleTypeA(world, new Vec3d(nextPos.getX(), nextPos.getY(), nextPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
+							return nextPos;
 						}
-					}
-					else
+					}, new Predicate<Fluid>()
 					{
-						for (int i : map.keySet())
+
+						@Override
+						public boolean apply(Fluid input)
 						{
-							if (!this.match(map.get(i).getFluid(), stack))
-							{
-								continue;
-							}
-							BlockPos nextPos = pos.add(face.getDirectionVec());
-							if (FluidUtil.tryPlaceFluid(player, world, nextPos, target.getStackInSlot(i), map.get(i)) != FluidActionResult.FAILURE)
-							{
-								target.getStackInSlot(i).setCount(0);
-								InventoryUtils.addInventoryfromStack(new ItemStack(Items.BUCKET), target, EnumFacing.UP);
-								SpellUtils.onDisplayParticleTypeA(world, new Vec3d(nextPos.getX(), nextPos.getY(), nextPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
-								if (runner instanceof EntityPlayerMP)
-								{
-									PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
-									pmds.addMXP(1L);
-								}
-								break;
-							}
+							return match(input, stack);
+						}
+					}, world, player))
+					{
+						if (runner instanceof EntityPlayerMP)
+						{
+							PlayerMagicData pmds = NeoOresData.instance.getPMD((EntityPlayerMP) runner);
+							pmds.addMXP(1L);
 						}
 					}
 				}
@@ -133,11 +113,16 @@ public class SpellPushItem extends SpellEffectItemFilteredOrFluid implements Has
 			if (entity == null)
 				return;
 			int trial = 2 * this.range + 1;
-			Map<Integer, ItemStack> map = InventoryUtils.getInventoryStackList(target, true, EnumFacing.UP);
-			int count = 0;
-			for (int i : map.keySet())
+
+			IItemHandler handler = InventoryUtils.getInventoryStackList(target, EnumFacing.UP);
+			if (handler == null)
 			{
-				ItemStack original = map.get(i);
+				return;
+			}
+			int count = 0;
+			for (int i = 0; i < handler.getSlots(); i++)
+			{
+				ItemStack original = handler.getStackInSlot(i);
 				if (!original.isEmpty() && this.match(original, stack))
 				{
 					EntityItem entityItem = new EntityItem(world, entity.posX, entity.posY, entity.posZ, original.copy());

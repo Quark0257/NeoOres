@@ -68,6 +68,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	private ItemStack writingItem = ItemStack.EMPTY;
 	private String alterType = "";
 	private static final String[] ALTERS = new String[] { "alter_tier2", "alter_tier2_1", "alter_tier3", "alter_tier3_1", "alter_tier4" };
+	private boolean isUnstackMode = false;
 
 	@SideOnly(Side.CLIENT)
 	public void setClient(boolean multiblock, int phase, int maxPhase, boolean isCreating)
@@ -97,6 +98,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		this.writingItem = new ItemStack(compound.getCompoundTag("writingItem"));
 		this.alterType = compound.getString("alterType");
 		this.maxPhase = compound.getInteger("maxPhase");
+		this.isUnstackMode = compound.getBoolean("isUnstackMode");
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -116,8 +118,16 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		compound.setTag("writingItem", this.writingItem.writeToNBT(new NBTTagCompound()));
 		compound.setString("alterType", alterType);
 		compound.setInteger("maxPhase", maxPhase);
+		compound.setBoolean("isUnstackMode", this.isUnstackMode);
 		super.writeToNBT(compound);
 		return compound;
+	}
+	
+	public void changeStackMode() 
+	{
+		this.isUnstackMode = !this.isUnstackMode;
+		int color = this.isUnstackMode ? 0xFF3F3F : 0x3FFF3F;
+		SpellUtils.displayParticleTypeB(this.world, new Vec3d(this.getPos().getX() + 0.5D, this.getPos().getY() + 0.5D, this.getPos().getZ() + 0.5D), 0.5D, 5, 10, 2.0F, 5.0F, color, true);
 	}
 
 	@Override
@@ -133,13 +143,16 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 
 	public ItemStack decrStackSize(int index, int count)
 	{
-		return !this.stack.isEmpty() && count > 0 ? this.stack.splitStack(count) : ItemStack.EMPTY;
+		ItemStack result = !this.stack.isEmpty() && count > 0 ? this.stack.splitStack(count) : ItemStack.EMPTY;
+		this.markDirty();
+		return result;
 	}
 
 	public ItemStack removeStackFromSlot(int index)
 	{
 		ItemStack prev = this.stack;
 		this.stack = ItemStack.EMPTY;
+		this.markDirty();
 		return prev;
 	}
 
@@ -152,37 +165,13 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		{
 			stack.setCount(this.getInventoryStackLimit());
 		}
+		this.markDirty();
 	}
 
 	public void setContents(ItemStack stack)
 	{
 		this.stack = stack;
-	}
-
-	public ItemStack addItemStackToInventory(ItemStack stack)
-	{
-		if (this.compareWith(stack, this.stack))
-		{
-			ItemStack stack1 = stack.copy();
-			ItemStack stack2 = stack.copy();
-			if (this.stack.getMaxStackSize() < this.stack.getCount() + stack.getCount())
-			{
-				stack1.setCount(this.stack.getMaxStackSize() - this.stack.getCount());
-				stack2.setCount(this.stack.getCount() + stack.getCount() - this.stack.getMaxStackSize());
-			}
-			else
-			{
-				stack2 = ItemStack.EMPTY;
-			}
-			this.setInventorySlotContents(0, stack1);
-			return stack2;
-		}
-		else if (this.stack.isEmpty())
-		{
-			this.setInventorySlotContents(0, stack);
-			return ItemStack.EMPTY;
-		}
-		return stack;
+		this.markDirty();
 	}
 
 	public boolean isFull()
@@ -193,7 +182,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	@Override
 	public int getInventoryStackLimit()
 	{
-		return 64;
+		return this.isUnstackMode ? 1 : 64;
 	}
 
 	@Override
@@ -245,7 +234,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	@Override
 	public String getName()
 	{
-		return "container.enhance_pedestal";
+		return "container.pedestal";
 	}
 
 	@Override
@@ -286,6 +275,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			boolean flag2 = true;
 			if (this.isMultiblock && this.isCreating)
 			{
+				this.markDirty();
 				List<SpellItem> recipeIn = this.getRecipeIn();
 				if (recipeIn.isEmpty())
 					flag = true;
@@ -444,6 +434,9 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 			double red = FastMath.min(FastMath.max(255.0 * FastMath.cos(rate), 0), 255) + FastMath.min(FastMath.max(-255.0 * FastMath.sin(rate), 0), 255);
 			double green = FastMath.min(FastMath.max(255.0 * FastMath.sin(rate), 0), 255);
 			double blue = FastMath.min(FastMath.max(-255.0 * FastMath.cos(rate), 0), 255);
+			red = 255 * 0.25D + red * 0.75D;
+			green = 255 * 0.25D + green * 0.75D;
+			blue = 255 * 0.25D + blue * 0.75D;
 			return 256 * 256 * (int) red + 256 * (int) green + (int) blue;
 		}
 		return 0xDDDDDD;
@@ -492,29 +485,31 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 	@Override
 	public int[] getSlotsForFace(EnumFacing side)
 	{
+		/* comment out for all side accepting
 		if (this.offset < -0.4375 && side != EnumFacing.DOWN || this.offset >= -0.4375 && side != EnumFacing.UP)
 		{
-			List<Integer> list = new ArrayList<Integer>();
-			int size = this.getSizeInventory();
-			for (int i = 0; i < size; i++)
-			{
-				list.add(i);
-			}
-			return ArrayUtils.toPrimitive(list.toArray(new Integer[] {}));
+			
 		}
-		return new int[] {};
+		*/
+		List<Integer> list = new ArrayList<Integer>();
+		int size = this.getSizeInventory();
+		for (int i = 0; i < size; i++)
+		{
+			list.add(i);
+		}
+		return ArrayUtils.toPrimitive(list.toArray(new Integer[] {}));
 	}
 
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
 	{
-		return canInsert(index, itemStackIn, direction);
+		return this.isItemValidForSlot(index, itemStackIn);
 	}
 
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
 	{
-		return canExtract(index, stack, direction);
+		return true;
 	}
 
 	public static void dropInventoryItems(World worldIn, BlockPos pos, TileEntityPedestal tileentity)
@@ -528,28 +523,12 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 		}
 	}
 
-	@Override
-	public boolean canExtract(int index, ItemStack stack, EnumFacing direction)
-	{
-		return (direction != EnumFacing.UP && this.offset >= -0.4375) || (direction != EnumFacing.DOWN && this.offset < -0.4375);
-	}
-
-	@Override
-	public boolean canInsert(int index, ItemStack stack, EnumFacing direction)
-	{
-		if (this.offset < -0.4375)
-		{
-			return direction != EnumFacing.DOWN && this.isItemValidForSlot(index, stack);
-		}
-		return direction != EnumFacing.UP && this.isItemValidForSlot(index, stack);
-	}
-
 	private boolean compareWith(ItemStack stack1, ItemStack stack2)
 	{
 		return stack1.getItem() == stack2.getItem() && stack1.getItemDamage() == stack2.getItemDamage() && StackUtils.compareNBTWith(stack1, stack2);
 	}
 
-	public void spellCreation(World worldIn, BlockPos pos, IBlockState state, @Nullable EntityPlayer playerIn)
+	public boolean spellCreation(World worldIn, BlockPos pos, IBlockState state, @Nullable EntityPlayer playerIn)
 	{
 		if (!world.isRemote && this.offset < -0.4375)
 		{
@@ -577,6 +556,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 					this.isCreating = true;
 					this.requiredSize = 0;
 					this.writingItem = ItemStack.EMPTY;
+					return true;
 				}
 				else
 				{
@@ -586,6 +566,7 @@ public class TileEntityPedestal extends AbstractTileEntityPedestal implements IS
 				}
 			}
 		}
+		return false;
 	}
 
 	private long getMaxMana()

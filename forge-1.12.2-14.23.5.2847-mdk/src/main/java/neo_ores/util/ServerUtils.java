@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
@@ -290,6 +291,11 @@ public class ServerUtils
 				}
 			}
 		}
+	}
+	
+	public static void playSound(@Nonnull Entity entity, SoundEvent soundIn, float volume, float pitch)
+	{
+		playSound(entity.getEntityWorld(), entity.posX, entity.posY, entity.posZ, soundIn, entity.getSoundCategory(), volume, pitch);
 	}
 
 	public static void playSound(EntityPlayer player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)

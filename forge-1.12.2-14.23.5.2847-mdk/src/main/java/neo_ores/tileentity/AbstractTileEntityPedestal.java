@@ -2,7 +2,6 @@ package neo_ores.tileentity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
 public abstract class AbstractTileEntityPedestal extends TileEntity implements ITickable
@@ -27,8 +26,9 @@ public abstract class AbstractTileEntityPedestal extends TileEntity implements I
 	{
 		this.tickCount++;
 	}
-
-	public abstract boolean canExtract(int index, ItemStack stack, EnumFacing direction);
-
-	public abstract boolean canInsert(int index, ItemStack stack, EnumFacing direction);
+	
+	public int getPriority() 
+	{
+		return 0;
+	}
 }

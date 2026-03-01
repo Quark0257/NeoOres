@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -33,8 +34,8 @@ public class RendererItemSpell extends PerspectiveMapWrapper
 	public RendererItemSpell(ModelResourceLocation inInventory, ModelResourceLocation in3d)
 	{
 		super(new RendererItemSpell.Model(), ImmutableMap.copyOf(new HashMap<TransformType, TRSRTransformation>()));
-		inInv = inInventory;
-		outInv = in3d;
+		this.inInv = inInventory;
+		this.outInv = in3d;
 	}
 
 	@Override
@@ -43,12 +44,22 @@ public class RendererItemSpell extends PerspectiveMapWrapper
 		ModelManager manager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
 
 		IBakedModel model;
+		Matrix4f matrix = TRSRTransformation.identity().getMatrix();
 		if (cameraTransformType != TransformType.GUI && cameraTransformType != TransformType.GROUND && cameraTransformType != TransformType.FIXED)
-			model = manager.getModel(outInv);
+		{
+			model = manager.getModel(this.outInv);
+		}
 		else
-			model = manager.getModel(inInv);
+		{
+			model = manager.getModel(this.inInv);
+			if (cameraTransformType == TransformType.GROUND)
+			{
+				matrix.setScale(0.5F);
+				matrix.setTranslation(new Vector3f(0.0f, 0.15f, 0.0f));;
+			}
+		}
 
-		return Pair.of(model, TRSRTransformation.identity().getMatrix());
+		return Pair.of(model, matrix);
 	}
 
 	public static class Model implements IBakedModel
@@ -61,7 +72,7 @@ public class RendererItemSpell extends PerspectiveMapWrapper
 		@Override
 		public ItemCameraTransforms getItemCameraTransforms()
 		{
-			return ItemCameraTransforms.DEFAULT; // The requirement for this is a bug
+			return ItemCameraTransforms.DEFAULT;
 		}
 
 		@Override

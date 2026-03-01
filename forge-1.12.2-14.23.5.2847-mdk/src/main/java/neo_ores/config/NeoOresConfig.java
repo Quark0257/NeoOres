@@ -565,5 +565,8 @@ public class NeoOresConfig
 		@LangKey("config.misc.initialItems")
 		@RequiresMcRestart
 		public boolean allowInitialItems = true;
+		
+		@LangKey("config.mics.piSortType")
+		public int sortType = 0;
 	}
 }

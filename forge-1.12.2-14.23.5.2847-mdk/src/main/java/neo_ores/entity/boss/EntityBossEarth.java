@@ -32,6 +32,8 @@ public class EntityBossEarth extends AbstractNeoOresBoss
 			ColorUtils.getColorWithWhite(DimensionName.EARTH.getColor(), 1.0), new NBTTagCompound());
 	private static final SpellData PLACE = new SpellData(Arrays.asList(new SpellItem[] { NeoOresSpells.spell_touch, NeoOresSpells.spell_place_infinity }),
 			ColorUtils.getColorWithWhite(DimensionName.EARTH.getColor(), 1.0), getPlaceAdditional());
+	private static final SpellData GRAVITY_AND_PLACE = new SpellData(Arrays.asList(new SpellItem[] { NeoOresSpells.spell_touch, NeoOresSpells.spell_earth_damage, NeoOresSpells.spell_damageLv3 }),
+			ColorUtils.getColorWithWhite(DimensionName.EARTH.getColor(), 1.0), new NBTTagCompound());
 
 	public EntityBossEarth(World worldIn)
 	{

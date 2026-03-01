@@ -1,6 +1,6 @@
 package neo_ores.api;
 
-import neo_ores.main.NeoOresBlocks;
+import neo_ores.block.IPedestalInterfaceComponent;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -34,8 +34,8 @@ public interface ICompareBlockState
 		@Override
 		public boolean compare(World world, BlockPos pos, IBlockState a, IBlockState b)
 		{
-			return (a.getBlock() == NeoOresBlocks.enhanced_pedestal || a.getBlock() == NeoOresBlocks.pedestal)
-					&& (b.getBlock() == NeoOresBlocks.enhanced_pedestal || b.getBlock() == NeoOresBlocks.pedestal);
+			return (a.getBlock() instanceof IPedestalInterfaceComponent)
+					&& (b.getBlock() instanceof IPedestalInterfaceComponent);
 		}
 	};
 

@@ -33,6 +33,7 @@ import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
 import neo_ores.packet.PacketParticleTypeBToClient;
 import neo_ores.spell.form.IPassiveSpell;
+import net.glease.healer.Healer;
 import net.jafama.FastMath;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -877,7 +878,10 @@ public class SpellUtils
 		}
 		else
 		{
-			runner.attackEntityFrom(NeoOres.PAYMENT, amount);
+			if (!runner.attackEntityFrom(NeoOres.PAYMENT, amount)) 
+			{
+				return false;
+			}
 			if (runner.isEntityAlive())
 			{
 				return true;

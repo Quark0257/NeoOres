@@ -1,0 +1,10 @@
+{
+	"variants": {
+	    "facing=down": { "model": "neo_ores:pedestal_network_bus", "x": 180 },
+	    "facing=up": { "model": "neo_ores:pedestal_network_bus" },
+	    "facing=north": { "model": "neo_ores:pedestal_network_bus", "x": 90 },
+	    "facing=south": { "model": "neo_ores:pedestal_network_bus", "x": 90, "y": 180 },
+	    "facing=west": { "model": "neo_ores:pedestal_network_bus", "x": 90, "y": 270 },
+	    "facing=east": { "model": "neo_ores:pedestal_network_bus", "x": 90, "y": 90 }
+	}
+}

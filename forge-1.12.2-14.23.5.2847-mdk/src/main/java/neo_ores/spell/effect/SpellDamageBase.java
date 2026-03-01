@@ -92,7 +92,7 @@ public abstract class SpellDamageBase extends SpellEffect implements HasRange, H
 					}
 					if (runner instanceof EntityPlayer && !elb.isEntityAlive() && this.gathering)
 					{
-						ItemStack resultStack = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
+						ItemStack resultStack = InventoryUtils.addInventoryFromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
 						if (!target.isEmpty() && resultStack.getCount() != target.getCount())
 						{
 							entityitem.setItem(resultStack);

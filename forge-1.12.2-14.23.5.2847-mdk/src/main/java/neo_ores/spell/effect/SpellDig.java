@@ -9,6 +9,8 @@ import neo_ores.spell.SpellItemInterfaces.HasChain;
 import neo_ores.spell.SpellItemInterfaces.HasGather;
 import neo_ores.spell.SpellItemInterfaces.HasHarvestLevel;
 import neo_ores.spell.SpellItemInterfaces.HasLuck;
+import neo_ores.spell.SpellItemInterfaces.HasOffsetDown;
+import neo_ores.spell.SpellItemInterfaces.HasOffsetUp;
 import neo_ores.spell.SpellItemInterfaces.HasRange;
 import neo_ores.spell.SpellItemInterfaces.HasSilk;
 import neo_ores.spell.SpellItemInterfaces.HasSmelt;
@@ -36,16 +38,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.event.ForgeEventFactory;
 
-public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather, HasSmelt
+public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuck, HasHarvestLevel, HasGather, HasSmelt, HasOffsetUp, HasOffsetDown
 {
 	private int fortune = 0;
 	private boolean isSilktouch = false;
 	private int harvestlevel = 0;
 	private boolean canGather = false;
 	private boolean smelting = false;
+	private boolean offsetUp = false;
+	private boolean offsetDown = false;
 
-	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result, ItemStack stack)
+	public void onEffectRunToOther(World world, EntityLivingBase runner, RayTraceResult result1, ItemStack stack)
 	{
+		RayTraceResult result = this.getResultBlockFromEntity(world, result1, stack, this.offsetUp, this.offsetDown);
+		
 		if (result != null && result.typeOfHit == Type.BLOCK)
 		{
 			ItemStack item = stack.copy();
@@ -77,6 +83,12 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 					{
 						continue;
 					}
+					
+					if (!this.canEditBlocksBySpells(runner, stack, world, pos, face)) 
+					{
+						continue;
+					}
+					
 					if (runner instanceof EntityPlayer)
 					{
 						this.breakBlock(state, world, pos, runner, xpvalue, item);
@@ -148,7 +160,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 					}
 					if (this.canGather)
 					{
-						ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
+						ItemStack result = InventoryUtils.addInventoryFromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
 						if (!target.isEmpty() && result.getCount() != target.getCount())
 						{
 							eitem.setItem(result);
@@ -188,7 +200,7 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 						}
 						if (this.canGather)
 						{
-							ItemStack result = InventoryUtils.addInventoryfromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
+							ItemStack result = InventoryUtils.addInventoryFromStack(target, InventoryUtils.getPlayerInventory((EntityPlayer) runner), EnumFacing.UP);
 							if (!target.isEmpty() && result.getCount() != target.getCount())
 							{
 								entity.setItem(result);
@@ -258,5 +270,17 @@ public class SpellDig extends SpellEffectItemFiltered implements HasSilk, HasLuc
 	public void setSmelt()
 	{
 		this.smelting = true;
+	}
+
+	@Override
+	public void setOffsetDown()
+	{
+		this.offsetDown = true;
+	}
+
+	@Override
+	public void setOffsetUp()
+	{
+		this.offsetUp = true;
 	}
 }

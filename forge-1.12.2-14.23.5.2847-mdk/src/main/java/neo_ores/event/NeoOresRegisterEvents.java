@@ -28,11 +28,13 @@ import neo_ores.client.render.RendererNeoPortal;
 import neo_ores.client.render.RendererMageKnowledgeTable;
 import neo_ores.tileentity.TileEntityBossCapsule;
 import neo_ores.tileentity.TileEntityChunkLoader;
+import neo_ores.tileentity.TileEntityPedestalNetworkDetector;
 import neo_ores.tileentity.TileEntityEnhancedPedestal;
 import neo_ores.tileentity.TileEntityManaFurnace;
 import neo_ores.tileentity.TileEntityMechanicalMagician;
 import neo_ores.tileentity.TileEntityNeoPortal;
 import neo_ores.tileentity.TileEntityPedestal;
+import neo_ores.tileentity.TileEntityPedestalNetworkBus;
 import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
 import neo_ores.util.SpellUtils;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
@@ -288,6 +290,8 @@ public class NeoOresRegisterEvents
 		GameRegistry.registerTileEntity(TileEntityMechanicalMagician.class, new ResourceLocation(Reference.MOD_ID, "mechanical_magician"));
 		GameRegistry.registerTileEntity(TileEntityChunkLoader.class, new ResourceLocation(Reference.MOD_ID, "chunk_loader"));
 		GameRegistry.registerTileEntity(TileEntityBossCapsule.class, new ResourceLocation(Reference.MOD_ID, "boss_capsule"));
+		GameRegistry.registerTileEntity(TileEntityPedestalNetworkDetector.class, new ResourceLocation(Reference.MOD_ID, "pedestal_network_detector"));
+		GameRegistry.registerTileEntity(TileEntityPedestalNetworkBus.class, new ResourceLocation(Reference.MOD_ID, "pedestal_network_bus"));
 	}
 
 	@SubscribeEvent
@@ -432,6 +436,7 @@ public class NeoOresRegisterEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RendererPedestal());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMechanicalMagician.class, new RendererMechanicalMagician());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChunkLoader.class, new RendererChunkLoader());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestalNetworkDetector.class, new RendererPedestal());
 	}
 	
 	/**

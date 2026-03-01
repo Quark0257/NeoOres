@@ -37,4 +37,19 @@ public class Vec2I
 	{
 		return "{" + this.x + "; " + this.y + "}";
 	}
+	
+	public double getArgument() 
+	{
+		return Math.atan2(this.y, this.x);
+	}
+	
+	public double getArgumentDegree() 
+	{
+		return Math.toDegrees(this.getArgument());
+	}
+	
+	public double getNorm() 
+	{
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
 }

@@ -24,6 +24,7 @@ import com.google.gson.stream.JsonWriter;
 import neo_ores.api.PlayerTrigger;
 import neo_ores.api.RecipeOreStack;
 import neo_ores.api.RecipeOreStackWildCard;
+import neo_ores.api.RecipeOreStackWildCardPostScript;
 import neo_ores.api.guide.GuidePage;
 import neo_ores.api.recipe.ManaCompositionRecipe;
 import neo_ores.api.recipe.ManaCraftingRecipe;
@@ -259,6 +260,7 @@ public class NeoOresRecipeRegisterEvents
 				new RecipeOreStack("enderpearl", 4)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_pi_mode, new RecipeOreStack(new ItemStack(Blocks.PISTON), 1), new RecipeOreStack(new ItemStack(Blocks.STICKY_PISTON), 1), new RecipeOreStack("string", 1)));
 		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_terraform, new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 4), 1), new RecipeOreStack(new ItemStack(NeoOresItems.biome_bottle), 1)));
+		event.getRegistry().register(new SpellRecipe(NeoOresSpells.spell_place_infinity, new RecipeOreStack(new ItemStack(NeoOresItems.essence, 1, 4), 1), RecipeOreStackWildCardPostScript.INFINITY_SPELL_MATERIAL));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

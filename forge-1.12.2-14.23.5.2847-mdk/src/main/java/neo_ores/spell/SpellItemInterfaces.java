@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import neo_ores.api.ICompareBlockState;
+import neo_ores.block.IPedestalInterfaceComponent;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -374,30 +376,30 @@ public class SpellItemInterfaces
 			return result;
 		}
 	}
-	
+
 	public static interface HasSmelt extends ICorrectingBase
 	{
 		public void setSmelt();
 	}
-	
+
 	public static interface HasPI extends ICorrectingBase
 	{
 		public void setPIMode();
-		
+
 		public static List<BlockPos> getPIPos(World world, BlockPos target)
 		{
 			List<BlockPos> candidates = new ArrayList<BlockPos>();
 			List<BlockPos> tempList = new ArrayList<BlockPos>();
 			IBlockState initState = world.getBlockState(target);
 			BlockPos targetPos = new BlockPos(target.getX(), target.getY(), target.getZ());
-			if (!ICompareBlockState.PI.compare(world, targetPos, world.getBlockState(targetPos), world.getBlockState(targetPos))) 
+			if (!ICompareBlockState.PI.compare(world, targetPos, world.getBlockState(targetPos), world.getBlockState(targetPos)))
 			{
 				return candidates;
 			}
 			candidates.add(targetPos);
 			tempList.add(targetPos);
 			List<BlockPos> offsets = getOffsets();
-			int maxAmount = 512;
+			int maxAmount = Integer.MAX_VALUE;
 			while (!tempList.isEmpty())
 			{
 				List<BlockPos> lastAdded = new ArrayList<>(tempList);
@@ -409,7 +411,7 @@ public class SpellItemInterfaces
 						BlockPos pos = tempTarget.add(offset);
 						if (!candidates.contains(pos))
 						{
-							if (!world.isAreaLoaded(pos, pos)) 
+							if (!world.isAreaLoaded(pos, pos))
 							{
 								continue;
 							}
@@ -430,9 +432,18 @@ public class SpellItemInterfaces
 					break;
 				}
 			}
-			return candidates;
+			List<BlockPos> result = new ArrayList<BlockPos>();
+			for (BlockPos pos : candidates)
+			{
+				Block block = world.getBlockState(pos).getBlock();
+				if (block instanceof IPedestalInterfaceComponent && ((IPedestalInterfaceComponent) block).isContent())
+				{
+					result.add(pos);
+				}
+			}
+			return result;
 		}
-		
+
 		public static List<BlockPos> getOffsets()
 		{
 			List<BlockPos> result = new ArrayList<BlockPos>();
@@ -448,17 +459,17 @@ public class SpellItemInterfaces
 			return result;
 		}
 	}
-	
-	public static interface HasNegative extends ICorrectingBase 
+
+	public static interface HasNegative extends ICorrectingBase
 	{
 		public void setNegative();
 	}
-	
-	public static interface HasPositive extends ICorrectingBase 
+
+	public static interface HasPositive extends ICorrectingBase
 	{
 		public void setPositive();
 	}
-	
+
 	public static interface HasDominant extends ICorrectingBase
 	{
 		public void setDominant();

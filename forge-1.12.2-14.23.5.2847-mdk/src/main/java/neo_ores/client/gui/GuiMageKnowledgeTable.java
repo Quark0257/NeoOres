@@ -69,6 +69,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	private int currentTabIndex = 0;
 	private int prevMouseX;
 	private int prevMouseY;
+	private GuiButton tabButton;
 
 	public GuiMageKnowledgeTable()
 	{
@@ -85,7 +86,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 	public void initGui()
 	{
 		this.scale = 1.0;
-		this.buttonList.add(new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2 + 7, 100, 20,
+		this.tabButton = new GuiButton(101, (this.width - windowSizeX) / 2 + 10, (this.height - windowSizeY) / 2 + 7, 100, 20,
 				I18n.format(this.tab.getKey()) + " (" + (this.currentTabIndex + 1) + "/" + this.tabs.size() + ")")
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
@@ -95,10 +96,13 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				{
 					currentTabIndex = (currentTabIndex + 1 < tabs.size()) ? currentTabIndex + 1 : 0;
 					GuiMageKnowledgeTable.this.update();
+					this.displayString = I18n.format(GuiMageKnowledgeTable.this.tab.getKey()) + " (" + (GuiMageKnowledgeTable.this.currentTabIndex + 1) + "/"
+							+ GuiMageKnowledgeTable.this.tabs.size() + ")";
 				}
 				return flag;
 			}
-		});
+		};
+		this.buttonList.add(this.tabButton);
 	}
 
 	public void update()
@@ -211,7 +215,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			this.mouseLeftClicked(mouseX, mouseY);
 
 		this.drawDefaultBackground();
-		this.renderInside(mouseX, mouseY, i, j);
+		this.renderInside(mouseX, mouseY, i, j, partialTicks);
 		this.renderWindow(i, j);
 		this.drawTooltip(mouseX, mouseY);
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -232,7 +236,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		}
 	}
 
-	private void renderInside(int mouseX, int mouseY, int p_191936_3_, int p_191936_4_)
+	private void renderInside(int mouseX, int mouseY, int p_191936_3_, int p_191936_4_, float partialTicks)
 	{
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) (p_191936_3_ + 8), (float) (p_191936_4_ + 32), -400.0F);
@@ -241,7 +245,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		{
 			GlStateManager.scale(this.scale, this.scale, 1.0);
 		}
-		this.drawContents();
+		this.drawContents(partialTicks);
 		if (this.scale != 0.0)
 		{
 			GlStateManager.scale(1.0 / this.scale, 1.0 / this.scale, 1.0);
@@ -251,7 +255,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		GlStateManager.disableDepth();
 	}
 
-	public void drawContents()
+	public void drawContents(float partialTicks)
 	{
 		GlStateManager.depthFunc(518);
 		drawRect(0, 0, (int) (insideSizeX / this.scale), (int) (insideSizeY / this.scale), -16777216);
@@ -287,20 +291,20 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				int endY = spellitem.getParent().getPositionY() * interval + y + 16;
 				if (isWide)
 				{
-					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 3.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-					
+					ClientUtils.drawLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 3.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
 				}
 				if (this.canGet(spellitem))
 				{
-					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+					ClientUtils.drawLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 				}
 				else if (this.pmdc.didGet(spellitem.getModId(), spellitem.getRegisteringId()))
 				{
-					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+					ClientUtils.drawLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 				}
 				else
 				{
-					ClientUtils.drawSmoothLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+					ClientUtils.drawLine(new Vec2I(startX, startY), new Vec2I(endX, endY), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 				}
 			}
 		}
@@ -350,29 +354,31 @@ public class GuiMageKnowledgeTable extends GuiScreen
 				}
 				else
 				{
-					tooltip.add(
-							(TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " " + I18n.format("spell.magic_point"));
+					tooltip.add((TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + spellitem.getTier() + " "
+							+ I18n.format("spell.magic_point"));
 				}
 
-				if (spellitem.getParent() != null) 
+				if (spellitem.getParent() != null)
 				{
 					if (!this.canGetSpellItemByTree(spellitem, this.mc.player))
 					{
 						tooltip.add((TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + getName(spellitem.getParent()));
 					}
-					else 
+					else
 					{
 						tooltip.add((TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + getName(spellitem.getParent()));
 					}
 				}
-				
+
 				if (!this.canGetSpellItemByTrigger(spellitem, this.mc.player))
 				{
-					tooltip.add((TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + I18n.format(spellitem.getTrigger().getUnlocalizedName()));
+					tooltip.add(
+							(TextFormatting.BOLD + (TextFormatting.DARK_RED + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + I18n.format(spellitem.getTrigger().getUnlocalizedName()));
 				}
 				else if (spellitem.getTrigger() != null)
 				{
-					tooltip.add((TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + I18n.format(spellitem.getTrigger().getUnlocalizedName()));
+					tooltip.add(
+							(TextFormatting.BOLD + (TextFormatting.GREEN + I18n.format("spell.required") + " : ")) + TextFormatting.BLUE + I18n.format(spellitem.getTrigger().getUnlocalizedName()));
 				}
 			}
 
@@ -602,7 +608,7 @@ public class GuiMageKnowledgeTable extends GuiScreen
 			return false;
 		return this.pmdc.getMagicPoint() >= (long) spellitem.getTier();
 	}
-	
+
 	private boolean canGetSpellItemByTrigger(SpellItem spellitem, EntityPlayerSP player)
 	{
 		if (spellitem == null)
@@ -651,8 +657,8 @@ public class GuiMageKnowledgeTable extends GuiScreen
 		this.scale = scale;
 		this.scroll(0, 0);
 	}
-	
-	private boolean canGet(SpellItem item) 
+
+	private boolean canGet(SpellItem item)
 	{
 		return this.canGetSpellItemByMagicPoint(item, this.mc.player) && this.canGetSpellItemByTree(item, this.mc.player) && this.canGetSpellItemByTrigger(item, this.mc.player);
 	}

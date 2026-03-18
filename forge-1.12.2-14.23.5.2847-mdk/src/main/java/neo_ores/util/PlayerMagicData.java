@@ -12,7 +12,7 @@ import neo_ores.api.spell.SpellItem;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.main.NeoOres;
 import neo_ores.packet.PacketMagicDataToClient;
-import net.minecraft.entity.player.EntityPlayer;
+import neo_ores.packet.PacketPlayerTriggerComplete;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -511,7 +511,7 @@ public class PlayerMagicData
 		this.needSending = false;
 	}
 	
-	public void triggerPlayerTrigger(PlayerTrigger trigger, EntityPlayer player) 
+	public void triggerPlayerTrigger(PlayerTrigger trigger, EntityPlayerMP player) 
 	{
 		if (trigger.canTrigger(player)) 
 		{
@@ -522,10 +522,29 @@ public class PlayerMagicData
 				if (trigger.hasDialogRewards()) 
 				{
 					this.triggerRewards.put(trigger.getId(), true);
+					PacketPlayerTriggerComplete pptc = new PacketPlayerTriggerComplete(trigger.getRegistryName());
+					NeoOres.PACKET.sendTo((IMessage) pptc, player);
 				}
 				this.markSending();
 				this.markDirty();
 			}
+		}
+	}
+	
+	public void forceTriggerPlayerTrigger(PlayerTrigger trigger, EntityPlayerMP player) 
+	{
+		if (!this.checkTrigger(trigger)) 
+		{
+			trigger.trigger(player);
+			this.triggers.put(trigger.getId(), true);
+			if (trigger.hasDialogRewards()) 
+			{
+				this.triggerRewards.put(trigger.getId(), true);
+				PacketPlayerTriggerComplete pptc = new PacketPlayerTriggerComplete(trigger.getRegistryName());
+				NeoOres.PACKET.sendTo((IMessage) pptc, player);
+			}
+			this.markSending();
+			this.markDirty();
 		}
 	}
 	

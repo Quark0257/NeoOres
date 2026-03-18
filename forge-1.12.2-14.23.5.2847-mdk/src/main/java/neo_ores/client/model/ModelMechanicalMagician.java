@@ -7,6 +7,10 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+//Made with Blockbench 4.0.5
+//Exported for Minecraft version 1.7 - 1.12
+//Paste this class into your mod and generate all required imports
+
 @SideOnly(Side.CLIENT)
 public class ModelMechanicalMagician extends ModelBase
 {

@@ -54,7 +54,6 @@ public class TexturedParticle
 		this.particleMaxAge = time;
 		this.textures = list;
 		this.particleSize = size * Minecraft.getMinecraft().world.rand.nextFloat() * 0.6F + 0.5F;
-		;
 		this.textureSize = 4.0F;
 		this.particleAlpha = 1.0F;
 		this.particleRed = 1.0F;
@@ -103,7 +102,7 @@ public class TexturedParticle
 		GlStateManager.disableAlpha();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
-		GlStateManager.disableCull();
+		GlStateManager.enableCull();
 		GlStateManager.depthMask(false);
 		GlStateManager.color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
 		double interpX = this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks;

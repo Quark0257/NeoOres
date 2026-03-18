@@ -14,14 +14,27 @@ public abstract class AbstractMethodHook extends AbstractMethodChanger
 			@Override
 			public void visitMethodInsn(int opcode, String owner, String methodName, String desc, boolean it)
 			{
-				if (isPre())
+				if (behaveReplace()) 
 				{
-					super.visitMethodInsn(Opcodes.INVOKESTATIC, getHookClassName(), getHookMethodName(), Type.getMethodDescriptor(Type.VOID_TYPE), false);
-				}
-				super.visitMethodInsn(opcode, owner, methodName, desc, it);
-				if (!isPre())
+					preHook(mv);
+					super.visitMethodInsn(getOpcodes(), getHookClassName(), getHookMethodName(), hookDescriptor(), isTransfromingInterface());
+					postHook(mv);
+				} 
+				else
 				{
-					super.visitMethodInsn(Opcodes.INVOKESTATIC, getHookClassName(), getHookMethodName(), Type.getMethodDescriptor(Type.VOID_TYPE), false);
+					if (isPre())
+					{
+						preHook(mv);
+						super.visitMethodInsn(getOpcodes(), getHookClassName(), getHookMethodName(), hookDescriptor(), isTransfromingInterface());
+						postHook(mv);
+					}
+					super.visitMethodInsn(opcode, owner, methodName, desc, it);
+					if (!isPre())
+					{
+						preHook(mv);
+						super.visitMethodInsn(getOpcodes(), getHookClassName(), getHookMethodName(), hookDescriptor(), isTransfromingInterface());
+						postHook(mv);
+					}
 				}
 			}
 		};
@@ -35,6 +48,19 @@ public abstract class AbstractMethodHook extends AbstractMethodChanger
 	public abstract String getHookClassName();
 
 	public abstract String getHookMethodName();
+	
+	public String hookDescriptor() 
+	{
+		return Type.getMethodDescriptor(Type.VOID_TYPE);
+	}
+	
+	public void preHook(MethodVisitor mv) 
+	{
+	}
+	
+	public void postHook(MethodVisitor mv) 
+	{
+	}
 
 	/**
 	 * @return Whether this hook fire at pre or post
@@ -42,5 +68,15 @@ public abstract class AbstractMethodHook extends AbstractMethodChanger
 	public boolean isPre()
 	{
 		return true;
+	}
+	
+	public boolean behaveReplace() 
+	{
+		return false;
+	}
+	
+	public boolean isTransfromingInterface() 
+	{
+		return false;
 	}
 }

@@ -20,6 +20,7 @@ import neo_ores.api.spell.SpellItem;
 import neo_ores.api.spell.SpellItemType;
 import neo_ores.client.particle.TexturedParticle;
 import neo_ores.event.NeoOresClientEvents;
+import neo_ores.api.IFunction;
 import neo_ores.api.ILifeContainer;
 import neo_ores.api.MathUtils;
 import neo_ores.api.MathUtils.Surface;
@@ -31,9 +32,8 @@ import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.main.Reference;
 import neo_ores.packet.PacketParticleToClient;
-import neo_ores.packet.PacketParticleTypeBToClient;
+import neo_ores.packet.PacketParticleTypeToClient;
 import neo_ores.spell.form.IPassiveSpell;
-import net.glease.healer.Healer;
 import net.jafama.FastMath;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -813,7 +813,7 @@ public class SpellUtils
 		}
 		else if (sendPacket)
 		{
-			PacketParticleTypeBToClient ppc = new PacketParticleTypeBToClient(target, maxRadius, minCount, maxCount, minParticleVolume, maxParticleVolume, color, world.provider.getDimension());
+			PacketParticleTypeToClient ppc = new PacketParticleTypeToClient(target, maxRadius, 0.0, minCount, maxCount, minParticleVolume, maxParticleVolume, color, world.provider.getDimension(), 0);
 			NeoOres.PACKET.sendToAll(ppc);
 		}
 	}
@@ -830,6 +830,54 @@ public class SpellUtils
 			double dz = r * FastMath.sin(theta);
 			NeoOresClientEvents.getInstance().addParticle(new TexturedParticle(target.x + dx, target.y, target.z + dz, 0.0, 0.1, 0.0, 5 + world.rand.nextInt(10),
 					minParticleVolume + (maxParticleVolume - minParticleVolume) * world.rand.nextFloat(), NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
+		}
+	}
+	
+	public static void displayParticleTypeC(World world, Vec3d target, double initSpeed, double alphaBrake, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color, boolean sendPacket)
+	{
+		if (world.isRemote)
+		{
+			displayParticleTypeC(world, target, initSpeed, alphaBrake, minCount, maxCount, minParticleVolume, maxParticleVolume, color);
+		}
+		else if (sendPacket)
+		{
+			PacketParticleTypeToClient ppc = new PacketParticleTypeToClient(target, initSpeed, alphaBrake, minCount, maxCount, minParticleVolume, maxParticleVolume, color, world.provider.getDimension(), 1);
+			NeoOres.PACKET.sendToAll(ppc);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void displayParticleTypeC(World world, Vec3d target, double initSpeed, double alphaBrake, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color)
+	{
+		int count = world.rand.nextInt(maxCount - minCount + 1) + minCount;
+		for (int i = 0; i < count; i++)
+		{
+			double theta = 2.0 * Math.PI * world.rand.nextDouble();
+			double phi = 2.0 * Math.PI * world.rand.nextDouble();
+			double vx = initSpeed * FastMath.cos(theta) * FastMath.cos(phi);
+			double vz = initSpeed * FastMath.cos(theta) * FastMath.sin(phi);
+			double vy = initSpeed * FastMath.sin(theta);
+			double alphaX = alphaBrake * FastMath.cos(theta) * FastMath.cos(phi);
+			double alphaZ = alphaBrake * FastMath.cos(theta) * FastMath.sin(phi);
+			double alphaY = alphaBrake * FastMath.sin(theta);
+			NeoOresClientEvents.getInstance()
+					.addParticle(new TexturedParticle(target.x, target.y, target.z, vx, vy, vz, 5 + world.rand.nextInt(10),
+							minParticleVolume + (maxParticleVolume - minParticleVolume) * world.rand.nextFloat(), NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F)
+									.setUpdateFunc(new IFunction<TexturedParticle>()
+									{
+
+										@Override
+										public TexturedParticle function(TexturedParticle t)
+										{
+											t.motionX -= alphaX;
+											t.motionY -= alphaY;
+											t.motionZ -= alphaZ;
+											t.posX += t.motionX;
+											t.posY += t.motionY;
+											t.posZ += t.motionZ;
+											return t;
+										}
+									}));
 		}
 	}
 
@@ -878,7 +926,12 @@ public class SpellUtils
 		}
 		else
 		{
-			if (!runner.attackEntityFrom(NeoOres.PAYMENT, amount)) 
+			if (runner instanceof EntityPlayer && ((EntityPlayer) runner).capabilities.isCreativeMode)
+			{
+				return true;
+			}
+
+			if (!runner.attackEntityFrom(NeoOres.PAYMENT, amount))
 			{
 				return false;
 			}

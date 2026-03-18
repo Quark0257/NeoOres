@@ -4,26 +4,31 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 
+import neo_ores.core.hooks.HookEntityMobAttack;
+import neo_ores.core.hooks.HookEntityPlayerAttackWithItem;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
 public class NeoOresTransformer implements IClassTransformer
 {
-	private static final AbstractClassAdaptor[] ADAPTORS = new AbstractClassAdaptor[] {};
+	private static final AbstractClassAdaptor[] ADAPTORS = new AbstractClassAdaptor[] {new HookEntityPlayerAttackWithItem(), new HookEntityMobAttack()};
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass)
 	{
-		for (AbstractClassAdaptor adaptor : ADAPTORS) {
-			if (adaptor.getClassName().equals(transformedName)) {
+		CoreConfigManager.getInstance();
+		for (AbstractClassAdaptor adaptor : ADAPTORS)
+		{
+			if (adaptor.getClassName().equals(transformedName))
+			{
 				ClassReader cr = new ClassReader(basicClass);
 				ClassWriter cw = new ClassWriter(1);
-				cr.accept(adaptor.getVisitor(cw), 0);
+				cr.accept(adaptor.getVisitor(cw), adaptor.getAcceptFlag());
 
 				return cw.toByteArray();
 			}
 		}
-		return basicClass;		
+		return basicClass;
 	}
 
 	public static String unmapClassName(String name)

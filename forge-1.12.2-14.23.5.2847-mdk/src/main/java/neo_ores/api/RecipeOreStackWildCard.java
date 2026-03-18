@@ -5,8 +5,9 @@ import java.util.List;
 
 import neo_ores.item.IItemNeoBauble;
 import neo_ores.item.IItemNeoTool;
+import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresItems;
-import net.minecraft.init.Enchantments;
+import neo_ores.util.SpellUtils.NBTTagUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -25,14 +26,14 @@ public abstract class RecipeOreStackWildCard extends RecipeOreStack
 		@Override
 		public boolean compareWith(ItemStack target)
 		{
-			return !target.isEmpty();
+			return !target.isEmpty() && (!target.hasTagCompound() || !target.getTagCompound().hasKey(NBTTagUtils.SPELL, 10));
 		}
 
 		@Override
 		public ItemStack getRepresentative()
 		{
 			ItemStack rep = new ItemStack(NeoOresItems.spell_sheet);
-			rep.addEnchantment(Enchantments.LURE, 1);
+			rep.addEnchantment(NeoOres.soulbound, 1);
 			return rep;
 		}
 	};
@@ -53,7 +54,7 @@ public abstract class RecipeOreStackWildCard extends RecipeOreStack
 		public ItemStack getRepresentative()
 		{
 			ItemStack rep = new ItemStack(NeoOresItems.undite_helmet);
-			rep.addEnchantment(Enchantments.LURE, 1);
+			rep.addEnchantment(NeoOres.soulbound, 1);
 			return rep;
 		}
 	};

@@ -527,6 +527,10 @@ public class NeoOresConfig
 		@LangKey("config.magic.repeatable")
 		@RequiresMcRestart
 		public boolean repeatable = false;
+		
+		@LangKey("config.magic.base_cool_time")
+		@RequiresMcRestart
+		public int base_cool_time = 20;
 
 		@LangKey("config.magic.init_magic_point")
 		@RequiresMcRestart
@@ -568,5 +572,8 @@ public class NeoOresConfig
 		
 		@LangKey("config.mics.piSortType")
 		public int sortType = 0;
+		
+		@LangKey("config.mics.allow_toast_of_quest")
+		public boolean allowToastOfQuest = true;
 	}
 }

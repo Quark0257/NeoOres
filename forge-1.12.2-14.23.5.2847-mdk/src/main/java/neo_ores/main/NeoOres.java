@@ -7,12 +7,14 @@ import neo_ores.client.gui.GuiHandler;
 import neo_ores.command.CommandNeoOres;
 import neo_ores.config.NeoOresConfig;
 import neo_ores.creativetab.NeoOresTab;
+import neo_ores.enchantments.EnchantmentFastSpelling;
 import neo_ores.enchantments.EnchantmentOffensive;
 import neo_ores.enchantments.EnchantmentSoulBound;
 import neo_ores.event.NeoOresItemEvents;
 import neo_ores.event.NeoOresRecipeRegisterEvents;
 import neo_ores.event.NeoOresRegisterEvents;
 import neo_ores.event.NeoOresWorldEvents;
+import neo_ores.item.ItemSpell;
 import neo_ores.event.NeoOresBlockEvents;
 import neo_ores.event.NeoOresEntityEvents;
 import neo_ores.packet.PacketAreaParticleToClient;
@@ -26,7 +28,8 @@ import neo_ores.packet.PacketMagicDataToServer;
 import neo_ores.packet.PacketPISyncToClient;
 import neo_ores.packet.PacketPISyncToServer;
 import neo_ores.packet.PacketParticleToClient;
-import neo_ores.packet.PacketParticleTypeBToClient;
+import neo_ores.packet.PacketParticleTypeToClient;
+import neo_ores.packet.PacketPlayerTriggerComplete;
 import neo_ores.packet.PacketSRCTToClient;
 import neo_ores.packet.PacketSRCTToServer;
 import neo_ores.packet.PacketSyncConstantDataToClient;
@@ -63,6 +66,7 @@ import neo_ores.world.gen.structures.water.WaterStructurePieces;
 import neo_ores.world.gen.structures.water.WaterStructureStart;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -79,6 +83,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -103,22 +108,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 
 import morph.avaritia.recipe.AvaritiaRecipeManager;
 import morph.avaritia.recipe.extreme.ExtremeShapedRecipe;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.MOD_VERSION, acceptedMinecraftVersions=Reference.ACCEPTED_MINECRAFT_VERSIONS, 
-dependencies="required-after:baubles@[1.5.2,);after:avaritia@[3.3.0,);after:jei;")
-public class NeoOres 
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.MOD_VERSION, acceptedMinecraftVersions = Reference.ACCEPTED_MINECRAFT_VERSIONS, dependencies = "required-after:baubles@[1.5.2,);after:avaritia@[3.3.0,);after:jei;")
+public class NeoOres
 {
-	static 
+	static
 	{
 		FluidRegistry.enableUniversalBucket();
 	}
-	
+
 	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) 
+	public void preInit(FMLPreInitializationEvent event)
 	{
 		NeoOresInfoCore.registerInfo(meta);
 		MinecraftForge.EVENT_BUS.register(new NeoOresRegisterEvents());
@@ -135,7 +140,7 @@ public class NeoOres
 		GameRegistry.registerWorldGenerator(new NeoOresOreGen(), 0);
 		NeoOresRecipeRegisterEvents.registerFromJson(event);
 		NeoOres.registerStructures();
-		
+
 		PACKET.registerMessage(PacketMagicDataToClient.Handler.class, PacketMagicDataToClient.class, 0, Side.CLIENT);
 		PACKET.registerMessage(PacketMagicDataToServer.Handler.class, PacketMagicDataToServer.class, 1, Side.SERVER);
 		PACKET.registerMessage(PacketItemsToClient.Handler.class, PacketItemsToClient.class, 2, Side.CLIENT);
@@ -151,15 +156,16 @@ public class NeoOres
 		PACKET.registerMessage(PacketSyncConstantDataToClient.Handler.class, PacketSyncConstantDataToClient.class, 12, Side.CLIENT);
 		PACKET.registerMessage(PacketSyncConstantDataToServer.Handler.class, PacketSyncConstantDataToServer.class, 13, Side.SERVER);
 		PACKET.registerMessage(PacketBiomeChangeToClient.Handler.class, PacketBiomeChangeToClient.class, 14, Side.CLIENT);
-		PACKET.registerMessage(PacketParticleTypeBToClient.Handler.class, PacketParticleTypeBToClient.class, 15, Side.CLIENT);
-		
-		if(event.getSide().isClient())
+		PACKET.registerMessage(PacketParticleTypeToClient.Handler.class, PacketParticleTypeToClient.class, 15, Side.CLIENT);
+		PACKET.registerMessage(PacketPlayerTriggerComplete.Handler.class, PacketPlayerTriggerComplete.class, 16, Side.CLIENT);
+
+		if (event.getSide().isClient())
 		{
 			NeoOresRegisterEvents.registerRendering();
 		}
 	}
-	
-	public static void registerStructures() 
+
+	public static void registerStructures()
 	{
 		MapGenStructureIO.registerStructure(EarthStructureStart.class, "UrySanctuary");
 		MapGenStructureIO.registerStructure(WaterStructureStart.class, "GabrySanctuary");
@@ -170,76 +176,96 @@ public class NeoOres
 		AirStructurePieces.registerPieces();
 		FireStructurePieces.registerPieces();
 	}
-	
+
 	@EventHandler
-	public void init(FMLInitializationEvent event) 
+	public void init(FMLInitializationEvent event)
 	{
 		NeoOresSpells.test();
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		NeoOresRegisterEvents.registerEntity(this);
 		NeoOres.proxy.init();
 	}
-	
+
 	@EventHandler
-	public void postInit(final FMLPostInitializationEvent event) 
+	public void postInit(final FMLPostInitializationEvent event)
 	{
-		if(Loader.isModLoaded("avaritia"))
+		if (Loader.isModLoaded("avaritia"))
 		{
 			ItemStack helmet = new ItemStack(NeoOresItems.creative_helmet);
 			TierUtils utils = new TierUtils(helmet);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_helmet"), new ExtremeShapedRecipe(helmet,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_helmet"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_helmet"),
+					new ExtremeShapedRecipe(helmet, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_helmet"))));
 			ItemStack chestplate = new ItemStack(NeoOresItems.creative_chestplate);
 			utils = new TierUtils(chestplate);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_chestplate"), new ExtremeShapedRecipe(chestplate,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_chestplate"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_chestplate"),
+					new ExtremeShapedRecipe(chestplate,
+							CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+									new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+									new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X',
+									Item.getByNameOrId("avaritia:infinity_chestplate"))));
 			ItemStack leggings = new ItemStack(NeoOresItems.creative_leggings);
 			utils = new TierUtils(leggings);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_leggings"), new ExtremeShapedRecipe(leggings,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_pants"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_leggings"),
+					new ExtremeShapedRecipe(leggings, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM",
+							'M', new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_pants"))));
 			ItemStack boots = new ItemStack(NeoOresItems.creative_boots);
 			utils = new TierUtils(boots);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_boots"), new ExtremeShapedRecipe(boots,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_boots"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_boots"),
+					new ExtremeShapedRecipe(boots, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_boots"))));
 			ItemStack axe = new ItemStack(NeoOresItems.creative_axe);
 			utils = new TierUtils(axe);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_axe"), new ExtremeShapedRecipe(axe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_axe"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_axe"),
+					new ExtremeShapedRecipe(axe, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_axe"))));
 			ItemStack hoe = new ItemStack(NeoOresItems.creative_hoe);
 			utils = new TierUtils(hoe);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_hoe"), new ExtremeShapedRecipe(hoe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_hoe"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_hoe"),
+					new ExtremeShapedRecipe(hoe, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_hoe"))));
 			ItemStack pickaxe = new ItemStack(NeoOresItems.creative_pickaxe);
 			utils = new TierUtils(pickaxe);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_pickaxe"), new ExtremeShapedRecipe(pickaxe,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_pickaxe"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_pickaxe"),
+					new ExtremeShapedRecipe(pickaxe, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM",
+							'M', new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_pickaxe"))));
 			ItemStack shovel = new ItemStack(NeoOresItems.creative_shovel);
 			utils = new TierUtils(shovel);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_shovel"), new ExtremeShapedRecipe(shovel,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_shovel"))));
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_shovel"),
+					new ExtremeShapedRecipe(shovel, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_shovel"))));
 			ItemStack sword = new ItemStack(NeoOresItems.creative_sword);
 			utils = new TierUtils(sword);
 			utils.setTier(11, 11, 11, 11);
-			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID,"creative_sword"), new ExtremeShapedRecipe(sword,CraftingHelper.parseShaped("MEEEEEEEM","WMEEEEEMA","WWMEEEMAA","WWWMEMAAA","WWWWXAAAA","WWWMFMAAA","WWMFFFMAA","WMFFFFFMA","MFFFFFFFM",
-					'M',new ItemStack(NeoOresBlocks.mana_block),'E',new ItemStack(NeoOresItems.earth_essence_core,1,10),'A',new ItemStack(NeoOresItems.air_essence_core,1,10),'F',new ItemStack(NeoOresItems.fire_essence_core,1,10),'W',new ItemStack(NeoOresItems.water_essence_core,1,10),'X',Item.getByNameOrId("avaritia:infinity_sword"))));
-			
+			AvaritiaRecipeManager.EXTREME_RECIPES.put(new ResourceLocation(Reference.MOD_ID, "creative_sword"),
+					new ExtremeShapedRecipe(sword, CraftingHelper.parseShaped("MEEEEEEEM", "WMEEEEEMA", "WWMEEEMAA", "WWWMEMAAA", "WWWWXAAAA", "WWWMFMAAA", "WWMFFFMAA", "WMFFFFFMA", "MFFFFFFFM", 'M',
+							new ItemStack(NeoOresBlocks.mana_block), 'E', new ItemStack(NeoOresItems.earth_essence_core, 1, 10), 'A', new ItemStack(NeoOresItems.air_essence_core, 1, 10), 'F',
+							new ItemStack(NeoOresItems.fire_essence_core, 1, 10), 'W', new ItemStack(NeoOresItems.water_essence_core, 1, 10), 'X', Item.getByNameOrId("avaritia:infinity_sword"))));
+
 		}
 	}
-	
+
 	@EventHandler
 	public void serverInit(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new CommandNeoOres());
 	}
-	
+
 	@EventHandler
 	public static void onServerToStart(FMLServerAboutToStartEvent event)
 	{
@@ -257,45 +283,45 @@ public class NeoOres
 	{
 		NeoOresData.onServerStopping(event);
 	}
-	
+
 	@SidedProxy(clientSide = "neo_ores.proxy.ClientProxy", serverSide = "neo_ores.proxy.CommonProxy")
 	public static CommonProxy proxy;
-	
+
 	@Instance(Reference.MOD_ID)
 	public static NeoOres instance;
-	
+
 	@Metadata(Reference.MOD_ID)
 	private static ModMetadata meta;
-	
+
 	public static final String LEGACY = "legacy";
 	public static final Random RANDOM = new Random();
-	
+
 	public static ItemStack addRegacy(ItemStack stack)
 	{
 		ItemStack item = stack;
 		NBTTagCompound nbt = new NBTTagCompound();
-		if(item.hasTagCompound())
+		if (item.hasTagCompound())
 		{
 			nbt = item.getTagCompound();
 		}
-		
+
 		nbt.setBoolean(LEGACY, true);
 		item.setTagCompound(nbt);
 		return item;
 	}
-	
-	public static ItemStack addEnchantment(ItemStack stack,Enchantment ench,int level)
+
+	public static ItemStack addEnchantment(ItemStack stack, Enchantment ench, int level)
 	{
 		stack.addEnchantment(ench, level);
 		return stack;
 	}
-	
-	public static ItemStack addName(ItemStack stack,String displayname)
+
+	public static ItemStack addName(ItemStack stack, String displayname)
 	{
 		stack.setTranslatableName(displayname);
 		return stack;
 	}
-	
+
 	public static final int guiIDManaWorkbench = 0;
 	public static final int guiIDManaFurnace = 1;
 	public static final int guiIDStudyTable = 2;
@@ -303,9 +329,9 @@ public class NeoOres
 	public static final int guiIDMM = 4;
 	public static final int guiIDPI = 5;
 	public static final int guiIDGuide = 6;
-	
+
 	public static final SimpleNetworkWrapper PACKET = NetworkRegistry.INSTANCE.newSimpleChannel("neo_ores".toLowerCase());
-	
+
 	public static final KnowledgeTab neo_ores = new KnowledgeTab("itemGroup.neo_ores_tab");
 
 	public static final CreativeTabs neo_ores_tab = new NeoOresTab("neo_ores_tab");
@@ -314,54 +340,61 @@ public class NeoOres
 	public static final DamageSource FIRE = new DamageSource("neo_ores.fire").setDamageBypassesArmor();
 	public static final DamageSource EARTH = new DamageSource("neo_ores.earth").setDamageBypassesArmor();
 	public static final DamageSource AIR = new DamageSource("neo_ores.air").setDamageBypassesArmor();
+	public static final DamageSource SPELL = new DamageSource("neo_ores.spell");
 	public static final DamageSource PAYMENT = new DamageSource("neo_ores.payment").setDamageBypassesArmor().setDamageIsAbsolute();
 	public static final DamageSource CERATIVE = new DamageSource("neo_ores.creative").setDamageIsAbsolute().setDamageBypassesArmor().setDamageAllowedInCreativeMode();
-	
+
 	public static final DimensionType THE_WATER = DimensionType.register("The Gabry", "dim_water", NeoOresConfig.dim.dimwater, WorldProviderTheWater.class, false);
 	public static final DimensionType THE_EARTH = DimensionType.register("The Ury", "dim_earth", NeoOresConfig.dim.dimearth, WorldProviderTheEarth.class, false);
 	public static final DimensionType THE_FIRE = DimensionType.register("The Micha", "dim_fire", NeoOresConfig.dim.dimfire, WorldProviderTheFire.class, false);
-	public static final DimensionType THE_AIR = DimensionType.register("The Rapha", "dim_air", NeoOresConfig.dim.dimair, WorldProviderTheAir.class, false);	
-	
+	public static final DimensionType THE_AIR = DimensionType.register("The Rapha", "dim_air", NeoOresConfig.dim.dimair, WorldProviderTheAir.class, false);
+
+	public static final EnumEnchantmentType SPELLS = EnumHelper.addEnchantmentType("spell", new Predicate<Item>()
+	{
+		@Override
+		public boolean apply(Item input)
+		{
+			return input instanceof ItemSpell;
+		}
+	});
+
+	public static final Enchantment fastspelling = new EnchantmentFastSpelling();
 	public static final Enchantment offensive = new EnchantmentOffensive();
 	public static final Enchantment soulbound = new EnchantmentSoulBound();
-	
-	public static final Potion mana_boost = new PotionManaBoost("neo_ores.effect.mana_boost").setIconIndex(0,0).setRegistryName(Reference.MOD_ID, "mana_boost").setBeneficial();
-	public static final Potion mana_weakness = new PotionManaWeakness("neo_ores.effect.mana_weakness").setIconIndex(2,0).setRegistryName(Reference.MOD_ID, "mana_weakness");
-	public static final Potion mana_regeneration = new PotionManaRegeneration("neo_ores.effect.mana_regeneration").setIconIndex(1,0).setRegistryName(Reference.MOD_ID, "mana_regeneration").setBeneficial();
-	public static final Potion gravity = new PotionGravity("neo_ores.effect.gravity").setIconIndex(4,0).setRegistryName(Reference.MOD_ID, "gravity");
-	public static final Potion freeze = new PotionFreeze("neo_ores.effect.freeze").setIconIndex(3,0).setRegistryName(Reference.MOD_ID, "freeze");
-	public static final Potion undying = new PotionUndying("neo_ores.effect.undying").setIconIndex(6,0).setRegistryName(Reference.MOD_ID, "undying").setBeneficial();
-	public static final Potion shield = new PotionShield("neo_ores.effect.shield").setIconIndex(5,0).setRegistryName(Reference.MOD_ID, "shield").setBeneficial();
-	public static final Potion antiknockback = new PotionAntiKnockback("neo_ores.effect.antiknockback").setIconIndex(7,0).setRegistryName(Reference.MOD_ID, "antiknockback").setBeneficial();
-	public static final Potion antigriefing = new PotionAntiGriefing("neo_ores.effect.antigriefing").setIconIndex(8,0).setRegistryName(Reference.MOD_ID, "antigriefing");
-	public static final Potion antienderteleport = new PotionAntiTeleport("neo_ores.effect.antiteleport").setIconIndex(9,0).setRegistryName(Reference.MOD_ID, "antiteleport");
-	public static final Potion flying = new PotionFlying("neo_ores.effect.flying").setIconIndex(10,0).setRegistryName(Reference.MOD_ID, "flying").setBeneficial();
-	
-	public static final PotionType mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,3600)).setRegistryName(Reference.MOD_ID, "mana_regen");
-	public static final PotionType strong_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,1800,1)).setRegistryName(Reference.MOD_ID, "strong_mana_regen");
-	public static final PotionType long_mana_regen = new PotionType("mana_regen",new PotionEffect(NeoOres.mana_regeneration,9600)).setRegistryName(Reference.MOD_ID, "long_mana_regen");
-	
+
+	public static final Potion mana_boost = new PotionManaBoost("neo_ores.effect.mana_boost").setIconIndex(0, 0).setRegistryName(Reference.MOD_ID, "mana_boost").setBeneficial();
+	public static final Potion mana_weakness = new PotionManaWeakness("neo_ores.effect.mana_weakness").setIconIndex(2, 0).setRegistryName(Reference.MOD_ID, "mana_weakness");
+	public static final Potion mana_regeneration = new PotionManaRegeneration("neo_ores.effect.mana_regeneration").setIconIndex(1, 0).setRegistryName(Reference.MOD_ID, "mana_regeneration")
+			.setBeneficial();
+	public static final Potion gravity = new PotionGravity("neo_ores.effect.gravity").setIconIndex(4, 0).setRegistryName(Reference.MOD_ID, "gravity");
+	public static final Potion freeze = new PotionFreeze("neo_ores.effect.freeze").setIconIndex(3, 0).setRegistryName(Reference.MOD_ID, "freeze");
+	public static final Potion undying = new PotionUndying("neo_ores.effect.undying").setIconIndex(6, 0).setRegistryName(Reference.MOD_ID, "undying").setBeneficial();
+	public static final Potion shield = new PotionShield("neo_ores.effect.shield").setIconIndex(5, 0).setRegistryName(Reference.MOD_ID, "shield").setBeneficial();
+	public static final Potion antiknockback = new PotionAntiKnockback("neo_ores.effect.antiknockback").setIconIndex(7, 0).setRegistryName(Reference.MOD_ID, "antiknockback").setBeneficial();
+	public static final Potion antigriefing = new PotionAntiGriefing("neo_ores.effect.antigriefing").setIconIndex(8, 0).setRegistryName(Reference.MOD_ID, "antigriefing");
+	public static final Potion antienderteleport = new PotionAntiTeleport("neo_ores.effect.antiteleport").setIconIndex(9, 0).setRegistryName(Reference.MOD_ID, "antiteleport");
+	public static final Potion flying = new PotionFlying("neo_ores.effect.flying").setIconIndex(10, 0).setRegistryName(Reference.MOD_ID, "flying").setBeneficial();
+
+	public static final PotionType mana_regen = new PotionType("mana_regen", new PotionEffect(NeoOres.mana_regeneration, 3600)).setRegistryName(Reference.MOD_ID, "mana_regen");
+	public static final PotionType strong_mana_regen = new PotionType("mana_regen", new PotionEffect(NeoOres.mana_regeneration, 1800, 1)).setRegistryName(Reference.MOD_ID, "strong_mana_regen");
+	public static final PotionType long_mana_regen = new PotionType("mana_regen", new PotionEffect(NeoOres.mana_regeneration, 9600)).setRegistryName(Reference.MOD_ID, "long_mana_regen");
+
 	public static final SoundEvent MUSIC_AIR = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.sylphied")).setRegistryName(Reference.MOD_ID, "music.sylphied");
 	public static final SoundEvent MUSIC_EARTH = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.gnome")).setRegistryName(Reference.MOD_ID, "music.gnome");
 	public static final SoundEvent MUSIC_FIRE = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.salamandra")).setRegistryName(Reference.MOD_ID, "music.salamandra");
 	public static final SoundEvent MUSIC_WATER = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "music.undine")).setRegistryName(Reference.MOD_ID, "music.undine");
-	
+
 	public static final Biome air = new BiomeTheAir((new Biome.BiomeProperties("Raphael's Forest")).setTemperature(0.7F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "air");
 	public static final Biome earth = new BiomeTheEarth((new Biome.BiomeProperties("Uriel's Forest")).setTemperature(0.95F).setRainfall(0.8F)).setRegistryName(Reference.MOD_ID, "earth");
 	public static final Biome fire = new BiomeTheFire((new Biome.BiomeProperties("Michael's Forest")).setTemperature(2.0F)).setRegistryName(Reference.MOD_ID, "fire");
 	public static final Biome water = new BiomeTheWater((new Biome.BiomeProperties("Gabriel's Forest")).setTemperature(0.5F)).setRegistryName(Reference.MOD_ID, "water");
-	
-	public static final ResourceLocation[] PARTICLE_MAGIC = new ResourceLocation[] {
-			new ResourceLocation("neo_ores:textures/particles/particle_animated0.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated1.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated2.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated3.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated4.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated5.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated6.png"),
-			new ResourceLocation("neo_ores:textures/particles/particle_animated7.png"),
-	};
-	
+
+	public static final ResourceLocation[] PARTICLE_MAGIC = new ResourceLocation[] { new ResourceLocation("neo_ores:textures/particles/particle_animated0.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated1.png"), new ResourceLocation("neo_ores:textures/particles/particle_animated2.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated3.png"), new ResourceLocation("neo_ores:textures/particles/particle_animated4.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated5.png"), new ResourceLocation("neo_ores:textures/particles/particle_animated6.png"),
+			new ResourceLocation("neo_ores:textures/particles/particle_animated7.png"), };
+
 	public static final List<OreWeightRecipe> ore_gen_recipes = new ArrayList<OreWeightRecipe>();
 	public static final List<JsonObject> infinity_place_blocks = new ArrayList<JsonObject>();
 }

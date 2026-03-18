@@ -6,10 +6,12 @@ import javax.annotation.Nullable;
 
 import neo_ores.api.spell.SpellItem;
 import neo_ores.config.NeoOresConfig;
+import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.util.PlayerMagicData;
 import neo_ores.util.PlayerMagicDataClient;
 import neo_ores.util.SpellUtils;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -70,6 +72,7 @@ public class ItemSpell extends Item
 					PlayerMagicData pmd = NeoOresData.instance.getPMD((EntityPlayerMP) player);
 					if (manaConsume > pmd.getMana())
 					{
+						// TODO mana hunger effect
 						return new ActionResult<ItemStack>(actionResult, player.getHeldItem(hand));
 					}
 					else
@@ -86,7 +89,8 @@ public class ItemSpell extends Item
 					}
 				}
 			}
-
+			
+			player.getCooldownTracker().setCooldown(this, (int) ((double)NeoOresConfig.magic.base_cool_time * Math.max(1.0 - 0.1 * EnchantmentHelper.getEnchantmentLevel(NeoOres.fastspelling, itemspell), 0.0)));
 			SpellUtils.run(rawSpellList, world, player, player.getHeldItem(hand), null);
 		}
 
@@ -102,4 +106,14 @@ public class ItemSpell extends Item
 	{
 		return 72000;
 	}
+	
+	public int getItemEnchantability(ItemStack stack) 
+	{
+		return 10;
+	}
+	
+	public boolean isEnchantable(ItemStack stack)
+    {
+        return true;
+    }
 }

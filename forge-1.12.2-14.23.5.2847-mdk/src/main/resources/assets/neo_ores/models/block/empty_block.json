@@ -2,6 +2,6 @@
 	"parent": "block/cube_all",
   	"textures": 
   	{
-    	"all": "neo_ores:blocks/opaque_mana_block"
+    	"all": "neo_ores:blocks/empty"
   	}
 }

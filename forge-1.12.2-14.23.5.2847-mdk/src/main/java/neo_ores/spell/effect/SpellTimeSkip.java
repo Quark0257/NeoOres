@@ -55,7 +55,7 @@ public class SpellTimeSkip extends SpellEffect implements HasRange, HasChain, Ha
 		if (result != null && result.typeOfHit == Type.BLOCK)
 		{
 			EnumFacing face = result.sideHit;
-			int count = 20 * (this.amp + 1);
+			int count = 10 * (this.amp + 1) * (this.amp + 1) - 1;
 			for (BlockPos pos : this.rangeMode ? HasRange.rangedPos(result.getBlockPos(), face, this.range) : HasChain.getChainedPos(world, this.chain, result.getBlockPos(), ICompareBlockState.ITEM))
 			{
 				SpellUtils.onDisplayParticleTypeA(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);

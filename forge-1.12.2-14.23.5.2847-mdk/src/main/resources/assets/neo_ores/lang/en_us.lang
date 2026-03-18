@@ -226,6 +226,7 @@ fluid.neo_ores.mana=Fluid Mana
 
 enchantment.offensive=Offensive
 enchantment.soulbound=Soul Bound
+enchantment.fast_spelling=Fast Spelling
 
 entity.spell_placeable.name=Placeable Spell
 entity.spell_bullet.name=Bullet Spell
@@ -305,6 +306,7 @@ gui.overlay.mana=Mana
 gui.mage_knowledge_table=Knowledge Table of Mage
 gui.srct.all_delete=Delete All
 gui.srct.write=Write
+gui.srct.load=Load
 gui.pedestal_interface=Pedestal Interface
 
 container.mana_workbench=Mana Crafting Table
@@ -695,6 +697,8 @@ neo_ores.requestable=REQUESTABLE
 death.attack.neo_ores.payment=%1$s's lives weren't enough
 
 homerunbat=§b§oHome Run Bat
+
+neo_ores.toast.quest_complete=Quest Completed
 
 trigger.earth_dim_visit.name=Visit Ury Dim
 trigger.earth_dim_visit.desc=Through Ury Portal and Visit Ury Dim

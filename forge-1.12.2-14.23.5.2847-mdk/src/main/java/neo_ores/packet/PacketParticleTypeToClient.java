@@ -12,20 +12,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketParticleTypeBToClient implements IMessage
+public class PacketParticleTypeToClient implements IMessage
 {
 	private NBTTagCompound nbt;
 
-	public PacketParticleTypeBToClient()
+	public PacketParticleTypeToClient()
 	{
 	}
 
-	public PacketParticleTypeBToClient(NBTTagCompound nbt)
+	public PacketParticleTypeToClient(NBTTagCompound nbt)
 	{
 		this.nbt = nbt;
 	}
 
-	public PacketParticleTypeBToClient(Vec3d target, double maxRadius, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color, int dimension)
+	public PacketParticleTypeToClient(Vec3d target, double maxRadius, double accel, int minCount, int maxCount, float minParticleVolume, float maxParticleVolume, int color, int dimension, int type)
 	{
 		this.nbt = new NBTTagCompound();
 		NBTTagCompound targetTag = new NBTTagCompound();
@@ -40,6 +40,8 @@ public class PacketParticleTypeBToClient implements IMessage
 		this.nbt.setFloat("maxParticleVolume", maxParticleVolume);
 		this.nbt.setInteger("color", color);
 		this.nbt.setInteger("dim", dimension);
+		this.nbt.setInteger("type", type);
+		this.nbt.setDouble("accel", accel);
 	}
 
 	@Override
@@ -54,10 +56,10 @@ public class PacketParticleTypeBToClient implements IMessage
 		ByteBufUtils.writeTag(buf, this.nbt);
 	}
 
-	public static class Handler implements IMessageHandler<PacketParticleTypeBToClient, IMessage>
+	public static class Handler implements IMessageHandler<PacketParticleTypeToClient, IMessage>
 	{
 		@Override
-		public IMessage onMessage(final PacketParticleTypeBToClient message, MessageContext ctx)
+		public IMessage onMessage(final PacketParticleTypeToClient message, MessageContext ctx)
 		{
 			Minecraft.getMinecraft().addScheduledTask(new Runnable()
 			{
@@ -73,8 +75,17 @@ public class PacketParticleTypeBToClient implements IMessage
 					}
 					NBTTagCompound targetTag = message.nbt.getCompoundTag("target");
 					Vec3d target = new Vec3d(targetTag.getDouble("x"), targetTag.getDouble("y"), targetTag.getDouble("z"));
-					SpellUtils.displayParticleTypeB(world, target, message.nbt.getDouble("maxRadius"), message.nbt.getInteger("minCount"), message.nbt.getInteger("maxCount"),
-							message.nbt.getFloat("minParticleVolume"), message.nbt.getFloat("maxParticleVolume"), message.nbt.getInteger("color"));
+					int type = message.nbt.getInteger("type");
+					if (type == 0)
+					{
+						SpellUtils.displayParticleTypeB(world, target, message.nbt.getDouble("maxRadius"), message.nbt.getInteger("minCount"), message.nbt.getInteger("maxCount"),
+								message.nbt.getFloat("minParticleVolume"), message.nbt.getFloat("maxParticleVolume"), message.nbt.getInteger("color"));
+					}
+					else if (type == 1) 
+					{
+						SpellUtils.displayParticleTypeC(world, target, message.nbt.getDouble("maxRadius"), message.nbt.getDouble("accel"), message.nbt.getInteger("minCount"), message.nbt.getInteger("maxCount"),
+								message.nbt.getFloat("minParticleVolume"), message.nbt.getFloat("maxParticleVolume"), message.nbt.getInteger("color"));
+					}
 				}
 			});
 			return null;

@@ -12,6 +12,7 @@ import neo_ores.item.ItemNeoArmor;
 import neo_ores.main.NeoOresBlocks;
 import neo_ores.main.NeoOresItems;
 import neo_ores.world.dimension.DimensionHelper.ToolType;
+import net.jafama.FastMath;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
@@ -244,11 +245,7 @@ public class TileEntityManaFurnace extends TileEntityLockable implements ITickab
 		int cost = 2;
 		TierUtils utils = new TierUtils(stack);
 		int cost_calc = (utils.getAir() + utils.getEarth() + utils.getFire() + utils.getWater()) / 2;
-		for (int i = 0; i < cost_calc + 1; i++)
-		{
-			cost *= 2;
-		}
-		return 600 * cost + 1;
+		return 600 * cost * (int)FastMath.pow(cost, cost_calc) + 1;
 	}
 
 	private boolean canSmelt()

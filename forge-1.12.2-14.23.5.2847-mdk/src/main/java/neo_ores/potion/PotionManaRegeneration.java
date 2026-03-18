@@ -18,12 +18,22 @@ public class PotionManaRegeneration extends PotionNeoOres
 		{
 			EntityPlayerMP playermp = (EntityPlayerMP) entityLivingBaseIn;
 			PlayerMagicData pmd = NeoOresData.instance.getPMD(playermp);
-			pmd.addMana((long) (1.0D / 50.0D * (double) pmd.getTrueMaxMana()));
+			pmd.addMana((long) (1.0D / 20.0D * (double) pmd.getTrueMaxMana()));
 		}
 	}
 
 	public boolean isReady(int duration, int amplifier)
 	{
-		return duration % (20 / (amplifier + 1) + 1) == 0;
+		// return duration % (20 / (amplifier + 1) + 1) == 0;
+		int k = 50 >> amplifier;
+
+		if (k > 0)
+		{
+			return duration % k == 0;
+		}
+		else
+		{
+			return true;
+		}
 	}
 }

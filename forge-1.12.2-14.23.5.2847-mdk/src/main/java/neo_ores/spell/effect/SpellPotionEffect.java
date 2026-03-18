@@ -1,5 +1,6 @@
 package neo_ores.spell.effect;
 
+import neo_ores.util.SpellUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -20,8 +21,9 @@ public class SpellPotionEffect extends SpellEffectEntityBuffBase
 	{
 		if (elb instanceof EntityLivingBase)
 		{
+			SpellUtils.onDisplayParticleTypeAEntity(world, elb, SpellUtils.getColor(stack), 16);
 			EntityLivingBase entity = (EntityLivingBase) elb;
-			PotionEffect correctedEffect = new PotionEffect(this.effect.getPotion(), this.effect.getDuration() * (this.duration + 1), (this.effect.getAmplifier() + 1) * (this.amp + 1) - 1,
+			PotionEffect correctedEffect = new PotionEffect(this.effect.getPotion(), this.effect.getDuration() * (this.duration + 1) * (this.duration + 1), (this.effect.getAmplifier() + 1) * (this.amp + 1) - 1,
 					this.effect.getIsAmbient(), this.effect.doesShowParticles());
 			entity.addPotionEffect(correctedEffect);
 		}

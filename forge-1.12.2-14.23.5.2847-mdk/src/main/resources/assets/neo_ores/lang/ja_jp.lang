@@ -226,6 +226,7 @@ fluid.neo_ores.mana=液体マナ
 
 enchantment.offensive=攻撃的
 enchantment.soulbound=ソウルバウンド
+enchantment.fast_spelling=高速詠唱
 
 entity.spell_placeable.name=設置魔法
 entity.spell_bullet.name=魔法弾
@@ -305,6 +306,7 @@ gui.overlay.mana=マナ
 gui.mage_knowledge_table=魔術師の知識台
 gui.srct.all_delete=すべて消す
 gui.srct.write=書き込む
+gui.srct.load=読み込み
 gui.pedestal_interface=ペデスタルインターフェース
 
 container.mana_workbench=マナ作業台
@@ -694,8 +696,10 @@ death.attack.neo_ores.payment=%1$sのライフは十分でなかった
 
 homerunbat=§b§oホームランバット
 
-trigger.earth_dim_visit.name=ウリー次元を訪れる
-trigger.earth_dim_visit.desc=ウリーポータルを通ってウリー次元へ行く
+neo_ores.toast.quest_complete=クエスト完了
+
+trigger.earth_dim_visit.name=ユリー次元を訪れる
+trigger.earth_dim_visit.desc=ユリーポータルを通ってユリー次元へ行く
 
 quest.incompleted=未完了
 quest.claimable=報酬を左クリックで受け取る

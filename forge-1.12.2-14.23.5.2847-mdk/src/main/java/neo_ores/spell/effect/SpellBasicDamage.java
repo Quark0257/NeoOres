@@ -1,5 +1,6 @@
 package neo_ores.spell.effect;
 
+import neo_ores.main.NeoOres;
 import neo_ores.main.NeoOresData;
 import neo_ores.util.EntityDamageSourceWithItem;
 import neo_ores.util.PlayerMagicData;
@@ -33,6 +34,14 @@ public class SpellBasicDamage extends SpellDamageBase
 		if (elb instanceof EntityLivingBase)
 		{
 			flag = elb.hurtResistantTime <= ((EntityLivingBase) elb).maxHurtResistantTime * 0.5F;
+			
+			// all of same time spell's damages will apply to the entity
+			if (elb.hurtResistantTime == ((EntityLivingBase) elb).maxHurtResistantTime) 
+			{
+				elb.hurtResistantTime = 0;
+				((EntityLivingBase) elb).hurtTime = 0;
+				flag = true;
+			}
 		}
 		
 		if (flag)
@@ -45,7 +54,8 @@ public class SpellBasicDamage extends SpellDamageBase
 					((EntityLivingBase) elb).hurtTime = 0;
 				}
 			}
-			ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(EntityDamageSourceWithItem.getPhysicalDamage(runner), runner, stack),
+			// EntityDamageSourceWithItem.getPhysicalDamage(runner)
+			ServerUtils.damageEntity(elb, EntityDamageSourceWithItem.setDamageByEntityWithItem(NeoOres.SPELL, runner, stack),
 					(1.0f - this.spellDamageRate) * amount);
 			if (elb instanceof EntityLivingBase)
 			{

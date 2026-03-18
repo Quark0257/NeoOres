@@ -182,15 +182,6 @@ public class StructurePanel extends AbstractPageComponent
 			}
 			tessellator.draw();
 			GlStateManager.popMatrix();
-			/*
-			GlStateManager.scale(1.0 / scale, -1.0 / scale, 1.0 / scale);
-			GlStateManager.translate((sizeX % 2 == 1) ? 0.5 * scale : 0.0, (sizeY % 2 == 1) ? -0.5 * scale : 0.0, (sizeZ % 2 == 1) ? 0.5 * scale : 0.0);
-			GlStateManager.rotate(-this.rotZ, 0.0F, 0.0F, 1.0F);
-			GlStateManager.rotate(-this.rotY, 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate(-this.rotX, 1.0F, 0.0F, 0.0F);
-			GlStateManager.translate(0.0, 0.0, -2.0 * structureWidthR * scale);
-			GlStateManager.translate(-(this.width - viewOffset) * 0.5, -this.height * 0.5, 0.0);
-			*/
 			GlStateManager.translate(-(this.posX + viewOffset), -this.posY, 0.0);
 
 			RenderHelper.enableGUIStandardItemLighting();

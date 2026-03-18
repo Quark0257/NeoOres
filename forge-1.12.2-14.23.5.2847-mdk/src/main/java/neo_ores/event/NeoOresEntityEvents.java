@@ -163,6 +163,13 @@ public class NeoOresEntityEvents
 			}
 		}
 	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onEntityAttacking(EntityAttackEvent event) 
+	{
+		// TODO add elemental damages
+		System.out.println(event.getEntity());
+	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onEntityWasAttacked(LivingAttackEvent event)
@@ -194,6 +201,11 @@ public class NeoOresEntityEvents
 								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
 					}
 					ServerUtils.playSound(event.getEntityLiving(), SoundEvents.BLOCK_GLASS_BREAK, 1.0F, 0.5F);
+					double x = event.getEntityLiving().posX;
+					double y = event.getEntityLiving().posY + 0.3 * event.getEntityLiving().getEyeHeight();
+					double z = event.getEntityLiving().posZ;
+					double vel = 0.2D;
+					SpellUtils.displayParticleTypeC(event.getEntityLiving().world, new Vec3d(x, y, z), vel, vel / 15.0D, 8, 16, 4.0F, 6.0F, 0xB56B6E, true);
 				}
 				return;
 			}
@@ -223,7 +235,7 @@ public class NeoOresEntityEvents
 
 	@SubscribeEvent
 	public void onEntitySpawnEvent(EntityJoinWorldEvent event)
-	{
+	{		
 		if (event.getEntity() instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP playermp = (EntityPlayerMP) event.getEntity();
@@ -262,6 +274,9 @@ public class NeoOresEntityEvents
 		{
 			NeoOresData.resetStructures();
 			NeoOresData.clearAllPMDC();
+			NeoOresData.guidePage = 0;
+			NeoOresData.guideIndexSearch = "";
+			NeoOresData.guideQuestSearch = "";
 		}
 	}
 
@@ -541,8 +556,14 @@ public class NeoOresEntityEvents
 						event.getEntityLiving()
 								.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier() - 1, effect.getIsAmbient(), effect.doesShowParticles()));
 					}
+					ServerUtils.playSound(event.getEntityLiving(), SoundEvents.BLOCK_GLASS_BREAK, 1.0F, 0.5F);
+					double x = event.getEntityLiving().posX;
+					double y = event.getEntityLiving().posY + 0.3 * event.getEntityLiving().getEyeHeight();
+					double z = event.getEntityLiving().posZ;
+					double vel = 0.2D;
+					SpellUtils.displayParticleTypeC(event.getEntityLiving().world, new Vec3d(x, y, z), vel, vel / 15.0D, 8, 16, 4.0F, 6.0F, 0xB5FF6E, true);
+					event.getEntityLiving().setHealth(1.0F);
 				}
-				event.getEntityLiving().setHealth(event.getEntityLiving().getMaxHealth() / 2);
 				return;
 			}
 		}

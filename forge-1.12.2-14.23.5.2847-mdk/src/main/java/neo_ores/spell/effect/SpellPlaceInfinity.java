@@ -85,7 +85,6 @@ public class SpellPlaceInfinity extends SpellEffectItemFiltered implements HasOf
 					}
 					else if (world.mayPlace(state.getBlock(), targetPos, true, face, runner))
 					{
-						System.out.println(stack.getTagCompound());
 						SpellUtils.onDisplayParticleTypeA(world, new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()), new Vec3d(1, 1, 1), SpellUtils.getColor(stack), 8);
 						if (world.setBlockState(targetPos, state, 11))
 						{

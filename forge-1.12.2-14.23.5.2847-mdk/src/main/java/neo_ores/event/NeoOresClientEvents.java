@@ -79,6 +79,7 @@ public class NeoOresClientEvents
 		}
 	}
 
+	
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onRenderLast(RenderWorldLastEvent event)
 	{

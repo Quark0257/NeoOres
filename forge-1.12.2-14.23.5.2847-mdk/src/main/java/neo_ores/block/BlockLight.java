@@ -131,7 +131,7 @@ public class BlockLight extends NeoOresBlock
 			double vy = d * (world.rand.nextDouble() - 0.5);
 			double vz = d * (world.rand.nextDouble() - 0.5);
 			NeoOresClientEvents.getInstance()
-					.addParticle(new TexturedParticle(x + vx, y + vy, z + vz, vx / time, vx / time, vz / time, time, 1.0F + world.rand.nextFloat(), NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
+					.addParticle(new TexturedParticle(x + vx, y + vy, z + vz, vx / time, vy / time, vz / time, time, 1.0F + world.rand.nextFloat(), NeoOres.PARTICLE_MAGIC).setColor(color, 1.0F));
 		}
 		return true;
 	}

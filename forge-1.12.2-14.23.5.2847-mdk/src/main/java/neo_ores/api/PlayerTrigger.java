@@ -17,7 +17,14 @@ public class PlayerTrigger extends IForgeRegistryEntry.Impl<PlayerTrigger>
 	private final Class<? extends IPlayerRunnable> runnable;
 	private final List<IDialogReward> rewards;
 
-	public PlayerTrigger(String translateKey, Class<? extends IPlayerRunnable> runnable, @Nullable List<IDialogReward> rewards, ResourceLocation registerId)
+	/**
+	 * 
+	 * @param translateKey
+	 * @param runnable @Nullable If it is null, this needs to force to trigger 
+	 * @param rewards @Nullable If it is null, this doesn't behave as a quest
+	 * @param registerId
+	 */
+	public PlayerTrigger(String translateKey, @Nullable Class<? extends IPlayerRunnable> runnable, @Nullable List<IDialogReward> rewards, ResourceLocation registerId)
 	{
 		this.translateKey = translateKey;
 		this.runnable = runnable;
@@ -40,6 +47,10 @@ public class PlayerTrigger extends IForgeRegistryEntry.Impl<PlayerTrigger>
 		return "trigger." + this.translateKey + ".desc";
 	}
 	
+	/**
+	 * whether this behaves as a quest
+	 * @return
+	 */
 	public boolean hasDialogRewards() 
 	{
 		return this.rewards != null;

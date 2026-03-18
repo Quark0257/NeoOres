@@ -3,6 +3,7 @@ package neo_ores.client.gui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.lwjgl.input.Mouse;
 
@@ -120,7 +121,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			}
 		});
 
-		this.buttonList.add(new GuiButton(104, (this.width - xSize) / 2 + 284, (this.height - ySize) / 2 + 181, 100, 20, I18n.format("gui.srct.write"))
+		this.buttonList.add(new GuiButton(104, (this.width - xSize) / 2 + 284, (this.height - ySize) / 2 + 181, 50, 20, I18n.format("gui.srct.write"))
 		{
 			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
 			{
@@ -132,14 +133,31 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 						((ISpellRecipeWritable) tileSRCT.getStackInSlot(0).getItem()).writeRecipeSpells(selectedSpells, tileSRCT.getStackInSlot(0));
 						changed();
 					}
-					
-					if (mc.player.capabilities.isCreativeMode && tileSRCT.getStackInSlot(0).getItem() instanceof ISpellWritable) 
+
+					if (mc.player.capabilities.isCreativeMode && tileSRCT.getStackInSlot(0).getItem() instanceof ISpellWritable)
 					{
 						ItemStack stack = tileSRCT.getStackInSlot(0).copy();
 						ItemStack stack1 = ((ISpellWritable) stack.getItem()).writeActiveSpells(selectedSpells, stack);
-						//stack1.getTagCompound().setTag("additionalData", this.additionalData);
-						//stack1.getTagCompound().setTag("desc", this.desc);
+						// stack1.getTagCompound().setTag("additionalData", this.additionalData);
+						// stack1.getTagCompound().setTag("desc", this.desc);
 						tileSRCT.setInventorySlotContents(0, stack1);
+						changed();
+					}
+				}
+				return flag;
+			}
+		});
+		this.buttonList.add(new GuiButton(105, (this.width - xSize) / 2 + 334, (this.height - ySize) / 2 + 181, 50, 20, I18n.format("gui.srct.load"))
+		{
+			public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+			{
+				boolean flag = this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				if (flag)
+				{
+					if (tileSRCT.getStackInSlot(0).getItem() instanceof ISpellRecipeWritable)
+					{
+						selectedSpells.clear();
+						selectedSpells.addAll(((ISpellRecipeWritable) tileSRCT.getStackInSlot(0).getItem()).readRecipeSpells(tileSRCT.getStackInSlot(0)));
 						changed();
 					}
 				}
@@ -169,7 +187,7 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
 	{
 		this.drawDefaultBackground();
-		
+
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
 
@@ -440,11 +458,11 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : +" + spellitem.getCostsum());
 			tooltip.add(TextFormatting.BLUE + I18n.format("spell.cost") + " : x" + spellitem.getCostproduct());
 			tooltip.add(TextFormatting.GRAY + I18n.format("spell.recipe"));
-			for(String formatted : SpellUtils.getRecipe(spellitem)) 
+			for (String formatted : SpellUtils.getRecipe(spellitem))
 			{
 				tooltip.add(TextFormatting.GRAY + formatted);
 			}
-			
+
 			if (this.canSelect(spellitem))
 			{
 				tooltip.add("");
@@ -520,12 +538,14 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 	{
 		if (spell == null)
 			return false;
-		String[] ss = this.search.split(" ");
+		String[] ss = TextFormatting.getTextWithoutFormattingCodes(this.search).toLowerCase(Locale.ROOT).split(" ");
 		boolean flag = true;
 		for (String s : ss)
 		{
-			if (!(spell.getModId().contains(s) || spell.getRegisteringId().contains(s) || getName(spell).contains(s) || I18n.format("spell." + spell.getTranslateKey() + ".desc").contains(s)
-					|| I18n.format(SpellUtils.typeFromSpellItem(spell)).contains(s)))
+			if (!(spell.getModId().toLowerCase(Locale.ROOT).contains(s) || spell.getRegisteringId().toLowerCase(Locale.ROOT).contains(s)
+					|| TextFormatting.getTextWithoutFormattingCodes(getName(spell)).toLowerCase(Locale.ROOT).contains(s)
+					|| TextFormatting.getTextWithoutFormattingCodes(I18n.format("spell." + spell.getTranslateKey() + ".desc")).toLowerCase(Locale.ROOT).contains(s)
+					|| TextFormatting.getTextWithoutFormattingCodes(I18n.format(SpellUtils.typeFromSpellItem(spell))).toLowerCase(Locale.ROOT).contains(s)))
 			{
 				flag = false;
 				break;
@@ -587,9 +607,9 @@ public class GuiSpellRecipeCreationTable extends GuiContainer
 		nbt.setTag("recipeSpells", SpellUtils.getNBTFromList(selectedSpells));
 		NBTTagCompound item = tileSRCT.getStackInSlot(0).writeToNBT(new NBTTagCompound());
 		nbt.setTag("recipeItem", item);
-		
+
 		nbt.setInteger("dim", tileSRCT.getWorld().provider.getDimension());
-		
+
 		PacketSRCTToServer psrcts = new PacketSRCTToServer(nbt);
 		NeoOres.PACKET.sendToServer(psrcts);
 	}

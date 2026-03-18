@@ -135,20 +135,30 @@ public class GuiPedestalInterface extends GuiContainer implements IPIListener
 		this.getPIContainer().itemList.addAll(this.itemList);
 		if (!this.searchField.getText().isEmpty())
 		{
-			String search = this.searchField.getText().toLowerCase(Locale.ROOT);
+			String[] searches = this.searchField.getText().toLowerCase(Locale.ROOT).split(" ");
 			Iterator<ItemStack> itr = this.getPIContainer().itemList.iterator();
 			while (itr.hasNext())
 			{
 				ItemStack stack = itr.next();
-				boolean matches = false;
-				for (String line : stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+				boolean matches = true;
+				for (String search : searches) 
 				{
-					if (TextFormatting.getTextWithoutFormattingCodes(line).toLowerCase(Locale.ROOT).contains(search))
+					boolean match = false;
+					for (String line : stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
 					{
-						matches = true;
+						if (TextFormatting.getTextWithoutFormattingCodes(line).toLowerCase(Locale.ROOT).contains(search))
+						{
+							match = true;
+							break;
+						}
+					}
+					if (!match) 
+					{
+						matches = false;
 						break;
 					}
 				}
+				
 				if (!matches)
 					itr.remove();
 			}

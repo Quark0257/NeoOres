@@ -610,4 +610,6 @@ public class NeoOresData
 	}
 	
 	public static int guidePage = 0;
+	public static String guideIndexSearch = "";
+	public static String guideQuestSearch = "";
 }

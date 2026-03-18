@@ -8,4 +8,9 @@ public abstract class AbstractClassAdaptor
 	public abstract String getClassName();
 	
 	public abstract ClassVisitor getVisitor(ClassWriter cw); 
+	
+	public int getAcceptFlag() 
+	{
+		return 0;
+	}
 }

@@ -3,6 +3,7 @@ package neo_ores.spell;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -56,19 +57,18 @@ public class SpellItemInterfaces
 					}
 				}
 			}
-			if (temp.isEmpty())
+			if (!temp.contains(target))
 			{
 				temp.add(target);
 			}
-			List<Entity> sorted = temp.stream().sorted(new Comparator<Entity>()
+			List<Entity> sorted = temp.stream().sorted(Comparator.comparingDouble(new ToDoubleFunction<Entity>()
 			{
 				@Override
-				public int compare(Entity o1, Entity o2)
+				public double applyAsDouble(Entity value)
 				{
-					boolean flag = target.getPositionVector().subtract(o1.getPositionVector()).lengthSquared() < target.getPositionVector().subtract(o2.getPositionVector()).lengthSquared();
-					return flag ? -1 : 1;
+					return target.getPositionVector().subtract(value.getPositionVector()).lengthSquared();
 				}
-			}).collect(Collectors.toList());
+			})).collect(Collectors.toList());
 
 			if (maxEntities == -1)
 			{

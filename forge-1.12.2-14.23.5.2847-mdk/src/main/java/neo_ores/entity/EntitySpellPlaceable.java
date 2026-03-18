@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -151,15 +152,14 @@ public class EntitySpellPlaceable extends EntityThrowable implements IEntityAddi
 			}
 		}));
 
-		List<Entity> sorted = list.stream().sorted(new Comparator<Entity>()
+		List<Entity> sorted = list.stream().sorted(Comparator.comparingDouble(new ToDoubleFunction<Entity>()
 		{
 			@Override
-			public int compare(Entity o1, Entity o2)
+			public double applyAsDouble(Entity arg0)
 			{
-				boolean flag = getPositionVector().subtract(o1.getPositionVector()).lengthSquared() < getPositionVector().subtract(o2.getPositionVector()).lengthSquared();
-				return flag ? -1 : 1;
+				return getPositionVector().subtract(arg0.getPositionVector()).lengthSquared();
 			}
-		}).collect(Collectors.toList());
+		})).collect(Collectors.toList());
 
 		int maxEntity = this.range * 2 + 1;
 

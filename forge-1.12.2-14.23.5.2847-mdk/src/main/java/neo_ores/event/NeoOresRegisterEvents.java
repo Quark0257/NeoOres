@@ -1,9 +1,5 @@
 package neo_ores.event;
 
-import neo_ores.client.render.RendererPedestal;
-import neo_ores.client.render.entity.RenderEntityBossEarth;
-import neo_ores.client.render.entity.RenderSpellBullet;
-import neo_ores.client.render.entity.RenderSpellPlaceable;
 import neo_ores.entity.EntitySpellBullet;
 import neo_ores.entity.EntitySpellPlaceable;
 import neo_ores.entity.EntityThruster;
@@ -26,6 +22,11 @@ import neo_ores.client.render.RendererChunkLoader;
 import neo_ores.client.render.RendererMechanicalMagician;
 import neo_ores.client.render.RendererNeoPortal;
 import neo_ores.client.render.RendererMageKnowledgeTable;
+import neo_ores.client.render.RendererPedestal;
+import neo_ores.client.render.RendererManaBlock;
+import neo_ores.client.render.entity.RenderEntityBossEarth;
+import neo_ores.client.render.entity.RenderSpellBullet;
+import neo_ores.client.render.entity.RenderSpellPlaceable;
 import neo_ores.tileentity.TileEntityBossCapsule;
 import neo_ores.tileentity.TileEntityChunkLoader;
 import neo_ores.tileentity.TileEntityPedestalNetworkDetector;
@@ -39,6 +40,7 @@ import neo_ores.tileentity.TileEntitySpellRecipeCreationTable;
 import neo_ores.util.SpellUtils;
 import neo_ores.world.dimension.DimensionHelper.DimensionName;
 import neo_ores.tileentity.TileEntityMageKnowledgeTable;
+import neo_ores.tileentity.TileEntityManaBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -243,6 +245,7 @@ public class NeoOresRegisterEvents
 	{
 		event.getRegistry().register(NeoOres.offensive);
 		event.getRegistry().register(NeoOres.soulbound);
+		event.getRegistry().register(NeoOres.fastspelling);
 	}
 
 	@SubscribeEvent
@@ -292,6 +295,7 @@ public class NeoOresRegisterEvents
 		GameRegistry.registerTileEntity(TileEntityBossCapsule.class, new ResourceLocation(Reference.MOD_ID, "boss_capsule"));
 		GameRegistry.registerTileEntity(TileEntityPedestalNetworkDetector.class, new ResourceLocation(Reference.MOD_ID, "pedestal_network_detector"));
 		GameRegistry.registerTileEntity(TileEntityPedestalNetworkBus.class, new ResourceLocation(Reference.MOD_ID, "pedestal_network_bus"));
+		GameRegistry.registerTileEntity(TileEntityManaBlock.class, new ResourceLocation(Reference.MOD_ID, "mana_block"));
 	}
 
 	@SubscribeEvent
@@ -437,6 +441,7 @@ public class NeoOresRegisterEvents
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMechanicalMagician.class, new RendererMechanicalMagician());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChunkLoader.class, new RendererChunkLoader());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestalNetworkDetector.class, new RendererPedestal());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityManaBlock.class, new RendererManaBlock());
 	}
 	
 	/**
